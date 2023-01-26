@@ -65,7 +65,7 @@ measures
 \section{Introduction}
 PolSAR images offer a distinct advantage over other remote sensing images by utilizing four different polarization combinations, specifically HH, HV, VH, and VV~\cite{Hua2022}. These combinations are based on the horizontal (H), and vertical (V) polarizations of the received and transmitted signals. The polarization allows for the acquisition of detailed and comprehensive data, providing significantly more information than the single polarization mode~\cite{Zhai2015}.
 
-The study on the applications of PolSAR data, particularly edge detection, has received increasing attention~\cite{Jin2016,Wang2018}. Edge detection in PolSAR images plays an essential role in many applications, such as speckle noise reduction, superpixel segmentation, land-cover classification, and target recognition~\cite{Xiang2016}. 
+The study on the applications of PolSAR data, including edge detection, has received increasing attention~\cite{Jin2016,Wang2018}. Edge detection in PolSAR images plays an essential role in many applications, such as speckle noise reduction, superpixel segmentation, land-cover classification, and target recognition~\cite{Xiang2016}. 
 Several methods and algorithms have been proposed for edge detection in PolSAR imagery~\cite{Schou2003,Gambini2007,Nascimento2014}. 
 
 Shi et al.~\cite{Shi2020} proposed a new method for extracting all edge-related features. 
@@ -173,14 +173,14 @@ Such information enables the decision to utilize or discard data from a specific
 \section{Quality assessment}
 
 Some of the most frequently used indicators of quality are the mean square error (MSE)~\cite{beaulieu2003multi}, 
-the correlation (CC) coefficient~\cite{aiazzi2004spectral}, and the entropy~\cite{han2008study}:
+the correlation coefficient (CC)~\cite{aiazzi2004spectral}, and the entropy (H)~\cite{han2008study}:
 \begin{itemize}
 	\item Mean square error measures the spectral distortion introduced by the fusion process.
 	$$MSE= \displaystyle \frac{\sum_{i=1}^{M}\sum_{i=1}^{N}(f(i,j)-r(i,j))^2}{M\times N}.$$
 	\item The correlation coefficient measures the degree of correlation between the enhanced and the original images.
 	$$CC=  \frac{\sum_{i=1}^{n}(x_i-\Bar{x})(y_i-\Bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i-\Bar{x})^2(y_i-\Bar{y})^2}}.$$
-	\item The Entropy is used for measuring the richness of data in enhanced images.
-	$$H=-\sum_{i=1}^{n}d(i)\log_2d(i).$$
+	\item The entropy is used for measuring the richness of data in enhanced images.
+	$$H=-\sum_{i=1}^{n}p(i)\log_2p(i).$$
 	%%% ACF O que é d(i)?
 \end{itemize}
 
