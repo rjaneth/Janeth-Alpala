@@ -5,6 +5,7 @@
 \documentclass{article}
 \usepackage{spconf,amsmath,epsfig}
 \usepackage{bm,bbm}
+\usepackage{cite}
 % \newcommand{\mcite}[1]{\mbox{\cite{#1}}}
 
 % Example definitions.
@@ -62,35 +63,44 @@ measures
 %
 \end{abstract}
 \section{Introduction}
-PolSAR images offer a distinct advantage over other remote sensing images by utilizing four different polarization combinations, specifically HH, HV, VH, and VV~\cite{Hua2022}. These combinations are based on the horizontal (H), and vertical (V) polarizations of the received and transmitted signals. The polarization allows for the acquisition of detailed and comprehensive data, providing significantly more information than the simple polarization mode~\cite{Zhai2015}.\par
+PolSAR images offer a distinct advantage over other remote sensing images by utilizing four different polarization combinations, specifically HH, HV, VH, and VV~\cite{Hua2022}. These combinations are based on the horizontal (H), and vertical (V) polarizations of the received and transmitted signals. The polarization allows for the acquisition of detailed and comprehensive data, providing significantly more information than the single polarization mode~\cite{Zhai2015}.
 
+The study on the applications of PolSAR data, particularly edge detection, has received increasing attention~\cite{Jin2016,Wang2018}. Edge detection in PolSAR images plays an essential role in many applications, such as speckle noise reduction, superpixel segmentation, land-cover classification, and target recognition~\cite{Xiang2016}. 
+Several methods and algorithms have been proposed for edge detection in PolSAR imagery~\cite{Schou2003,Gambini2007,Nascimento2014}. 
 
-The study on the applications of PolSAR data, particularly edge detection, has received increasing attention~\cite{Jin2016,Wang2018}. Edge detection in PolSAR images plays an essential role in many applications, such as speckle noise reduction, superpixel segmentation, land-cover classification, and target recognition~\cite{Xiang2016}. In order to achieve the goal of PolSAR image detection, several methods and algorithms have been proposed~\cite{Schou2003,Gambini2007,Nascimento2014}. \par
+Shi et al.~\cite{Shi2020} proposed a new method for extracting all edge-related features. 
+This method is designed to reduce speckle noise in regions with both weak and strong edges, particularly in heterogeneous areas. 
+Another approach~\cite{DeBorba2020} involves the fusion of evidence obtained from intensity channels. 
+This can be done using a simple average, principal component analysis, ROC statistics, etc.
 
+The study by de Borba et al.~\cite{DeBorba2020} is the foundation for this research. 
+It finds evidence of the location of edge points by using a deterministic approach that does not take into account the variability of the estimator. 
+We extended this investigation using new edge detectors~\cite{Xiang2016, Nascimento2014,Shi2020}. 
+In addition, we employ various quality metrics to evaluate and compare the results of fusing edge evidence in PolSAR images.
 
-A new method for extracting all edge-related features is proposed in~\cite{Shi2020}. This method is designed to reduce speckle noise in regions with both weak and strong edges, particularly in heterogeneous areas. Another approach involves the fusion of evidence obtained from intensity channels to detect edges in PolSAR image. This can be done using a simple average, principal component analysis, ROC statistics, etc. See~\cite{DeBorba2020}. 
-
-
-The study by de Borba et al.~\cite{DeBorba2020} is the foundation for this research. It presents evidence of the location of edge points in images with low signal-to-noise ratio by using a deterministic approach that does not take into account the variability of the estimator. We extended this investigation using new edge detectors following the work of~\cite{Xiang2016, Nascimento2014,Shi2020}. In addition, various quality metrics will be employed to evaluate and compare the results of edge evidence fusion in PolSAR images.
 \section{Background}
-\subsection{PolSAR data representation }
-Using PolSAR data, a wide range of biophysical and geophysical parameters related to the Earth's surface can be efficiently and reliably extracted. The polarimetric scattering matrix~\cite{Lee2017} serves as an instrumental tool to represent the polarimetric target information.
-\begin{align}
+\subsection{PolSAR data representation}
+
+Using PolSAR data, a wide range of biophysical and geophysical parameters related to the Earth's surface can be efficiently and reliably extracted. The polarimetric scattering matrix~\cite{Lee2017} serves as an instrumental tool to represent the polarimetric target information:
+\begin{equation}
  \mathbf{S} = \begin{bmatrix}
 S_{\text{HH}} & S_{\text{HV}} \\
 S_{\text{VH}} & S_{\text{VV}}
 \end{bmatrix},  
 \label{E:a1}
-\end{align}
-where the elements $S_{\text{HH}}$ and $S_{\text{VV}}$ generate the power return in the co-polarized channels, while the elements $S_{\text{HV}}$ and $S_{\text{VH}}$ are responsible for the power return in the cross-polarized channels.\par
-If the PolSAR targets comply with the reciprocal condition $(S_{\text{HV}} = S_{\text{VH}})$, the single-look PolSAR data can be represented using a scattering vector:
-\begin{align}
+\end{equation}
+where the elements $S_{\text{HH}}$ and $S_{\text{VV}}$ are the returned power in the co-polarized channels, while the elements $S_{\text{HV}}$ and $S_{\text{VH}}$ relate to the cross-polarized channels.
+If the PolSAR targets comply with the reciprocal condition $(S_{\text{HV}} = S_{\text{VH}})$, single-look PolSAR data can be represented using a scattering vector:
+\begin{equation}
 \mathbf{k}_s=[S_{\text{HH}}, \sqrt{2}S_{\text{HV}}, S_{\text{VV}} ]^t,
 \label{E:21}
-\end{align}
-where  the superscript $t$ stands for the transpose operation. The multi‑look PolSAR data can be expressed  by a covariance matrix  given as 
-\(\mathbf{C}=\langle\mathbf{k}_S\mathbf{k}_S^H \rangle= \frac{1}{L} \sum_{i=1}^{L} \mathbf{k}_s(i)\mathbf{k}_s(i)^\text{H} \), here $\langle \cdot \rangle$ is the ensemble average, H  the is complex conjugate transpose operator, and $L$ is the number of looks. Covariance matrix is hermitian, i.e., $\mathbf{C}= \mathbf{C}^\text{H}$
-see~\cite{Qin2022}.
+\end{equation}
+where  the superscript $t$ stands for the transpose operation. 
+Multi‑look PolSAR data can be expressed  by a covariance matrix  given as 
+\(\mathbf{C}=\langle\mathbf{k}_S\mathbf{k}_S^\text{H} \rangle= {L}^{-1} \sum_{i=1}^{L} \mathbf{k}_s(i)\mathbf{k}_s(i)^\text{H} \), where $\langle \cdot \rangle$ is the ensemble average, $\text{H}$  the is complex conjugate transpose operator, and $L$ is the number of looks. 
+The covariance matrix is hermitian, i.e., $\mathbf{C}= \mathbf{C}^\text{H}$, and positive definite;
+see Ref.~\cite{Qin2022}.
+
 \subsection{Gamma distribution}
 %Over the past decades, several distributions have been created for modeling PolSAR image data. The most commonly used distribution for working with images generated from polarimetric multilook data is the complex Wishart distribution~\cite{Nielsen2007}. This distribution is characterized by two parameters, the covariance matrix $\mathbf{\Sigma}$ and the number of looks L of the image. Thus, the polarimetric matrix $\mathbf{Z} = \mathbf{C}=\left\langle\mathbf{k}_s\mathbf{k}_s^H \right\rangle$ can be derived following a complex Wishart distribution, represented as $\mathbf{Z}\sim \mathcal{W}_{\mathcal{C}}(\mathbf{\Sigma}, L),$  whose probability density function
 %is~\cite{Frery2014, Qin2022}:
@@ -100,7 +110,7 @@ see~\cite{Qin2022}.
 %\end{align}
 %where $\Gamma_q(L)=\pi^{q(q-1)/2}\prod_{i=0}^{q-1}\Gamma(L-i)$,  $\Gamma(\cdot)$ denotes the gamma function and $\Tr(\cdot)$ is the trace of the matrix. In this case, three channels will be used, i.e., $q = 3$.
 
-Considering the previous section, we assume that the distribution of each intensity channel  follows a Gamma law, as described by: 
+We assume that the distribution of each intensity channel  follows a Gamma law, characterized by the probability density function
 \begin{equation}
 f_Z(z;\mu,L)=\frac{L^{L}z^{L-1}}{\mu^{L}\Gamma(L)} \exp\big\{-Lz/\mu\big\},\quad z>0,
 \label{func_dens_uni_gamma}
@@ -109,21 +119,24 @@ where $L>0$, and
 $\mu>0$ is the mean.
 The log-likelihood of the sample $\bm{z} = (z_1,\dots,z_n)$ under this model is
 \begin{equation}
-\mathcal{L}(\mu, L; \mathbf{z}) = 
+\mathcal{L}(\mu, L; \bm{z}) = 
 n \big[L\ln (L / \mu) - \ln \Gamma(L)\big]
 +L \sum_{k=1}^{n}\ln z_k -\frac{L}{\mu}\sum_{k=1}^{n} z_k.
 \label{eq:LogLikelihoodGamma}
 \end{equation}
-Then, we find $\big(\widehat \mu, \widehat L\big)$, the maximum likelihood estimator (MLE) of $(\mu, L)$ from $\bm{z}$, is obtained by maximizing~\eqref{eq:LogLikelihoodGamma}.
+Then, we find $\big(\widehat \mu, \widehat L\big)$, the maximum likelihood estimator (MLE) of $(\mu, L)$ from $\bm{z}$, by maximizing~\eqref{eq:LogLikelihoodGamma}.
 
 % A simplified derivation to obtain the complex Wishart distribution was presented in \cite{LEE1994}.
 \subsection{Edge detection on a single data strip}
-Finding the edges of an image is a crucial step in image analysis. These boundaries define distinct regions within the image, such as pastures, urban areas, or forested areas~\cite{monferran2020modelo}. Various techniques, including maximum likelihood, entropy, and geodesic distance, are commonly used in research studies to identify edge points~\cite{NaranjoTorres2017,Nascimento2019}. To locate edge points in these types of images, modeling the data using a suitable statistical distribution and determining the related parameters is necessary.
+Finding the edges of an image is a crucial step in image analysis. These boundaries define distinct regions within the image, such as pastures, urban areas, or forested areas~\cite{monferran2020modelo}. Various techniques, including maximum likelihood, entropy, and geodesic distance, are commonly used in research studies to identify edge points~\cite{NaranjoTorres2017,Nascimento2019}. 
+Suitable statistical models are needed for locating edge points in these types of images.
 
-The Gambini algorithm~\cite{Gambini2007} is a highly appealing method for edge detection. It is designed to be localized, searching for evidence of edges within a narrow data strip. The algorithm involves the projection of rays and identifying edge evidence by maximizing a value function.
+The Gambini algorithm~\cite{Gambini2007} is a highly appealing method for edge detection. 
+It searches for evidence of edges within a narrow data strip. 
+The algorithm involves projecting rays and identifying edge evidence by maximizing a value function.
 
 The algorithm starts by casting rays from a point inside the candidate region, e.g., the centroid.
-Data are collected around each ray to form the sample $\bm z = (z_1,z_2,\dots,z_n)$, which is partitioned at position $j$:
+Data are collected around each ray to form the sample $\bm z = (z_1,z_2,\dots,z_n)$, which is partitioned at position $j$ into the interior $\bm z_\text{I}$ and exterior $\bm z_\text{E}$ samples:
 $$
 \bm z = (\underbrace{z_1,z_2,\dots,z_j}_{\bm z_\text{I}}, 
 \underbrace{z_{j+1}, z_{j+2},\dots,z_n}_{\bm z_\text{E}}).
@@ -133,7 +146,7 @@ $\bm Z_\text{I} \sim \Gamma(\mu_\text{I},L_\text{I})$, and
 $\bm Z_\text{E} \sim \Gamma(\mu_\text{E},L_\text{E})$.
 We then estimate $(\mu_\text{I},L_\text{I})$ and $(\mu_\text{E},L_\text{E})$ with $\bm z_\text{I}$ and $\bm z_\text{E}$, respectively, by maximizing~\eqref{eq:LogLikelihoodGamma}, and obtain $\big(\widehat{\mu}_\text{I}, \widehat{L}_\text{I}\big)$ and $\big(\widehat{\mu}_\text{E}, \widehat{L}_\text{E}\big)$.
 
-Then, the total log-likelihood is calculated of $\bm z_\text{I}$ and $\bm z_\text{E}$:
+Then, the total log-likelihood is
 \begin{equation}\label{eq:TotalLogLikelihood}
 \begin{aligned}
 \mathcal L\big(j&;\widehat{\mu}_I, \widehat{L}_I,\widehat{\mu}_E, \widehat{L}_E\big)= -\Bigg(
@@ -147,37 +160,48 @@ Then, the total log-likelihood is calculated of $\bm z_\text{I}$ and $\bm z_\tex
 \raisetag{2.2em}
 \end{aligned}
 \end{equation}
-The estimate of the edge position on the ray is represented by the coordinate  $\widehat\jmath$, which maximizes it.
+The estimate of the edge position on the ray is the coordinate  $\widehat\jmath$ which maximizes $\mathcal L$.
 
 \subsection{Fusion methods for edge evidence}
-In~\cite{DeBorba2020}, a fusion of edge evidence is carried out in the channels of intensities HH, HV, and VV, of a PolSAR image to produce a unique and more accurate edge position estimator. For this purpose, six fusion methods were used:  simple average, multiresolution discrete wavelet transform (MRDWT), principal component analysis (PCA), receiver operating characteristic (ROC) statistics, multiresolution stationary wavelet transform (MR-SWT), and a multiresolution method based on singular value decomposition (MR-SVD).\par
 
-Edge evidence fusion methods are essential to quantify and qualify the information obtained from each image channel. This information enables the decision to utilize or discard data from a specific channel to enhance edge detection accuracy.
+De Borba et al.~\cite{DeBorba2020} fused the edges evidence obtained in intensities channels HH, HV, and VV to produce a unique and more accurate edge position estimator. 
+The authors used six fusion methods: simple average, multiresolution discrete wavelet transform (MRDWT), principal component analysis (PCA), receiver operating characteristic (ROC) statistics, multiresolution stationary wavelet transform (MR-SWT), and a multiresolution method based on singular value decomposition (MR-SVD).
+
+Edge evidence fusion methods are essential to quantify and qualify the information obtained from each image channel. 
+Such information enables the decision to utilize or discard data from a specific channel to enhance edge detection accuracy.
+
 \section{Quality assessment}
-Quality assessment is a central issue in the image fusion process to compare the quality of the fused images and the performance of the method used~\cite{Somvanshi2017}. Quality measure indicators that are most used to evaluate fusion results are:  mean square error (MSE)~\cite{beaulieu2003multi}, standard deviation (SD)~\cite{choi2003biorthogonal}, average gradient (AG)~\cite{li2005color}, the correlation (CC) coefficient~\cite{aiazzi2004spectral}, entropy~\cite{han2008study}, and the peak signal-to-noise ratio (PSNR)~\cite{canga2005}. Some of these metrics are defined as follows: Mean square error measures the spectral distortion introduced by the fusion process.
-    $$MSE= \displaystyle \frac{\sum_{i=1}^{M}\sum_{i=1}^{N}(f(i,j)-r(i,j))^2}{M\times N}.$$
-   % where $(i, j)$ denote pixel location.
-The correlation coefficient measures the degree of correlation between the enhanced and the original images.
-    $$CC=  \frac{\sum_{i=1}^{n}(x_i-\Bar{x})(y_i-\Bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i-\Bar{x})^2(y_i-\Bar{y})^2}}.$$
-   % where $x_i$, $y_i$ are the grey values of homologous pixel synthesised image and real image.
-And, the Entropy is used for measuring the richness of data in enhanced images.
-    $$H=-\sum_{i=1}^{n}d(i)\log_2d(i).$$
-    %where $G$ is the number of grey level of the image’s histogram and $d(i)$ is the normalised frequency of occurrence of each grey level.
 
-Following the image fusion quality assessment strategy proposed in~\cite{Li2010, Somvanshi2017,Nikola2015}, we intend to utilize this approach in our study for the fusion of edge evidence through statistical analysis.
+Some of the most frequently used indicators of quality are the mean square error (MSE)~\cite{beaulieu2003multi}, 
+the correlation (CC) coefficient~\cite{aiazzi2004spectral}, and the entropy~\cite{han2008study}:
+\begin{itemize}
+	\item Mean square error measures the spectral distortion introduced by the fusion process.
+	$$MSE= \displaystyle \frac{\sum_{i=1}^{M}\sum_{i=1}^{N}(f(i,j)-r(i,j))^2}{M\times N}.$$
+	\item The correlation coefficient measures the degree of correlation between the enhanced and the original images.
+	$$CC=  \frac{\sum_{i=1}^{n}(x_i-\Bar{x})(y_i-\Bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i-\Bar{x})^2(y_i-\Bar{y})^2}}.$$
+	\item The Entropy is used for measuring the richness of data in enhanced images.
+	$$H=-\sum_{i=1}^{n}d(i)\log_2d(i).$$
+	%%% ACF O que é d(i)?
+\end{itemize}
+
+We follow the image fusion quality assessment strategy proposed in~\cite{Li2010, Somvanshi2017,Nikola2015} for the problem at hand, using statistical analyses.
 
 %We use the criteria described in [2]  to evaluate the quality of each evidence for each fusion method.
 
 %We expanded our research to a statistical analysis, using quality metrics to assess the efficiency in the fusion of evidence, using different methods. 
 
 \subsection{Exploring the concept of explainability}
-Explainability is a crucial concern when it comes to artificial intelligence (AI)~\cite{Vilone2021}. It refers to the ability to understand and interpret the decisions and actions made by an AI system. This is particularly important in applications where the stakes are high, such as in medical diagnosis~\cite{Tjoa2021}. The term~\textit{explainable} refers to a statement, fact, or situation that provides a reason for why something happened. It helps to make something clear or interpretable.
+
+Explainability is crucial when it comes to artificial intelligence (AI) and related fields~\cite{Vilone2021}. 
+It refers to the ability to understand and interpret the decisions and actions made by an automatic system. 
 
 The proposed methodology in this work focuses on identifying interpretable measures that can be used to weigh the influence of individual estimates during an evidence fusion process.
+
 \section{RESULTS}
 
-From Fig.~\ref{fig:res}(a)-(c), we can see the edge evidences in the HH, HV and VV channels obtained through maximum likelihood estimation.\par
-According to the research in~\cite{DeBorba2020}, various fusion methods were utilized to detect edge evidence. As an example, the results obtained by applying PCA and ROC methods to an AIRSAR L-band image of Flevoland are shown in Fig.~\ref{fig:2}.%(a)-(b).
+Figs.~\ref{fig:res}(a)-(c) show the edge evidences in the HH, HV and VV channels obtained through maximum likelihood estimation.
+De Borba et al.~\cite{DeBorba2020} applied various fusion methods to detect edge evidence. 
+As an example, the results obtained by applying PCA and ROC methods to an AIRSAR L-band image of Flevoland are shown in Fig.~\ref{fig:2}.%(a)-(b).
 
 %%% The source is in ../../../Figures/PDF/hh.pdf
  \begin{figure}[htb]
@@ -225,9 +249,12 @@ According to the research in~\cite{DeBorba2020}, various fusion methods were uti
 \label{fig:2}
 %
 \end{figure}
+
 \section{CONCLUSION}
-The project outlined here will develop fusion techniques that factor in the quality of each evidence. In this way, evidence subject to great variability or that may be inconsistent with other evidence, will have less influence.
-An explainable fusion of statistical evidence can provide semantically rich information on the contribution of each component to the composition of the final result. This enables the extraction of relevant and dependable information about the content of the evidence from each source. 
+The project outlined here will develop fusion techniques that factor in the quality of each evidence. In this way, evidence subjected to great variability or that may be inconsistent with other pieces of evidence, will have less influence.
+
+An explainable fusion of statistical evidence can provide semantically rich information on the contribution of each component to the composition of the final result. 
+This enables the extraction of relevant and dependable information about the content of the evidence from each source. 
 
 Finally, we will use several evaluation indicators presented in the literature to evaluate the quality of edge evidence fusion in PolSAR images.
 
@@ -255,6 +282,6 @@ Finally, we will use several evaluation indicators presented in the literature t
 % style file from IEEE produces unsorted bibliography list.
 % ------------------------------------------------------------------------
 %%% The source is in ../../Common/references
-\bibliographystyle{IEEEbib}
+\bibliographystyle{IEEEtranS}
 \bibliography{../../Common/references}
 \end{document}
