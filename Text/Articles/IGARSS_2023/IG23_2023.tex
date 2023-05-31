@@ -37,7 +37,7 @@
 % ---------------
 
 %\address{Author Affiliation(s)}
-\name{Rosa Janeth Alpala$^a$, Anderson A.\ de Borba$^{b,c}$, and Alejandro C.\ Frery$^c$.\thanks{e-mail:$^{a}$janeth.alpala@ufpe.br,$^{b}$anderson.borba@mackenzie.br, $^c$alejandro.frery@vuw.ac.nz}}
+\name{Rosa Janeth Alpala$^a$, Anderson A.\ de Borba$^{b,c}$, and Alejandro C.\ Frery$^c$\thanks{e-mail:$^{a}$janeth.alpala@ufpe.br,$^{b}$anderson.borba@mackenzie.br, $^c$alejandro.frery@vuw.ac.nz}}
 \address{$^a$ Universidade Federal de Pernambuco, 50740-540, Recife, PE, Brazil,           \\
 $^b$Mackenzie Presbyterian University--UPM, FCI, BigMAAp, SP -- Brazil, \\
 $^c$School of Mathematics and Statistics, Victoria University of Wellington, 6140, New Zealand.}
@@ -67,15 +67,21 @@ PolSAR images offer a distinct advantage over other remote sensing images by uti
 Edge detection in PolSAR images plays an essential role in many applications, such as speckle noise reduction, superpixel segmentation, land-cover classification, and target recognition~\cite{Jin2016}. 
 
 
-The study by de Borba et al.~\cite{DeBorba2020} is the foundation for this research. 
-It finds evidence of the location of edge points by using a deterministic approach that does not take into account the variability of the estimator. We extended this research by incorporating several quality metrics that not only assess the accuracy of the edge estimate, but also provide insight into the explainability of the fused edge evidence.
+The studies by de Borba et al.~\cite{DeBorba2020,FeatureSelectionforEdgeDetectioninPolSARImages} are the foundation for this research. 
+The authors find evidence of the location of edge points by using a deterministic approach that does not take into account the variability of the estimator. 
+We extended this research by incorporating several quality metrics that not only assess the accuracy of the edge estimate, but also provide insight into the explainability of the fused edge evidence.
 %We extended this investigation using various quality metrics to evaluate and compare the results of fusing edge evidence in PolSAR images.
 
-The remaining of this paper is organized as follows: Section \ref{sec_2} provides a brief introduction to the background knowledge, including PolSAR data and edge detection. Section 3 presents an overview of the quality measures employed. The evaluation of edge estimation quality using various metrics is discussed in Section 4. Lastly, conclusion is provided in Section 5.
+The remaining of this paper is organized as follows: 
+Section~\ref{sec_2} provides a brief introduction to the background knowledge, including PolSAR data and edge detection. 
+%%% ACF Não use números, use \ref
+Section 3 presents an overview of the quality measures employed. 
+The evaluation of edge estimation quality using various metrics is discussed in Section 4. 
+Lastly, the conclusions are provided in Section 5.
 
 
 \section{Background}\label{sec_2}
-\vspace{-0.2cm}
+
 \subsection{PolSAR data representation}
 Using PolSAR data, a wide range of biophysical and geophysical parameters related to the Earth's surface can be efficiently and reliably extracted. The polarimetric scattering matrix~\cite{Lee2017} serves as an instrumental tool to represent the polarimetric target information:
 \begin{equation}
@@ -88,10 +94,12 @@ S_{\text{VH}} & S_{\text{VV}}
 where the elements $S_{\text{HH}}$ and $S_{\text{VV}}$ are the returned power in the co-polarized channels, while the elements $S_{\text{HV}}$ and $S_{\text{VH}}$ relate to the cross-polarized channels.
 If the PolSAR targets comply with the reciprocal condition $(S_{\text{HV}} = S_{\text{VH}})$, single-look PolSAR data can be represented using a scattering vector:
 \begin{equation}
-\mathbf{k}_s=[S_{\text{HH}}, \sqrt{2}S_{\text{HV}}, S_{\text{VV}} ]^t,
+\mathbf{k}_s=\begin{bmatrix}
+S_{\text{HH}} & \sqrt{2}S_{\text{HV}} & S_{\text{VV}}
+\end{bmatrix}^t,
 \label{E:21}
 \end{equation}
-where  the superscript $t$ stands for the transpose operation. 
+where  the superscript $t$ is the transpose operation. 
 Multi‑look PolSAR data can be expressed  by a covariance matrix  given as 
 \(\mathbf{C}=\langle\mathbf{k}_S\mathbf{k}_S^\text{H} \rangle= {L}^{-1} \sum_{i=1}^{L} \mathbf{k}_s(i)\mathbf{k}_s(i)^\text{H} \), where $\langle \cdot \rangle$ is the ensemble average, $\text{H}$  the is complex conjugate transpose operator, and $L$ is the number of looks. 
 The covariance matrix is hermitian, i.e., $\mathbf{C}= \mathbf{C}^\text{H}$, and positive definite;
@@ -143,69 +151,55 @@ $\bm Z_\text{E} \sim \Gamma(\mu_\text{E},L_\text{E})$.
 We then estimate $(\mu_\text{I},L_\text{I})$ and $(\mu_\text{E},L_\text{E})$ with $\bm z_\text{I}$ and $\bm z_\text{E}$, respectively, by maximizing~\eqref{eq:LogLikelihoodGamma}, and obtain $\big(\widehat{\mu}_\text{I}, \widehat{L}_\text{I}\big)$ and $\big(\widehat{\mu}_\text{E}, \widehat{L}_\text{E}\big)$.
 
 Then, the total log-likelihood is
-\begin{equation}\label{eq:TotalLogLikelihood}
-\begin{aligned}
-\mathcal L\big(j&;\widehat{\mu}_I, \widehat{L}_I,\widehat{\mu}_E, \widehat{L}_E\big)= -\Bigg(
+\begin{multline}\label{eq:TotalLogLikelihood}
+\mathcal L\big(j;\widehat{\mu}_I, \widehat{L}_I,\widehat{\mu}_E, \widehat{L}_E\big)= -\Bigg(
 	\frac{\widehat{L}_\text{I}}{\widehat{\mu}_\text{I}}\sum_{k=1}^{j} z_k +
 	\frac{\widehat{L}_\text{E}}{\widehat{\mu}_\text{E}}\sum_{k=j+1}^{n} z_k  
 	\Bigg)\mbox{}\\
-&+j \big[\widehat{L}_\text{I}\ln (\widehat{L}_\text{I} / \widehat{\mu}_\text{I}) - \ln \Gamma(\widehat{L}_\text{I})\big]
++j \big[\widehat{L}_\text{I}\ln (\widehat{L}_\text{I} / \widehat{\mu}_\text{I}) - \ln \Gamma(\widehat{L}_\text{I})\big]
 +\widehat{L}_\text{I} \sum_{k=1}^{j}\ln z_k  \mbox{}\\
-&+(n-j) \big[\widehat{L}_\text{E}\ln (\widehat{L}_\text{E} / \widehat{\mu}_\text{E}) - \ln \Gamma(\widehat{L}_\text{E})\big]
++(n-j) \big[\widehat{L}_\text{E}\ln (\widehat{L}_\text{E} / \widehat{\mu}_\text{E}) - \ln \Gamma(\widehat{L}_\text{E})\big]
 +\widehat{L}_\text{E} \sum_{k=j+1}^{n}\ln z_k .%-\\ 
 \raisetag{2.2em}
-\end{aligned}
-\end{equation}
+\end{multline}
 The estimate of the edge position on the ray is the coordinate  $\widehat\jmath$ which maximizes $\mathcal L$.
-\vspace{-0.2cm}
+
 \subsection{Fusion methods for edge evidence}
-De Borba et al.~\cite{DeBorba2020} fused the edges evidence obtained in intensities channels HH, HV, and VV to produce a unique and more accurate edge position estimator. 
-The authors used six fusion methods: simple average, multiresolution discrete wavelet transform (MRDWT), principal component analysis (PCA), receiver operating characteristic (ROC) statistics, multiresolution stationary wavelet transform (MR-SWT), and a multiresolution method based on singular value decomposition (MR-SVD).
+De Borba et al.~\cite{DeBorba2020,FeatureSelectionforEdgeDetectioninPolSARImages} fused the edges evidence to produce a unique and more accurate edge position estimator with six fusion methods: simple average, multiresolution discrete wavelet transform (MRDWT), principal component analysis (PCA), receiver operating characteristic (ROC) statistics, multiresolution stationary wavelet transform (MR-SWT), and a multiresolution method based on singular value decomposition (MR-SVD).
 
 Edge evidence fusion methods are essential to quantify and qualify the information obtained from each image channel. 
-Such information enables the decision to utilize or discard data from a specific channel to enhance edge detection accuracy.
+Such information enables the decision to utilize or discard data from a specific channel for improved edge detection.
 
 \section{Quality assessment}
-\vspace{-0.2cm}
+
 Commonly used quality measures for performance evaluation include Mean Absolute Error (MAE) and Root Mean Square Error (RMSE). MAE calculates the average absolute difference between estimated and reference values, being robust against outliers and independent of error signs. In contrast, RMSE emphasizes larger errors, making it more sensitive to outliers \cite{Ritter2013}. Additional precision evaluation measures include Standard Deviation (SD) and Correlation Coefficient (CC). SD measures the dispersion of values relative to their average, higher SD indicates lower precision. CC quantifies the linear relationship between the value sets~\cite{Vijayaraj}. The formulas are as follows:
 \begin{align*}
-	\text{RMSE} =\sqrt{\frac{1}{n}\sum_{i=1}^{n}\left(y_i-\hat{y}_i\right)^2},
-	%\label{rmse}
-\end{align*}
-\vspace{-0.3cm}
-\begin{align*}
-	\text{MAE} =\frac{1}{n}\sum_{i=1}^{n}|y_i-\hat{y}_i|,
-	%\label{mae}
-\end{align*}
-\begin{align*}
-	\text{SD} =\sqrt{\frac{1}{n-1}\sum_{i=1}^{n}\left(y_i-\bar{y}\right)^2},
-	%\label{sd}
-\end{align*}
-\begin{align*}
-\text{CC}=  \frac{\sum_{i=1}^{n}(x_i-\Bar{x})(y_i-\Bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i-\Bar{x})^2\sum_{i=1}^{n}(y_i-\Bar{y})^2}},
+	\text{RMSE} &=\sqrt{\frac{1}{n}\sum_{i=1}^{n}\left(y_i-\hat{y}_i\right)^2},\\
+	\text{MAE} &=\frac{1}{n}\sum_{i=1}^{n}|y_i-\hat{y}_i|,\\
+	\text{SD} &=\sqrt{\frac{1}{n-1}\sum_{i=1}^{n}\left(y_i-\bar{y}\right)^2},\\
+\text{CC}&=  \frac{\sum_{i=1}^{n}(x_i-\Bar{x})(y_i-\Bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i-\Bar{x})^2\sum_{i=1}^{n}(y_i-\Bar{y})^2}},
 %\label{cc}
 \end{align*}
 where $n$ represents the number of observations, $y_i$ denotes the estimated values, $\hat{y}_i$ are the reference measured values, and  $\Bar{x}$ and $\Bar{y}$ are the mean values.
 
  Another metric that is used is the entropy, this quantifies the uncertainty of a probability distribution. In information theory, it reflects the level of uncertainty in a random experiment or signal. A peaked distribution has low entropy and low uncertainty, while a homogeneous distribution has high entropy and high uncertainty \cite{Mays2002}. For a discrete random variable $X$ with $\left\{x_1, x_2, \ldots, x_N\right\}$ the set of possible values it can take, Shannon entropy is defined as:
-\begin{align}
+\begin{equation}
 	H(X)=-\sum_{i=1}^{N}p(x_i)\log_2p(x_i),
 	\label{eq:H}
-\end{align}
-where $p(x_i)$ represents the probability of $i$th element in the vector.
+\end{equation}
+where $p(x_i)$ is the probability of the $i$th element.
 
-Entropy is commonly used in remote sensing to describe the information content of images. It employs expression \eqref{eq:H}  to assess the amount of information conveyed by each pixel within an image. 
+%Entropy is commonly used in remote sensing to describe the information content of images. It employs expression \eqref{eq:H}  to assess the amount of information conveyed by each pixel within an image. 
 
-\vspace{-0.2cm}
 \section{RESULTS}
-\vspace{-0.2cm}
+
 Figs.~\ref{fig:res}(a)-(c) show the edge evidences in the HH, HV and VV channels obtained through maximum likelihood estimation.
 De Borba et al.~\cite{DeBorba2020} applied various fusion methods to detect edge evidence. 
 As an example, the results obtained by applying PCA, ROC and MR-SWT methods to an AIRSAR L-band image of Flevoland are shown in Fig.~\ref{fig:fus}.%(a)-(b).
 
 
-
-\begin{figure}[H]
+%%% ACF Use subcaption
+\begin{figure}[hbt]
    % \centering
     \begin{minipage}{0.5\textwidth}
        \begin{minipage}[b]{.32\linewidth}
@@ -232,7 +226,7 @@ As an example, the results obtained by applying PCA, ROC and MR-SWT methods to a
     \end{minipage}%\hfill
 \end{figure}
 \vspace{-0.4cm}
-\begin{figure}[H]
+\begin{figure}[hbt]
    % \centering
     \begin{minipage}{0.5\textwidth}
        \begin{minipage}[b]{.32\linewidth}
@@ -257,10 +251,11 @@ As an example, the results obtained by applying PCA, ROC and MR-SWT methods to a
        \caption{Fusion methods.}
 \label{fig:fus}
     \end{minipage}%\hfill
-\end{figure}\vspace{-0.2cm}
+\end{figure}
 
-Figs.~\ref{fig:entropy1}(a)-(c), illustrate the total log-likelihood $\mathcal L$ functions with respect to the $j$th position, where these functions exhibit peaks that potentially serve as indicators of edge position. Specifically, the concept of entropy is used as a means of evaluating the accuracy of edge position.\vspace{-0.3cm}
-\begin{figure}[H]
+Figs.~\ref{fig:entropy1}(a)-(c), illustrate the total log-likelihood $\mathcal L$ functions with respect to the $j$th position, where these functions exhibit peaks that potentially serve as indicators of edge position. Specifically, the concept of entropy is used as a means of evaluating the accuracy of edge position.
+
+\begin{figure}[hbt]
    % \centering
     \begin{minipage}{0.5\textwidth}
        \begin{minipage}[b]{.5\linewidth}
@@ -288,13 +283,14 @@ Figs.~\ref{fig:entropy1}(a)-(c), illustrate the total log-likelihood $\mathcal L
 \label{fig:entropy1}
     \end{minipage}%\hfill
 \end{figure}
-\vspace{-0.3cm}
+
 To calculate entropy,  we employ the transformation of the total log-likelihood function, into a discrete probability function, the sample is taken from a single data strip (ray) of length 120 pixels.  Subsequently, expression~\eqref{eq:H} is used to calculate the Shannon entropy, $H(X)$. The resulting value provides an objective metric for evaluating the accuracy of edge point detection. A low entropy value signifies precise estimation, characterized by a compact and peaked curve, see Fig.~\ref{fig:entropy1}(a). Conversely, a high entropy value suggests less accurate estimation, featuring a more dispersed probability distribution and a graph with a flatter and elongated shape, see Fig.~\ref{fig:entropy1}(b)-(c).\par
 %\vspace{-0.1cm}
 On the other hand, the aim of this study is to determine whether evidence fusion in PolSAR images provides more information, leading to accurate edge detection, compared to edge detection of individual channels.\par
 %\vspace{-0.1cm}
 Table~\ref{tab_1} illustrates the evaluation metrics employed to assess the quality of the estimated edge points by comparing their similarity with a predefined set of reference points. These metrics offer an objective evaluation of the accuracy of the obtained results. Entropy is calculated exclusively using the estimated edge point dataset ($\hat{x},\hat{y}$), while the remaining metrics (MAE, RMSE, SD, and CC) utilize both datasets. 
-\begin{table}[H]
+
+\begin{table}[hbt]
   \centering
   \begin{tabular}{@{}cccccc@{}}
     \toprule
@@ -310,25 +306,32 @@ Method  &Entropy    & MAE        & RMSE       &SD       & CC \\
   \end{tabular}\vspace{-0.1cm}
   \caption{\small{Assessment metrics.}}
   \label{tab_1}
-\end{table}\vspace{-0.3cm}
-The importance of entropy calculation is highlighted. For instance, with the ROC method, we observe low error and high correlation, indicating significant similarity between edge point positions. However, the low entropy value suggests a relatively small amount of information in the fused image. This implies precise edge detection with few outliers, but exhibiting a sparse distribution of points, as shown in Fig.~\ref{F4}. \vspace{-0.45cm}
-\begin{figure}[H] %\vspace{-2.0mm} 
+\end{table}
+
+Computing the entropy is important. 
+For instance, with the ROC method, we observe low error and high correlation, indicating significant similarity between edge point positions. 
+However, the low entropy value suggests a relatively small amount of information in the fused image. This implies precise edge detection with few outliers, but exhibiting a sparse distribution of points, as shown in Fig.~\ref{F4}. 
+
+\begin{figure}[hbt] %\vspace{-2.0mm} 
 	\includegraphics[scale=0.55]{figures/roc_f.pdf}\vspace{-1.5mm} 
 	\caption{Comparison of estimated points with reference points.}
 	\label{F4}
 \end{figure}
 On the other hand, the PCA method demonstrates superior performance, as it exhibits a moderate entropy value along with low values of MAE, RMSE, and SD.
 
-This approach enables a comprehensive evaluation of the characteristics and performance of fusion methods and individual channels. All metrics are depicted in Fig.~\ref{F5}. \vspace{-0.3cm}
-\begin{figure}[H] 
+This approach enables a comprehensive evaluation of the characteristics and performance of fusion methods and individual channels. All metrics are depicted in Fig.~\ref{F5}. 
+
+\begin{figure}[hbt] 
 	\includegraphics[scale=0.55]{figures/metricas.pdf}\vspace{-3.5mm} 
 	\caption{illustration of quality metrics.}\vspace{-0.3cm}
 	\label{F5}
 \end{figure}%\vspace{-0.1cm}
-The method for detecting edge evidence  and fusion methods were implemented in Python. Code and data are available for download at:  \url{ https://github.com/rjaneth/code_igarss_23.git}
-\vspace{-0.3cm}
+
+The edge detection and fusion methods were implemented in Python. 
+Code and data are available at \url{ https://github.com/rjaneth/code_igarss_23.git}
+
 \section{CONCLUSION}
-\vspace{-0.3cm}
+
 This paper presents some fusion methods for edge evidence and assesses their estimation precision using commonly employed metrics in the literature, with a specific emphasis on entropy as the primary measure.
 
 By incorporating entropy as an evaluation metric, we enhance the explainability of our fusion methodology. Entropy provides a quantitative measure of the diversity and variability of the detected edges, allowing us to assess the amount of information captured by the fusion process. This transparency in evaluating the results enhances the interpretability and trustworthiness of our approach.
