@@ -1,0 +1,89 @@
+% 
+%          spconf.sty  - LaTeX style file, and
+%          IEEEbib.bst - IEEE bibliography style file.
+% --------------------------------------------------------------------------
+\documentclass{article}
+\usepackage{spconf,amsmath,epsfig}
+\usepackage{bm,bbm}
+\usepackage[style=numeric-comp, sorting=none, backend=bibtex,bibstyle=ieee, doi=true,url=false, isbn=false, natbib=false, giveninits]{biblatex}
+\addbibresource{../../Common/references.bib}
+    %\setlength{\bibitemsep}{\parskip}
+
+
+% \newcommand{\mcite}[1]{\mbox{\cite{#1}}}
+%\usepackage[round]{natbib}   % omit 'round' option if you prefer square brackets
+
+
+% Example definitions.
+% --------------------
+
+
+%\DeclareMathOperator{\Tr}{Tr}
+
+% Title.
+% ------
+
+\title{Title}
+% Single address.
+% ---------------
+%\name{Author(s) Name(s)\thanks{Thanks to XYZ agency for funding.}} 
+%\address{Author Affiliation(s)}
+\name{Name}
+\address{University}
+
+
+%
+\begin{document}
+%\ninept
+%
+\maketitle
+%
+\begin{abstract}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum sit amet justo donec enim diam vulputate. Phasellus faucibus scelerisque eleifend donec pretium. In ornare quam viverra orci sagittis eu volutpat odio facilisis. Sit amet consectetur adipiscing elit. Velit aliquet sagittis id consectetur purus ut. Accumsan in nisl nisi scelerisque eu ultrices vitae auctor. Amet mattis vulputate enim nulla. Ut pharetra sit amet aliquam id. In metus vulputate eu scelerisque. Dignissim enim sit amet venenatis urna cursus eget. Egestas maecenas pharetra convallis posuere. Iaculis nunc sed augue lacus viverra vitae congue eu consequat. Facilisis leo vel fringilla est ullamcorper. Orci phasellus egestas tellus rutrum tellus pellentesque eu tincidunt tortor. At quis risus sed vulputate odio ut enim blandit volutpat. Mi eget mauris pharetra et ultrices neque ornare aenean euismod \cite{Park2022}.
+
+%
+\begin{keywords}
+
+
+\end{keywords}
+%
+\end{abstract}
+\section{Introduction}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum sit amet justo donec enim diam vulputate. Phasellus faucibus scelerisque eleifend donec pretium \cite{xiang2017sar}. In ornare quam viverra orci sagittis eu volutpat odio facilisis. Sit amet consectetur adipiscing elit. Velit aliquet sagittis id consectetur purus ut. Accumsan in nisl nisi scelerisque eu ultrices vitae auctor \cite{qin2018edge}. Amet mattis vulputate enim nulla. Ut pharetra sit amet aliquam id. In metus vulputate eu scelerisque. Dignissim enim sit amet venenatis urna cursus eget. Egestas maecenas pharetra convallis posuere. Iaculis nunc sed augue lacus viverra vitae congue eu consequat \cite{Frery2015}. Facilisis leo vel fringilla est ullamcorper. Orci phasellus egestas tellus rutrum tellus pellentesque eu tincidunt tortor. At quis risus sed vulputate odio ut enim blandit volutpat. Mi eget mauris pharetra et ultrices neque ornare aenean euismod.
+
+
+
+%\section{Background}
+
+
+%\section{Methodology}
+
+
+ 
+
+
+%\section{Results}
+
+
+%\section{CONCLUSION}
+
+%\newpage
+
+% % -------------------------------------------------------------------------
+% % -------------------------------------------------------------------------
+
+%\pagebreak
+
+
+
+% References should be produced using the bibtex program from suitable
+% BiBTeX files (here: strings, refs, manuals). The IEEEbib.bst bibliography
+% style file from IEEE produces unsorted bibliography list.
+% ------------------------------------------------------------------------
+\printbibliography[heading=bibintoc]
+
+%\bibliographystyle{IEEEtranS}
+%\bibliographystyle{apa}
+%\bibliography{../../Common/references}
+\end{document}
