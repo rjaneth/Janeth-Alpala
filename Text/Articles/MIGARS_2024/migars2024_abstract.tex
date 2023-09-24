@@ -1,0 +1,130 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}                        %
+\usepackage[utf8]{inputenc}                  % 
+\usepackage{rotating}                        %
+%\usepackage{subfigure}                       
+%\usepackage[export]{adjustbox}              
+\usepackage{bbm}
+
+
+\DeclareRobustCommand{\bbone}{\text{\usefont{U}{bbold}{m}{n}1}}
+
+\DeclareMathOperator{\EX}{\mathbb{E}}% expected value
+
+\ifCLASSOPTIONcompsoc                        %
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\else
+\usepackage[caption=false,font=footnotesize]{subfig}
+\fi
+%
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\DeclareMathOperator{\traco}{tr}
+
+\begin{document}
+
+\title{Identifying Departures from the Fully Developed Speckle Hypothesis In Intensity SAR Data with Non-Parametric Estimation of the Entropy\\
+
+\thanks{Grantee Capes.}
+}
+
+\author{
+\begin{minipage}[t]{0.3\textwidth}
+\centering
+1st Given Name Surname \\
+\textit{Dept. name of organization } \\
+\textit{Name of organization }\\
+City, Country \\
+Email address 
+\end{minipage}%
+\begin{minipage}[t]{0.3\textwidth}
+\centering
+2nd  Given Name Surname \\
+\textit{Dept. name of organization } \\
+\textit{Name of organization }\\
+City, Country \\
+Email address 
+\end{minipage}%
+\begin{minipage}[t]{0.3\textwidth}
+\centering
+3rd Given Name Surname \\
+\textit{Dept. name of organization } \\
+\textit{Name of organization }\\
+City, Country \\
+Email address 
+\end{minipage}
+}
+
+\maketitle\begin{abstract}
+This study focuses on the analysis of Intensity SAR Data, which is commonly affected by speckle noise, introducing complexity into data analysis and necessitating specialized models and techniques for effective information extraction. 
+The main goal is to identify departures from the fully developed speckle hypothesis within SAR intensity data. 
+The study highlights the suitability of the $G^0$ distribution family and underscores the significance of entropy as a meaningful metric. 
+Additionally, a non-parametric approach employing order statistics is applied to estimate entropy for this analysis, enhancing the understanding of these data characteristics.
+\end{abstract}
+
+\begin{IEEEkeywords}
+SAR, Entropy estimation, Non-parametric analysis, Order statistics
+\end{IEEEkeywords}
+
+\section{Introduction}\label{sec_01}
+
+emote sensing data obtained through sensors, particularly Synthetic Aperture Radar (SAR), play a pivotal role in understanding environmental dynamics, enabling predictive capabilities, and facilitating early disaster detection. Unlike optical spectrum observations, microwave remote sensing sensors, operating in the microwave band, offer significant advantages, including reduced sensitivity to adverse atmospheric conditions and their self-illuminating properties.
+
+This study is dedicated to the analysis of SAR intensity data, which frequently contends with the presence of speckle noise. Speckle noise can significantly complicate the analysis of these data, necessitating the use of specific models and techniques for information extraction. In this context, we propose the adoption of the G0 distribution family as a suitable model for describing SAR intensity data, as it effectively characterizes areas with varying degrees of texture.
+
+The article is structured as follows: 
+Section~\ref{sec_02} describes 
+
+\section{Statistical modeling for SAR data}\label{sec_02}
+
+
+
+\section{Nonparametric entropy estimation}
+
+
+Let $X_1,\ldots,X_n$ be a random sample from $X$, with density $f$, consider the nonparametric estimation of functional
+\begin{equation}
+  \label{E:entropy1}
+  T(f)=\int_{-\infty }^\infty \!\! f(x)\Phi(f(x))w(x)\,dx,
+\end{equation}
+where, $\Phi=\phi(x)/x$, and $w(x)= \mathbbm{I}_E(x)$ for any set $E$.
+And the entropy of the density $f$, obtained by taking $\Phi(x)=-\log (x)$, where $w=1$.
+\begin{equation}
+  \label{E:entropy2}
+  H(f)=-\int_{-\infty }^\infty \ f(x)\log(f(x))\,dx,=\EX(-\log(f(X)).
+\end{equation}
+The problem of estimating $H(f)$ has been considered by many authors including
+Correa \cite{correa1995new}, van Es \cite{van1992}, Wieczorkowski and Grzegorzewski, and Vasicek.
+
+
+\begin{itemize}
+	\item Van Es 
+
+\begin{align*}
+%\label{E:VanEs}
+	\widehat{H}_{VE}=\frac{1}{n-m}&\sum_{i=1}^{n-m}\log\left\{\frac{n+1}{m}\left(Z_{(i+m)}-Z_{(i)}\right)\right\}\\
+	&\sum_{k=m}^n\frac{1}{k}+\log\left(\frac{m}{n+1}\right)
+\end{align*}
+Van Es, showed that, under general conditions, \ref{E:VanEs} can be converges almost surely 
+%$H(X)=-\sum_{i=1}^k{p_i\log p_i}$
+\end{itemize}
+
+
+
+\section{Results}
+
+\section{Conclusion}\label{sec_09}
+
+In this article, 
+
+\bibliographystyle{IEEEtran}
+%\bibliography{strings,refs}
+
+\bibliography{../../Common/references}\end{document}
