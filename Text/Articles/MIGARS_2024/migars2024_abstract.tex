@@ -10,7 +10,7 @@
 \usepackage{rotating}                        %
 %\usepackage{subfigure}                       
 %\usepackage[export]{adjustbox}              
-\usepackage{bbm}
+\usepackage{bm}
 
 
 \DeclareRobustCommand{\bbone}{\text{\usefont{U}{bbold}{m}{n}1}}
@@ -30,7 +30,7 @@
 
 \begin{document}
 
-\title{Identifying Departures from the Fully Developed Speckle Hypothesis In Intensity SAR Data with Non-Parametric Estimation of the Entropy\\
+\title{Identifying Departures from the Fully Developed Speckle Hypothesis in Intensity SAR Data with Non-Parametric Estimation of the Entropy\\
 
 \thanks{Grantee Capes.}
 }
@@ -65,58 +65,89 @@ Email address
 \maketitle\begin{abstract}
 This study focuses on the analysis of Intensity SAR Data, which is commonly affected by speckle noise, introducing complexity into data analysis and necessitating specialized models and techniques for effective information extraction. 
 The main goal is to identify departures from the fully developed speckle hypothesis within SAR intensity data. 
-The study highlights the suitability of the $G^0$ distribution family and underscores the significance of entropy as a meaningful metric. 
+The study highlights the suitability of the $\mathcal{G}^0$ distribution family and underscores the significance of entropy as a meaningful metric. 
 Additionally, a non-parametric approach employing order statistics is applied to estimate entropy for this analysis, enhancing the understanding of these data characteristics.
 \end{abstract}
 
 \begin{IEEEkeywords}
-SAR, Entropy estimation, Non-parametric analysis, Order statistics
+SAR, entropy estimation, non-parametric analysis, order statistics
 \end{IEEEkeywords}
 
 \section{Introduction}\label{sec_01}
 
-emote sensing data obtained through sensors, particularly Synthetic Aperture Radar (SAR), play a pivotal role in understanding environmental dynamics, enabling predictive capabilities, and facilitating early disaster detection. Unlike optical spectrum observations, microwave remote sensing sensors, operating in the microwave band, offer significant advantages, including reduced sensitivity to adverse atmospheric conditions and their self-illuminating properties.
+Remote sensing data from sensors, in particular synthetic aperture radar (SAR), play a key role in understanding the dynamics of the environment, enabling predictive capabilities and facilitating the early detection of disasters. Unlike optical spectrum observations, microwave remote sensing sensors, operating in the microwave band, offer significant advantages, including reduced sensitivity to adverse atmospheric conditions and their self-illuminating properties.
 
-This study is dedicated to the analysis of SAR intensity data, which frequently contends with the presence of speckle noise. Speckle noise can significantly complicate the analysis of these data, necessitating the use of specific models and techniques for information extraction. In this context, we propose the adoption of the G0 distribution family as a suitable model for describing SAR intensity data, as it effectively characterizes areas with varying degrees of texture.
+Entropy is a fundamental concept in information theory with broad applications in fields like classification, pattern recognition, statistical physics, stochastic dynamics, and statistics.
+Shannon introduced it for a random variables in 1948~\cite{Shannon1948} as a measure of information and uncertainty. 
+In statistics, Shannon entropy is a crucial descriptive parameter, particularly for assessing data dispersion and conducting tests for normality, exponentiality, and uniformity~\cite{Wieczorkowski1999}.
+
+Estimating entropy presents practical challenges, especially when the true probability density function (pdf) is unknown.
+In such cases, nonparametric methods are employed for entropy estimation. 
+In the parametric approach, the form of the pdf is assumed to be known, and its parameters are inferred from the available samples. 
+Conversely, nonparametric methods, like histogram or kernel density estimators, do not make such assumptions. 
+They estimate the pdf using these techniques and then calculate entropy through numerical or Monte Carlo integration. 
+Other nonparametric approaches involve spacing methods, which allow the estimation of the entropy of a random variable with an unknown distribution function when independent and identically distributed (i.i.d.) observations of the random variable are available.
+
+In this paper we consider an estimator based on spacings
+
+
+
+This study is dedicated to the analysis of SAR intensity data, which frequently contends with the presence of speckle noise. Speckle noise can significantly complicate the analysis of these data, necessitating the use of specific models and techniques for information extraction. In this context, we propose the adoption of the $G^0$ distribution family as a suitable model for describing SAR intensity data, as it effectively characterizes areas with varying degrees of texture.
 
 The article is structured as follows: 
 Section~\ref{sec_02} describes 
 
 \section{Statistical modeling for SAR data}\label{sec_02}
 
+\subsection{Intensity data}
+
+The primary models used for intensity SAR data include the Gamma, $\mathcal{K}$, and $\mathcal{G}^0$ distributions. 
+
+
+\begin{align}
+	f(z; \mu, L)=\frac{L^L}{\Gamma(L)\mu(L)}z^{L-1}\exp\left\{-Lz/\mu\right\}
+\end{align}
+
+\begin{align}
+	f(z; \alpha, \gamma, L)=\frac{L^L\Gamma(L-\alpha)}{\gamma^{\alpha}\Gamma(-\alpha)\Gamma(L)}z^{L-1}(\gamma+Lz)^{\alpha-L}
+\end{align}
 
 
 \section{Nonparametric entropy estimation}
 
 
-Let $X_1,\ldots,X_n$ be a random sample from $X$, with density $f$, consider the nonparametric estimation of functional
-\begin{equation}
-  \label{E:entropy1}
-  T(f)=\int_{-\infty }^\infty \!\! f(x)\Phi(f(x))w(x)\,dx,
-\end{equation}
-where, $\Phi=\phi(x)/x$, and $w(x)= \mathbbm{I}_E(x)$ for any set $E$.
-And the entropy of the density $f$, obtained by taking $\Phi(x)=-\log (x)$, where $w=1$.
-\begin{equation}
-  \label{E:entropy2}
-  H(f)=-\int_{-\infty }^\infty \ f(x)\log(f(x))\,dx,=\EX(-\log(f(X)).
-\end{equation}
-The problem of estimating $H(f)$ has been considered by many authors including
-Correa \cite{correa1995new}, van Es \cite{van1992}, Wieczorkowski and Grzegorzewski, and Vasicek.
 
+Suppose a random variable $X$ has a distribution function $F(x)$ with a continuous density function $f(x)$. Then, the Shannon entropy $H(X)$ is defined as
+\begin{equation*}
+  %\label{E:entropy2}
+  H(X)=-\int_{-\infty }^\infty \ f(x)\log(f(x))\,dx.
+\end{equation*}
+The problem of estimating $H(X)$ has been considered by many authors including \cite{vasicek1976test, van1992, Wieczorkowski1999, correa1995new}, who proposed estimators based on spacings.
 
-\begin{itemize}
-	\item Van Es 
+Vasicek \cite{vasicek1976test}, used $f(x)=p$  to express $ H(f)$ as
+\begin{align*}
+	H(X)= \int_0^1 \log\left(\frac{d}{dp}Q(p)\right)dp,
+\end{align*}
 
+where $Q(p)=F^{-1}(p)=\inf\left\{x: F(x)\leq p\right\}$ is the quantile function. The derivative of $F^{-1}(p)$ is  estimated by a function of the order statistics.
+Assuming that  $\bm{X}=(X_1, X_2, \ldots,X_n)$ is a random sample from the distribution $F(x)$, the estimator is given by
 \begin{align*}
 %\label{E:VanEs}
-	\widehat{H}_{VE}=\frac{1}{n-m}&\sum_{i=1}^{n-m}\log\left\{\frac{n+1}{m}\left(Z_{(i+m)}-Z_{(i)}\right)\right\}\\
-	&\sum_{k=m}^n\frac{1}{k}+\log\left(\frac{m}{n+1}\right)
-\end{align*}
-Van Es, showed that, under general conditions, \ref{E:VanEs} can be converges almost surely 
-%$H(X)=-\sum_{i=1}^k{p_i\log p_i}$
-\end{itemize}
+	\widehat{H}_{V}(\bm{X})=\frac{1}{n}&\sum_{i=1}^{n}\log\left\{\frac{n}{2m}\left(X_{(i+m)}-X_{(i-m)}\right)\right\},
+	\end{align*}
+where $m<n/2$ is a positive integer, $X_{(i+m)}-X_{(i-m)}$ is the $m$-spacing and $X_{(1)}\leq X_{(2)}\leq\ldots\leq X_{(n)}$ are the order statistics and $X_{(i)}= X_{(1)}$ if $i<1$, $X_{(i)}= X_{(n)}$ if $i>n$.
+
+Multiple authors have presented  adaptations to Vasicek's estimator, including Van Es \cite{van1992}, who proposed a new estimator of entropy given by
+ 
+\begin{align}
+%\label{E:VanEs}
+	\widehat{H}_{VE}(\bm{X})=\frac{1}{n-m}&\sum_{i=1}^{n-m}\log\left\{\frac{n+1}{m}\left(X_{(i+m)}-X_{(i)}\right)\right\}.\\
+	+&\sum_{k=m}^n\frac{1}{k}+\log\left(\frac{m}{n+1}\right)\nonumber
+\end{align}
+Van Es demonstrated that, under some conditions, this estimator exhibits consistency and asymptotic normality.
 
 
+\section{Fully Developed Speckle}
 
 \section{Results}
 
