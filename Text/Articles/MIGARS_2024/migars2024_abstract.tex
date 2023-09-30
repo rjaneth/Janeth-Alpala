@@ -63,10 +63,14 @@ alejandro.frery@vuw.ac.nz
 }
 
 \maketitle\begin{abstract}
-This study focuses on the analysis of Intensity SAR Data, which is commonly affected by speckle noise, introducing complexity into data analysis and necessitating specialized models and techniques for effective information extraction. 
-The main goal is to identify departures from the fully developed speckle hypothesis within SAR intensity data. 
-The study highlights the suitability of the $\mathcal{G}^0$ distribution family and underscores the significance of entropy as a meaningful metric. 
-Additionally, a non-parametric approach employing order statistics is applied to estimate entropy for this analysis, enhancing the understanding of these data characteristics.
+SAR Data are affected by speckle in a non-additive and non-Gaussian way.
+The type of distribution these data follow is paramount for their processing and analysis.
+Good statistical models provide flexibility and accuracy, often at the cost of using several parameters.
+The $\mathcal{G}^0$ distribution is one of the most successful models for SAR data. 
+It includes the Gamma law as particular case which arises in the presence of fully developed speckle.
+Although the latter is a limit distribution of the former, using the same estimation technique for the more general model is numerically unfeasible.
+We propose a two-stage estimation procedure: first, we verify the hypothesis that the data are fully-developed speckle and, if this assumption is rejected, we proceed to estimate the parameters that index the $\mathcal G^0$ distribution.
+Given the uncertainty of the underlying distribution, and the negative impact that using an inadequate model has on maximum likelihood estimation, we employ a non-parametric approach to estimate entropy under the fully-developed speckle hypothesis.
 \end{abstract}
 
 \begin{IEEEkeywords}
