@@ -1,0 +1,64 @@
+---
+title: "Exploratory Plots"
+author: "Alejandro C. Frery"
+date: "2023-10-16"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(ggplot2)
+library(ggthemes)
+library(reshape2)
+```
+
+# Gamma-SAR entropy
+
+We will see how the Shannon entropy of the Gamma-SAR model varies.
+It is given by
+\begin{align}
+H_{\Gamma_{\text{SAR}}}(L_0, \mu) &=   L_0 -\ln(L_0/\mu)+\ln\Gamma(L_0)+(1-L_0)\psi^{(0)}(L_0)\\
+&= \big[L_0 -\ln L_0+\ln\Gamma(L_0)+(1-L_0)\psi^{(0)}(L_0)\big] + \ln \mu.
+\end{align}
+where $L_0\geq 1$ is known, and $\mu>0$ is the mean.
+We see that, given $L_0$, the entropy of a random variable following the Gamma-SAR model depends on the logarithm of the mean $\mu$.
+
+```{r FunctionsDefinitions}
+entropy_gamma_sar <- function(L, mu) {
+  
+  return(L + log(gamma(L)) + (1 - L) * digamma(L) - log(L / mu))
+  
+}
+```
+
+```{r PlotGammaSAR, echo=FALSE}
+mu <- seq(.1, 10, length.out=500)
+
+EntropyL1 <- entropy_gamma_sar(L=1, mu)
+EntropyL3 <- entropy_gamma_sar(L=3, mu)
+EntropyL8 <- entropy_gamma_sar(L=8, mu)
+EntropyL12 <- entropy_gamma_sar(L=12, mu)
+EntropyL100 <- entropy_gamma_sar(L=100, mu)
+
+muEntropy <- data.frame(
+  mu, EntropyL1, EntropyL3, EntropyL8, EntropyL12, EntropyL100
+)
+
+muEntropy.molten <- melt(muEntropy, measure.vars = 2:6, value.name = "Entropy", variable.name = "Looks")
+
+ggplot(muEntropy.molten, aes(x=mu, y=Entropy, col=Looks)) +
+  geom_line() +
+  theme_pander()
+
+```
+
+# GI0-SAR Entropy
+
+The Shannon entropy of the GI0-SAR model is given by
+\begin{multline}
+H_{\mathcal{G}_I^0}(\mu, \alpha, L_0) = -\ln(\alpha)+\ln(\mu)+\ln(1+\alpha)
+ -(1-\alpha)\psi^{(0)}(-\alpha) +\ln(-\alpha)-\ln L_0
++ (L_0-\alpha)\psi^{(0)}(L_0-\alpha) + \\
+\ln\mathcal{B}(L_0,-\alpha)
+  + (1-L_0)\psi^{(0)}(L_0), \label{E:E-GIO}
+\end{multline}
