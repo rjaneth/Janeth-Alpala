@@ -3,6 +3,7 @@ title: "Exploratory Plots"
 author: "Alejandro C. Frery"
 date: "2023-10-16"
 output: pdf_document
+#html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -10,6 +11,9 @@ knitr::opts_chunk$set(echo = FALSE)
 library(ggplot2)
 library(ggthemes)
 library(reshape2)
+library(plotly)
+library(knitr)
+library(rgl)
 ```
 
 # Gamma-SAR entropy
@@ -26,8 +30,17 @@ We see that, given $L_0$, the entropy of a random variable following the Gamma-S
 ```{r FunctionsDefinitions}
 entropy_gamma_sar <- function(L, mu) {
   
-  return(L + log(gamma(L)) + (1 - L) * digamma(L) - log(L / mu))
+    return(L - log(L) + log(gamma(L)) + (1 - L) * digamma(L) + log(mu))
   
+}
+
+entropy_gI0 <- function(mu, alpha, L) {
+  
+  term1 <- L - log(L) + log(gamma(L)) + (1 - L) * digamma(L) + log(mu)   
+  term2 <- -L - log(gamma(L-alpha)) + (L-alpha)*(digamma(L - alpha))- (1-alpha)*digamma(- alpha)+log(-1 - alpha)+log(gamma(-alpha))
+  
+  entropy <- term1 + term2 
+  return(entropy)
 }
 ```
 
@@ -55,10 +68,67 @@ ggplot(muEntropy.molten, aes(x=mu, y=Entropy, col=Looks)) +
 # GI0-SAR Entropy
 
 The Shannon entropy of the GI0-SAR model is given by
+
 \begin{multline}
-H_{\mathcal{G}_I^0}(\mu, \alpha, L_0) = -\ln(\alpha)+\ln(\mu)+\ln(1+\alpha)
- -(1-\alpha)\psi^{(0)}(-\alpha) +\ln(-\alpha)-\ln L_0
-+ (L_0-\alpha)\psi^{(0)}(L_0-\alpha) + \\
-\ln\mathcal{B}(L_0,-\alpha)
-  + (1-L_0)\psi^{(0)}(L_0), \label{E:E-GIO}
+\label{E:E-GIO}
+H_{\mathcal{G}_I^0}(\mu, \alpha, L_0) =\underbrace{L_0 -\ln L_0+\ln\Gamma(L_0)+(1-L_0)\psi^{(0)}(L_0) +\ln \mu}_{H_{\Gamma_{\text{SAR}}}} 
+-\ln\Gamma(L_0-\alpha)+ (L_0-\alpha) \psi^{(0)}(L_0-\alpha)\\
+-(1-\alpha)\psi^{(0)}(-\alpha)+\ln (-1-\alpha)+\ln\Gamma(-\alpha)-L_0
 \end{multline}
+
+
+
+
+
+```{r PlotGI0, echo=FALSE}
+mu <- seq(1, 10, length.out = 500)
+alpha <- seq(-20, -2, length.out = 500)
+
+
+entropy <- outer(mu, alpha, FUN = function(mu, alpha) entropy_gI0(mu, alpha, L = 1))
+
+#
+persp(x = mu, y = alpha, z = entropy, col = "lightblue", border = "blue")
+
+#open3d()
+
+
+#persp3d(x = mu, y = alpha,z = entropy, col = "lightblue", border = "blue")
+
+
+#-----
+# mu <- seq(1, 10, length.out=200)
+# alpha <- seq(-2, -20, length.out=200)
+# 
+# 
+# entropyL1 <- outer(mu, alpha, function(mu, alpha) entropy_gI0(mu, alpha, L=1))
+# entropyL3 <- outer(mu, alpha,  function(mu, alpha) entropy_gI0(mu, alpha, L=3))
+# entropyL8 <- outer(mu, alpha,  function(mu, alpha) entropy_gI0(mu, alpha, L=8))
+# entropyL12 <- outer(mu, alpha, function(mu, alpha) entropy_gI0(mu, alpha, L=12))
+# entropyL100 <- outer(mu, alpha, function(mu, alpha) entropy_gI0(mu, alpha, L=100))
+# 
+# 
+# fig <- plot_ly( x = alpha, y = mu,    showscale = FALSE)
+# 
+# fig <- fig %>% add_surface(z = ~entropyL1, colorscale = list(c(0,1),c("rgb(255,107,184)","rgb(128,0,64)")),  name = "L=1")
+# fig <- fig %>% add_surface(z = ~entropyL3, colorscale = list(c(0,1),c("rgb(107,184,255)","rgb(90,90,124)")),  name = "L=3")
+# fig <- fig %>% add_surface(z = ~entropyL8,  colorscale = list(c(0,1),c("rgb(247,226,157)","rgb(255,192,7)")),  name = "L=8")
+# fig <- fig %>% add_surface(z = ~entropyL12, colorscale = list(c(0,1),c("rgb(107,255,184)","rgb(0,124,90)")),  name = "L=12")
+# fig <- fig %>% add_surface(z = ~entropyL100, colorscale = list(c(0,1),c("rgb(182,142,242)","rgb(104,3,255)")),  name = "L=100")
+# 
+# 
+# fig <- fig %>% layout(
+#   scene = list(
+#     xaxis = list(title = "alpha"),
+#     yaxis = list(title = "mu"),
+#     zaxis = list(title = "Entropy")
+#   )
+# )
+# 
+# fig
+
+```
+
+
+
+

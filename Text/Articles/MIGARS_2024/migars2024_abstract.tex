@@ -152,13 +152,16 @@ here, $f(\cdot)$ is the probability density function that characterizes the dist
 
 Using~\eqref{E:entropy2}, we can express the Shannon entropy of $\Gamma_{\text{SAR}}$ in~\eqref{E:gamma1} and $\mathcal{G}_I^0$ in~\eqref{E:gi02} based on~\cite{Cassetti2022, A.Ferreira2020}:
 %{\small % o \footnotesize
-\begin{align}
-H_{\Gamma_{\text{SAR}}}(L, \mu) &=   L -\log(L/\mu)+\log\Gamma(L)+(1-L)\psi^{(0)}(L), \label{E:E-gamma}\\
-H_{\mathcal{G}_I^0}(\mu, \alpha, L) &= -\log(\alpha)+\log(\mu)+\log(1+\alpha)\nonumber \\
-&\quad -(1-\alpha)\psi^{(0)}(-\alpha) +\log(-\alpha)-\log(L) \nonumber \\
-&\quad + (L-\alpha)\psi^{(0)}(L-\alpha) +\log\left(\mathcal{B}(L,-\alpha)\right)\nonumber \\
-&\quad  + (1-L)\psi^{(0)}(L), \label{E:E-GIO}
-\end{align}
+\begin{multline}
+\label{E:E-gamma}
+H_{\Gamma_{\text{SAR}}}(L, \mu) =   L -\ln L+\ln\Gamma(L)+(1-L)\psi^{(0)}(L) + \ln \mu, 
+\end{multline}
+\begin{multline}
+\label{E:E-GIO}
+H_{\mathcal{G}_I^0}(\mu, \alpha, L) =L -\ln L+\ln\Gamma(L)+(1-L)\psi^{(0)}(L) +\ln \mu \\
+-\ln\Gamma(L-\alpha)+ (L-\alpha) \psi^{(0)}(L-\alpha)\\
+-(1-\alpha)\psi^{(0)}(-\alpha)+\ln (-1-\alpha)+\ln\Gamma(-\alpha)-L
+\end{multline}
 where $\psi^{(0)}(\cdot)$ and $\mathcal{B}(\cdot)$ are the digamma and beta functions, respectively.
 
 
@@ -256,12 +259,12 @@ For each sample size, we performed $10.000$ samples. Fig. \ref{F4} shows converg
 	\caption{Convergence of mean non-parametric entropies.}
 	\label{F4}
 \end{figure}
-\begin{figure}[H] 
-\centering
-	\includegraphics[scale=0.5]{../../../Figures/PDF/histo1}\vspace{-1.5mm} 
-	\caption{Histogram of entropies.}
-	\label{F5}
-\end{figure}
+%\begin{figure}[H] 
+%\centering
+	%\includegraphics[scale=0.5]{../../../Figures/PDF/histo1}\vspace{-1.5mm} 
+	%\caption{Histogram of entropies.}
+	%\label{F5}
+%\end{figure}
 \section{Conclusion}\label{sec_09}
 
 In this article, 
