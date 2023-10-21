@@ -15,7 +15,7 @@ L <- 1
 gam=-mu*(alpha+1)
 
 r <- 10000
-n_values <- c(9, 25, 49, 81, 200,  1000) 
+n_values <- c(9, 25, 49, 81, 200,1000, 5000,  10000) 
 
 
 # Functions
@@ -114,9 +114,9 @@ for (n in n_values) {
 }
 
 
-# plot(n_values, means_entropies, type = "o", main = "Convergence of Mean Non-Parametric Entropies",
-#      xlab = "Sample Size (n)", ylab = "Mean Entropy")
-# grid()
+plot(n_values, means_entropies, type = "o", main = "Convergence of Mean Non-Parametric Entropies",
+     xlab = "Sample Size (n)", ylab = "Mean Entropy")
+grid()
 
 
 entropy_Gamma_sar <- entropy_gamma_sar(L, mu)
