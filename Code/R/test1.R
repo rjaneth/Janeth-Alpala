@@ -5,7 +5,12 @@ library(stats4)
 library(rmutil)
 library(gsl)
 library(invgamma)
-
+library(ggplot2)
+library(ggthemes)
+theme_set(theme_pander() +
+            theme(text=element_text(family="serif"),
+                  legend.position = "top")
+)
 
 
 alpha <- -2
@@ -14,83 +19,16 @@ L <- 1
 
 gam=-mu*(alpha+1)
 
-r <- 10000
-n_values <- c(9, 25, 49, 81, 200,1000, 5000,  10000) 
+r <- 500
+n_values <- c(9, 25, 49, 81, 200,1000, 5000,  10000, 20000) 
 
 
-# Functions
-# Entropy Gamma SAR
-entropy_gamma_sar <- function(L, mu) {
-  
-  return(L - log(L) + log(gamma(L)) + (1 - L) * digamma(L) + log(mu))
-  
-}
-
-# Entropy GI0
-entropy_gI0 <- function(mu, alpha, L) {
-  
-  term1 <- L - log(L) + log(gamma(L)) + (1 - L) * digamma(L) + log(mu)   
-  term2 <- -L - log(gamma(L-alpha)) + (L-alpha)*(digamma(L - alpha))- (1-alpha)*digamma(- alpha)+log(-1 - alpha)+log(gamma(-alpha))
-  
-  entropy <- term1 + term2 
-  return(entropy)
-}
-
-
-# only second term of GI0
-second_term <- function(alpha, L) {
-  return(-L - log(gamma(L-alpha)) + (L-alpha)*(digamma(L - alpha))- (1-alpha)*digamma(- alpha)+log(-1 - alpha)+log(gamma(-alpha)))
-
-}
-
-
-#Samples Gamma SAR
-gamma_sar_sample <- function(L, mu, n) {
-  samples <- rgamma(n, shape = L, rate = L / mu)
-  return(samples)
-}
-
-
-#Samples GI0
-Z_samples <- function(L, alpha, mu,  n) {
-
-  X_samples <- rinvgamma(n, shape = -alpha, rate =mu*(-alpha-1))
-
-  Y_samples <- rgamma(n, shape = L, rate = L)
-  Z_samples <- X_samples * Y_samples
-  return(Z_samples)
-}
-
-
-
-# nonparametric estimator
-
-
-
-van_es_estimator <- function(data) {
-  n <- length(data)
-  m <- round(sqrt(n) + 0.5)  # m-spacing
-  data_sorted <- sort(data)
-  sum_term1 <- 0
-  sum_term2 <- 0
-  
-  for (i in 1:(n - m)) {
-    sum_term1 <- sum_term1 + log(((n + 1) / m) * (data_sorted[i + m] - data_sorted[i]))
-  }
-  
-  for (k in m:n) {
-    sum_term2 <- sum_term2 + 1 / k
-  }
-  
-  sum_term3 <- log(m / (n + 1))
-  
-  return((sum_term1 / (n - m)) + sum_term2+ sum_term3)
-}
 
 
 means_entropies <- c()
 means_entropies2 <- c()
 entropies2 <- c()
+
 for (n in n_values) {
   entropies <- c()
   entropies2 <- c()
@@ -114,10 +52,21 @@ for (n in n_values) {
 }
 
 
-plot(n_values, means_entropies, type = "o", main = "Convergence of Mean Non-Parametric Entropies",
-     xlab = "Sample Size (n)", ylab = "Mean Entropy")
-grid()
+# plot(n_values, means_entropies, type = "o", main = "Convergence of Mean Non-Parametric Entropies",
+     # xlab = "Sample Size (n)", ylab = "Mean Entropy")
+# grid()
 
+### Using ggplot2
+
+df.MeanGamma <- data.frame(n_values, means_entropies)
+ggplot(df.MeanGamma, aes(x=n_values, y=means_entropies)) +
+  geom_hline(yintercept = entropy_gamma_sar(1, 1)) +
+  geom_line() +
+  geom_point() +
+  xlab("Sample Size") +
+  scale_x_continuous(breaks=n_values) +
+  ylab("Mean Non-parametric Entropy")
+  
 
 entropy_Gamma_sar <- entropy_gamma_sar(L, mu)
 cat("mean of Non-Parametric Entropies gamma sar :", means_entropies, "\n")
