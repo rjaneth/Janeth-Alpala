@@ -4,77 +4,29 @@ affiliation:
   ## Author mode :  use one only of the following --- +
   
   ## one column per author - using only the institution field
-  # author-columnar: true # uncomment this line to use
+  author-columnar: true # uncomment this line to use
   
-  ## one column per institution - using only the institution field
-  # institution-columnar: true # uncomment this line to use
-  
-  ## one column wide author/affiliation fields - using author or author_multiline and institution for mark
-  wide: true # uncomment this line to use
-  
-  ## Author mode: End ----
-  
-  ## A custom author ordering field that breaks institution grouping (used with `wide: true`)
-  ## Authors cited in institution field are ignored when this author field exists
-  ## Comment / Uncomment below
-  author:   
-   - name: Eldon Tyrell
-     mark: [2, 3]
-     email: eldon@starfleet-academy.star
-   - name: Michael Shell
-     mark: 1
-   - name: Roy Batty
-     mark: 4
-     email: roy@replicant.offworld
-  
-  ## Put authors in a given order, with multiline possibility (used with `wide: true` if `authors` above unset)
-  ## Authors cited in institution are ignored if exists
-  ## Comment / Uncomment below
-  #author_multiline: 
-  #  - line:         ## Create a new author line
-  #    - name: Michael Shell
-  #      mark: 1
-  #    - name: Homer Simpson
-  #      mark: 2
-  #      email: homer@thesimsons.com
-  #    - name: Roy Batty
-  #      mark: 4
-  #      email: roy@replicant.offworld
-  #  - line:         ## Create a second author line
-  #    - name: Montgomery Scott
-  #      mark: 3
-  #    - name: Eldon Tyrell
-  #      mark: 4
 
-  ## Define institution, and also authors used when `author-columnar: true` or `institution-columnar: true`
   institution:
-    - name: Georgia Institute of Technology
-      department: School of Electrical and Computer Engineering
-      location: Atlanta, Georgia 30332--0250
-      email: ece@datech.edu # if unset, authors' email will be used
+    - name: Universidade Federal de Pernambuco
+      department: Departamento de Estatística
+      location: Recife, PE, Brazil
+      email: janeth.alpala@ufpe.br, abraao@de.ufpe.br 
       mark: 1
       author:
-        - name: Michael Shell
-    - name: Twentieth Century Fox
-      location: Springfield, USA
+      - name: Rosa Janeth Alpala, Abraão D. C. Nascimento 
+      
+    - name: Victoria University of Wellington
+      department: School of Mathematics and Statistics
+      location: Wellington, New Zealand
+      email: alejandro.frery@vuw.ac.nz
       mark: 2
       author:
-        - name: Homer Simpson
-          email: homer@thesimpsons.com
-    - name: Starfleet Academy
-      location: San Francisco, California 96678-2391
-      other: "Telephone: (800) 555--1212, Fax: (888) 555--1212"
-      mark: 3
-      author:
-        - name: Montgomery Scott
-    - name: Tyrell Inc.
-      location: 123 Replicant Street, Los Angeles, USA 90210--4321
-      mark: 4
-      author:
-        - name: Eldon Tyrell
-          email: eldon@starfleet-academy.star
-        - name: Roy Batty
-          email: roy@replicant.offworld
+        - name: Alejandro C. Frery
+          
+
+      
+    
 
 keywords: ["SAR", "entropy estimation", "non-parametric analysis", "order statistics"]
 abstract: |
@@ -96,16 +48,6 @@ with_amsmath: true
 # with_array: true
 # with_dblfloatfix: true
 
-# header-includes:
-#    - \usepackage[english]{babel}
-#    - \usepackage{bm,bbm}
-#    - \usepackage{siunitx}
-#    - \usepackage{graphicx}
-#    - \usepackage{url}
-#    - \usepackage[T1]{fontenc}
-#    - \usepackage{booktabs}
-#    - \usepackage{color}
-#    - \usepackage{cite}
 
 header-includes:
    - \usepackage[english]{babel}
@@ -119,15 +61,16 @@ header-includes:
    - \usepackage{booktabs}
    - \usepackage{color}
    - \usepackage{mathtools}
+   - \usepackage[utf8]{inputenc}
+   
    
    
 
 
-#bibliography: ../../Common/references.bib
+
 bibliography:  ../../Common/references.bib
 csl: ieee.csl
 output: rticles::ieee_article
-fig_caption: yes
 
 
 #citation_sorting: none   ## used as sorting option of the biblatex package (if selected)
@@ -150,8 +93,9 @@ library(stats4)
 library(rmutil)
 library(gsl)
 library(invgamma)
-```
-  
+
+
+
 theme_set(theme_pander() +
             theme(text=element_text(family="serif"),
                   legend.position = "top")
@@ -159,36 +103,33 @@ theme_set(theme_pander() +
 ```
 
 
+
 \newtheorem{lemma}{Lemma}
+\renewcommand{\thesection}{\Alph{section}}
+# Introduction {#sec:Introduction}
 
-# Introduction
+Synthetic aperture radar (SAR) has become a fundamental technology for environmental monitoring and disaster management because of its ability to provide daytime and nighttime imagery in all weather conditions&nbsp;[@Cassetti2022]. However, the utility of SAR data depends on a thorough understanding of the statistical properties governing its inherent speckle noise. This complex interaction, which defies simplistic assumptions of additivity and Gaussianity, requires robust statistical models that can accurately characterize SAR data for efficient processing and analysis.
 
-Remote sensing data from sensors, in particular synthetic aperture radar (SAR), play a key role in understanding the dynamics of the environment, enabling predictive capabilities and facilitating the early detection of disasters. Unlike optical spectrum observations, microwave remote sensing sensors, operating in the microwave band, offer significant advantages, including reduced sensitivity to adverse atmospheric conditions and their self-illuminating properties.
+Among these models, the $\mathcal{G}^0$ distribution stands out as a powerful framework for modeling SAR data. Notably, this distribution encompasses the well-known Gamma distribution as a special case, particularly under the assumption of fully developed speckle. The interplay between these two distributions is apparent, with the Gamma distribution representing a limiting case of the more general $\mathcal{G}^0$ model. 
 
-Entropy is a fundamental concept in information theory with broad applications in fields like classification, pattern recognition, statistical physics, stochastic dynamics, and statistics.
+On the other hand, entropy is a fundamental concept in information theory with broad applications in fields like classification, pattern recognition, statistical physics, stochastic dynamics, and statistics.
 Shannon introduced it for a random variables in 1948&nbsp;[@Shannon1948] as a measure of information and uncertainty. 
 In statistics, Shannon entropy is a crucial descriptive parameter, particularly for assessing data dispersion and conducting tests for normality, exponentiality, and uniformity&nbsp;[@Wieczorkowski1999].
 
-Estimating entropy presents practical challenges, especially when the true probability density function (pdf) is unknown.
-In such cases, nonparametric methods are employed for entropy estimation. 
-In the parametric approach, the form of the pdf is assumed to be known, and its parameters are inferred from the available samples. 
-Conversely, nonparametric methods, like histogram or kernel density estimators, do not make such assumptions. 
-They estimate the pdf using these techniques and then calculate entropy through numerical or Monte Carlo integration. 
-Other nonparametric approaches involve spacing methods, which allow the estimation of the entropy of a random variable with an unknown distribution function when independent and identically distributed (i.i.d.) observations of the random variable are available.
+Estimating entropy faces practical challenges, particularly when the true probability density function (pdf) is unknown. Nonparametric methods are utilized in such cases, avoiding the assumption of a known pdf form. Instead, techniques like histograms or kernel density estimators are employed to estimate the pdf directly, followed by entropy calculation using numerical or Monte Carlo integration&nbsp;[@Lombardi2016]. An alternative nonparametric approach involves spacing methods, facilitating entropy estimation&nbsp;[@Zamanzade2012]. This non-parametric strategy offers flexibility to address a wide range of data distributions without imposing specific parametric constraints.
 
-%In this paper we consider an estimator based on spacings.
-
-This study is dedicated to the analysis of SAR intensity data, which frequently contends with the presence of speckle noise. 
-Speckle noise can significantly complicate the analysis of these data, necessitating the use of specific models and techniques for information extraction. 
-We adopt the $\mathcal G^0$ distribution family as a suitable model for describing SAR intensity data, as it effectively characterizes areas with varying degrees of texture.
+In this context, we present a two-stage estimation procedure designed to navigate the complexities of SAR data. The first stage of our methodology is to test the hypothesis that the data are completely speckled. If this hypothesis is rejected, we proceed to the second stage to estimate the parameters that characterize the $\mathcal{G}^0$ distribution.
 
 
-The article is structured as follows: 
-Section&nbsp;\ref{sec:2} describes 
+The significance of selecting an appropriate statistical model and estimation technique is well recognized. In order to address uncertainties in the data distribution, we employ a non-parametric approach. 
+Specifically, we focus on the entropy estimation considering estimators based on spacing.
 
-# Background
+The article is structured as follows: In Section&nbsp;\ref{sec:Background}, we provide an overview of statistical modeling for Intensity SAR data and the estimation of both parametric and non-parametric Shannon entropy.
 
-## Statistical modeling of Intensity SAR data {#sec:2}
+
+# Background {#sec:Background}
+
+## Statistical modeling of Intensity SAR data 
 
 The primary models used for intensity SAR data include the Gamma and $\mathcal{G}_I^0$  distributions&nbsp;[@Frery1997]. 
 The first is suitable for fully developed speckle and can also be considered a limiting case within the $\mathcal{G}_I^0$ distribution.
@@ -238,7 +179,7 @@ H_{\mathcal{G}_I^0}(\mu, \alpha, L) =L -\ln L+\ln\Gamma(L)+(1-L)\psi^{(0)}(L) +\
 \end{multline}
 where $\psi^{(0)}(\cdot)$ and $\mathcal{B}(\cdot)$ are the digamma and beta functions, respectively.
 
-The problem of non-parametric estimating of $H(Z)$ has been considered by many authors including&nbsp;[@vasicek1976test, @Bert1992, @Wieczorkowski1999, @correa1995new], who proposed estimators based on spacings.
+The problem of non-parametric estimating of $H(Z)$ has been considered by many authors including&nbsp;[@vasicek1976test; @Bert1992; @Wieczorkowski1999; @correa1995new], who proposed estimators based on spacings.
 
 Vasicek&nbsp;[@vasicek1976test], used $f(z)=p$  to express $ H(Z)$ as
 \begin{equation*}
@@ -266,7 +207,7 @@ The author also proved the asymptotic normality of the estimator when $m, n\righ
 
 
 # Hypothesis testing based on non-parametric entropy
-General asymptotic results for functions of spacings are detailed in&nbsp;\cite{Khashimov1990}, while Van Es&nbsp;\cite{Bert1992} has developed a correction for the case of Shannon entropy.
+General asymptotic results for functions of spacings are detailed in&nbsp;[@Khashimov1990], while VanEs&nbsp;[@Bert1992] has developed a correction for the case of Shannon entropy.
 Following the work of these authors, the next result applies: 
 
 \begin{lemma}
@@ -304,16 +245,14 @@ for a sequence of cdfs $\Phi_{m,n}(x)$ which tends uniformly to $\Phi_{\mathcal 
 # Results
 
 We verify that the results of the non-parametric entropies for samples of different sizes converge towards the analytical entropies of $\Gamma_{\text{SAR}}(L, \mu)$ and $G^0(\alpha, \mu , L)$ as the sample size increases. 
-%This indicates that the data appear to match the fully developed speckle hypothesis.
+
 
 We assume distinct parameter values for $\mu \in \left\{1, 3, 10\right\}$,  $\alpha\in\left\{-1.5,-3,-5, -8\right\}$, and  $L \in\left\{1,2, 5, 8\right\}$.
 We performed experiments to observe convergence under different scenarios, where each employed different sample sizes, i.e., $n\in \left\{9, 25, 49, 81, 121, 500, 5000\right\}$. 
 
-For each sample size, we performed $10.000$ samples. Fig. \ref{F4} shows convergence of mean non-parametric entropies, for $\mu=3$ and $L=2$.
+<!-- #For each sample size, we performed $1.000$ samples. Fig.&nbsp;\ref{fig:convergence} shows convergence of mean non-parametric entropies for $\mu=3$ and $L=2$. -->
 
-
-In Fig. \ref{fig:PlotGammaSAR} We  see how the Shannon entropy of the Gamma-SAR model varies.
-
+In Fig.&nbsp;\ref{fig:PlotGammaSAR} we see how the Entropy of the Gamma SAR distribution changes with $\mu$ for various values of $L$.
 
 
 ```{r FunctionsDefinitions, echo=FALSE}
@@ -333,27 +272,39 @@ entropy_gI0 <- function(mu, alpha, L) {
 }
 ```
 
-```{r PlotGammaSAR, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Simulation results of Entropy for Gamma SAR"}
-mu <- seq(.1, 10, length.out=500)
+```{r PlotGammaSAR, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Simulation of entropy for Gamma SAR"}
+L <- c(1, 3, 8, 12, 100)
 
-EntropyL1 <- entropy_gamma_sar(L=1, mu)
-EntropyL3 <- entropy_gamma_sar(L=3, mu)
-EntropyL8 <- entropy_gamma_sar(L=8, mu)
-EntropyL12 <- entropy_gamma_sar(L=12, mu)
-EntropyL100 <- entropy_gamma_sar(L=100, mu)
 
-muEntropy <- data.frame(
-  mu, EntropyL1, EntropyL3, EntropyL8, EntropyL12, EntropyL100
-)
+L_labels <- c("L=1", "L=3", "L=8", "L=12", "L=100")
 
-muEntropy.molten <- melt(muEntropy, measure.vars = 2:6, value.name = "Entropy", variable.name = "Looks")
+mu <- seq(0.1, 10, length.out = 500)
 
-ggplot(muEntropy.molten, aes(x=mu, y=Entropy, col=Looks)) +
+
+entropies <- sapply(L, function(L) entropy_gamma_sar(L, mu))
+
+
+muEntropy <- data.frame(mu, entropies)
+
+
+muEntropy.molten <- melt(muEntropy, id.vars = "mu", variable.name = "Looks", value.name = "Entropy")
+
+
+ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = Looks)) +
   geom_line() +
-  theme_pander()
+  theme_minimal() +
+  scale_color_manual(values = rainbow(length(L)), labels = L_labels) +
+  labs(col = "Looks") +
+  xlab(expression(paste(mu)))
 
 ```
 
+Fig.&nbsp;\ref{fig:3d_GIO} illustrates the entropy of $\mathcal{G}_I^0$ distribution as a function of three key parameters: $\mu$, $\alpha$, and $L$.
+
+```{r 3d_GIO, fig.align="center",  out.width = "120%", fig.cap="Simulation of entropy for ${G}_I^0$. ", fig.show="hold",  fig.pos="hbt"}
+knitr::include_graphics("../../../Figures/PDF/entropy_plot_3d.pdf")
+```
+As we explore the 3D plot, we can observe how changes in $\mu$, $\alpha$, and $L$ collectively influence the Entropy of the GI0 distribution. We can identify regions where Entropy is high or low, providing insights into the predictability and structure of the distribution in various regions of the parameter space.
 
 # Conclusion
 
@@ -365,9 +316,9 @@ The conclusion goes here.
 
 The authors would like to thank...
 
-# Bibliography styles
 
 
 
-\newpage
+
+
 # References {#references .numbered}
