@@ -27,4 +27,10 @@ van_es_estimator <- function(data) {
   sum_term3 <- log(m / (n + 1))
   
   return((sum_term1 / (n - m)) + sum_term2+ sum_term3)
+  
 }
+
+# # Example usage:
+# data <- c(1.2, 1.5,3.6, 2.0, 2.1, 2.5, 2.6, 3.0, 3.1, 3.5 )
+# result <- van_es_estimator(data)
+# cat("Avan es :", result, "\n")
