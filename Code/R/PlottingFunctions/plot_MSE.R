@@ -60,6 +60,6 @@ ggplot(output_mse, aes(x = SampleSize, y = MSE, color = Estimator)) +
   geom_line() +
   geom_point() +
   xlab("Sample Size") +
-  ylab("Mean Squared Error (MSE)") 
+  ylab("MSE") 
 
   

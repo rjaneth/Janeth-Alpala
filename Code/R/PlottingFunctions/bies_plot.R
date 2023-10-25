@@ -1,8 +1,16 @@
 rm(list = ls())
 library(ggplot2)
+library(gtools)
+library(stats4)
+library(rmutil)
+#library(gsl)
 library(invgamma)
+library(ggplot2)
 library(ggthemes)
-library(latex2exp)
+theme_set(theme_pander() +
+            theme(text=element_text(family="serif"),
+                  legend.position = "top")
+)
 source("../MainFunctions/gamma_sar_sample.r")
 source("../MainFunctions/entropy_gamma_sar.r")
 

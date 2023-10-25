@@ -2,7 +2,7 @@
 title: "Exploratory Plots"
 author: "Alejandro C. Frery"
 date: "2023-10-16"
-output: html_document
+output: pdf_document
 #html_document
 ---
 
@@ -13,7 +13,11 @@ library(ggthemes)
 library(reshape2)
 library(plotly)
 library(knitr)
-library(rgl)
+#library(rgl)
+theme_set(theme_pander() +
+            theme(text=element_text(family="serif"),
+                  legend.position = "top")
+          )
 ```
 
 # Gamma-SAR entropy
@@ -42,26 +46,204 @@ entropy_gI0 <- function(mu, alpha, L) {
   entropy <- term1 + term2 
   return(entropy)
 }
+
+gamma_sar_sample <- function(L, mu, n) {
+  samples <- rgamma(n, shape = L, rate = L / mu)
+  return(samples)
+}
+
+van_es_estimator <- function(data) {
+  n <- length(data)
+  m <- round(sqrt(n) + 0.5)  # m-spacing
+  data_sorted <- sort(data)
+  sum_term1 <- 0
+  sum_term2 <- 0
+  
+  for (i in 1:(n - m)) {
+    sum_term1 <- sum_term1 + log(((n + 1) / m) * (data_sorted[i + m] - data_sorted[i]))
+  }
+  
+  for (k in m:n) {
+    sum_term2 <- sum_term2 + 1 / k
+  }
+  
+  sum_term3 <- log(m / (n + 1))
+  
+  return((sum_term1 / (n - m)) + sum_term2+ sum_term3)
+  
+}
+vasicek_estimator <- function(data) {
+  n <- length(data)
+  m <- round(sqrt(n) + 0.5)  # m <- floor(n / 2)
+  data_sorted <- sort(data)
+  sum_term <- 0
+  
+  for (i in 1:n) {
+    if (i <= m) {
+      diff_term <- data_sorted[i + m] - data_sorted[1]
+    } else if (i >= n - m + 1) {
+      diff_term <- data_sorted[n] - data_sorted[i - m]
+    } else {
+      diff_term <- data_sorted[i + m] - data_sorted[i - m]
+    }
+    
+    sum_term <- sum_term + log((n / (2 * m)) * diff_term)
+  }
+  
+  return(sum_term / n)
+}
+correa_estimator <- function(data) {
+  n <- length(data)
+  m <- round(sqrt(n) + 0.5)
+  X_sorted <- sort(data)
+  C_mn <- 0
+  
+  for (i in 1:n) {
+    i_minus_m <- max(1, i - m)
+    i_plus_m <- min(n, i + m)
+    
+    X_i <- X_sorted[i]
+    X_window <- X_sorted[i_minus_m:i_plus_m]
+    X_bar_i <- mean(X_window)
+    
+    num <- sum((X_window - X_bar_i) * (i_minus_m:i_plus_m - i))
+    den <- n * sum((X_window - X_bar_i)^2)
+    
+    if (den == 0) {
+      b_i <- 0
+    } else {
+      b_i <- num / den
+    }
+    
+    if (b_i > 0) {
+      C_mn <- C_mn - log(b_i)
+    }
+  }
+  
+  C_mn <- C_mn / n
+  
+  return(C_mn)
+}
+ebrahimi_estimator <- function(data) {
+  n <- length(data)
+  m <- round(sqrt(n) + 0.5)  # m-spacing
+  data_sorted <- sort(data)
+  sum_term <- 0
+  
+  for (i in 1:n) {
+    if (i <= m) {
+      ci <- 1 + (i - 1) / m
+      diff_term <- data_sorted[i + m] - data_sorted[1]
+    } else if (i >= n - m + 1) {
+      ci <- 1 + (n - i) / m
+      diff_term <- data_sorted[n] - data_sorted[i - m]
+    } else {
+      ci <- 2
+      diff_term <- data_sorted[i + m] - data_sorted[i - m]
+    }
+    
+    sum_term <- sum_term + log((n / (ci * m)) * diff_term)
+  }
+  
+  return(sum_term / n)
+}
+noughabi_arghami_estimator <- function(data) {
+    n <- length(data)
+    m <- round(sqrt(n) + 0.5)  # m-spacing
+    data_sorted <- sort(data)
+    sum_term <- 0
+    
+    for (i in 1:n) {
+      if (i <= m) {
+        ai <- 1
+        diff_term <- data_sorted[i + m] - data_sorted[1]
+      } else if (i >= n - m + 1) {
+        ai <- 1
+        diff_term <- data_sorted[n] - data_sorted[i - m]
+      } else {
+        ai <- 2
+        diff_term <- data_sorted[i + m] - data_sorted[i - m]
+      }
+      
+      sum_term <- sum_term + log((n / (ai * m)) * diff_term)
+    }
+    
+    return(sum_term / n)
+}
+al_omari_1_estimator <- function(data) {
+  n <- length(data)
+  m <- round(sqrt(n) + 0.5)  # m-spacing
+  data_sorted <- sort(data)
+  sum_term <- 0
+  
+  for (i in 1:n) {
+    if (i <= m) {
+      omega_i <- 3/2
+      diff_term <- data_sorted[i + m] - data_sorted[1]
+    } else if (i >= n - m + 1) {
+      omega_i <- 3/2
+      diff_term <- data_sorted[n] - data_sorted[i - m]
+    } else {
+      omega_i <- 2
+      diff_term <- data_sorted[i + m] - data_sorted[i - m]
+    }
+    
+    sum_term <- sum_term + log((n / (omega_i * m)) * diff_term)
+  }
+  
+  return(sum_term / n)
+}
+al_omari_2_estimator <- function(data) {
+  n <- length(data)
+  m <- round(sqrt(n) + 0.5)  # m-spacing
+  data_sorted <- sort(data)
+  sum_term <- 0
+  
+  for (i in 1:n) {
+    if (i <= m) {
+      vi <- 1 + (i - 1) / m
+      diff_term <- data_sorted[i + m] - data_sorted[1]
+    } else if (i >= n - m + 1) {
+      vi <- 1 + (n - i) / (2 * m)
+      diff_term <- data_sorted[n] - data_sorted[i - m]
+    } else {
+      vi <- 2
+      diff_term <- data_sorted[i + m] - data_sorted[i - m]
+    }
+    
+    sum_term <- sum_term + log((n / (vi * m)) * diff_term)
+  }
+  
+  return(sum_term / n)
+}
 ```
 
-```{r PlotGammaSAR, echo=FALSE}
-mu <- seq(.1, 10, length.out=500)
 
-EntropyL1 <- entropy_gamma_sar(L=1, mu)
-EntropyL3 <- entropy_gamma_sar(L=3, mu)
-EntropyL8 <- entropy_gamma_sar(L=8, mu)
-EntropyL12 <- entropy_gamma_sar(L=12, mu)
-EntropyL100 <- entropy_gamma_sar(L=100, mu)
 
-muEntropy <- data.frame(
-  mu, EntropyL1, EntropyL3, EntropyL8, EntropyL12, EntropyL100
-)
+```{r PlotGammaSAR, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Simulation of entropy for Gamma SAR"}
+L <- c(1, 3, 8, 12, 100)
 
-muEntropy.molten <- melt(muEntropy, measure.vars = 2:6, value.name = "Entropy", variable.name = "Looks")
 
-ggplot(muEntropy.molten, aes(x=mu, y=Entropy, col=Looks)) +
+L_labels <- c("L=1", "L=3", "L=8", "L=12", "L=100")
+
+mu <- seq(0.1, 10, length.out = 500)
+
+
+entropies <- sapply(L, function(L) entropy_gamma_sar(L, mu))
+
+
+muEntropy <- data.frame(mu, entropies)
+
+
+muEntropy.molten <- melt(muEntropy, id.vars = "mu", variable.name = "Looks", value.name = "Entropy")
+
+
+ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = Looks)) +
   geom_line() +
-  theme_pander()
+  theme_minimal() +
+  scale_color_manual(values = rainbow(length(L)), labels = L_labels) +
+  labs(col = "Looks") +
+  xlab(expression(paste(mu)))
 
 ```
 
@@ -77,58 +259,182 @@ H_{\mathcal{G}_I^0}(\mu, \alpha, L_0) =\underbrace{L_0 -\ln L_0+\ln\Gamma(L_0)+(
 \end{multline}
 
 
+```{r 3d_GIO, fig.align="center",  out.width = "120%", fig.cap="Simulation of entropy for ${G}_I^0$. ", fig.show="hold",  fig.pos="hbt"}
+knitr::include_graphics("../../../Figures/PDF/entropy_plot_3d.pdf")
+```
 
 
 
-```{r PlotGI0, echo=FALSE}
-mu <- seq(1, 10, length.out = 500)
-alpha <- seq(-20, -2, length.out = 500)
+# Non-Parametric Entropy Estimators
+
+In 1995 Correa suggested a modification of Vasicek's estimator. In estimation the density $f$ of $F$ in the interval $\left(X_{(i-m)}, X_{(i+m)}\right)$ he used a local linear model based on $2 m+1$ points: $F\left(X_{(j)}\right)=\alpha+\beta X_{(j)}+\varepsilon, j=m-i, \ldots, m+i$. This yields a following estimator
+\begin{equation}
+\widehat{H}_C(\mathbf{X})=-\frac{1}{n} \sum_{i=1}^n \ln \left(b_i\right),
+\end{equation}
+where
+$$
+\begin{gathered}
+b_i=\frac{\sum_{j=i-m}^{i+m}\left(X_{(j)}-\bar{X}_{(i)}\right)(j-i)}{n \cdot \sum_{j=i-m}^{i+m}\left(X_{(j)}-\bar{X}_{(i)}\right)^2}, \\
+\bar{X}_{(i)}=\frac{1}{2 m+1} \sum_{j=i-m}^{i+m} X_{(j)},
+\end{gathered}
+$$
+$m$ is a positive integer smaller than $\frac{n}{2}, X_{(i)}=X_{(1)}$ for $i<1$ and $X_{(i)}=X_{(n)}$ for $i>n$.
+
+Ebrahimi et al. (1994), adjusted the weights of Vasicek's estimator, in order to take into account the fact that the differences are truncated around the smallest and the largest data points. i.e. $X_{(i+m)}-X_{(i-m)}$ is replaced by $X_{(i+m)}-X_{(1)}$ when $i \leq m$ and $X_{(i+m)}-X_{(i-m)}$ is replaced by $X_{(n)}-X_{(i-m)}$ when $i \geq n-m+1$. Their estimator is given by
+\begin{equation}
+\widehat{H}_E(\mathbf{X})=\frac{1}{n} \sum_{i=1}^n \log \left[\frac{n}{c_i m}\left(X_{(i+m)}-X_{(i-m)}\right)\right],
+\end{equation}
+where
+$$
+c_i=\left\{\begin{array}{lr}
+1+\frac{i-1}{m}, & 1 \leq i \leq m \\
+2, & m+1 \leq i \leq n-m, \\
+1+\frac{n-i}{m}, & n-m+1 \leq i \leq n
+\end{array}\right.
+$$
+
+Noughabi and Arghami suggested an entropy estimator given by
+
+\begin{equation}
+\widehat{H}_{NA}(\mathbf{X})=\frac{1}{n}(\mathbf{X}) \sum_{i=1}^n \log \left[\frac{n}{a_i m}\left(X_{(i+m)}-X_{(i-m)}\right)\right],
+\end{equation}
+where
+$$
+a_i=\left\{\begin{array}{lc}
+1, & 1 \leq i \leq m, \\
+2, & m+1 \leq i \leq n-m, \\
+1, & n-m+1 \leq i \leq n,
+\end{array}\right.
+$$
+and $X_{(i-m)}=X_{(1)}$ for $i \leq m$ and $X_{(i+m)}=X_{(n)}$ for $i \geq n-m$.
+
+Al-Omari suggested the following estimators of entropy:
+
+\begin{equation}
+\widehat{H}_{\mathrm{AO}_1}(\mathbf{X})=\frac{1}{n} \sum_{i=1}^n \log \left[\frac{n}{\omega_i m}\left(X_{(i+m)}-X_{(i-m)}\right)\right]
+\end{equation}
+where
+$$
+\omega_i= \begin{cases}3 / 2 & \text { if } 1 \leq i \leq m \\ 2 & \text { if } m+1 \leq i \leq n-m, \\ 3 / 2 & \text { if } n-m+1 \leq i \leq n,\end{cases}
+$$
+in which $X_{(i-m)}=X_{(1)}$ for $i \leq m$, and $X_{(i+m)}=X_{(n)}$ for $i \geq n-m$.
+And
+\begin{equation}
+\widehat{H}_{\mathrm{AO}_2}(\mathbf{X})=\frac{1}{n} \sum_{i=1}^n \log \left[\frac{n}{v_i m}\left(X_{(i+m)}-X_{(i-m)}\right)\right]
+\end{equation}
+where
+$$
+v_i= \begin{cases}1+(i-1) / m & \text { if } 1 \leq i \leq m \\ 2 & \text { if } m+1 \leq i \leq n-m, \\ 1+(n-i) / 2 m & \text { if } n-m+1 \leq i \leq n\end{cases}
+$$
+in which $X_{(i-m)}=X_{(1)}$ for $i \leq m$, and $X_{(i+m)}=X_{(n)}$ for $i \geq n-m$.
+
+Fig. \ref{fig:PlotBias}, illustrate  the bias  of each estimator as a function of sample size. We observe that as the sample size n increases, the bias tends to zero, for some estimators, this means that the estimators are becoming more unbiased as the amount of data available increases, because they are getting closer to the value true of entropy.
 
 
-entropy <- outer(mu, alpha, FUN = function(mu, alpha) entropy_gI0(mu, alpha, L = 1))
 
-#
-persp(x = mu, y = alpha, z = entropy, col = "lightblue", border = "blue")
+```{r PlotBias, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Bias, for $L= 1$, $\\mu=1$."}
+sample_sizes <- c(9, 25, 49, 81, 121, 225)
+R <- 1000
+mu <- 1
+L <- 1
 
-open3d()
-
-
-persp3d(x = mu, y = alpha,z = entropy, col = "lightblue", border = "blue")
-
-
-#-----
-mu <- seq(1, 10, length.out=200)
-alpha <- seq(-2, -20, length.out=200)
+#  True entropy value for the gamma SAR distribution
+true_entropy <- entropy_gamma_sar(L, mu)
 
 
-entropyL1 <- outer(mu, alpha, function(mu, alpha) entropy_gI0(mu, alpha, L=1))
-entropyL3 <- outer(mu, alpha,  function(mu, alpha) entropy_gI0(mu, alpha, L=3))
-entropyL8 <- outer(mu, alpha,  function(mu, alpha) entropy_gI0(mu, alpha, L=8))
-entropyL12 <- outer(mu, alpha, function(mu, alpha) entropy_gI0(mu, alpha, L=12))
-entropyL100 <- outer(mu, alpha, function(mu, alpha) entropy_gI0(mu, alpha, L=100))
+output <- data.frame(SampleSize = integer(0), Estimator = character(0), Bias = numeric(0))
 
-
-fig <- plot_ly( x = alpha, y = mu,    showscale = FALSE)
-
-fig <- fig %>% add_surface(z = ~entropyL1, colorscale = list(c(0,1),c("rgb(255,107,184)","rgb(128,0,64)")),  name = "L=1")
-fig <- fig %>% add_surface(z = ~entropyL3, colorscale = list(c(0,1),c("rgb(107,184,255)","rgb(90,90,124)")),  name = "L=3")
-fig <- fig %>% add_surface(z = ~entropyL8,  colorscale = list(c(0,1),c("rgb(247,226,157)","rgb(255,192,7)")),  name = "L=8")
-fig <- fig %>% add_surface(z = ~entropyL12, colorscale = list(c(0,1),c("rgb(107,255,184)","rgb(0,124,90)")),  name = "L=12")
-fig <- fig %>% add_surface(z = ~entropyL100, colorscale = list(c(0,1),c("rgb(182,142,242)","rgb(104,3,255)")),  name = "L=100")
-
-
-fig <- fig %>% layout(
-  scene = list(
-    xaxis = list(title = "alpha"),
-    yaxis = list(title = "mu"),
-    zaxis = list(title = "Entropy")
-  )
+#List of estimator
+estimators <- list(
+  list(func = van_es_estimator, label = "Van Es"),
+  list(func = correa_estimator, label = "Correa"),
+  list(func = ebrahimi_estimator, label = "Ebrahimi"),
+  list(func = noughabi_arghami_estimator, label = "Noughabi Arghami"),
+  list(func = vasicek_estimator, label = "Vasicek"),
+  list(func = al_omari_1_estimator, label = "Al Omari 1"),
+  list(func = al_omari_2_estimator, label = "Al Omari 2")
 )
 
-fig
+
+
+
+for (estimator in estimators) {
+  for (ssize in sample_sizes) {
+    v.nonparametric.entropy <- numeric(R)
+    for (r in 1:R) {
+      sample <- gamma_sar_sample(L, mu, ssize)
+      v.nonparametric.entropy[r] <- estimator$func(sample)
+    }
+    
+    # Calculate the bias 
+    bias <- mean(v.nonparametric.entropy) - true_entropy
+    
+    
+    output <- rbind(output, data.frame(SampleSize = ssize, Estimator = estimator$label, Bias = bias))
+  }
+}
+
+# Plot the bias as a function of the sample size 
+ggplot(output, aes(x = SampleSize, y = Bias, color = Estimator)) +
+  geom_line() +
+  geom_point() +
+  xlab("Sample Size") +
+  ylab(expression(paste("Bias ")))
 
 ```
 
+
+Figure \ref{fig:PlotMSE}, shows the Mean Square Error of each estimator as a function of sample size. We see that the lower the MSE, the better the performance of the estimator, as it indicates that the estimates are closer to the true values.
+```{r PlotMSE, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="MSE, for $L= 1$, $\\mu=1$."}
+sample_sizes <- c(9, 25, 49, 81, 121, 225)
+R <- 1000
+mu <- 1
+L <- 2
+
+# True entropy value for the gamma SAR distribution
+true_entropy <- entropy_gamma_sar(L, mu)
+
+
+
+output_mse <- data.frame(SampleSize = integer(0), Estimator = character(0), MSE = numeric(0))
+#List of estimator
+estimators <- list(
+  list(func = van_es_estimator, label = "Van Es"),
+  list(func = correa_estimator, label = "Correa"),
+  list(func = ebrahimi_estimator, label = "Ebrahimi"),
+  list(func = noughabi_arghami_estimator, label = "Noughabi Arghami"),
+  list(func = vasicek_estimator, label = "Vasicek"),
+  list(func = al_omari_1_estimator, label = "Al Omari 1"),
+  list(func = al_omari_2_estimator, label = "Al Omari 2")
+)
+
+
+
+for (estimator in estimators) {
+  for (ssize in sample_sizes) {
+    squared_errors <- numeric(R)
+    for (r in 1:R) {
+      sample <- gamma_sar_sample(L, mu, ssize)
+      estimated_entropy <- estimator$func(sample)
+      squared_errors[r] <- (estimated_entropy - true_entropy)^2
+    }
+    
+    # Calculate the MSE
+    mse <- mean(squared_errors)
+    
+    output_mse <- rbind(output_mse, data.frame(SampleSize = ssize, Estimator = estimator$label, MSE = mse))
+  }
+}
+
+# Plot the MSE as a function of the sample size
+ggplot(output_mse, aes(x = SampleSize, y = MSE, color = Estimator)) +
+  geom_line() +
+  geom_point() +
+  xlab("Sample Size") +
+  ylab("MSE") 
+
+
+```
 
 
 
