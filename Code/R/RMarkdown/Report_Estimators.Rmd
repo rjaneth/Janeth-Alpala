@@ -1,0 +1,1448 @@
+---
+title: "Report: Exploring Non-Parametric Entropy Estimators and Bootstrap Enhancements"
+author: ""
+date: ""
+output: pdf_document
+
+# output: 
+#   pdf_document:
+#     toc: true
+#     toc_depth: 2
+#html_document
+header-includes:
+  - \usepackage{graphicx}
+  - \usepackage{float}
+  - \usepackage{bm}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{wrapfig}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+  - \usepackage{threeparttablex}
+  - \usepackage[normalem]{ulem}
+  - \usepackage{makecell}
+  - \usepackage{xcolor}
+  - \usepackage{amsmath}
+  - \usepackage{mathabx}
+
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+#knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+
+library(reshape2)
+#library(plotly)
+library(knitr)
+library(pandoc)
+library(gridExtra)
+library(tidyr)
+library(gtools)
+library(stats4)
+library(rmutil)
+library(scales)
+library(tidyr)
+library(gtools)
+library(stats4)
+library(rmutil)
+library(invgamma)
+library(tidyverse)
+library(scales)
+library(RColorBrewer)
+library(ggsci)
+library(wesanderson)
+library(ggpubr)
+library(patchwork)
+options(kableExtra.latex.load_packages = FALSE)
+library(devtools)
+devtools::install_github("haozhu233/kableExtra")
+#devtools::install_github("haozhu233/kableExtra")
+library(kableExtra)
+library(ggthemes)
+theme_set(theme_bw()  +
+            theme(text=element_text(family="serif"),
+                  legend.position = "top")# Gridtop , right , bottom , or left#, panel.grid = element_blank()
+)
+# Helpful for latex tables
+# library(xtable)
+# options(xtable.caption.placement='top',
+#         xtable.table.placement='!t',
+#         xtable.include.rownames=F,
+#         xtable.comment=F)
+# #library(rgl)
+
+
+
+source("../MainFunctions/gamma_sar_sample.r")
+source("../MainFunctions/entropy_gamma_sar.r")
+source("../MainFunctions/entropy_gI0.r")
+source("../MainFunctions/gi0_sample.r")
+
+source("../MainFunctions/van_es_estimator.r")
+source("../MainFunctions/correa_estimator.r")
+source("../MainFunctions/ebrahimi_estimator.r")
+source("../MainFunctions/noughabi_arghami_estimator.r")
+source("../MainFunctions/vasicek_estimator.r")
+source("../MainFunctions/al_omari_1_estimator.r")
+source("../MainFunctions/al_omari_2_estimator.r")
+
+source("../MainFunctions/bootstrap_van_es_estimator.r")
+source("../MainFunctions/bootstrap_correa_estimator.r")
+source("../MainFunctions/bootstrap_ebrahimi_estimator.r")
+source("../MainFunctions/bootstrap_noughabi_arghami_estimator.r")
+source("../MainFunctions/bootstrap_vasicek_estimator.r")
+source("../MainFunctions/bootstrap_al_omari_1_estimator.r")
+source("../MainFunctions/bootstrap_al_omari_2_estimator.r")
+#The next function contains the functions: generate_samples, calculate_bias_mse, generate_plot
+source("../Programs/functions_sample_bias_mse.R")# 
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+```
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.pos = 'H')
+```
+
+
+\newcommand{\bias}{\operatorname{Bias}}
+
+# Introduction
+Understanding and measuring entropy, a fundamental concept in information theory, is crucial in various fields. 
+This study delves into the evaluation of non-parametric of Shannon entropy estimators and their Bootstrap enhancements. Non-parametric estimators offer a flexible approach to parameter estimation, while Bootstrap technique provide a robust tool for refining these estimators and quantifying their uncertainty. Using various sample sizes and replications, different estimators are evaluated based on bias, variance, mean squared error (MSE), and confidence intervals. The results highlight the trade-off between bias and variance, shedding light on the efficiency and reliability of each estimator.
+
+
+
+
+# Non-Parametric Entropy Estimators
+
+The problem of non-parametric estimating of $H(X)$ has been considered by many authors, who proposed estimators based on spacings.
+
+Vasicek (1976), used $f(z)=p$  to express $H(X)$ as
+\begin{equation*}
+	H(X)= \int_0^1 \log\left(\frac{\mathrm{d}}{\mathrm{d}p}Q(p)\right)\mathrm{d}p,
+\end{equation*}
+where $Q(p)=F^{-1}(p)=\inf\left\{x: F(X)\leq p\right\}$ is the quantile function. The derivative of $F^{-1}(p)$ is  estimated by a function of the order statistics.
+
+Assuming that  $\bm{X}=(X_1, X_2, \ldots,X_n)$ is a random sample from the distribution $F(x)$, the estimator is defined as:
+\begin{equation}
+\label{E:Vas}
+	\widehat{H}_{V}(\bm{X})=\frac{1}{n}\sum_{i=1}^{n}\log\left[\frac{n}{2m}\left(X_{(i+m)}-X_{(i-m)}\right)\right],
+	\end{equation}
+where $m<n/2$ is a positive integer, $X_{(i+m)}-X_{(i-m)}$ is the $m$-spacing and $X_{(1)}\leq X_{(2)}\leq\ldots\leq X_{(n)}$ are the order statistics and $X_{(i)}= X_{(1)}$ if $i<1$, $Z_{(i)}= X_{(n)}$ if $i>n$.
+
+Multiple authors have presented  adaptations to Vasicek's estimator, including Van Es (1992), who proposed a new estimator of entropy given by:
+\begin{equation}
+\label{E:VanEs}
+	\widehat{H}_{\text{VE}}(\bm{X})=\frac{1}{n-m}\sum_{i=1}^{n-m}\log\left[\frac{n+1}{m}\left(X_{(i+m)}-X_{(i)}\right)\right]+\sum_{k=m}^n\frac{1}{k}+\log\frac{m}{n+1}.
+\end{equation}
+Van Es demonstrated that, under some conditions, this estimator exhibits consistency and asymptotic normality.
+
+In 1995 Correa suggested a modification of Vasicek's estimator. In estimation the density $f$ of $F$ in the interval $\left(X_{(i-m)}, X_{(i+m)}\right)$ he used a local linear model based on $2 m+1$ points: $F\left(X_{(j)}\right)=\alpha+\beta X_{(j)}+\varepsilon, j=m-i, \ldots, m+i$. This yields a following estimator
+\begin{equation}
+\widehat{H}_C(\mathbf{X})=-\frac{1}{n} \sum_{i=1}^n \ln \left(b_i\right),
+\end{equation}
+where
+$$
+\begin{gathered}
+b_i=\frac{\sum_{j=i-m}^{i+m}\left(X_{(j)}-\bar{X}_{(i)}\right)(j-i)}{n \cdot \sum_{j=i-m}^{i+m}\left(X_{(j)}-\bar{X}_{(i)}\right)^2}, \\
+\bar{X}_{(i)}=\frac{1}{2 m+1} \sum_{j=i-m}^{i+m} X_{(j)},
+\end{gathered}
+$$
+$m$ is a positive integer smaller than $\frac{n}{2}, X_{(i)}=X_{(1)}$ for $i<1$ and $X_{(i)}=X_{(n)}$ for $i>n$.
+
+Ebrahimi et al. (1994), adjusted the weights of Vasicek's estimator, in order to take into account the fact that the differences are truncated around the smallest and the largest data points. i.e. $X_{(i+m)}-X_{(i-m)}$ is replaced by $X_{(i+m)}-X_{(1)}$ when $i \leq m$ and $X_{(i+m)}-X_{(i-m)}$ is replaced by $X_{(n)}-X_{(i-m)}$ when $i \geq n-m+1$. Their estimator is given by
+\begin{equation}
+\widehat{H}_E(\mathbf{X})=\frac{1}{n} \sum_{i=1}^n \log \left[\frac{n}{c_i m}\left(X_{(i+m)}-X_{(i-m)}\right)\right],
+\end{equation}
+where
+$$
+c_i=\left\{\begin{array}{lr}
+1+\frac{i-1}{m}, & 1 \leq i \leq m \\
+2, & m+1 \leq i \leq n-m, \\
+1+\frac{n-i}{m}, & n-m+1 \leq i \leq n
+\end{array}\right.
+$$
+
+Noughabi and Arghami suggested an entropy estimator given by
+
+\begin{equation}
+\widehat{H}_{NA}(\mathbf{X})=\frac{1}{n}(\mathbf{X}) \sum_{i=1}^n \log \left[\frac{n}{a_i m}\left(X_{(i+m)}-X_{(i-m)}\right)\right],
+\end{equation}
+where
+$$
+a_i=\left\{\begin{array}{lc}
+1, & 1 \leq i \leq m, \\
+2, & m+1 \leq i \leq n-m, \\
+1, & n-m+1 \leq i \leq n,
+\end{array}\right.
+$$
+and $X_{(i-m)}=X_{(1)}$ for $i \leq m$ and $X_{(i+m)}=X_{(n)}$ for $i \geq n-m$.
+
+Al-Omari suggested the following estimators of entropy:
+
+\begin{equation}
+\widehat{H}_{\mathrm{AO}_1}(\mathbf{X})=\frac{1}{n} \sum_{i=1}^n \log \left[\frac{n}{\omega_i m}\left(X_{(i+m)}-X_{(i-m)}\right)\right]
+\end{equation}
+where
+$$
+\omega_i= \begin{cases}3 / 2 & \text { if } 1 \leq i \leq m \\ 2 & \text { if } m+1 \leq i \leq n-m, \\ 3 / 2 & \text { if } n-m+1 \leq i \leq n,\end{cases}
+$$
+in which $X_{(i-m)}=X_{(1)}$ for $i \leq m$, and $X_{(i+m)}=X_{(n)}$ for $i \geq n-m$.
+And
+\begin{equation}
+\widehat{H}_{\mathrm{AO}_2}(\mathbf{X})=\frac{1}{n} \sum_{i=1}^n \log \left[\frac{n}{v_i m}\left(X_{(i+m)}-X_{(i-m)}\right)\right]
+\end{equation}
+where
+$$
+v_i= \begin{cases}1+(i-1) / m & \text { if } 1 \leq i \leq m \\ 2 & \text { if } m+1 \leq i \leq n-m, \\ 1+(n-i) / 2 m & \text { if } n-m+1 \leq i \leq n\end{cases}
+$$
+in which $X_{(i-m)}=X_{(1)}$ for $i \leq m$, and $X_{(i+m)}=X_{(n)}$ for $i \geq n-m$.
+
+## Results for  Nonparametric Estimators with $\Gamma_{\text{SAR}}$
+
+
+Our experimental setup involves an analysis of bias and MSE for each estimator using varying sample sizes, denoted as \(n\in\left\{9, 25, 49, 81, 121\right\}\). For each specific sample size, we generate 100 random samples to ensure robust statistical insights. Additionally, we consider distinct parameter values, where $\mu$ varies within $\left\{1, 3, 10, 100\right\}$ and $L$ within $\left\{1, 3, 5, 18\right\}$. This parameter variation aims to explore potential impacts on estimator performance.
+Figures \ref{fig:Plot_bias_mse_1}, \ref{fig:Plot_bias_mse_2}, \ref{fig:Plot_bias_mse_3}, and  \ref{fig:Plot_bias_mse_4}  present the bias and MSE for each of the seven non-parametric entropy estimators. 
+
+```{r Plot_bias_mse_1, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE, for $L= 1$.", fig.width=10,fig.height=5}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 1
+
+
+
+ mu_values <- c(1,  3, 10, 100)
+
+#L values
+
+L <- 1
+
+# Define a list of estimators
+estimators <- list(
+  "Van Es" = van_es_estimator,
+  "Correa" = correa_estimator,
+  "Ebrahimi" = ebrahimi_estimator,
+  "Noughabi Arghami" = noughabi_arghami_estimator,
+  "Vasicek" = vasicek_estimator,
+  "Al Omari 1" = al_omari_1_estimator,
+  "Al Omari 2" = al_omari_2_estimator
+  #"Van Es Bootstrap" = bootstrap_van_es_estimator,
+  #"Correa Bootstrap" = bootstrap_correa_estimator,
+  #"Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+  #"Noughabi Arghami Bootstrap" = bootstrap_noughabi_arghami_estimator,
+  #"Vasicek Bootstrap" = bootstrap_vasicek_estimator
+  # "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator,
+  #"Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator
+)
+
+combined_plot <- generate_plot(sample_sizes, R, B, mu_values, L, estimators, ncol = 2, nrow = 2)
+
+# Print the combined plot
+print(combined_plot)
+
+```
+
+```{r Plot_bias_mse_2, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE, for $L= 3$.", fig.width=10,fig.height=5}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 1
+mu_values <- c(1,  3, 10, 100)
+L <- 3
+
+# Define a list of estimators
+estimators <- list(
+  "Van Es" = van_es_estimator,
+  "Correa" = correa_estimator,
+  "Ebrahimi" = ebrahimi_estimator,
+  "Noughabi Arghami" = noughabi_arghami_estimator,
+  "Vasicek" = vasicek_estimator,
+  "Al Omari 1" = al_omari_1_estimator,
+  "Al Omari 2" = al_omari_2_estimator
+  #"Van Es Bootstrap" = bootstrap_van_es_estimator,
+  #"Correa Bootstrap" = bootstrap_correa_estimator,
+  #"Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+  #"Noughabi Arghami Bootstrap" = bootstrap_noughabi_arghami_estimator,
+  #"Vasicek Bootstrap" = bootstrap_vasicek_estimator
+  # "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator,
+  #"Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator
+)
+
+# Generate and plot the results
+combined_plot <- generate_plot(sample_sizes, R, B, mu_values, L, estimators, ncol = 2, nrow = 2)
+
+# Print the combined plot
+print(combined_plot)
+
+```
+
+```{r Plot_bias_mse_3, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE, for $L= 5$.", fig.width=10,fig.height=5}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 1
+mu_values <- c(1,  3, 10, 100)
+L <- 5
+
+# Define a list of estimators
+estimators <- list(
+  "Van Es" = van_es_estimator,
+  "Correa" = correa_estimator,
+  "Ebrahimi" = ebrahimi_estimator,
+  "Noughabi Arghami" = noughabi_arghami_estimator,
+  "Vasicek" = vasicek_estimator,
+  "Al Omari 1" = al_omari_1_estimator,
+  "Al Omari 2" = al_omari_2_estimator
+  #"Van Es Bootstrap" = bootstrap_van_es_estimator,
+  #"Correa Bootstrap" = bootstrap_correa_estimator,
+  #"Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+  #"Noughabi Arghami Bootstrap" = bootstrap_noughabi_arghami_estimator,
+  #"Vasicek Bootstrap" = bootstrap_vasicek_estimator
+  # "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator,
+  #"Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator
+)
+
+# Generate and plot the results
+combined_plot <- generate_plot(sample_sizes, R, B, mu_values, L, estimators, ncol = 2, nrow = 2)
+
+# Print the combined plot
+print(combined_plot)
+
+```
+
+```{r Plot_bias_mse_4, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE, for $L= 18$.", fig.width=10,fig.height=5}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 1
+mu_values <- c(1,  3, 10, 100)
+L <- 18
+
+# Define a list of estimators
+estimators <- list(
+  "Van Es" = van_es_estimator,
+  "Correa" = correa_estimator,
+  "Ebrahimi" = ebrahimi_estimator,
+  "Noughabi Arghami" = noughabi_arghami_estimator,
+  "Vasicek" = vasicek_estimator,
+  "Al Omari 1" = al_omari_1_estimator,
+  "Al Omari 2" = al_omari_2_estimator
+  #"Van Es Bootstrap" = bootstrap_van_es_estimator,
+  #"Correa Bootstrap" = bootstrap_correa_estimator,
+  #"Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+  #"Noughabi Arghami Bootstrap" = bootstrap_noughabi_arghami_estimator,
+  #"Vasicek Bootstrap" = bootstrap_vasicek_estimator
+  # "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator,
+  #"Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator
+)
+
+# Generate and plot the results
+combined_plot <- generate_plot(sample_sizes, R, B, mu_values, L, estimators, ncol = 2, nrow = 2)
+
+# Print the combined plot
+print(combined_plot)
+
+```
+
+The simulation results for bias and MSE, where $\mu$ takes values in $\left\{1, 3, 10, 100\right\}$ and $L=5$, are presented in Table \ref{tab:bias_mse_1}.
+```{r GenerateTables6, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+# Parámetros
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+R <- 100
+B <- 1
+mu_values <- c(1, 3, 10, 100)
+L <- 5
+
+# Define a list of estimators
+estimators <- list(
+  "Van Es" = van_es_estimator,
+  "Correa" = correa_estimator,
+  "Ebrahimi" = ebrahimi_estimator,
+  "Noughabi Arghami" = noughabi_arghami_estimator,
+  "Vasicek" = vasicek_estimator,
+  "Al Omari 1" = al_omari_1_estimator,
+  "Al Omari 2" = al_omari_2_estimator
+  #"Van Es Bootstrap" = bootstrap_van_es_estimator,
+  #"Correa Bootstrap" = bootstrap_correa_estimator,
+  #"Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+  #"Noughabi Arghami Bootstrap" = bootstrap_noughabi_arghami_estimator,
+  #"Vasicek Bootstrap" = bootstrap_vasicek_estimator
+  # "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator,
+  #"Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator
+)
+
+# Crear una tabla para almacenar los resultados de todos los valores de mu
+combined_results <- NULL
+
+for (mu_val in mu_values) {
+  # Calcular resultados para el valor actual de mu
+  results <- calculate_bias_mse(sample_sizes, R, B, mu_val, L, estimators)
+
+  # Añadir una columna con el valor actual de mu en la primera posición
+  results <- cbind(mu = mu_val, results)
+
+  # Combina los resultados con la tabla principal
+  combined_results <- bind_rows(combined_results, results)
+}
+
+# Reshape the data to have Estimators as columns
+reshaped_results <- combined_results %>%
+  pivot_wider(names_from = Estimator, values_from = c(Bias, MSE))
+#\widetilde{H}_{i}
+
+# colnames(reshaped_results) <- c("$\\bm{\\mu}$", "$\\bm{n}$", "$\\widehat{H}_{VE}$ ", "$\\widehat{H}_{C}$", "$\\widehat{H}_{E}$", "$\\widehat{H}_{NA}$", "$\\widehat{H}_{V}$", "$\\widehat{H}_{AO_1}$",  "$\\widehat{H}_{AO_2}$", "$\\widehat{H}_{VE}$ ", "$\\widehat{H}_{C}$", "$\\widehat{H}_{E}$", "$\\widehat{H}_{NA}$", "$\\widehat{H}_{V}$", "$\\widehat{H}_{AO_1}$",  "$\\widehat{H}_{AO_2}$")
+
+colnames(reshaped_results) <- c("$\\bm{\\mu}$", "$\\bm{n}$", "$\\widehat{H}_{VE}$ ", "$\\widehat{H}_{C}$", "$\\widehat{H}_{E}$", "$\\widehat{H}_{NA}$", "$\\widehat{H}_{V}$", "$\\widehat{H}_{AO_1}$",  "$\\widehat{H}_{AO_2}$", "$\\widehat{H}_{VE}$ ", "$\\widehat{H}_{C}$", "$\\widehat{H}_{E}$", "$\\widehat{H}_{NA}$", "$\\widehat{H}_{V}$", "$\\widehat{H}_{AO_1}$",  "$\\widehat{H}_{AO_2}$")
+
+# Imprime la tabla combinada con líneas divisorias y título personalizado
+print(collapse_rows(kbl(reshaped_results, caption = "Bias and MSE for different $\\mu$ values, and $L=5$.",  escape=FALSE,
+                        align = "ccccccc",
+                        booktabs = T,
+                        #longtable = T,
+                        digits=4, label="bias_mse_1",# position="hbt", linesep = "",
+                        row.names=FALSE) %>%
+                     row_spec(0, bold = TRUE) %>%
+                    add_header_above(c(" ", " ", "Bias" = 7, "MSE" = 7)) %>%
+                    #collapse_rows(columns = 1:2) %>%
+                     kable_styling(latex_options = c("repeat_header",  "hold_position", "scale_down"))))
+```
+
+Based on our experiments, the estimators with consistently lower bias and MSE across various scenarios are $\widehat{H}_{C}$, $\widehat{H}_{AO_2}$, and $\widehat{H}_{E}$. These estimators demonstrate robust performance and convergence under different parameter combinations.
+
+For the Noughabi Arghami estimator, it demonstrates consistently low MSE across various scenarios. However, it is noteworthy that the bias remains constant and notably high for sample sizes larger than 25, with no indication of rapid convergence.
+
+In contrast, the Van Es and Vasicek estimators have a larger bias, but the one with the highest MSE is undoubtedly the Vasicek estimator.
+
+
+# Enhanced Bootstrap Estimators
+
+In this section, we extend our exploration of nonparametric entropy estimators by incorporating enhanced bootstrap methodologies. The integration of bootstrap techniques aims to refine the precision and reliability of entropy estimates, offering a robust framework for information-theoretic analyses. 
+
+Bootstrap methods, renowned for their versatility in handling complex data structures, have become invaluable tools for refining statistical inferences. In the realm of entropy estimation, the application of bootstrap techniques seeks to mitigate the inherent challenges posed by finite sample sizes. By repeatedly resampling from the observed data, bootstrap enhances the stability of estimates and provides a comprehensive understanding of the uncertainty associated with each estimator.
+
+The bootstrap technique is a powerful resampling method widely employed in statistical analyses to comprehend the variability and uncertainty associated with sample data. It operates on the fundamental principle that a sample drawn from an underlying population is a representative reflection of the entire population. Bootstrap methodology involves generating numerous resamples by drawing observations with replacement from the original dataset.
+
+Here's a step-by-step breakdown of the bootstrap process:
+\begin{itemize}
+	\item Resampling with Replacement: A primary characteristic of bootstrap is the sampling with replacement, meaning that each observation selected during resampling is returned to the pool, allowing the same observation to be chosen multiple times or not at all.
+	\item Creating Bootstrap Samples: Through the resampling process, multiple bootstrap samples are generated, each equivalent in size to the original dataset. This technique mimics the randomness inherent in the data collection process.
+\item Estimate Computation: The statistical quantity of interest (e.g., mean, variance, or entropy) is calculated for each bootstrap sample, yielding a distribution of estimates.
+\end{itemize}
+
+## Theoretical Framework
+We present an innovative approach to enhance the non-parametric entropy estimators denoted as $\widehat{H}_{i}$. Acknowledging the inherent bias in these estimators, we propose bootstrap-enhanced versions denoted as $\widetilde{H}_{i}$ to address the bias and refine the accuracy of the original estimations.
+
+
+Let \( \widehat{\theta}(X)= \widehat{H}_{i}\) represent the non-parametric entropy estimators based on a sample \(X\) of size \(n\). Let's assume that these estimators are inherently biased, that is, the bias is defined as:
+
+\begin{equation}
+\label{Eq:bias1}
+\bias\left(\widehat{\theta}(X)\right) = \mathbb{E}\left[\widehat{\theta}(X)\right] - \theta.
+\end{equation}
+Our objective is to devise unbiased estimators with reduced variance. To achieve this, we introduce an "ideal estimator" \(\check{\theta}(X)\) using the bias information:
+\begin{equation}
+\label{Eq:bias2}
+\widecheck{\theta}(X) = \widehat{\theta}(X) - \bias\left(\widehat{\theta}(X)\right).
+\end{equation}
+However, \(\check{\theta}(X)\) is not an estimator, because it does not depend on the true parameter \(\theta\), prompting the formulation of a new unbiased "proper estimator" \(\widetilde{\theta}\), from \eqref{Eq:bias1} and \eqref{Eq:bias2} we have:
+
+\begin{align}
+\label{Eq:bias3}
+\widetilde{\theta}(X) &= \widehat{\theta}(X)+\widehat{\theta}(X) - \frac{1}{B}\sum_{b=1}^B \widehat{\theta}_b(X^{(b)}),\nonumber\\
+                      & =2\widehat{\theta}(X) - \frac{1}{B}\sum_{b=1}^B \widehat{\theta}_b(X^{(b)}),
+\end{align}
+
+where $B$ represents the number of replications in the bootstrap technique.
+
+The proposed \(\widetilde{\theta}(X)\) leverages the bootstrap technique to refine the original estimators. For each iteration \(b\) (from \(1\) to \(B\)) in the bootstrap process, a sample \(X^{(b)}\) is generated, and the corresponding bootstrap estimator \(\widehat{\theta}_b(X^{(b)})\) is calculated.
+
+The final bootstrap-enhanced estimator \(\widetilde{H}_{i}\) is computed by incorporating these bootstrap estimators into the formulation:
+
+\[\widetilde{H}_{i}(X) = \widetilde{\theta}(X)\]
+
+This methodology significantly reduces bias, resulting in more accurate and robust entropy estimations. The notation \(\widetilde{H}_{i}\) denotes the improved versions of the original estimators, providing a comprehensive enhancement to their non-parametric counterparts.
+
+
+## MSE Results for Bootstrap Estimators
+
+Similar to the analysis conducted on the original estimators, we consider two parameter values for $\mu\in\left\{1,  10\right\}$ and $L=5$. To observe the behavior of the estimators under different scenarios, we perform experiments with varying sample sizes \(n\in\left\{9, 25, 49, 81, 121\right\}\). For each specific sample size, we generate 100 random samples and perform 100 replications for bootstrap.
+
+In-depth comparisons of bias and MSE between original non-parametric entropy estimators and their respective bootstrap-enhanced versions are presented in Figures 5-10. The application of the bootstrap technique demonstrates notable improvements across the majority of methods.
+
+<!-- The analysis involves a comparison between each original non-parametric entropy estimator and its corresponding bootstrap-enhanced version. We aim to identify estimators that exhibit enhanced precision, reduced bias, and improved convergence. -->
+
+
+```{r Plot_bias_mse_5, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE of $\\widehat{H}_{VE}$ and $\\widetilde{H}_{VE}$, for $L= 5$.", fig.width=10,fig.height=3}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 100
+mu_values <- c(1,   10)
+L <- 5
+
+# Define a list of estimators
+estimators <- list(
+  "Van Es" = van_es_estimator,
+  "Van Es Bootstrap" = bootstrap_van_es_estimator#"$\\widetilde{H}_{VE}$" = bootstrap_van_es_estimator
+)
+
+# Generate and plot the results
+combined_plot <- generate_plot(sample_sizes, R, B, mu_values, L, estimators, ncol = 2, nrow = 1)
+
+# Print the combined plot
+print(combined_plot)
+
+```
+
+```{r Plot_bias_mse_6, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE, for $L= 5$.", fig.width=10,fig.height=3}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 100
+mu_values <- c(1,  10)
+L <- 5
+
+# Define a list of estimators
+estimators <- list(
+  "Vasicek" = vasicek_estimator,
+   "Vasicek Bootstrap" = bootstrap_vasicek_estimator
+ )
+
+# Generate and plot the results
+combined_plot <- generate_plot(sample_sizes, R, B, mu_values, L, estimators, ncol = 2, nrow = 1)
+
+# Print the combined plot
+print(combined_plot)
+
+```
+
+
+```{r Plot_bias_mse_7, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE, for $L= 5$.", fig.width=10,fig.height=3}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 100
+mu_values <- c(1,  10)
+L <- 5
+
+# Define a list of estimators
+estimators <- list(
+   "Ebrahimi" = ebrahimi_estimator,
+   "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator
+ )
+# Generate and plot the results
+combined_plot <- generate_plot(sample_sizes, R, B, mu_values, L, estimators, ncol = 2, nrow = 1)
+
+# Print the combined plot
+print(combined_plot)
+
+```
+
+```{r Plot_bias_mse_8, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE, for $L= 5$.", fig.width=10,fig.height=3}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+# Number of bootstrap replications
+B <- 100
+mu_values <- c(1, 10)
+L <- 5
+
+# Define a list of estimators
+estimators <- list(
+   "Correa" = correa_estimator,
+   "Correa Bootstrap" = bootstrap_correa_estimator
+
+)
+
+# Generate and plot the results
+combined_plot <- generate_plot(sample_sizes, R, B, mu_values, L, estimators, ncol = 2, nrow = 1)
+
+# Print the combined plot
+print(combined_plot)
+
+```
+
+```{r Plot_bias_mse_9, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE, for $L= 5$.", fig.width=10,fig.height=3}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+# Number of bootstrap replications
+B <- 100
+mu_values <- c(1,  10)
+L <- 5
+
+# Define a list of estimators
+estimators <- list(
+  "Noughabi Arghami" = noughabi_arghami_estimator,
+  "Noughabi Arghami Bootstrap" = bootstrap_noughabi_arghami_estimator
+ )
+
+# Generate and plot the results
+combined_plot <- generate_plot(sample_sizes, R, B, mu_values, L, estimators, ncol = 2, nrow = 1)
+
+# Print the combined plot
+print(combined_plot)
+
+```
+
+```{r Plot_bias_mse_10, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE, for $L= 5$.", fig.width=10,fig.height=3}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 100
+mu_values <- c(1,  10)
+L <- 5
+
+# Define a list of estimators
+estimators <- list(
+  "Al Omari 1" = al_omari_1_estimator,
+   "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator
+  )
+
+# Generate and plot the results
+combined_plot <- generate_plot(sample_sizes, R, B, mu_values, L, estimators, ncol = 2, nrow = 1)
+
+# Print the combined plot
+print(combined_plot)
+
+```
+
+```{r Plot_bias_mse_11, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE, for $L= 5$.", fig.width=10,fig.height=3}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 100
+mu_values <- c(1,  10)
+L <- 5
+
+# Define a list of estimators
+estimators <- list(
+    "Al Omari 2" = al_omari_2_estimator,
+    "Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator
+)
+
+# Generate and plot the results
+combined_plot <- generate_plot(sample_sizes, R, B, mu_values, L, estimators, ncol = 2, nrow = 1)
+
+# Print the combined plot
+print(combined_plot)
+
+```
+The simulation results for Correa Bootstrap, Ebrahimi Bootstrap, and Al Omari 1 Bootstrap estimators are presented in Table \ref{tab:bias_mse_2}, where $\mu$ takes values in $\left\{1,10\right\}$ and $L=5$.
+
+```{r Table2, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+# Parámetros
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+R <- 100
+B <- 100
+mu_values <- c(1,  10)
+L <- 5
+
+# Define a list of estimators
+estimators <- list(
+  #"Van Es Bootstrap" = bootstrap_van_es_estimator,
+  "Correa Bootstrap" = bootstrap_correa_estimator,
+  "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+  #"Noughabi Arghami Bootstrap" = bootstrap_noughabi_arghami_estimator,
+  #"Vasicek Bootstrap" = bootstrap_vasicek_estimator,
+  "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator
+  #"Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator
+)
+
+# Crear una tabla para almacenar los resultados de todos los valores de mu
+combined_results <- NULL
+
+for (mu_val in mu_values) {
+  # Calcular resultados para el valor actual de mu
+  results <- calculate_bias_mse(sample_sizes, R, B, mu_val, L, estimators)
+
+  # Añadir una columna con el valor actual de mu en la primera posición
+  results <- cbind(mu = mu_val, results)
+
+  # Combina los resultados con la tabla principal
+  combined_results <- bind_rows(combined_results, results)
+}
+
+# Reshape the data to have Estimators as columns
+reshaped_results <- combined_results %>%
+  pivot_wider(names_from = Estimator, values_from = c(Bias, MSE))
+#\widetilde{H}_{i}
+
+
+colnames(reshaped_results) <- c("$\\bm{\\mu}$", "$\\bm{n}$",  "$\\widetilde{H}_{C}$", "$\\widetilde{H}_{E}$",  "$\\widetilde{H}_{AO_1}$",  "$\\widetilde{H}_{C}$", "$\\widetilde{H}_{E}$",  "$\\widetilde{H}_{AO_1}$")
+
+# Imprime la tabla combinada con líneas divisorias y título personalizado
+print(collapse_rows(kbl(reshaped_results, caption = "Bias and MSE for different $\\mu$ values, and $L=5$.",  escape=FALSE,
+                        align = "ccccccc",
+                        booktabs = T,
+                        #longtable = T,
+                        digits=4, label="bias_mse_2",# position="hbt", linesep = "",
+                        row.names=FALSE) %>%
+                     row_spec(0, bold = TRUE) %>%
+                    add_header_above(c(" ", " ", "Bias" = 3, "MSE" = 3)) %>%
+                    #collapse_rows(columns = 1:2) %>%
+                     kable_styling(latex_options = c("repeat_header",  "hold_position"))))
+```
+
+
+The precision of estimators, as evidenced by bias and MSE comparisons, benefits significantly from the bootstrap technique. Particularly, are the enhancements achieved by the Correa Bootstrap, Ebrahimi Bootstrap, and Al Omari 1 Bootstrap estimators. These methods exhibit remarkable precision, showcasing the efficacy of the bootstrap approach in refining their accuracy.
+
+Conversely, the application of bootstrap did not yield favorable results for the Noughabi-Arghami Bootstrap and Al Omari 2 Bootstrap estimators. The observed lack of improvement suggests that, in certain cases, the bootstrap technique may not be universally effective for all entropy estimation methods.
+
+
+
+Motivated by the superior performance of the Correa Bootstrap, Ebrahimi Bootstrap, and Al Omari 1 Bootstrap estimators, we proceed to a more detailed analysis of their variance and confidence intervals. This selection is driven by their consistent precision improvement through bootstrap enhancement, establishing them as promising candidates for further investigation.
+
+
+# Analysis of Variance and Confidence Intervals
+
+The next phase of our investigation involves a detailed examination of the variance exhibited by three selected bootstrap-enhanced estimators: Correa Bootstrap, Ebrahimi Bootstrap, and Al Omari 1 Bootstrap. The primary objective is to assess the stability and consistency of these estimators under varying conditions.
+
+
+Figures 1, 2, and 3 present a comparative analysis of the variance for each estimator across different parameter values ($\mu$ and $L$) and sample sizes ($n$). Notably, the Correa Bootstrap, Ebrahimi Bootstrap, and Al Omari 1 Bootstrap estimators consistently demonstrate lower variance compared to their non-bootstrap counterparts.
+
+
+
+
+```{r Plot_var, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap=" Variance for $L= 5$.", fig.width=6,fig.height=5}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 100
+mu <- 1
+L <- 5
+
+# Define a list of estimators
+estimators <- list(
+  "Correa" = correa_estimator,
+  "Ebrahimi" = ebrahimi_estimator,
+  "Al Omari 1" = al_omari_1_estimator,
+  "Correa Bootstrap" = bootstrap_correa_estimator,
+  "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+  "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator
+)
+
+#plot
+
+variance_data <- calculate_variance(sample_sizes, R, B, mu, L, estimators)
+ggplot(variance_data, aes(x = SampleSize, y = Variance, color = Estimator)) +
+  geom_point(size = 2) +
+  geom_line(aes(group = Estimator), linetype = "solid", linewidth = 0.5) +
+  labs(title = "",
+       x = "Sample Size", y = "Variance") +
+  guides(color = guide_legend(title = "Estimator")) +
+  annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu)), hjust = 1.08, vjust = 1.3, size = 3)
+ 
+
+```
+
+```{r Plot_var2, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Variance for $L= 5$.", fig.width=6,fig.height=5}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 100
+mu <- 10
+L <- 5
+
+# Define a list of estimators
+estimators <- list(
+  "Correa" = correa_estimator,
+  "Ebrahimi" = ebrahimi_estimator,
+  "Al Omari 1" = al_omari_1_estimator,
+  "Correa Bootstrap" = bootstrap_correa_estimator,
+  "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+  "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator
+)
+
+#plot
+
+variance_data <- calculate_variance(sample_sizes, R, B, mu, L, estimators)
+ggplot(variance_data, aes(x = SampleSize, y = Variance, color = Estimator)) +
+  geom_point(size = 2) +
+  geom_line(aes(group = Estimator), linetype = "solid", linewidth = 0.5) +
+  labs(title = "",
+       x = "Sample Size", y = "Variance") +
+  guides(color = guide_legend(title = "Estimator")) +
+  annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu)), hjust = 1.08, vjust = 1.3, size = 3)
+ 
+
+```
+
+```{r Plot_var3, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Variance for $L= 5$.", fig.width=6,fig.height=5}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 100
+mu <- 100
+L <- 5
+
+# Define a list of estimators
+estimators <- list(
+  "Correa" = correa_estimator,
+  "Ebrahimi" = ebrahimi_estimator,
+  "Al Omari 1" = al_omari_1_estimator,
+  "Correa Bootstrap" = bootstrap_correa_estimator,
+  "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+  "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator
+)
+
+#plot
+
+variance_data <- calculate_variance(sample_sizes, R, B, mu, L, estimators)
+ggplot(variance_data, aes(x = SampleSize, y = Variance, color = Estimator)) +
+  geom_point(size = 2) +
+  geom_line(aes(group = Estimator), linetype = "solid", linewidth = 0.5) +
+  labs(title = "",
+       x = "Sample Size", y = "Variance") +
+  guides(color = guide_legend(title = "Estimator")) +
+  annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu)), hjust = 1.08, vjust = 1.3, size = 3)
+ 
+
+```
+
+The results indicate that, for small sample sizes, the original estimators exhibit lower variance compared to their bootstrap counterparts. However, as the sample size increases, the variance decreases for both the original and bootstrap estimators.
+
+# Confidence Interval Analysis
+To complement our variance examination, we delve into the evaluation of confidence intervals associated with the selected bootstrap-enhanced estimators. Confidence intervals provide valuable insights into the precision and reliability of the estimators' predictions.
+
+The narrower and more stable the confidence intervals, the higher the confidence in the accuracy of the estimators. Our analysis reveals that the Correa Bootstrap, Ebrahimi Bootstrap, and Al Omari 1 Bootstrap estimators consistently generate tighter and more reliable confidence intervals. 
+
+```{r Plot_CI1, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Confidence Intervals for $L= 5$ and $\\mu=10$.", fig.width=6,fig.height=5}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+sample_sizes <- c(9, 25, 49, 81, 121)
+R <- 100
+mu <- 10
+L <- 5
+
+# Function to generate samples for a given sample size and replication
+generate_samples <- function(sample_size, replication, mu, L) {
+  samples <- vector("list", replication)
+  for (r in 1:replication) {
+    samples[[r]] <- gamma_sar_sample(L, mu, sample_size)
+  }
+  return(samples)
+}
+
+true_entropy <- entropy_gamma_sar(L, mu)
+# Function to calculate Confidence Intervals for both non-parametric and bootstrap estimators
+calculate_confidence_intervals <- function(sample_sizes, R, mu, L, confidence_level = 0.95) {
+  true_entropy <- entropy_gamma_sar(L, mu)
+  
+  # Define a list of estimators
+  estimators <- list(
+      "Correa Bootstrap" = bootstrap_correa_estimator
+    # "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+    # "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator
+    # "Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator
+  )
+  
+  output <- data.frame(SampleSize = integer(0), Estimator = character(0), 
+                       LowerCI = numeric(0), UpperCI = numeric(0))
+  
+  for (ssize in sample_sizes) {
+    
+    samples <- generate_samples(ssize, R, mu, L)
+    
+    for (estimator_name in names(estimators)) {
+      estimator <- estimators[[estimator_name]]
+      v.entropy <- numeric(R)
+      
+      for (r in 1:R) {
+        sample <- samples[[r]]
+        
+        if (grepl("Bootstrap", estimator_name)) {
+          v.entropy[r] <- estimator(sample, B = 100)
+        } else {
+          v.entropy[r] <- estimator(sample)
+        }
+        
+      }
+      
+      # Calculate Confidence Interval
+      se <- sd(v.entropy)
+      margin_of_error <- qt((1 + confidence_level) / 2, R - 1) * se / sqrt(R)
+      ci_lower <- mean(v.entropy) - margin_of_error
+      ci_upper <- mean(v.entropy) + margin_of_error
+      
+      output <- rbind(output, data.frame(SampleSize = ssize, Estimator = estimator_name, 
+                                         LowerCI = round(ci_lower, 5), UpperCI = round(ci_upper, 5)))
+    }
+  }
+  
+  return(output)
+}
+
+
+confidence_intervals_data <- calculate_confidence_intervals(sample_sizes, R, mu, L)
+
+
+combined_plot <- ggplot(confidence_intervals_data, aes(x = SampleSize, y = UpperCI, ymin = LowerCI, ymax = UpperCI, color = Estimator)) +
+  geom_line(aes(group = Estimator), linetype = "dashed") +
+  geom_ribbon(alpha = 0.2) +
+  geom_point(aes(y = (LowerCI + UpperCI) / 2), color = "#808080", size = 2) + 
+  geom_line(aes(x = SampleSize, y = (LowerCI + UpperCI) / 2, color = Estimator), linetype = "solid", size = 0.5) +  
+  geom_line(aes(y = true_entropy), linetype = "solid", color = "black") +  
+  labs(title = "",
+       x = "Sample Size", y = "Entropy") 
+ 
+print(combined_plot)
+```
+
+```{r Plot_CI_2, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Confidence Intervals for $L= 5$ and $\\mu=10$.", fig.width=6,fig.height=5}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+sample_sizes <- c(9, 25, 49, 81, 121)
+R <- 100
+mu <- 10
+L <- 5
+
+# Function to generate samples for a given sample size and replication
+generate_samples <- function(sample_size, replication, mu, L) {
+  samples <- vector("list", replication)
+  for (r in 1:replication) {
+    samples[[r]] <- gamma_sar_sample(L, mu, sample_size)
+  }
+  return(samples)
+}
+
+true_entropy <- entropy_gamma_sar(L, mu)
+# Function to calculate Confidence Intervals for both non-parametric and bootstrap estimators
+calculate_confidence_intervals <- function(sample_sizes, R, mu, L, confidence_level = 0.95) {
+  true_entropy <- entropy_gamma_sar(L, mu)
+  
+  # Define a list of estimators
+  estimators <- list(
+      "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator
+     #"Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator
+    # "Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator
+  )
+  
+  output <- data.frame(SampleSize = integer(0), Estimator = character(0), 
+                       LowerCI = numeric(0), UpperCI = numeric(0))
+  
+  for (ssize in sample_sizes) {
+    
+    samples <- generate_samples(ssize, R, mu, L)
+    
+    for (estimator_name in names(estimators)) {
+      estimator <- estimators[[estimator_name]]
+      v.entropy <- numeric(R)
+      
+      for (r in 1:R) {
+        sample <- samples[[r]]
+        
+        if (grepl("Bootstrap", estimator_name)) {
+          v.entropy[r] <- estimator(sample, B = 100)
+        } else {
+          v.entropy[r] <- estimator(sample)
+        }
+        
+      }
+      
+      # Calculate Confidence Interval
+      se <- sd(v.entropy)
+      margin_of_error <- qt((1 + confidence_level) / 2, R - 1) * se / sqrt(R)
+      ci_lower <- mean(v.entropy) - margin_of_error
+      ci_upper <- mean(v.entropy) + margin_of_error
+      
+      output <- rbind(output, data.frame(SampleSize = ssize, Estimator = estimator_name, 
+                                         LowerCI = round(ci_lower, 5), UpperCI = round(ci_upper, 5)))
+    }
+  }
+  
+  return(output)
+}
+
+
+confidence_intervals_data <- calculate_confidence_intervals(sample_sizes, R, mu, L)
+
+
+combined_plot <- ggplot(confidence_intervals_data, aes(x = SampleSize, y = UpperCI, ymin = LowerCI, ymax = UpperCI, color = Estimator)) +
+  geom_line(aes(group = Estimator), linetype = "dashed") +
+  geom_ribbon(alpha = 0.2) +
+  geom_point(aes(y = (LowerCI + UpperCI) / 2), color = "#808080", size = 2) + 
+  geom_line(aes(x = SampleSize, y = (LowerCI + UpperCI) / 2, color = Estimator), linetype = "solid", size = 0.5) +  
+  geom_line(aes(y = true_entropy), linetype = "solid", color = "black") +  
+  labs(title = "",
+       x = "Sample Size", y = "Entropy") 
+ 
+print(combined_plot)
+```
+
+```{r Plot_CI_3, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Confidence Intervals for $L= 5$ and $\\mu=10$.", fig.width=6,fig.height=5}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+sample_sizes <- c(9, 25, 49, 81, 121)
+R <- 100
+mu <- 10
+L <- 5
+
+# Function to generate samples for a given sample size and replication
+generate_samples <- function(sample_size, replication, mu, L) {
+  samples <- vector("list", replication)
+  for (r in 1:replication) {
+    samples[[r]] <- gamma_sar_sample(L, mu, sample_size)
+  }
+  return(samples)
+}
+
+true_entropy <- entropy_gamma_sar(L, mu)
+# Function to calculate Confidence Intervals for both non-parametric and bootstrap estimators
+calculate_confidence_intervals <- function(sample_sizes, R, mu, L, confidence_level = 0.95) {
+  true_entropy <- entropy_gamma_sar(L, mu)
+  
+  # Define a list of estimators
+  estimators <- list(
+      #"Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator
+     "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator
+  )
+  
+  output <- data.frame(SampleSize = integer(0), Estimator = character(0), 
+                       LowerCI = numeric(0), UpperCI = numeric(0))
+  
+  for (ssize in sample_sizes) {
+    
+    samples <- generate_samples(ssize, R, mu, L)
+    
+    for (estimator_name in names(estimators)) {
+      estimator <- estimators[[estimator_name]]
+      v.entropy <- numeric(R)
+      
+      for (r in 1:R) {
+        sample <- samples[[r]]
+        
+        if (grepl("Bootstrap", estimator_name)) {
+          v.entropy[r] <- estimator(sample, B = 100)
+        } else {
+          v.entropy[r] <- estimator(sample)
+        }
+        
+      }
+      
+      # Calculate Confidence Interval
+      se <- sd(v.entropy)
+      margin_of_error <- qt((1 + confidence_level) / 2, R - 1) * se / sqrt(R)
+      ci_lower <- mean(v.entropy) - margin_of_error
+      ci_upper <- mean(v.entropy) + margin_of_error
+      
+      output <- rbind(output, data.frame(SampleSize = ssize, Estimator = estimator_name, 
+                                         LowerCI = round(ci_lower, 5), UpperCI = round(ci_upper, 5)))
+    }
+  }
+  
+  return(output)
+}
+
+
+confidence_intervals_data <- calculate_confidence_intervals(sample_sizes, R, mu, L)
+
+
+combined_plot <- ggplot(confidence_intervals_data, aes(x = SampleSize, y = UpperCI, ymin = LowerCI, ymax = UpperCI, color = Estimator)) +
+  geom_line(aes(group = Estimator), linetype = "dashed") +
+  geom_ribbon(alpha = 0.2) +
+  geom_point(aes(y = (LowerCI + UpperCI) / 2), color = "#808080", size = 2) + 
+  geom_line(aes(x = SampleSize, y = (LowerCI + UpperCI) / 2, color = Estimator), linetype = "solid", size = 0.5) +  
+  geom_line(aes(y = true_entropy), linetype = "solid", color = "black") +  
+  labs(title = "",
+       x = "Sample Size", y = "Entropy") 
+ 
+print(combined_plot)
+```
+
+# Mean Entropy for Estimators
+
+```{r Plot_mean, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Mean entropy for $L= 5$ and $\\mu=10$.", fig.width=6,fig.height=5}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+sample_sizes <- c(9, 25, 49, 81, 121)
+R <- 100
+mu <- 10
+L <- 5
+
+# Function to generate samples for a given sample size and replication
+generate_samples <- function(sample_size, replication, mu, L) {
+  samples <- vector("list", replication)
+  for (r in 1:replication) {
+    samples[[r]] <- gamma_sar_sample(L, mu, sample_size)
+  }
+  return(samples)
+}
+true_entropy <- entropy_gamma_sar(L, mu)
+# Function to calculate Variance for both non-parametric and bootstrap estimators
+calculate_entropy <- function(sample_sizes, R, mu, L) {
+  #true_entropy <- entropy_gamma_sar(L, mu)
+  
+  # Define a list of estimators
+  estimators <- list(
+     "Correa" = correa_estimator,
+     "Ebrahimi" = ebrahimi_estimator,
+     "Al Omari 1" = al_omari_1_estimator,
+      "Correa Bootstrap" = bootstrap_correa_estimator,
+     "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+     "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator
+  )
+  
+  output <- data.frame(SampleSize = integer(0), Estimator = character(0), MeanEntropy = numeric(0))
+  
+  for (ssize in sample_sizes) {
+    samples <- generate_samples(ssize, R, mu, L)
+    
+    for (estimator_name in names(estimators)) {
+      estimator <- estimators[[estimator_name]]
+      v.entropy <- numeric(R)
+      
+      for (r in 1:R) {
+        sample <- samples[[r]]
+        
+        if (grepl("Bootstrap", estimator_name)) {
+          v.entropy[r] <- estimator(sample, B = 100)
+        } else {
+          v.entropy[r] <- estimator(sample)
+        }
+      }
+      
+      mean_entropy <- mean(v.entropy)
+      output <- rbind(output, data.frame(SampleSize = ssize, Estimator = estimator_name, MeanEntropy = round(mean_entropy, 5)))
+      
+      
+    
+    }
+  }
+  
+  return(output)
+}
+
+
+entropy_data <-calculate_entropy(sample_sizes, R, mu, L)
+
+
+ggplot(entropy_data, aes(x = SampleSize, y = MeanEntropy, color = Estimator)) +
+geom_point(size = 2) +
+  geom_line(aes(group = Estimator), linetype = "solid", linewidth = 0.5) +
+  geom_line(aes(y = true_entropy), linetype = "solid", color = "black") + 
+  labs(title = "",
+       x = "Sample Size", y = "Mean Entropy") +
+       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu)), hjust = 1.08, vjust = 1.3, size = 3)
+  
+```
+
+
+```{r Plot_mean1, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Mean entropy for $L= 1$ and $\\mu=1$.", fig.width=6,fig.height=5}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+sample_sizes <- c(9, 25, 49, 81, 121, 225)
+R <- 100
+mu <- 1
+L <- 1
+
+# Function to generate samples for a given sample size and replication
+generate_samples <- function(sample_size, replication, mu, L) {
+  samples <- vector("list", replication)
+  for (r in 1:replication) {
+    samples[[r]] <- gamma_sar_sample(L, mu, sample_size)
+  }
+  return(samples)
+}
+
+# Function to calculate Variance for both non-parametric and bootstrap estimators
+true_entropy <- entropy_gamma_sar(L, mu)
+calculate_entropy <- function(sample_sizes, R, mu, L) {
+ # true_entropy <- entropy_gamma_sar(L, mu)
+  
+  # Define a list of estimators
+  estimators <- list(
+     "Correa" = correa_estimator,
+     "Ebrahimi" = ebrahimi_estimator,
+     "Al Omari 1" = al_omari_1_estimator,
+      "Correa Bootstrap" = bootstrap_correa_estimator,
+     "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+     "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator
+  )
+  
+  output <- data.frame(SampleSize = integer(0), Estimator = character(0), MeanEntropy = numeric(0))
+  
+  for (ssize in sample_sizes) {
+    samples <- generate_samples(ssize, R, mu, L)
+    
+    for (estimator_name in names(estimators)) {
+      estimator <- estimators[[estimator_name]]
+      v.entropy <- numeric(R)
+      
+      for (r in 1:R) {
+        sample <- samples[[r]]
+        
+        if (grepl("Bootstrap", estimator_name)) {
+          v.entropy[r] <- estimator(sample, B = 100)
+        } else {
+          v.entropy[r] <- estimator(sample)
+        }
+      }
+      
+      mean_entropy <- mean(v.entropy)
+      output <- rbind(output, data.frame(SampleSize = ssize, Estimator = estimator_name, MeanEntropy = round(mean_entropy, 5)))
+      
+      
+    
+    }
+  }
+  
+  return(output)
+}
+
+
+entropy_data <-calculate_entropy(sample_sizes, R, mu, L)
+
+
+ggplot(entropy_data, aes(x = SampleSize, y = MeanEntropy, color = Estimator)) +
+geom_point(size = 2) +
+  geom_line(aes(group = Estimator), linetype = "solid", linewidth = 0.5) +
+  geom_line(aes(y = true_entropy), linetype = "solid", color = "black") + 
+  labs(title = "",
+       x = "Sample Size", y = "Mean Entropy") +
+       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu)), hjust = 1.08, vjust = 1.3, size = 3)
+  
+```
+
+```{r Plot_mean2, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Mean entropy for $L= 5$ and $\\mu=5$.", fig.width=6,fig.height=5}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+sample_sizes <- c(9, 25, 49, 81, 121)
+R <- 100
+mu <- 5
+L <- 5
+
+# Function to generate samples for a given sample size and replication
+generate_samples <- function(sample_size, replication, mu, L) {
+  samples <- vector("list", replication)
+  for (r in 1:replication) {
+    samples[[r]] <- gamma_sar_sample(L, mu, sample_size)
+  }
+  return(samples)
+}
+
+# Function to calculate Variance for both non-parametric and bootstrap estimators
+true_entropy <- entropy_gamma_sar(L, mu)
+calculate_entropy <- function(sample_sizes, R, mu, L) {
+ # true_entropy <- entropy_gamma_sar(L, mu)
+  
+  # Define a list of estimators
+  estimators <- list(
+     "Correa" = correa_estimator,
+     "Ebrahimi" = ebrahimi_estimator,
+     "Al Omari 1" = al_omari_1_estimator,
+      "Correa Bootstrap" = bootstrap_correa_estimator,
+     "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+     "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator
+  )
+  
+  output <- data.frame(SampleSize = integer(0), Estimator = character(0), MeanEntropy = numeric(0))
+  
+  for (ssize in sample_sizes) {
+    samples <- generate_samples(ssize, R, mu, L)
+    
+    for (estimator_name in names(estimators)) {
+      estimator <- estimators[[estimator_name]]
+      v.entropy <- numeric(R)
+      
+      for (r in 1:R) {
+        sample <- samples[[r]]
+        
+        if (grepl("Bootstrap", estimator_name)) {
+          v.entropy[r] <- estimator(sample, B = 100)
+        } else {
+          v.entropy[r] <- estimator(sample)
+        }
+      }
+      
+      mean_entropy <- mean(v.entropy)
+      output <- rbind(output, data.frame(SampleSize = ssize, Estimator = estimator_name, MeanEntropy = round(mean_entropy, 5)))
+      
+      
+    
+    }
+  }
+  
+  return(output)
+}
+
+
+entropy_data <-calculate_entropy(sample_sizes, R, mu, L)
+
+
+ggplot(entropy_data, aes(x = SampleSize, y = MeanEntropy, color = Estimator)) +
+geom_point(size = 2) +
+  geom_line(aes(group = Estimator), linetype = "solid", linewidth = 0.5) +
+  geom_line(aes(y = true_entropy), linetype = "solid", color = "black") + 
+  labs(title = "",
+       x = "Sample Size", y = "Mean Entropy") +
+       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu)), hjust = 1.08, vjust = 1.3, size = 3)
+  
+```
+
+## Results for  Nonparametric Estimators with  $\mathcal{G}_I^0$
+
+
+```{r Plot_GI0_mean, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Mean entropy for $L= 5$, $\\alpha= -1000$ and $\\mu=10$.", fig.width=6,fig.height=5}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+sample_sizes <- c(9, 25, 49, 81, 121)
+R <- 100
+mu <- 10
+L <- 5
+alpha <- -1000
+
+# Function to generate samples for a given sample size and replication
+generate_samples <- function(sample_size, replication, mu, alpha, L) {
+  samples <- vector("list", replication)
+  for (r in 1:replication) {
+    samples[[r]] <- gi0_sample(mu, alpha, L, sample_size)
+  }
+  return(samples)
+}
+
+# Function to calculate Variance for both non-parametric and bootstrap estimators
+true_entropy <- entropy_gI0(mu, alpha, L)
+calculate_entropy <- function(sample_sizes, R, mu, alpha, L) {
+  # true_entropy <- entropy_gamma_sar(L, mu)
+  
+  # Define a list of estimators
+  estimators <- list(
+    #"Van Es" = van_es_estimator,
+    "Correa" = correa_estimator,
+    "Ebrahimi" = ebrahimi_estimator,
+    #"Noughabi Arghami" = noughabi_arghami_estimator,
+    #"Vasicek" = vasicek_estimator,
+    "Al Omari 1" = al_omari_1_estimator,
+    #"Al Omari 2" = al_omari_2_estimator,
+    #"Van Es Bootstrap" = bootstrap_van_es_estimator,
+    "Correa Bootstrap" = bootstrap_correa_estimator,
+    "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+    #"Noughabi Arghami Bootstrap" = bootstrap_noughabi_arghami_estimator,
+    "Vasicek Bootstrap" = bootstrap_vasicek_estimator,
+    "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator
+    #"Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator
+  )
+  
+  output <- data.frame(SampleSize = integer(0), Estimator = character(0), MeanEntropy = numeric(0))
+  
+  for (ssize in sample_sizes) {
+    samples <- generate_samples(ssize, R, mu, alpha, L)
+    
+    for (estimator_name in names(estimators)) {
+      estimator <- estimators[[estimator_name]]
+      v.entropy <- numeric(R)
+      
+      for (r in 1:R) {
+        sample <- samples[[r]]
+        
+        if (grepl("Bootstrap", estimator_name)) {
+          v.entropy[r] <- estimator(sample, B = 100)
+        } else {
+          v.entropy[r] <- estimator(sample)
+        }
+      }
+      
+      mean_entropy <- mean(v.entropy)
+      output <- rbind(output, data.frame(SampleSize = ssize, Estimator = estimator_name, MeanEntropy = round(mean_entropy, 5)))
+      
+      
+      
+    }
+  }
+  
+  return(output)
+}
+
+
+entropy_data <-calculate_entropy(sample_sizes, R, mu, alpha, L)
+
+
+ggplot(entropy_data, aes(x = SampleSize, y = MeanEntropy, color = Estimator)) +
+  geom_point(size = 2) +
+  geom_line(aes(group = Estimator), linetype = "solid", linewidth = 0.5) +
+  geom_line(aes(y = true_entropy), linetype = "solid", color = "black") + 
+  labs(title = "",
+       x = "Sample Size", y = "Mean Entropy") +
+  annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu)), hjust = 1.08, vjust = 1.3, size = 3)
+
+  
+```
+In the figure we can observe that when the parameter $\alpha$ goes to $-\infty$, the entropy of $\mathcal{G}_I^0$ is close to the entropy of $\Gamma_{\text{SAR}}$.

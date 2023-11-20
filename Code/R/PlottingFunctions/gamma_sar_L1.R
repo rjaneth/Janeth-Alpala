@@ -14,11 +14,12 @@ source("../MainFunctions/entropy_gamma_sar.r")
 set.seed(1234567890, kind="Mersenne-Twister")
 
 # Define sample sizes, the number of repetitions, and parameters
-sample_sizes <- c(9, 25, 121, 1000, 10000, 100000)
-R <- 10000
+sample_sizes <- c(9, 25, 49, 81, 121, 225)
+R <- 100
 mu <- 1
 L <- 1
-
+true_entropy <- entropy_gamma_sar(2, 2)
+#cat( "True entropy:", tru2_entropy)
 # Initialize the output data frame
 output <- NULL
 
@@ -30,6 +31,7 @@ for(ssize in sample_sizes) {
     v.nonparametric.entropy[r] <- van_es_estimator(sample)
   }
   output <- rbind(output, c(mean(v.nonparametric.entropy), sd(v.nonparametric.entropy)))
+  cat( "Sample Size:", ssize, "entropy:", mean(v.nonparametric.entropy),"True entropy:", true_entropy, "\n")
 }
 
 # Create a data frame with results
@@ -37,6 +39,7 @@ output <- data.frame(output)
 names(output) <- c("Mean", "Std")
 output$SampleSize <- sample_sizes
 
+#cat( "True entropy:", tru2_entropy)
 #Plot
 ggplot(output, aes(x=SampleSize, y=Mean)) +
   geom_hline(yintercept = entropy_gamma_sar(1, 1)) +
@@ -44,10 +47,10 @@ ggplot(output, aes(x=SampleSize, y=Mean)) +
   geom_point() +
   #geom_errorbar(aes(ymin = Mean - Std, ymax = Mean + Std), width = 0.1) +
   xlab("Sample Size") +
-  scale_x_log10(breaks=output$SampleSize) +
+  #scale_x_log10(breaks=output$SampleSize) +
   ylab("Mean Non-parametric Entropy")
 
 # Save the plot as a PDF file
-ggsave("myplot.pdf")
+#ggsave("myplot.pdf")
 
 

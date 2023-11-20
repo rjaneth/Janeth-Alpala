@@ -21,12 +21,14 @@ source("../MainFunctions/noughabi_arghami_estimator.r")
 source("../MainFunctions/vasicek_estimator.r") 
 source("../MainFunctions/al_omari_1_estimator.r") 
 source("../MainFunctions/al_omari_2_estimator.r") 
-#set.seed(1234567890, kind = "Mersenne-Twister")
+
+
+set.seed(1234567890, kind = "Mersenne-Twister")
 
 
 
 # Set sample sizes, the number of repetitions, and parameters
-sample_sizes <- c(9, 25,49,81, 121, 1225)
+sample_sizes <- c(9, 25, 49, 81, 121, 225)
 R <- 1000
 mu <- 1
 L <- 1
@@ -42,7 +44,7 @@ for (ssize in sample_sizes) {
   v.nonparametric.entropy <- NULL
   for (r in 1:R) {
     sample <- gamma_sar_sample(L, mu, ssize)
-    v.nonparametric.entropy[r] <- noughabi_arghami_estimator(sample)
+    v.nonparametric.entropy[r] <- van_es_estimator(sample)
   }
   
   # Calculate the bias by subtracting the true entropy value

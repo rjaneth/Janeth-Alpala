@@ -11,7 +11,7 @@
 
 
 
-gi0_sample <- function(L, alpha, mu,  n) {
+gi0_sample <- function(mu, alpha, L,  n) {
   
   X_samples <- rinvgamma(n, shape = -alpha, rate =mu*(-alpha-1))
   

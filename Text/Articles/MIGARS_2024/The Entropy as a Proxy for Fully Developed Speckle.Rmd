@@ -69,8 +69,10 @@ header-includes:
 
 
 bibliography:  ../../Common/references.bib
-csl: ieee.csl
-output: rticles::ieee_article
+csl: "lib/ieee.csl"
+output: 
+  rticles::ieee_article:
+    number_sections: TRUE
 
 
 #citation_sorting: none   ## used as sorting option of the biblatex package (if selected)
@@ -105,7 +107,7 @@ theme_set(theme_pander() +
 
 
 \newtheorem{lemma}{Lemma}
-\renewcommand{\thesection}{\Alph{section}}
+
 # Introduction {#sec:Introduction}
 
 Synthetic aperture radar (SAR) has become a fundamental technology for environmental monitoring and disaster management because of its ability to provide daytime and nighttime imagery in all weather conditions&nbsp;[@Cassetti2022]. However, the utility of SAR data depends on a thorough understanding of the statistical properties governing its inherent speckle noise. This complex interaction, which defies simplistic assumptions of additivity and Gaussianity, requires robust statistical models that can accurately characterize SAR data for efficient processing and analysis.
@@ -310,7 +312,7 @@ As we explore the 3D plot, we can observe how changes in $\mu$, $\alpha$, and $L
 
 The conclusion goes here.
 
-<!-- conference papers do not normally have an appendix -->
+
 
 # Acknowledgment {#acknowledgment}
 

@@ -19,3 +19,4 @@ entropy_gI0 <- function(mu, alpha, L) {
   entropy <- term1 + term2 
   return(entropy)
 }
+

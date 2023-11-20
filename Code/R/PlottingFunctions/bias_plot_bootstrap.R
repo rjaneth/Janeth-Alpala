@@ -22,10 +22,18 @@ source("../MainFunctions/vasicek_estimator.r")
 source("../MainFunctions/al_omari_1_estimator.r")
 source("../MainFunctions/al_omari_2_estimator.r")
 
+source("../MainFunctions/bootstrap_van_es_estimator.r")
+source("../MainFunctions/bootstrap_correa_estimator.r")
+source("../MainFunctions/bootstrap_ebrahimi_estimator.r")
+source("../MainFunctions/bootstrap_noughabi_arghami_estimator.r")
+source("../MainFunctions/bootstrap_vasicek_estimator.r")
+source("../MainFunctions/bootstrap_al_omari_1_estimator.r")
+source("../MainFunctions/bootstrap_al_omari_2_estimator.r")
+
 set.seed(1234567890, kind="Mersenne-Twister")
 
-sample_sizes <- c( 9, 25, 49, 81, 121, 1000)
-R <- 100
+sample_sizes <- c( 9, 25)
+R <- 5
 mu <- 1
 L <- 1
 
@@ -37,37 +45,35 @@ output <- data.frame(SampleSize = integer(0), Estimator = character(0), Bias = n
 
 #List of estimator
 estimators <- list(
-  list(func = van_es_estimator, label = "Van Es"),
-  list(func = correa_estimator, label = "Correa"),
-  list(func = ebrahimi_estimator, label = "Ebrahimi"),
-  list(func = noughabi_arghami_estimator, label = "Noughabi Arghami"),
-  list(func = vasicek_estimator, label = "Vasicek"),
-  list(func = al_omari_1_estimator, label = "Al Omari 1"),
-  list(func = al_omari_2_estimator, label = "Al Omari 2")
+  list(func = bootstrap_van_es_estimator, label = " bootstrap Van Es"),
+  list(func = bootstrap_correa_estimator, label = " bootstrap Correa"),
+  # list(func = bootstrap_ebrahimi_estimator, label = "bootstrap Ebrahimi"),
+  # list(func = bootstrap_noughabi_arghami_estimator, label = "bootstrap Noughabi Arghami"),
+  # list(func = bootstrap_vasicek_estimator, label = "bootstrap Vasicek"),
+  # list(func = bootstrap_al_omari_1_estimator, label = "bootstrap Al Omari 1"),
+  list(func = bootstrap_al_omari_2_estimator, label = "bootstrap Al Omari 2")
 )
+
 
 
 
 
 for (estimator in estimators) {
   for (ssize in sample_sizes) {
-    v.nonparametric.entropy <- numeric(R)
-   
+    v.bootstrap.entropy <- numeric(R)
     for (r in 1:R) {
       sample <- gamma_sar_sample(L, mu, ssize)
-      #cat("sample:", estimator$label, sample, "\n")
-      v.nonparametric.entropy[r] <- estimator$func(sample)
-      #cat("non:", v.nonparametric.entropy, "\n")
-      
-     
+      cat("sample:", sample, "\n")
+      v.bootstrap.entropy[r] <- estimator$func(sample, B=3)
+      cat("non:", v.bootstrap.entropy, "\n")
     }
-    bias <- mean(v.nonparametric.entropy) - true_entropy
-    # Calculate the bias 
     
-    #cat("bias:", bias, "\n")
+    # Calculate the bias 
+    bias <- mean(v.bootstrap.entropy) - true_entropy
+    
     
     output <- rbind(output, data.frame(SampleSize = ssize, Estimator = estimator$label, Bias = bias))
-    cat("Estimator:", estimator$label, "Sample Size:", ssize, "Bias:", bias, "\n")
+    cat("Estimator bootstrap:", estimator$label, "Sample Size:", ssize, "Bias:", bias, "\n")
   }
 }
 

@@ -14,3 +14,4 @@ gamma_sar_sample <- function(L, mu, n) {
   samples <- rgamma(n, shape = L, rate = L / mu)
   return(samples)
 }
+

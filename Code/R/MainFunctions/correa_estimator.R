@@ -33,7 +33,7 @@ correa_estimator <- function(data) {
 
 
 # # # Example usage:
-# data <- c(1.2, 1.5,3.6, 2.0, 2.1, 2.5, 2.6, 3.0, 3.1, 3.5 )
+# data <- data <- c( 0.429283, 0.429283, 0.9444219, 0.9608317, 1.451404, 1.451404, 0.429283, 0.429283, 0.429283 )#c(1.2, 1.5,3.6, 2.0, 2.1, 2.5, 2.6, 3.0, 3.1, 3.5 )
 # result <- correa_estimator(data)
 # cat("Correa Estimator:", result, "\n")
 
