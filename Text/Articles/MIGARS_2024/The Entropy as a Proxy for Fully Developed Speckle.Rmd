@@ -248,7 +248,7 @@ ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = Looks)) +
 
 Fig.&nbsp;\ref{fig:3d_GIO} illustrates the entropy of $G_I^0$ distribution as a function of three key parameters: $\mu$, $\alpha$, and $L$.
 
-```{r 3d_GIO, fig.align="center",  out.width = "70%", fig.cap="Simulation of entropy for ${G}_I^0$. ", fig.show="hold",  fig.pos="hbt"}
+```{r 3d_GIO, fig.align="center",  out.width = "70%", fig.cap="The Shannon Entropy under ${G}_I^0$ models.", fig.show="hold",  fig.pos="hbt"}
 knitr::include_graphics("../../../Figures/PDF/entropy_plot_3d.pdf")
 ```
 As we explore the 3D plot, we can observe how changes in $\mu$, $\alpha$, and $L$ collectively influence the Entropy of the $G_I^0$ distribution. 
