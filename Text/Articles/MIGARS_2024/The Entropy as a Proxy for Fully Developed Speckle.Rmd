@@ -14,7 +14,7 @@ affiliation:
       email: janeth.alpala@ufpe.br, abraao@de.ufpe.br 
       mark: 1
       author:
-      - name: Rosa Janeth Alpala, Abraão D. C. Nascimento 
+      - name: Rosa Janeth Alpala, Abraão D.\ C.\ Nascimento 
       
     - name: Victoria University of Wellington
       department: School of Mathematics and Statistics
@@ -22,7 +22,7 @@ affiliation:
       email: alejandro.frery@vuw.ac.nz
       mark: 2
       author:
-        - name: Alejandro C. Frery
+        - name: Alejandro C.\ Frery
           
 
       
@@ -30,13 +30,13 @@ affiliation:
 
 keywords: ["SAR", "entropy estimation", "non-parametric analysis", "order statistics"]
 abstract: |
-  SAR Data are affected by speckle in a non-additive and non-Gaussian way.
+  SAR Data are affected by speckle, a non-additive and non-Gaussian interference noise-like pattern.
   The type of distribution these data follow is paramount for their processing and analysis.
   Good statistical models provide flexibility and accuracy, often at the cost of using several parameters.
   The $\mathcal{G}^0$ distribution is one of the most successful models for SAR data. 
   It includes the Gamma law as particular case which arises in the presence of fully developed speckle.
   Although the latter is a limit distribution of the former, using the same estimation technique for the more general model is numerically unfeasible.
-  We propose a two-stage estimation procedure: first, we verify the hypothesis that the data are fully-developed speckle and, if this assumption is rejected, we proceed to estimate the parameters that index the $\mathcal G^0$ distribution.
+  We propose a two-stage estimation procedure: first, we verify the hypothesis that the data are fully-developed speckle. If this assumption is rejected, we proceed to estimate the parameters that index the $\mathcal G^0$ distribution; otherwise, we proceed with the Gamma model.
   Given the uncertainty of the underlying distribution, and the negative impact that using an inadequate model has on maximum likelihood estimation, we employ a non-parametric approach to estimate entropy under the fully-developed speckle hypothesis.
 
 # use some specific Tex packages if needed. 
@@ -69,7 +69,7 @@ header-includes:
 
 
 bibliography:  ../../Common/references.bib
-csl: "lib/ieee.csl"
+#csl: "ieee.csl"
 output: 
   rticles::ieee_article:
     number_sections: TRUE
@@ -110,23 +110,42 @@ theme_set(theme_pander() +
 
 # Introduction {#sec:Introduction}
 
-Synthetic aperture radar (SAR) has become a fundamental technology for environmental monitoring and disaster management because of its ability to provide daytime and nighttime imagery in all weather conditions&nbsp;[@Cassetti2022]. However, the utility of SAR data depends on a thorough understanding of the statistical properties governing its inherent speckle noise. This complex interaction, which defies simplistic assumptions of additivity and Gaussianity, requires robust statistical models that can accurately characterize SAR data for efficient processing and analysis.
+Synthetic aperture radar (SAR) has become a fundamental technology for environmental monitoring and disaster management because of its ability to provide daytime and nighttime imagery in all weather conditions&nbsp;[@Cassetti2022]. 
+However, the utility of SAR data depends on a thorough understanding of the their statistical properties.
+Speckle is part of SAR data because of the imaging process' coherent nature.
+Its non-additivity and non-Gaussianity require robust statistical models that can accurately characterize the data.
 
-Among these models, the $\mathcal{G}^0$ distribution stands out as a powerful framework for modeling SAR data. Notably, this distribution encompasses the well-known Gamma distribution as a special case, particularly under the assumption of fully developed speckle. The interplay between these two distributions is apparent, with the Gamma distribution representing a limiting case of the more general $\mathcal{G}^0$ model. 
+Among these models, the $\mathcal{G}^0$ distribution stands out as a powerful framework. 
+Notably, this distribution encompasses the well-known Gamma distribution as a special case, particularly under the assumption of fully developed speckle. 
+The interplay between these two distributions is apparent, with the Gamma distribution representing a limiting case of the more general $\mathcal{G}^0$ model. 
 
-On the other hand, entropy is a fundamental concept in information theory with broad applications in fields like classification, pattern recognition, statistical physics, stochastic dynamics, and statistics.
+When deciding which model is the best, practitioners face a problem.
+On the one hand, if they opt for the Gamma law when the data came from the $\mathcal{G}^0$ distribution, they loose all the information about the number of scatterers, which is revealed by one of the parameters of the latter model [@Yue2021].
+On the other hand, if they apply the $\mathcal{G}^0$ distribution under fully developed speckle,
+maximum likelihood estimation is tricky: 
+bias increases making estimation unreliable [@VasconcellosFrerySilva:CompStat], and
+the likelihood is flat, so numerical optimization may not converge [@FreryCribariSouza:JASP:04].
+
+The two-stage technique we propose tackles this problem by using the Entropy as a proxy to decide which is the best model.
+
+The entropy is a fundamental concept in information theory with broad applications to pattern recognition, statistical physics, stochastic dynamics, and statistics.
 Shannon introduced it for a random variables in 1948&nbsp;[@Shannon1948] as a measure of information and uncertainty. 
 In statistics, Shannon entropy is a crucial descriptive parameter, particularly for assessing data dispersion and conducting tests for normality, exponentiality, and uniformity&nbsp;[@Wieczorkowski1999].
 
-Estimating entropy faces practical challenges, particularly when the true probability density function (pdf) is unknown. Nonparametric methods are utilized in such cases, avoiding the assumption of a known pdf form. Instead, techniques like histograms or kernel density estimators are employed to estimate the pdf directly, followed by entropy calculation using numerical or Monte Carlo integration&nbsp;[@Lombardi2016]. An alternative nonparametric approach involves spacing methods, facilitating entropy estimation&nbsp;[@Zamanzade2012]. This non-parametric strategy offers flexibility to address a wide range of data distributions without imposing specific parametric constraints.
+Estimating the entropy faces practical challenges, particularly when the model is unknown; nonparametric methods are utilized in such cases.
+<!-- Instead, techniques like histograms or kernel density estimators are employed to estimate the pdf directly, followed by entropy calculation using numerical or Monte Carlo integration&nbsp;[@Lombardi2016].  -->
+Among nonparametric approaches, @Zamanzade2012 discussed the use of spacing methods.
+This non-parametric strategy offers flexibility to address a wide range of models without imposing specific parametric constraints.
 
-In this context, we present a two-stage estimation procedure designed to navigate the complexities of SAR data. The first stage of our methodology is to test the hypothesis that the data are completely speckled. If this hypothesis is rejected, we proceed to the second stage to estimate the parameters that characterize the $\mathcal{G}^0$ distribution.
+In this context, we present a two-stage estimation procedure designed to navigate the complexities of SAR data. 
+The first stage tests the hypothesis that the data follow the Gamma distribution, i.e., we are in the presence of fully developed speckle. 
+If this hypothesis is rejected, we proceed to the second stage to estimate the parameters that characterize the $\mathcal{G}^0$ distribution.
 
+<!-- The significance of selecting an appropriate statistical model and estimation technique is well recognized. In order to address uncertainties in the data distribution, we employ a non-parametric approach.  -->
+<!-- Specifically, we focus on the entropy estimation considering estimators based on spacing. -->
 
-The significance of selecting an appropriate statistical model and estimation technique is well recognized. In order to address uncertainties in the data distribution, we employ a non-parametric approach. 
-Specifically, we focus on the entropy estimation considering estimators based on spacing.
-
-The article is structured as follows: In Section&nbsp;\ref{sec:Background}, we provide an overview of statistical modeling for Intensity SAR data and the estimation of both parametric and non-parametric Shannon entropy.
+The article is structured as follows: 
+In Section&nbsp;\ref{sec:Background}, we provide an overview of statistical modeling for Intensity SAR data and the estimation of both parametric and non-parametric Shannon entropy.
 
 
 # Background {#sec:Background}
@@ -134,14 +153,13 @@ The article is structured as follows: In Section&nbsp;\ref{sec:Background}, we p
 ## Statistical modeling of Intensity SAR data 
 
 The primary models used for intensity SAR data include the Gamma and $\mathcal{G}_I^0$  distributions&nbsp;[@Frery1997]. 
-The first is suitable for fully developed speckle and can also be considered a limiting case within the $\mathcal{G}_I^0$ distribution.
-Whereas the latter is appealing due to its versatility in accurately representing regions with various roughness characteristics&nbsp;[@Cassetti2022].
+The first is suitable for fully developed speckle and is a limiting case of the second, which is appealing due to its versatility in accurately representing regions with various roughness characteristics&nbsp;[@Cassetti2022].
 We denote $Z \sim \Gamma_{\text{SAR}}(L, \mu)$ and $Z \sim G_I^0(\alpha, \gamma, L)$ to indicate that $Z$ follows the distributions characterized by the respective probability density functions:
 \begin{align}
-	f_Z(z;L, \mu)&=\frac{L^L}{\Gamma(L)\mu^L}z^{L-1}\exp\left\{-Lz/\mu\right\},\label{E:gamma1}\\
-	f_Z(z; \alpha, \gamma, L)&=\frac{L^L\Gamma(L-\alpha)}{\gamma^{\alpha}\Gamma(-\alpha)\Gamma(L)}\cdot\frac{z^{L-1}}{(\gamma+Lz)^{L-\alpha}},\label{E:gi01}
+	f_Z(z;L, \mu)&=\frac{L^L}{\Gamma(L)\mu^L}z^{L-1}\exp\left\{-Lz/\mu\right\} \mathbbm 1_{\mathbbm R_+}(z),\label{E:gamma1}\\
+	f_Z(z; \alpha, \gamma, L)&=\frac{L^L\Gamma(L-\alpha)}{\gamma^{\alpha}\Gamma(-\alpha)\Gamma(L)}\cdot\frac{z^{L-1}}{(\gamma+Lz)^{L-\alpha}} \mathbbm 1_{\mathbbm R_+}(z),\label{E:gi01}
 \end{align}
-where, in&nbsp;\eqref{E:gamma1} $\mu > 0$ is the mean; in&nbsp;\eqref{E:gi01}  $\gamma > 0$ is the scale, $\alpha < -1$ measures the roughness,  $L \geq 1$ is the number of looks, and $\Gamma(\cdot)$ is the gamma function.
+where, in&nbsp;\eqref{E:gamma1} $\mu > 0$ is the mean; in&nbsp;\eqref{E:gi01}  $\gamma > 0$ is the scale, $\alpha < -1$ measures the roughness,  $L \geq 1$ is the number of looks, $\Gamma(\cdot)$ is the gamma function, and $\mathbbm 1_{A}(z)$ is the indicator function of the set $A$.
 
 From \eqref{E:gi01}, the $r$th moment of $Z$ is expressed as:
 \begin{align}
@@ -154,21 +172,21 @@ In this way, we compute the expected value $\mu$ using the expression in&nbsp;\e
 \begin{align*}
 	\mu=\left(\frac{\gamma}{L}\right)\frac{\Gamma(-\alpha-1)}{\Gamma(-\alpha)}\cdot\frac{\Gamma(L+1)}{\gamma(L)}=-\frac{\gamma}{\alpha+1}.
 \end{align*}
-Thus, the probability density functions that characterize the $G_I^0(\mu, \alpha, L)$ is
+Thus, the probability density functions that characterize the $G_I^0(\mu, \alpha, L)$ law is
 \begin{multline}
 		f_Z(z; \mu, \alpha, L)=\frac{L^L\Gamma(L-\alpha)}{\big(-\mu(\alpha+1)\big)^{\alpha}\Gamma(-\alpha)\Gamma(L)}\\ \frac{z^{L-1}}{\big(-\mu(\alpha+1)+Lz\big)^{L-\alpha}}.\label{E:gi02}
 \end{multline}
 
 ## Parametric \& Non-Parametric Shannon Entropy
 
-The parametric representation of Shannon entropy for a system described by a continuous random variable is as follows:
+The parametric representation of Shannon entropy for a system described by a continuous random variable is:
 \begin{equation}
   \label{E:entropy2}
-  H_(Z)=-\int_{-\infty }^\infty \ f(z)\log(f(z))\, \mathrm{d}z,
+  H_(Z)=-\int_{-\infty }^\infty \ f(z)\log f(z)\, \mathrm{d}z,
 \end{equation}
 here, $f(\cdot)$ is the probability density function that characterizes the distribution of the real-valued random variable $Z$.
 
-Using&nbsp;\eqref{E:entropy2}, we can express the Shannon entropy of $\Gamma_{\text{SAR}}$in&nbsp;\eqref{E:gamma1} and $\mathcal{G}_I^0$in&nbsp;\eqref{E:gi02} based on&nbsp;[@Cassetti2022, @Ferreira2020]:
+Using&nbsp;\eqref{E:entropy2}, we can express the Shannon entropy of $\Gamma_{\text{SAR}}$in&nbsp;\eqref{E:gamma1} and $\mathcal{G}_I^0$in&nbsp;\eqref{E:gi02} based on @Cassetti2022 and @Ferreira2020:
 \begin{multline}
 \label{E:E-gamma}
 H_{\Gamma_{\text{SAR}}}(L, \mu) =   L -\ln L+\ln\Gamma(L)+(1-L)\psi^{(0)}(L) + \ln \mu, 
@@ -181,68 +199,66 @@ H_{\mathcal{G}_I^0}(\mu, \alpha, L) =L -\ln L+\ln\Gamma(L)+(1-L)\psi^{(0)}(L) +\
 \end{multline}
 where $\psi^{(0)}(\cdot)$ and $\mathcal{B}(\cdot)$ are the digamma and beta functions, respectively.
 
-The problem of non-parametric estimating of $H(Z)$ has been considered by many authors including&nbsp;[@vasicek1976test; @Bert1992; @Wieczorkowski1999; @correa1995new], who proposed estimators based on spacings.
+The problem of non-parametric estimating of $H(Z)$ has been considered by many authors including @vasicek1976test, @Bert1992, @Wieczorkowski1999, and @correa1995new, who proposed estimators based on spacings.
 
-Vasicek&nbsp;[@vasicek1976test], used $f(z)=p$  to express $ H(Z)$ as
+@vasicek1976test expressed $H(Z)$ as
 \begin{equation*}
 	H(Z)= \int_0^1 \log\frac{\mathrm{d}}{\mathrm{d}p}Q(p)\mathrm{d}p,
 \end{equation*}
-where $Q(p)=F^{-1}(p)=\inf\left\{z: F(z)\leq p\right\}$ is the quantile function. The derivative of $F^{-1}(p)$ is  estimated by a function of the order statistics&nbsp;[@AlOmari2019].
+where $Q(p)=F^{-1}(p)=\inf\left\{z: F(z)\leq p\right\}$ is the quantile function. The derivative of $F^{-1}(p)$ is then estimated as a function of the order statistics&nbsp;[@AlOmari2019].
 
 Assuming that  $\bm{Z}=(Z_1, Z_2, \ldots,Z_n)$ is a random sample from the distribution $F(z)$, the estimator is defined as:
 \begin{equation*}
 %\label{E:VanEs}
-	\widehat{H}_{V}(\bm{Z})=\frac{1}{n}\sum_{i=1}^{n}\log\left[\frac{n}{2m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right],
+	\widehat{H}_{\text{V}}(\bm{Z})=\frac{1}{n}\sum_{i=1}^{n}\log\left[\frac{n}{2m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right],
 	\end{equation*}
 where $m<n/2$ is a positive integer, $Z_{(i+m)}-Z_{(i-m)}$ is the $m$-spacing and $Z_{(1)}\leq Z_{(2)}\leq\ldots\leq Z_{(n)}$ are the order statistics and $Z_{(i)}= Z_{(1)}$ if $i<1$, $Z_{(i)}= Z_{(n)}$ if $i>n$.
 
-Multiple authors have presented  adaptations to Vasicek's estimator, including Van Es&nbsp;[@Bert1992], who proposed a new estimator of entropy given by:
+Several authors studied adaptations and improvements to Vasicek's estimator, including @Bert1992, who proposed the following estimator:
 \begin{multline}
 \label{E:VanEs}
 	\widehat{H}_{\text{VE}}(\bm{Z})=\frac{1}{n-m}\sum_{i=1}^{n-m}\log\left[\frac{n+1}{m}\left(Z_{(i+m)}-Z_{(i)}\right)\right]\\
 	+\sum_{k=m}^n\frac{1}{k}+\log\frac{m}{n+1}.
 \end{multline}
 
-Van Es proved that, under general conditions,\eqref{E:VanEs} converges almost surely to $H(Z)$ when $m, n\rightarrow\infty$,  $m/ \log(n)\rightarrow\infty$, and $m/n \rightarrow0$.
+Van Es proved that, under general conditions, \eqref{E:VanEs} converges almost surely to $H(Z)$ when $m, n\rightarrow\infty$,  $m/ \log(n)\rightarrow\infty$, and $m/n \rightarrow0$.
 The author also proved the asymptotic normality of the estimator when $m, n\rightarrow\infty$ and $m=o(n^{1/2})$.
 
 
 
 # Hypothesis testing based on non-parametric entropy
-General asymptotic results for functions of spacings are detailed in&nbsp;[@Khashimov1990], while VanEs&nbsp;[@Bert1992] has developed a correction for the case of Shannon entropy.
+General asymptotic results for functions of spacings are detailed @Khashimov1990, while @Bert1992 developed a correction for the case of Shannon entropy.
 Following the work of these authors, the next result applies: 
 
 \begin{lemma}
 Suppose that $f(\cdot)$ is a bounded density bounded away from zero and satisfies a Lipschitz condition on its support.
-Then the next asymptotic results follow: If $m,n\rightarrow \infty$ and $m=o(n^{1/2})$, then:
+Then, if $m,n\rightarrow \infty$ and $m=o(n^{1/2})$, holds that:
 \begin{equation}
 \sqrt{n}\,\Big(\widehat{H}_{\text{VE}}+\int_{-\infty}^\infty f(z)\log f(z) \mathrm{d}z\Big)
 \xrightarrow[]{\mathcal{D}}
 \mathcal{N}(0,\operatorname{Var}(\log f(Z))),
 \end{equation}
-where $o(\cdot)$ represents the little-o and $\widehat{H}_{\text{VE}}$ is defined in expression \eqref{E:VanEs}.
-
+where $o(\cdot)$ represents the little-o.
 \end{lemma} 
 
-
-Let us consider, starting from the previous lemma, the test of the null hypothesis $\mathcal{H}_0: T_{\mathcal{D}}=D_0$ as opposed to one of the other three:
-
-\begin{equation}
-\text{(i)}\, \mathcal{H}_1:T_{\mathcal{D}}\neq D_0, \, \, \text{(ii)}\, \mathcal{H}_1:T_{\mathcal{D}}> D_0, \, \, \text{or}\, \,  \text{(iii)}\, \mathcal{H}_1:T_{\mathcal{D}}< D_0. 
-\end{equation}
-
+Consider, starting from the previous lemma, the test of the null hypothesis $\mathcal{H}_0: T_{\mathcal{D}}=D_0$ as opposed to one of the other three:
+\begin{align}
+\mathcal{H}_1 &: T_{\mathcal{D}}\neq D_0,\\ 
+\mathcal{H}_1 &: T_{\mathcal{D}}> D_0,\text{ or}\\
+\mathcal{H}_1 &: T_{\mathcal{D}}< D_0. 
+\end{align}
 
 For this purpose, we can use the test statistics:
 \begin{equation}
-Z_{m,n} = \frac{\sqrt{n}(\widehat{H}_{\text{VE}}-D_0)}{\sqrt{\operatorname{Var}(\log f(Z))}},
+Z_{m,n} = \frac{\sqrt{n}\big(\widehat{H}_{\text{VE}}-D_0\big)}{\sqrt{\operatorname{Var}\big(\log f(Z)\big)}},
 \end{equation}
-So the null hypothesis should be rejected if (i) $Z_{n,m} > z_{\alpha/2}$ or $Z_{n,m} < - z_{\alpha/2}$ for $\Phi_{\mathcal N}(z_{\alpha/2})=1-\alpha/2$ and $\Phi_{\mathcal N}$ being the standard normal cdf, (ii) $Z_{n,m} > z_{\alpha/2}$ or (iii) $Z_{n,m} < - z_{\alpha/2}$.  
+so the null hypothesis should be rejected if (i) $Z_{n,m} > z_{\alpha/2}$ or $Z_{n,m} < - z_{\alpha/2}$ for $\Phi_{\mathcal N}(z_{\alpha/2})=1-\alpha/2$ and $\Phi_{\mathcal N}$ being the standard normal cumulative distribution function, (ii) $Z_{n,m} > z_{\alpha/2}$ or (iii) $Z_{n,m} < - z_{\alpha/2}$.  
 
 The power function for case (i) (two-sided test) at $t\neq D_0$ is given by
 \begin{multline*}
 \pi_{m,n}(t)=1-\Phi_{m,n}\Big(z_{\alpha/2}-\frac{\sqrt{n}(Z_{m,n}-D_0)}{\sigma}\Big)\\+\Phi_{m,n}\Big(-z_{\alpha/2}-\frac{\sqrt{n}(Z_{m,n}-D_0)}{\sigma}\Big),
 \end{multline*}
-for a sequence of cdfs $\Phi_{m,n}(x)$ which tends uniformly to $\Phi_{\mathcal N}(z)$.
+for a sequence of cumulative distribution functions $\Phi_{m,n}(x)$ which tends uniformly to $\Phi_{\mathcal N}(z)$.
 
 # Results
 
@@ -250,7 +266,7 @@ We verify that the results of the non-parametric entropies for samples of differ
 
 
 We assume distinct parameter values for $\mu \in \left\{1, 3, 10\right\}$,  $\alpha\in\left\{-1.5,-3,-5, -8\right\}$, and  $L \in\left\{1,2, 5, 8\right\}$.
-We performed experiments to observe convergence under different scenarios, where each employed different sample sizes, i.e., $n\in \left\{9, 25, 49, 81, 121, 500, 5000\right\}$. 
+We performed experiments to observe convergence under different scenarios, where each employed different sample sizes: $n\in \left\{9, 25, 49, 81, 121, 500, 5000\right\}$. 
 
 <!-- #For each sample size, we performed $1.000$ samples. Fig.&nbsp;\ref{fig:convergence} shows convergence of mean non-parametric entropies for $\mu=3$ and $L=2$. -->
 
@@ -274,7 +290,7 @@ entropy_gI0 <- function(mu, alpha, L) {
 }
 ```
 
-```{r PlotGammaSAR, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Simulation of entropy for Gamma SAR"}
+```{r PlotGammaSAR, echo=FALSE, message=FALSE, warning=FALSE, out.width="90%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Simulation of entropy for Gamma SAR"}
 L <- c(1, 3, 8, 12, 100)
 
 
@@ -297,16 +313,18 @@ ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = Looks)) +
   theme_minimal() +
   scale_color_manual(values = rainbow(length(L)), labels = L_labels) +
   labs(col = "Looks") +
-  xlab(expression(paste(mu)))
+  xlab(expression(paste(mu))) +
+  theme(text=element_text(family="serif"))
 
 ```
 
-Fig.&nbsp;\ref{fig:3d_GIO} illustrates the entropy of $\mathcal{G}_I^0$ distribution as a function of three key parameters: $\mu$, $\alpha$, and $L$.
+Fig.&nbsp;\ref{fig:3d_GIO} illustrates the entropy of $G_I^0$ distribution as a function of three key parameters: $\mu$, $\alpha$, and $L$.
 
 ```{r 3d_GIO, fig.align="center",  out.width = "120%", fig.cap="Simulation of entropy for ${G}_I^0$. ", fig.show="hold",  fig.pos="hbt"}
 knitr::include_graphics("../../../Figures/PDF/entropy_plot_3d.pdf")
 ```
-As we explore the 3D plot, we can observe how changes in $\mu$, $\alpha$, and $L$ collectively influence the Entropy of the GI0 distribution. We can identify regions where Entropy is high or low, providing insights into the predictability and structure of the distribution in various regions of the parameter space.
+As we explore the 3D plot, we can observe how changes in $\mu$, $\alpha$, and $L$ collectively influence the Entropy of the $G_I^0$ distribution. 
+We can identify regions where Entropy is high or low, providing insights into the predictability and structure of the distribution in various regions of the parameter space.
 
 # Conclusion
 
