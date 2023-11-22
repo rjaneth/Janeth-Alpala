@@ -181,7 +181,7 @@ Thus, the probability density functions that characterize the $G_I^0(\mu, \alpha
 The parametric representation of Shannon entropy for a system described by a continuous random variable is:
 \begin{equation}
   \label{E:entropy2}
-  H_(Z)=-\int_{-\infty }^\infty \ f(z)\log f(z)\, \mathrm{d}z,
+  H(Z)=-\int_{-\infty }^\infty \ f(z)\log f(z)\, \mathrm{d}z,
 \end{equation}
 here, $f(\cdot)$ is the probability density function that characterizes the distribution of the real-valued random variable $Z$.
 
