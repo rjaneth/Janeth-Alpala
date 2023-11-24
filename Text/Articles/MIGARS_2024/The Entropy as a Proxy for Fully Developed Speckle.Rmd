@@ -142,7 +142,7 @@ library(ggthemes)
 
 theme_set(theme_minimal() +
             theme(text=element_text(family="serif"),
-                  legend.position = "top")# Gridtop , right , bottom , or left#, panel.grid = element_blank()
+                  legend.position = "bottom")# Gridtop , right , bottom , or left#, panel.grid = element_blank()
 )
 
 # theme_set(theme_pander() +
@@ -262,7 +262,7 @@ Using&nbsp;\eqref{E:entropy2}, we can express the Shannon entropy of $\Gamma_{\t
 H_{\Gamma_{\text{SAR}}}(L, \mu) &= L - \ln L + \ln\Gamma(L) + (1-L)\psi^{(0)}(L) + \ln \mu, \\
 H_{\mathcal{G}_I^0}(\mu, \alpha, L) &= L - \ln L + \ln\Gamma(L) + (1-L)\psi^{(0)}(L) + \ln \mu \\
 &\quad - \ln\Gamma(L-\alpha) + (L-\alpha)\psi^{(0)}(L-\alpha)- L\\
-&\quad - (1-\alpha)\psi^{(0)}(-\alpha) + \ln (-1-\alpha) + \ln\Gamma(-\alpha),
+&\quad - (1-\alpha)\psi^{(0)}(-\alpha) + \ln (-1-\alpha) + \ln\Gamma(-\alpha)
 \end{align*}
 where $\psi^{(0)}(\cdot)$ is the digamma function. In Fig.&nbsp;\ref{fig:PlotGammaSAR} we see how the Entropy of the Gamma SAR distribution changes with $\mu$ for various values of $L$.
 
@@ -429,34 +429,7 @@ We choose to use the following heuristic formula for spacing, $m=\left[\sqrt{n}+
 In Fig. \ref{fig:Plot_bias_mse_gi0} we depict comparisons of bias and mean squared error (MSE) between the original non-parametric entropy estimators and their respective bootstrap-enhanced versions. The use of the bootstrap technique exhibits more precision, reduced bias and MSE, and improved convergence.
 
 The results of simulation are exhibited in Table&nbsp;\ref{tab:table2}. The precision of estimators, as evidenced by bias and MSE comparisons, benefits significantly from the bootstrap technique, particularly for sample sizes below 81.
-<!-- ```{r Plot_bias_mse_gama_sar, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE of entropy estimators for  $\\Gamma_{\\text{SAR}}$, $L=8$.", fig.width=6,fig.height=5} -->
-<!-- # Define sample sizes for analysis -->
-<!-- set.seed(1234567890, kind = "Mersenne-Twister") -->
-<!-- sample_sizes <- c(9, 25, 49, 81, 121) -->
 
-<!-- # Number of replications -->
-<!-- R <- 10 -->
-
-<!-- # Number of bootstrap replications -->
-<!-- B <- 10 -->
-<!-- mu_values <- c(1, 10) -->
-<!-- L <- 8 -->
-as
-<!-- estimators <- list( -->
-<!--   "Correa" = correa_estimator, -->
-<!--   "Ebrahimi" = ebrahimi_estimator, -->
-<!--   "Al Omari" = al_omari_1_estimator, -->
-<!--   "Correa Bootstrap" = bootstrap_correa_estimator, -->
-<!--   "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator, -->
-<!--   "Al Omari Bootstrap" = bootstrap_al_omari_1_estimator -->
-<!-- ) -->
-
-
-<!-- combined_plot <- generate_plot(sample_sizes, R, B, mu_values, L, estimators,  ncol = 1, nrow = 2) -->
-
-<!-- # Print the combined plot with sanitize=FALSE -->
-<!-- print(combined_plot) -->
-<!-- ``` -->
 
 ```{r Plot_bias_mse_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE of entropy estimators for  $\\mathcal{G}_I^0$, $L=8$, $\\alpha=-20$.", fig.width=6,fig.height=5}
 # Define sample sizes for analysis
@@ -464,10 +437,10 @@ set.seed(1234567890, kind = "Mersenne-Twister")
 sample_sizes <- c(9, 25, 49, 81, 121)
 
 # Number of replications
-R <- 100
+R <- 200
 
 # Number of bootstrap replications
-B <- 30
+B <- 100
 mu_values <- c(1, 10)
 alpha <- -20
 L <- 8
@@ -489,17 +462,14 @@ print(combined_plot)
 
 ```
 
-<<<<<<< HEAD
-# Acknowledgment {#acknowledgment}
-=======
 
 
 ```{r Table_gi01, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 #
 set.seed(1234567890, kind = "Mersenne-Twister")
 sample_sizes <- c(9, 25, 49, 81, 121)
-R <- 100
-B <- 30
+R <- 200
+B <- 100
 mu_values <- c(1,  10)
 L <- 8
 alpha<- -20
@@ -674,7 +644,7 @@ In this study, three estimators renowned for their robust performance across div
 
 It is worth noting that this analysis represents an initial exploration of SAR Intensity data, and future work will include a more in-depth analysis of effect size and statistical power.
 Additionally, exploring the impact of the $\alpha$ parameter on estimates and conducting more extensive analyses to assess the generalization of results to different parameter configurations is suggested.
->>>>>>> 95d6719 (update paper and codes)
+
 
 
 
