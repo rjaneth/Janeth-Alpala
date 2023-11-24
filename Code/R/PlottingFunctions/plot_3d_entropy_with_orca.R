@@ -42,4 +42,4 @@ fig <- fig %>% layout(
 fig
 
 #  PDF
-orca(fig, file = "Entropy_plot_3d_.pdf")
+orca(fig, file = "Entropy_plot_3d_1.pdf")

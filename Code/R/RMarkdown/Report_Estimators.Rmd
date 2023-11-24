@@ -37,9 +37,7 @@ header-includes:
 knitr::opts_chunk$set(echo = FALSE)
 #knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
-
 library(reshape2)
-#library(plotly)
 library(knitr)
 library(pandoc)
 library(gridExtra)

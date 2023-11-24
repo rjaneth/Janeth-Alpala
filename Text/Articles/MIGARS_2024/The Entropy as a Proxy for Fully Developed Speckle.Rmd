@@ -34,7 +34,7 @@ abstract: |
   The type of distribution these data follow is paramount for their processing and analysis.
   Good statistical models provide flexibility and accuracy, often at the cost of using several parameters.
   The $\mathcal{G}^0$ distribution is one of the most successful models for SAR data. 
-  It includes the Gamma law as particular case which arises in the presence of fully developed speckle.
+  It includes the Gamma law as a particular case which arises in the presence of fully developed speckle.
   Although the latter is a limit distribution of the former, using the same estimation technique for the more general model is numerically unfeasible.
   We propose a two-stage estimation procedure: first, we verify the hypothesis that the data are fully-developed speckle. If this assumption is rejected, we proceed to estimate the parameters that index the $\mathcal G^0$ distribution; otherwise, we proceed with the Gamma model.
   Given the uncertainty of the underlying distribution, and the negative impact that using an inadequate model has on maximum likelihood estimation, we employ a non-parametric approach to estimate entropy under the fully-developed speckle hypothesis.
@@ -62,6 +62,20 @@ header-includes:
    - \usepackage{color}
    - \usepackage{mathtools}
    - \usepackage[utf8]{inputenc}
+   - \usepackage{hyperref}
+   - \hypersetup{draft}
+   - \usepackage{graphicx}
+   - \usepackage{float}
+   - \usepackage{booktabs}
+   - \usepackage{array}
+   - \usepackage{multirow}
+   - \usepackage{wrapfig}
+   - \usepackage{colortbl}
+   - \usepackage{pdflscape}
+   - \usepackage{xcolor}
+   - \usepackage{amsmath}
+   - \usepackage{mathabx}
+   
    
    
    
@@ -69,13 +83,13 @@ header-includes:
 
 
 bibliography:  ../../Common/references.bib
-#csl: "ieee.csl"
+csl: "ieee.csl"
 output: 
   rticles::ieee_article:
     number_sections: TRUE
 
 
-#citation_sorting: none   ## used as sorting option of the biblatex package (if selected)
+#citation_sorting: none   
 ---
 
 
@@ -84,34 +98,94 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+# library(ggplot2)
+# library(ggthemes)
+# library(reshape2)
+# library(plotly)
+# library(knitr)
+# # library(rgl)
+# library(gtools)
+# library(stats4)
+# library(rmutil)
+# library(gsl)
+
 library(ggplot2)
-library(ggthemes)
+
 library(reshape2)
-library(plotly)
+#library(plotly)
 library(knitr)
-# library(rgl)
+library(pandoc)
+library(gridExtra)
+library(tidyr)
 library(gtools)
 library(stats4)
 library(rmutil)
-library(gsl)
+library(scales)
+library(tidyr)
+library(gtools)
+library(stats4)
+library(rmutil)
 library(invgamma)
+library(tidyverse)
+library(scales)
+library(RColorBrewer)
+library(ggsci)
+library(wesanderson)
+library(ggpubr)
+library(patchwork)
+library(dplyr)
+options(kableExtra.latex.load_packages = FALSE)
+library(devtools)
+devtools::install_github("haozhu233/kableExtra")
+library(kableExtra)
+library(ggthemes)
 
-
-
-theme_set(theme_pander() +
+theme_set(theme_minimal() +
             theme(text=element_text(family="serif"),
-                  legend.position = "top")
-          )
+                  legend.position = "top")# Gridtop , right , bottom , or left#, panel.grid = element_blank()
+)
+
+# theme_set(theme_pander() +
+#             theme(text=element_text(family="serif"),
+#                   legend.position = "top")
+#           )
+
+
+source("../../../Code/R/MainFunctions/gamma_sar_sample.r")
+source("../../../Code/R/MainFunctions/entropy_gamma_sar.r")
+source("../../../Code/R/MainFunctions/entropy_gI0.r")
+source("../../../Code/R/MainFunctions/gi0_sample.r")
+
+source("../../../Code/R/MainFunctions/van_es_estimator.r")
+source("../../../Code/R/MainFunctions/correa_estimator.r")
+source("../../../Code/R/MainFunctions/ebrahimi_estimator.r")
+source("../../../Code/R/MainFunctions/noughabi_arghami_estimator.r")
+source("../../../Code/R/MainFunctions/vasicek_estimator.r")
+source("../../../Code/R/MainFunctions/al_omari_1_estimator.r")
+source("../../../Code/R/MainFunctions/al_omari_2_estimator.r")
+
+source("../../../Code/R/MainFunctions/bootstrap_van_es_estimator.r")
+source("../../../Code/R/MainFunctions/bootstrap_correa_estimator.r")
+source("../../../Code/R/MainFunctions/bootstrap_ebrahimi_estimator.r")
+source("../../../Code/R/MainFunctions/bootstrap_noughabi_arghami_estimator.r")
+source("../../../Code/R/MainFunctions/bootstrap_vasicek_estimator.r")
+source("../../../Code/R/MainFunctions/bootstrap_al_omari_1_estimator.r")
+source("../../../Code/R/MainFunctions/bootstrap_al_omari_2_estimator.r")
+#The next function contains the functions: generate_samples, calculate_bias_mse, generate_plot
+source("../../../Code/R/Programs/functions_sample_bias_mse.R")# 
+
 ```
 
 
 
 \newtheorem{lemma}{Lemma}
 
+\newcommand{\bias}{\operatorname{Bias}}
+
 # Introduction {#sec:Introduction}
 
-Synthetic aperture radar (SAR) has become a fundamental technology for environmental monitoring and disaster management because of its ability to provide daytime and nighttime imagery in all weather conditions&nbsp;[@Cassetti2022]. 
-However, the utility of SAR data depends on a thorough understanding of the their statistical properties.
+Synthetic aperture radar (SAR) has become a fundamental technology for environmental monitoring and disaster management because of its ability to provide daytime and nighttime imagery in all weather conditions&nbsp;[@Mu2019]. 
+However, the utility of SAR data depends on a thorough understanding of their statistical properties.
 Speckle is part of SAR data because of the imaging process' coherent nature.
 Its non-additivity and non-Gaussianity require robust statistical models that can accurately characterize the data.
 
@@ -120,35 +194,33 @@ Notably, this distribution encompasses the well-known Gamma distribution as a sp
 The interplay between these two distributions is apparent, with the Gamma distribution representing a limiting case of the more general $\mathcal{G}^0$ model. 
 
 When deciding which model is the best, practitioners face a problem.
-On the one hand, if they opt for the Gamma law when the data came from the $\mathcal{G}^0$ distribution, they loose all the information about the number of scatterers, which is revealed by one of the parameters of the latter model [@Yue2021].
+On the one hand, if they opt for the Gamma law when the data come from the $\mathcal{G}^0$ distribution, they lose all the information about the number of scatterers, which is revealed by one of the parameters of the latter model&nbsp;[@Yue2021].
 On the other hand, if they apply the $\mathcal{G}^0$ distribution under fully developed speckle,
 maximum likelihood estimation is tricky: 
-bias increases making estimation unreliable [@VasconcellosFrerySilva:CompStat], and
-the likelihood is flat, so numerical optimization may not converge [@FreryCribariSouza:JASP:04].
+bias increases making estimation unreliable&nbsp;[@VasconcellosFrerySilva:CompStat], and
+the likelihood is flat, so numerical optimization may not converge&nbsp;[@FreryCribariSouza:JASP:04].
+The two-stage technique we propose tackles this problem by using the entropy as a proxy to decide which is the best model.
 
-The two-stage technique we propose tackles this problem by using the Entropy as a proxy to decide which is the best model.
+<!-- The entropy is a fundamental concept in information theory with broad applications to pattern recognition, statistical physics, stochastic dynamics, and statistics. -->
+<!-- Shannon introduced it for a random variable in 1948&nbsp;[@Shannon1948] as a measure of information and uncertainty.  -->
+<!-- In statistics, Shannon entropy is a crucial descriptive parameter, particularly for assessing data dispersion and conducting tests for normality, exponentiality, and uniformity&nbsp;[@Wieczorkowski1999]. -->
 
-The entropy is a fundamental concept in information theory with broad applications to pattern recognition, statistical physics, stochastic dynamics, and statistics.
-Shannon introduced it for a random variables in 1948&nbsp;[@Shannon1948] as a measure of information and uncertainty. 
-In statistics, Shannon entropy is a crucial descriptive parameter, particularly for assessing data dispersion and conducting tests for normality, exponentiality, and uniformity&nbsp;[@Wieczorkowski1999].
+Estimating the entropy faces practical challenges, particularly when the model is unknown; non-parametric methods are utilized in such cases.
+Among non-parametric approaches,&nbsp;@Subhash2021 discussed the use of spacing methods.
+This non-parametric strategy offers flexibility to address a wide range of models without imposing specific parametric constraints. We extend the exploration of nonparametric entropy estimators by incorporating enhanced bootstrap methodologies.
 
-Estimating the entropy faces practical challenges, particularly when the model is unknown; nonparametric methods are utilized in such cases.
-<!-- Instead, techniques like histograms or kernel density estimators are employed to estimate the pdf directly, followed by entropy calculation using numerical or Monte Carlo integration&nbsp;[@Lombardi2016].  -->
-Among nonparametric approaches, @Zamanzade2012 discussed the use of spacing methods.
-This non-parametric strategy offers flexibility to address a wide range of models without imposing specific parametric constraints.
-
-In this context, we present a two-stage estimation procedure designed to navigate the complexities of SAR data. 
-The first stage tests the hypothesis that the data follow the Gamma distribution, i.e., we are in the presence of fully developed speckle. 
-If this hypothesis is rejected, we proceed to the second stage to estimate the parameters that characterize the $\mathcal{G}^0$ distribution.
-
-<!-- The significance of selecting an appropriate statistical model and estimation technique is well recognized. In order to address uncertainties in the data distribution, we employ a non-parametric approach.  -->
-<!-- Specifically, we focus on the entropy estimation considering estimators based on spacing. -->
+<!-- In this context, we present a two-stage estimation procedure designed to navigate the complexities of SAR data.  -->
+<!-- The first stage tests the hypothesis that the data follow the Gamma distribution, i.e., we are in the presence of fully developed speckle.  -->
+<!-- If this hypothesis is rejected, we proceed to the second stage to estimate the parameters that characterize the $\mathcal{G}^0$ distribution.  -->
 
 The article is structured as follows: 
-In Section&nbsp;\ref{sec:Background}, we provide an overview of statistical modeling for Intensity SAR data and the estimation of both parametric and non-parametric Shannon entropy.
+Section&nbsp;\ref{sec:Background} covers statistical modeling and entropy estimation for Intensity SAR data. Section&nbsp;\ref{sec:test} outlines hypothesis testing based on non-parametric entropy. 
+In Section&nbsp;\ref{sec:results}, we present experimental results. 
+Finally, in Section&nbsp;\ref{sec:conclusion} conclusions are exhibited.
 
 
-# Background {#sec:Background}
+
+# Background {#sec:Background} 
 
 ## Statistical modeling of Intensity SAR data 
 
@@ -172,7 +244,7 @@ In this way, we compute the expected value $\mu$ using the expression in&nbsp;\e
 \begin{align*}
 	\mu=\left(\frac{\gamma}{L}\right)\frac{\Gamma(-\alpha-1)}{\Gamma(-\alpha)}\cdot\frac{\Gamma(L+1)}{\gamma(L)}=-\frac{\gamma}{\alpha+1}.
 \end{align*}
-Thus, the probability density functions that characterize the $G_I^0(\mu, \alpha, L)$ law is
+Thus, the probability density function that characterize the $G_I^0(\mu, \alpha, L)$ law is
 \begin{multline}
 		f_Z(z; \mu, \alpha, L)=\frac{L^L\Gamma(L-\alpha)}{\big(-\mu(\alpha+1)\big)^{\alpha}\Gamma(-\alpha)\Gamma(L)}\\ \frac{z^{L-1}}{\big(-\mu(\alpha+1)+Lz\big)^{L-\alpha}}.\label{E:gi02}
 \end{multline}
@@ -181,25 +253,18 @@ Thus, the probability density functions that characterize the $G_I^0(\mu, \alpha
 The parametric representation of Shannon entropy for a system described by a continuous random variable is:
 \begin{equation}
   \label{E:entropy2}
-  H(Z)=-\int_{-\infty }^\infty \ f(z)\log f(z)\, \mathrm{d}z,
+  H(Z)=-\int_{-\infty }^\infty \ f(z)\ln f(z)\, \mathrm{d}z,
 \end{equation}
 here, $f(\cdot)$ is the probability density function that characterizes the distribution of the real-valued random variable $Z$.
 
 Using&nbsp;\eqref{E:entropy2}, we can express the Shannon entropy of $\Gamma_{\text{SAR}}$in&nbsp;\eqref{E:gamma1} and $\mathcal{G}_I^0$in&nbsp;\eqref{E:gi02} based on @Cassetti2022 and @Ferreira2020:
-\begin{multline}
-\label{E:E-gamma}
-H_{\Gamma_{\text{SAR}}}(L, \mu) =   L -\ln L+\ln\Gamma(L)+(1-L)\psi^{(0)}(L) + \ln \mu, 
-\end{multline}
-\begin{multline}
-\label{E:E-GIO}
-H_{\mathcal{G}_I^0}(\mu, \alpha, L) =L -\ln L+\ln\Gamma(L)+(1-L)\psi^{(0)}(L) +\ln \mu \\
--\ln\Gamma(L-\alpha)+ (L-\alpha) \psi^{(0)}(L-\alpha)\\
--(1-\alpha)\psi^{(0)}(-\alpha)+\ln (-1-\alpha)+\ln\Gamma(-\alpha)-L
-\end{multline}
-where $\psi^{(0)}(\cdot)$ and $\mathcal{B}(\cdot)$ are the digamma and beta functions, respectively.
-
-In Fig.&nbsp;\ref{fig:PlotGammaSAR} we see how the Entropy of the Gamma SAR distribution changes with $\mu$ for various values of $L$.
-
+\begin{align*}
+H_{\Gamma_{\text{SAR}}}(L, \mu) &= L - \ln L + \ln\Gamma(L) + (1-L)\psi^{(0)}(L) + \ln \mu, \\
+H_{\mathcal{G}_I^0}(\mu, \alpha, L) &= L - \ln L + \ln\Gamma(L) + (1-L)\psi^{(0)}(L) + \ln \mu \\
+&\quad - \ln\Gamma(L-\alpha) + (L-\alpha)\psi^{(0)}(L-\alpha)- L\\
+&\quad - (1-\alpha)\psi^{(0)}(-\alpha) + \ln (-1-\alpha) + \ln\Gamma(-\alpha),
+\end{align*}
+where $\psi^{(0)}(\cdot)$ is the digamma function. In Fig.&nbsp;\ref{fig:PlotGammaSAR} we see how the Entropy of the Gamma SAR distribution changes with $\mu$ for various values of $L$.
 
 ```{r FunctionsDefinitions, echo=FALSE}
 entropy_gamma_sar <- function(L, mu) {
@@ -246,8 +311,8 @@ ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = Looks)) +
   scale_color_manual(values = rainbow(length(L)), labels = L_labels) +
   labs(col = "Looks") +
   xlab(expression(paste(mu))) +
-  theme(text=element_text(family="serif", size = 14),
-        legend.position = "top")
+  theme(text=element_text(family="serif"),
+        legend.position = "bottom")
 
 ```
 
@@ -256,64 +321,98 @@ Fig.&nbsp;\ref{fig:3d_GIO} illustrates the entropy of $G_I^0$ distribution as a 
 ```{r 3d_GIO, fig.align="center",  out.width = "70%", fig.cap="The Shannon Entropy under ${G}_I^0$ models.", fig.show="hold",  fig.pos="hbt"}
 knitr::include_graphics("../../../Figures/PDF/entropy_plot_3d.pdf")
 ```
-As we explore the 3D plot, we can observe how changes in $\mu$, $\alpha$, and $L$ collectively influence the Entropy of the $G_I^0$ distribution. 
-We can identify regions where Entropy is high or low, providing insights into the predictability and structure of the distribution in various regions of the parameter space.
+As we explore the 3D plot, we can observe how changes in $\mu$, $\alpha$, and $L$ collectively influence the entropy of the $G_I^0$ distribution. 
+We can identify regions where entropy is high or low, providing insights into the predictability and structure of the distribution in various regions of the parameter space.
 
 ## Estimation of the Shannon Entropy
 
-The problem of non-parametric estimating of $H(Z)$ has been considered by many authors including @vasicek1976test, @Bert1992, @Wieczorkowski1999, and @correa1995new, who proposed estimators based on spacings.
-
-@vasicek1976test expressed $H(Z)$ as
+One of the earliest non-parametric estimators relying on spacings was introduced by Vasicek&nbsp;[@vasicek1976test]. Assuming that $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ is a random sample from the distribution $F(z)$, the estimator is defined as:
 \begin{equation*}
-	H(Z)= \int_0^1 \log\frac{\mathrm{d}}{\mathrm{d}p}Q(p)\mathrm{d}p,
-\end{equation*}
-where $Q(p)=F^{-1}(p)=\inf\left\{z: F(z)\leq p\right\}$ is the quantile function. The derivative of $F^{-1}(p)$ is then estimated as a function of the order statistics&nbsp;[@AlOmari2019].
-
-Assuming that  $\bm{Z}=(Z_1, Z_2, \ldots,Z_n)$ is a random sample from the distribution $F(z)$, the estimator is defined as:
-\begin{equation*}
-%\label{E:VanEs}
-	\widehat{H}_{\text{V}}(\bm{Z})=\frac{1}{n}\sum_{i=1}^{n}\log\left[\frac{n}{2m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right],
+\label{E:Vas}
+	\widehat{H}_{\text{V}}(\bm{Z})=\frac{1}{n}\sum_{i=1}^{n}\ln\left[\frac{n}{2m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right],
 	\end{equation*}
 where $m<n/2$ is a positive integer, $Z_{(i+m)}-Z_{(i-m)}$ is the $m$-spacing and $Z_{(1)}\leq Z_{(2)}\leq\ldots\leq Z_{(n)}$ are the order statistics and $Z_{(i)}= Z_{(1)}$ if $i<1$, $Z_{(i)}= Z_{(n)}$ if $i>n$.
 
-Several authors studied adaptations and improvements to Vasicek's estimator, including @Bert1992, who proposed the following estimator:
-\begin{multline}
-\label{E:VanEs}
-	\widehat{H}_{\text{VE}}(\bm{Z})=\frac{1}{n-m}\sum_{i=1}^{n-m}\log\left[\frac{n+1}{m}\left(Z_{(i+m)}-Z_{(i)}\right)\right]\\
-	+\sum_{k=m}^n\frac{1}{k}+\log\frac{m}{n+1}.
-\end{multline}
+Several authors have explored adaptations to Vasicek's estimator. In this work, we consider three entropy estimators known for their superior performance:
 
-Van Es proved that, under general conditions, \eqref{E:VanEs} converges almost surely to $H(Z)$ when $m, n\rightarrow\infty$,  $m/ \log(n)\rightarrow\infty$, and $m/n \rightarrow0$.
-The author also proved the asymptotic normality of the estimator when $m, n\rightarrow\infty$ and $m=o(n^{1/2})$.
+* Correa [@correa1995new]: $\widehat{H}_{\text{C}}$.
+
+* Ebrahimi [@Ebrahimi1994]: $\widehat{H}_{\mathrm{E}}(\bm{Z})$.
+
+* Al-Omari [@IbrahimAlOmari2014]: $\widehat{H}_{\mathrm{AO}}(\bm{Z})$.
+
+These estimators, along with others, are described and studied in&nbsp;[@Cassetti2022].
+ 
+<!-- * Correa [@correa1995new]: -->
+<!-- \begin{equation*} -->
+<!-- \widehat{H}_{\text{C}}(\bm{Z}) = -\frac{1}{n} \sum_{i=1}^n \ln \frac{\sum_{j=i-m}^{i+m}(j-i)\left(Z_{(j)}-\widebar{Z}_{(i)}\right)}{n \sum_{j=i-m}^{i+m}\left(Z_{(j)}-\widebar{Z}_{(i)}\right)^2}, -->
+<!-- \end{equation*} -->
+<!-- where $\widebar{Z}_{(i)} = (2 m+1)^{-1} \sum_{j=i-m}^{i+m} Z_{(j)}$. -->
+
+<!-- * Ebrahimi [@Ebrahimi1994]: -->
+<!-- \begin{equation*} -->
+<!-- \widehat{H}_{\mathrm{E}}(\bm{Z})=\frac{1}{n} \sum_{i=1}^n \ln \left[\frac{n}{\tau_i m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right], -->
+<!-- \end{equation*} -->
+<!-- where -->
+<!-- $$ -->
+<!-- \tau_i= \begin{cases}1+(i-1) / m & \text { if } 1 \leq i \leq m, \\ 2 & \text { if } m+1 \leq i \leq n-m, \\ 1+(n-i) / m & \text { if } n-m+1 \leq i \leq n.\end{cases} -->
+<!-- $$ -->
+
+<!-- * Al-Omari [@IbrahimAlOmari2014]: -->
+<!-- \begin{equation*} -->
+<!-- \widehat{H}_{\mathrm{AO}}(\bm{Z})=\frac{1}{n} \sum_{i=1}^n \ln \left[\frac{n}{\omega_i m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right], -->
+<!-- \end{equation*} -->
+<!-- where -->
+<!-- $$ -->
+<!-- \omega_i= \begin{cases}3 / 2 & \text { if } 1 \leq i \leq m, \\ 2 & \text { if } m+1 \leq i \leq n-m, \\ 3 / 2 & \text { if } n-m+1 \leq i \leq n.\end{cases} -->
+<!-- $$ -->
 
 
+## Enhanced Bootstrap Technique
 
-# Hypothesis testing based on non-parametric entropy
-General asymptotic results for functions of spacings are detailed @Khashimov1990, while @Bert1992 developed a correction for the case of Shannon entropy.
+We employ the bootstrap technique to refine the precision of existing non-parametric entropy estimators. This approach involves generating new datasets through resampling with repetition from an existing one.
+
+Let's assume that non-parametric entropy estimators estimators \(\widehat{H}=\widehat{\theta}(\bm{Z})\) are inherently biased, that is:
+\begin{equation}
+\label{Eq:bias1}
+\bias\big(\widehat{\theta}(\bm{Z})\big) = E\big[\widehat{\theta}(\bm{Z})\big] - \theta.
+\end{equation}
+Our objective is to devise unbiased estimators with reduced variance. To achieve this, we introduce an "ideal estimator" \(\check{\theta}(\bm{Z})\) using the bias information:
+\begin{equation}
+\label{Eq:bias2}
+\widecheck{\theta}(\bm{Z}) = \widehat{\theta}(\bm{Z}) - \bias\big(\widehat{\theta}(\bm{Z})\big).
+\end{equation}
+However, \(\check{\theta}(\bm{Z})\) is not an estimator, because it does not depend on the true parameter \(\theta\), prompting the formulation of a new unbiased  estimator \(\widetilde{H}\), from \eqref{Eq:bias1} and \eqref{Eq:bias2} we have:
+\begin{align*}
+\widetilde{H} &= 2\widehat{\theta}(\bm{Z}) - \frac{1}{B}\sum_{b=1}^B \widehat{\theta}_b(\bm{Z}^{(b)}),
+\end{align*}
+where $B$ represents the number of replications in the bootstrap technique.
+Applying this methodology, the original estimators by Correa, Ebrahimi, and Al-Omari are now denoted as the proposed bootstrap-enhanced versions: $\widetilde{H}_{\text{C}}$, $\widetilde{H}_{\text{E}}$, and $\widetilde{H}_{\text{AO}}$, respectively.
+
+# Hypothesis testing based on non-parametric entropy {#sec:test}
+General asymptotic results for functions of spacings are detailed&nbsp;@Khashimov1990, while&nbsp;@Bert1992 developed a correction for the case of Shannon entropy.
 Following the work of these authors, the next result applies: 
-
 \begin{lemma}
 Suppose that $f(\cdot)$ is a bounded density bounded away from zero and satisfies a Lipschitz condition on its support.
 Then, if $m,n\rightarrow \infty$ and $m=o(n^{1/2})$, holds that:
-\begin{equation}
-\sqrt{n}\,\Big(\widehat{H}_{\text{VE}}+\int_{-\infty}^\infty f(z)\log f(z) \mathrm{d}z\Big)
+\begin{equation*}
+\sqrt{n}\,\Big(\label{Eq:bias_t}
+\widetilde{H}_{i}+\int_{-\infty}^\infty f(z)\ln f(z) \mathrm{d}z\Big)
 \xrightarrow[]{\mathcal{D}}
-\mathcal{N}(0,\operatorname{Var}(\log f(Z))),
-\end{equation}
-where $o(\cdot)$ represents the little-o.
+\mathcal{N}(0,\operatorname{Var}(\ln f(Z))).
+\end{equation*}
 \end{lemma} 
-
 Consider, starting from the previous lemma, the test of the null hypothesis $\mathcal{H}_0: T_{\mathcal{D}}=D_0$ as opposed to one of the other three:
-\begin{align}
+\begin{align*}
 \mathcal{H}_1 &: T_{\mathcal{D}}\neq D_0,\\ 
 \mathcal{H}_1 &: T_{\mathcal{D}}> D_0,\text{ or}\\
 \mathcal{H}_1 &: T_{\mathcal{D}}< D_0. 
-\end{align}
-
+\end{align*}
 For this purpose, we can use the test statistics:
-\begin{equation}
-Z_{m,n} = \frac{\sqrt{n}\big(\widehat{H}_{\text{VE}}-D_0\big)}{\sqrt{\operatorname{Var}\big(\log f(Z)\big)}},
-\end{equation}
+\begin{equation*}
+Z_{m,n} = \frac{\sqrt{n}\big(\label{Eq:bias4}
+\widetilde{H}-D_0\big)}{\sqrt{\operatorname{Var}\big(\ln f(Z)\big)}},
+\end{equation*}
 so the null hypothesis should be rejected if (i) $Z_{n,m} > z_{\alpha/2}$ or $Z_{n,m} < - z_{\alpha/2}$ for $\Phi_{\mathcal N}(z_{\alpha/2})=1-\alpha/2$ and $\Phi_{\mathcal N}$ being the standard normal cumulative distribution function, (ii) $Z_{n,m} > z_{\alpha/2}$ or (iii) $Z_{n,m} < - z_{\alpha/2}$.  
 
 The power function for case (i) (two-sided test) at $t\neq D_0$ is given by
@@ -322,23 +421,261 @@ The power function for case (i) (two-sided test) at $t\neq D_0$ is given by
 \end{multline*}
 for a sequence of cumulative distribution functions $\Phi_{m,n}(x)$ which tends uniformly to $\Phi_{\mathcal N}(z)$.
 
-# Results
+# Results {#sec:results} 
 
-We verify that the results of the non-parametric entropies for samples of different sizes converge towards the analytical entropies of $\Gamma_{\text{SAR}}(L, \mu)$ and $G^0(\alpha, \mu , L)$ as the sample size increases. 
+Simulations are conducted using $\mathcal{G}_I^0$ distribution, with 500 synthetic samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\), with parameters \(\mu \in \left\{1, 10\right\}\), \(\alpha=-20\), and \(L=8\). In the case of the bootstrap technique, each sample is replicated 200 times through bootstrapping.
+We choose to use the following heuristic formula for spacing, $m=\left[\sqrt{n}+0.5\right]$.
 
-We assume distinct parameter values for $\mu \in \left\{1, 3, 10\right\}$,  $\alpha\in\left\{-1.5,-3,-5, -8\right\}$, and  $L \in\left\{1,2, 5, 8\right\}$.
-We performed experiments to observe convergence under different scenarios, where each employed different sample sizes: $n\in \left\{9, 25, 49, 81, 121, 500, 5000\right\}$. 
+In Fig. \ref{fig:Plot_bias_mse_gi0} we depict comparisons of bias and mean squared error (MSE) between the original non-parametric entropy estimators and their respective bootstrap-enhanced versions. The use of the bootstrap technique exhibits more precision, reduced bias and MSE, and improved convergence.
 
-<!-- #For each sample size, we performed $1.000$ samples. Fig.&nbsp;\ref{fig:convergence} shows convergence of mean non-parametric entropies for $\mu=3$ and $L=2$. -->
+The results of simulation are exhibited in Table&nbsp;\ref{tab:table2}. The precision of estimators, as evidenced by bias and MSE comparisons, benefits significantly from the bootstrap technique, particularly for sample sizes below 81.
+<!-- ```{r Plot_bias_mse_gama_sar, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE of entropy estimators for  $\\Gamma_{\\text{SAR}}$, $L=8$.", fig.width=6,fig.height=5} -->
+<!-- # Define sample sizes for analysis -->
+<!-- set.seed(1234567890, kind = "Mersenne-Twister") -->
+<!-- sample_sizes <- c(9, 25, 49, 81, 121) -->
+
+<!-- # Number of replications -->
+<!-- R <- 10 -->
+
+<!-- # Number of bootstrap replications -->
+<!-- B <- 10 -->
+<!-- mu_values <- c(1, 10) -->
+<!-- L <- 8 -->
+
+<!-- estimators <- list( -->
+<!--   "Correa" = correa_estimator, -->
+<!--   "Ebrahimi" = ebrahimi_estimator, -->
+<!--   "Al Omari" = al_omari_1_estimator, -->
+<!--   "Correa Bootstrap" = bootstrap_correa_estimator, -->
+<!--   "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator, -->
+<!--   "Al Omari Bootstrap" = bootstrap_al_omari_1_estimator -->
+<!-- ) -->
 
 
-# Conclusion
+<!-- combined_plot <- generate_plot(sample_sizes, R, B, mu_values, L, estimators,  ncol = 1, nrow = 2) -->
 
-The conclusion goes here.
+<!-- # Print the combined plot with sanitize=FALSE -->
+<!-- print(combined_plot) -->
+<!-- ``` -->
 
+```{r Plot_bias_mse_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE of entropy estimators for  $\\mathcal{G}_I^0$, $L=8$, $\\alpha=-20$.", fig.width=6,fig.height=5}
+# Define sample sizes for analysis
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 10
+
+# Number of bootstrap replications
+B <- 10
+mu_values <- c(1, 10)
+alpha <- -20
+L <- 8
+# \widehat{H}_{\text{C}}, \widehat{H}_{\text{E}} \widehat{H}_{\text{AO}}, \widehat{H}_{\text{V}}
+# \widetilde{H}_{C}, \widetilde{H}_{E}, \widetilde{H}_{AO}
+estimators <- list(
+  "Correa" = correa_estimator,
+  "Ebrahimi" = ebrahimi_estimator,
+  "Al Omari" = al_omari_1_estimator,
+  "Correa Bootstrap" = bootstrap_correa_estimator,
+  "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+  "Al Omari Bootstrap" = bootstrap_al_omari_1_estimator
+)
+
+combined_plot <- generate_plot_gi0(sample_sizes, R, B, mu_values,alpha, L, estimators,  ncol = 1, nrow = 2)
+
+# Print the combined plot with sanitize=FALSE
+print(combined_plot)
+
+```
+
+<<<<<<< HEAD
 # Acknowledgment {#acknowledgment}
+=======
 
-The authors would like to thank...
+
+```{r Table_gi01, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+#
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+R <- 10
+B <- 10
+mu_values <- c(1,  10)
+L <- 8
+alpha<- -20
+
+# Define a list of estimators
+estimators <- list(
+  #"Van Es Bootstrap" = bootstrap_van_es_estimator,
+  "Correa Bootstrap" = bootstrap_correa_estimator,
+  "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+  #"Noughabi Arghami Bootstrap" = bootstrap_noughabi_arghami_estimator,
+  #"Vasicek Bootstrap" = bootstrap_vasicek_estimator,
+  "Al Omari  Bootstrap" = bootstrap_al_omari_1_estimator
+  #"Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator
+)
+
+# 
+combined_results <- NULL
+
+for (mu_val in mu_values) {
+  # 
+  results <- calculate_bias_mse_gi0(sample_sizes, R, B, mu_val,alpha,  L, estimators)
+
+  # 
+  results <- cbind(mu = mu_val, results)
+
+  # 
+  combined_results <- bind_rows(combined_results, results)
+}
+
+# 
+reshaped_results <- combined_results %>%
+  pivot_wider(names_from = Estimator, values_from = c(Bias, MSE))
+#\widetilde{H}_{i}
+
+
+colnames(reshaped_results) <- c("$\\bm{\\mu}$", "$\\bm{n}$",  "$\\widetilde{H}_{C}$", "$\\widetilde{H}_{E}$",  "$\\widetilde{H}_{AO}$",  "$\\widetilde{H}_{C}$", "$\\widetilde{H}_{E}$",  "$\\widetilde{H}_{AO}$")
+
+print(
+  kbl(
+    reshaped_results,
+    caption = "Bias and MSE of bootstrap estimators for $\\mathcal{G}_I^0$, $L=8$, $\\alpha=-20$.",
+    format = "latex",
+    booktabs = TRUE,
+    align = "c",
+    escape = FALSE, 
+    digits = 4,  
+    label = "table2"  # 
+  ) %>%
+    add_header_above(c(" ", " ", "Bias" = 3, "MSE" = 3)) %>%
+    collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle")# %>%
+  %>%
+    kable_styling(latex_options = c( "striped")) 
+   # column_spec(1, bold = TRUE) 
+)
+
+```
+
+
+```{r Table_gama_sar12, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+
+
+# Tamaños de muestra
+sample_sizes <- c(9, 25, 49)
+R <- 10
+mu <- 10
+L <- 8
+alpha <- -400
+
+# Entropía verdadera de Gamma SAR
+true_entropy <- entropy_gamma_sar(L, mu)
+#
+# Función para generar muestras
+generate_samples <- function(sample_size, replication, mu, alpha, L) {
+  samples <- vector("list", replication)
+  for (r in 1:replication) {
+    samples[[r]] <- gi0_sample(mu, alpha, L, sample_size)
+  }
+  return(samples)
+}
+
+#colnames(reshaped_results) <- c("$\\bm{\\mu}$", "$\\bm{n}$",  "$\\widetilde{H}_{C}$", "$\\widetilde{H}_{E}$",  "$\\widetilde{H}_{AO}$",  "$\\widetilde{H}_{C}$", "$\\widetilde{H}_{E}$",  "$\\widetilde{H}_{AO}$")
+# 
+calculate_entropy_and_test_table <- function(sample_sizes, R, mu, alpha, L) {
+  estimators <- list(
+    #" " = bootstrap_vasicek_estimator,
+    "$\\widetilde{H}_{C}$ " = bootstrap_correa_estimator,
+    "$\\widetilde{H}_{E}$ " = bootstrap_ebrahimi_estimator,
+    "$\\widetilde{H}_{AO}$ " = bootstrap_al_omari_1_estimator
+  )
+
+  output <- data.frame(
+    SampleSize = integer(0),
+    Estimator = character(0),
+    MeanEntropy = numeric(0),
+    ZStatistic = numeric(0),
+    PValue = numeric(0)
+  )
+
+  for (ssize in sample_sizes) {
+    samples <- generate_samples(ssize, R, mu, alpha, L)
+
+    for (estimator_name in names(estimators)) {
+      estimator <- estimators[[estimator_name]]
+      v.entropy <- numeric(R)
+
+      for (r in 1:R) {
+        sample <- samples[[r]]
+
+        if (grepl(" ", estimator_name)) {
+          v.entropy[r] <- estimator(sample, B = 10)
+        } else {
+          v.entropy[r] <- estimator(sample)
+        }
+      }
+
+      mean_entropy <- mean(v.entropy)
+
+      # Test de hipótesis
+      z_statistic <- sqrt(R) * (mean_entropy - true_entropy) / sd(v.entropy)
+      p_value <- 2 * (1 - pnorm(abs(z_statistic)))
+
+      output <- rbind(
+        output,
+        data.frame(
+          SampleSize = ssize,
+          Estimator = estimator_name,
+          MeanEntropy = round(mean_entropy, 5),
+          ZStatistic = round(z_statistic, 5),
+          PValue = round(p_value, 5)
+        )
+      )
+    }
+  }
+
+  # 
+  colnames(output) <- c("$n$", "Estimator", "Mean Entropy", "$Z$ Statistic", "$p$ Value")
+
+  # Crear la tabla con kbl
+  table_result <- kbl(
+    output,
+    caption = "Hypothesis Testing for $\\mathcal{G}_I^0$, $\\mu=10$, $L=8$, $\\alpha=-400$ , $H_{\\Gamma_{\\text{SAR}}}=2.638$.",
+    format = "latex",
+    booktabs = TRUE,
+    align = "c",
+    escape = FALSE,
+    digits = 4,
+    label = "table_hipotesis"
+  ) %>%
+    #add_header_above(c(" ", " ", "Estimador" = 1, " ", " ")) %>%
+    collapse_rows(columns = 1:3,latex_hline = "major", valign = "middle")  %>%
+    kable_styling(latex_options = c("striped"))
+
+  return(table_result)
+}
+
+# 
+result_table <- calculate_entropy_and_test_table(sample_sizes, R, mu, alpha, L)
+print(result_table)
+
+```
+
+A hypothesis testing was conducted using non-parametric entropy estimators as test statistics. The results in &nbsp;\ref{tab:table_hipotesis} show that data from the $\mathcal{G}_I^0$ distribution exhibit fully developed speckle behavior, specifically in the limit case with parameters $\mu=10$, $L=8$, and $\alpha= -400$. The true entropy of $\Gamma_{\text{SAR}}$ was set at $H_{\Gamma_{\text{SAR}}} = 2.638$.  It is observed that, for different sample sizes, entropy values converge towards the true value of the Gamma SAR distribution. Hypothesis test results were conducted with a 95% confidence level. The $Z$ statistic measures the discrepancy between the estimated entropy and the true entropy. The $p$-values associated with the $Z$ statistic are predominantly greater than $0.05$, suggesting that the data is consistent with the null hypothesis
+
+
+# Conclusion {#sec:conclusion} 
+
+
+In this study, three estimators renowned for their robust performance across diverse distributions were chosen for evaluation. We examine the impact of applying bootstrap techniques on their precision by comparing each estimator's performance with its bootstrap-enhanced counterpart, utilizing metrics such as bias and MSE. The effectiveness of bootstrap-enhanced nonparametric entropy estimators was observed, demonstrating efficacy in most instances. Nonetheless, it is essential to recognize that the applicability of this technique may not be universal across all estimation methods.
+
+It is worth noting that this analysis represents an initial exploration of SAR Intensity data, and future work will include a more in-depth analysis of effect size and statistical power.
+Additionally, exploring the impact of the $\alpha$ parameter on estimates and conducting more extensive analyses to assess the generalization of results to different parameter configurations is suggested.
+>>>>>>> 95d6719 (update paper and codes)
+
 
 
 # References {#references .numbered}
