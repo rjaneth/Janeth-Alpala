@@ -30,7 +30,7 @@ affiliation:
 
 keywords: ["SAR", "entropy estimation", "non-parametric analysis", "order statistics"]
 abstract: |
-  SAR Data are affected by speckle, a non-additive and non-Gaussian interference noise-like pattern.
+  SAR Data are affected by speckle, a non-additive and non-gaussian interference noise-like pattern.
   The type of distribution these data follow is paramount for their processing and analysis.
   Good statistical models provide flexibility and accuracy, often at the cost of using several parameters.
   The $\mathcal{G}^0$ distribution is one of the most successful models for SAR data. 
@@ -207,7 +207,7 @@ The two-stage technique we propose tackles this problem by using the entropy as 
 
 Estimating the entropy faces practical challenges, particularly when the model is unknown; non-parametric methods are utilized in such cases.
 Among non-parametric approaches,&nbsp;@Subhash2021 discussed the use of spacing methods.
-This non-parametric strategy offers flexibility to address a wide range of models without imposing specific parametric constraints. We extend the exploration of nonparametric entropy estimators by incorporating enhanced bootstrap methodologies.
+This non-parametric strategy offers flexibility to address a wide range of models without imposing specific parametric constraints. We extend the exploration of non-parametric entropy estimators by incorporating enhanced bootstrap methodologies.
 
 <!-- In this context, we present a two-stage estimation procedure designed to navigate the complexities of SAR data.  -->
 <!-- The first stage tests the hypothesis that the data follow the Gamma distribution, i.e., we are in the presence of fully developed speckle.  -->
@@ -372,7 +372,7 @@ These estimators, along with others, are described and studied in&nbsp;[@Cassett
 
 We employ the bootstrap technique to refine the precision of existing non-parametric entropy estimators. This approach involves generating new datasets through resampling with repetition from an existing one.
 
-Let's assume that non-parametric entropy estimators estimators \(\widehat{H}=\widehat{\theta}(\bm{Z})\) are inherently biased, that is:
+Let's assume that non-parametric entropy estimators \(\widehat{H}=\widehat{\theta}(\bm{Z})\) are inherently biased, that is:
 \begin{equation}
 \label{Eq:bias1}
 \bias\big(\widehat{\theta}(\bm{Z})\big) = E\big[\widehat{\theta}(\bm{Z})\big] - \theta.
@@ -423,7 +423,7 @@ for a sequence of cumulative distribution functions $\Phi_{m,n}(x)$ which tends 
 
 # Results {#sec:results} 
 
-Simulations are conducted using $\mathcal{G}_I^0$ distribution, with 500 synthetic samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\), with parameters \(\mu \in \left\{1, 10\right\}\), \(\alpha=-20\), and \(L=8\). In the case of the bootstrap technique, each sample is replicated 200 times through bootstrapping.
+Simulations are conducted using $\mathcal{G}_I^0$ distribution, with 200 synthetic samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\), with parameters \(\mu \in \left\{1, 10\right\}\), \(\alpha=-20\), and \(L=8\). In the case of the bootstrap technique, each sample is replicated 100 times through bootstrapping.
 We choose to use the following heuristic formula for spacing, $m=\left[\sqrt{n}+0.5\right]$.
 
 In Fig. \ref{fig:Plot_bias_mse_gi0} we depict comparisons of bias and mean squared error (MSE) between the original non-parametric entropy estimators and their respective bootstrap-enhanced versions. The use of the bootstrap technique exhibits more precision, reduced bias and MSE, and improved convergence.
@@ -441,7 +441,7 @@ The results of simulation are exhibited in Table&nbsp;\ref{tab:table2}. The prec
 <!-- B <- 10 -->
 <!-- mu_values <- c(1, 10) -->
 <!-- L <- 8 -->
-
+as
 <!-- estimators <- list( -->
 <!--   "Correa" = correa_estimator, -->
 <!--   "Ebrahimi" = ebrahimi_estimator, -->
@@ -464,10 +464,10 @@ set.seed(1234567890, kind = "Mersenne-Twister")
 sample_sizes <- c(9, 25, 49, 81, 121)
 
 # Number of replications
-R <- 10
+R <- 100
 
 # Number of bootstrap replications
-B <- 10
+B <- 30
 mu_values <- c(1, 10)
 alpha <- -20
 L <- 8
@@ -498,8 +498,8 @@ print(combined_plot)
 #
 set.seed(1234567890, kind = "Mersenne-Twister")
 sample_sizes <- c(9, 25, 49, 81, 121)
-R <- 10
-B <- 10
+R <- 100
+B <- 30
 mu_values <- c(1,  10)
 L <- 8
 alpha<- -20
@@ -566,9 +566,9 @@ set.seed(1234567890, kind = "Mersenne-Twister")
 
 # Tamaños de muestra
 sample_sizes <- c(9, 25, 49)
-R <- 10
+R <- 100
 mu <- 10
-L <- 8
+L <- 5
 alpha <- -400
 
 # Entropía verdadera de Gamma SAR
@@ -578,7 +578,7 @@ true_entropy <- entropy_gamma_sar(L, mu)
 generate_samples <- function(sample_size, replication, mu, alpha, L) {
   samples <- vector("list", replication)
   for (r in 1:replication) {
-    samples[[r]] <- gi0_sample(mu, alpha, L, sample_size)
+    samples[[r]] <- gi0_sample(mu, alpha, L, sample_size)#
   }
   return(samples)
 }
@@ -612,7 +612,7 @@ calculate_entropy_and_test_table <- function(sample_sizes, R, mu, alpha, L) {
         sample <- samples[[r]]
 
         if (grepl(" ", estimator_name)) {
-          v.entropy[r] <- estimator(sample, B = 10)
+          v.entropy[r] <- estimator(sample, B = 30)
         } else {
           v.entropy[r] <- estimator(sample)
         }
@@ -620,7 +620,7 @@ calculate_entropy_and_test_table <- function(sample_sizes, R, mu, alpha, L) {
 
       mean_entropy <- mean(v.entropy)
 
-      # Test de hipótesis
+      # 
       z_statistic <- sqrt(R) * (mean_entropy - true_entropy) / sd(v.entropy)
       p_value <- 2 * (1 - pnorm(abs(z_statistic)))
 
@@ -643,7 +643,7 @@ calculate_entropy_and_test_table <- function(sample_sizes, R, mu, alpha, L) {
   # Crear la tabla con kbl
   table_result <- kbl(
     output,
-    caption = "Hypothesis Testing for $\\mathcal{G}_I^0$, $\\mu=10$, $L=8$, $\\alpha=-400$ , $H_{\\Gamma_{\\text{SAR}}}=2.638$.",
+    caption = "Hypothesis Testing for $\\mathcal{G}_I^0$, $\\mu=10$, $L=5$, $\\alpha=-400$ , $H_{\\Gamma_{\\text{SAR}}}=2.846$.",
     format = "latex",
     booktabs = TRUE,
     align = "c",
@@ -664,13 +664,13 @@ print(result_table)
 
 ```
 
-A hypothesis testing was conducted using non-parametric entropy estimators as test statistics. The results in &nbsp;\ref{tab:table_hipotesis} show that data from the $\mathcal{G}_I^0$ distribution exhibit fully developed speckle behavior, specifically in the limit case with parameters $\mu=10$, $L=8$, and $\alpha= -400$. The true entropy of $\Gamma_{\text{SAR}}$ was set at $H_{\Gamma_{\text{SAR}}} = 2.638$.  It is observed that, for different sample sizes, entropy values converge towards the true value of the Gamma SAR distribution. Hypothesis test results were conducted with a 95% confidence level. The $Z$ statistic measures the discrepancy between the estimated entropy and the true entropy. The $p$-values associated with the $Z$ statistic are predominantly greater than $0.05$, suggesting that the data is consistent with the null hypothesis
+A hypothesis testing was conducted using non-parametric entropy estimators as test statistics. The results in &nbsp;\ref{tab:table_hipotesis} show that data from the $\mathcal{G}_I^0$ distribution exhibit fully developed speckle behavior, specifically in the limit case with parameters $\mu=10$, $L=5$, and $\alpha= -400$. The true entropy of $\Gamma_{\text{SAR}}$ was set at $H_{\Gamma_{\text{SAR}}} = 2.846$.  It is observed that, for different sample sizes, entropy values converge towards the true value of the Gamma SAR distribution. Hypothesis test results were conducted with a 95% confidence level. The $Z$ statistic measures the discrepancy between the estimated entropy and the true entropy. The $p$-values associated with the $Z$ statistic are predominantly greater than $0.05$, for sample sizes above 25, suggesting that the data is consistent with the null hypothesis.
 
 
 # Conclusion {#sec:conclusion} 
 
 
-In this study, three estimators renowned for their robust performance across diverse distributions were chosen for evaluation. We examine the impact of applying bootstrap techniques on their precision by comparing each estimator's performance with its bootstrap-enhanced counterpart, utilizing metrics such as bias and MSE. The effectiveness of bootstrap-enhanced nonparametric entropy estimators was observed, demonstrating efficacy in most instances. Nonetheless, it is essential to recognize that the applicability of this technique may not be universal across all estimation methods.
+In this study, three estimators renowned for their robust performance across diverse distributions were chosen for evaluation. We examine the impact of applying bootstrap techniques on their precision by comparing each estimator's performance with its bootstrap-enhanced counterpart, utilizing metrics such as bias and MSE. The effectiveness of bootstrap-enhanced non-parametric entropy estimators was observed, demonstrating efficacy in most instances. Nonetheless, it is essential to recognize that the applicability of this technique may not be universal across all estimation methods.
 
 It is worth noting that this analysis represents an initial exploration of SAR Intensity data, and future work will include a more in-depth analysis of effect size and statistical power.
 Additionally, exploring the impact of the $\alpha$ parameter on estimates and conducting more extensive analyses to assess the generalization of results to different parameter configurations is suggested.
