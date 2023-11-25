@@ -326,7 +326,8 @@ We can identify regions where entropy is high or low, providing insights into th
 
 ## Estimation of the Shannon Entropy
 
-One of the earliest non-parametric estimators relying on spacings was introduced by Vasicek&nbsp;[@vasicek1976test]. Assuming that $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ is a random sample from the distribution $F(z)$, the estimator is defined as:
+One of the earliest non-parametric estimators relying on spacings was introduced by @vasicek1976test. 
+Assuming that $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ is a random sample from the distribution $F(z)$, the estimator is defined as:
 \begin{equation*}
 \label{E:Vas}
 	\widehat{H}_{\text{V}}(\bm{Z})=\frac{1}{n}\sum_{i=1}^{n}\ln\left[\frac{n}{2m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right],
@@ -335,13 +336,13 @@ where $m<n/2$ is a positive integer, $Z_{(i+m)}-Z_{(i-m)}$ is the $m$-spacing an
 
 Several authors have explored adaptations to Vasicek's estimator. In this work, we consider three entropy estimators known for their superior performance:
 
-* Correa [@correa1995new]: $\widehat{H}_{\text{C}}$.
+* @correa1995new: $\widehat{H}_{\text{C}}$.
 
-* Ebrahimi [@Ebrahimi1994]: $\widehat{H}_{\mathrm{E}}(\bm{Z})$.
+* @Ebrahimi1994: $\widehat{H}_{\mathrm{E}}(\bm{Z})$.
 
-* Al-Omari [@IbrahimAlOmari2014]: $\widehat{H}_{\mathrm{AO}}(\bm{Z})$.
+* @IbrahimAlOmari2014: $\widehat{H}_{\mathrm{AO}}(\bm{Z})$.
 
-These estimators, along with others, are described and studied in&nbsp;[@Cassetti2022].
+These estimators, along with others, are described and studied in @Cassetti2022.
  
 <!-- * Correa [@correa1995new]: -->
 <!-- \begin{equation*} -->
@@ -370,7 +371,8 @@ These estimators, along with others, are described and studied in&nbsp;[@Cassett
 
 ## Enhanced Bootstrap Technique
 
-We employ the bootstrap technique to refine the precision of existing non-parametric entropy estimators. This approach involves generating new datasets through resampling with repetition from an existing one.
+We employ the bootstrap technique to refine the precision of existing non-parametric entropy estimators. 
+This approach involves generating new datasets through resampling with repetition from an existing one.
 
 Let's assume that non-parametric entropy estimators \(\widehat{H}=\widehat{\theta}(\bm{Z})\) are inherently biased, that is:
 \begin{equation}
@@ -382,11 +384,12 @@ Our objective is to devise unbiased estimators with reduced variance. To achieve
 \label{Eq:bias2}
 \widecheck{\theta}(\bm{Z}) = \widehat{\theta}(\bm{Z}) - \bias\big(\widehat{\theta}(\bm{Z})\big).
 \end{equation}
-However, \(\check{\theta}(\bm{Z})\) is not an estimator, because it does not depend on the true parameter \(\theta\), prompting the formulation of a new unbiased  estimator \(\widetilde{H}\), from \eqref{Eq:bias1} and \eqref{Eq:bias2} we have:
+However, \(\check{\theta}(\bm{Z})\) is not an estimator, because it depends on the true parameter \(\theta\), prompting the formulation of a new estimator \(\widetilde{H}\). 
+From \eqref{Eq:bias1} and \eqref{Eq:bias2} we have:
 \begin{align*}
 \widetilde{H} &= 2\widehat{\theta}(\bm{Z}) - \frac{1}{B}\sum_{b=1}^B \widehat{\theta}_b(\bm{Z}^{(b)}),
 \end{align*}
-where $B$ represents the number of replications in the bootstrap technique.
+where $B$ is the number of replications in the bootstrap technique.
 Applying this methodology, the original estimators by Correa, Ebrahimi, and Al-Omari are now denoted as the proposed bootstrap-enhanced versions: $\widetilde{H}_{\text{C}}$, $\widetilde{H}_{\text{E}}$, and $\widetilde{H}_{\text{AO}}$, respectively.
 
 # Hypothesis testing based on non-parametric entropy {#sec:test}
@@ -423,7 +426,7 @@ for a sequence of cumulative distribution functions $\Phi_{m,n}(x)$ which tends 
 
 # Results {#sec:results} 
 
-Simulations are conducted using $\mathcal{G}_I^0$ distribution, with 200 synthetic samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\), with parameters \(\mu \in \left\{1, 10\right\}\), \(\alpha=-20\), and \(L=8\). In the case of the bootstrap technique, each sample is replicated 100 times through bootstrapping.
+Simulations are conducted using $\mathcal{G}_I^0$ distribution, with $200$ simulated samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\), with parameters \(\mu \in \left\{1, 10\right\}\), \(\alpha=-20\), and \(L=8\). In the case of the bootstrap technique, each sample is replicated $100$ times with replacement.
 We choose to use the following heuristic formula for spacing, $m=\left[\sqrt{n}+0.5\right]$.
 
 In Fig. \ref{fig:Plot_bias_mse_gi0} we depict comparisons of bias and mean squared error (MSE) between the original non-parametric entropy estimators and their respective bootstrap-enhanced versions. The use of the bootstrap technique exhibits more precision, reduced bias and MSE, and improved convergence.
@@ -431,7 +434,7 @@ In Fig. \ref{fig:Plot_bias_mse_gi0} we depict comparisons of bias and mean squar
 The results of simulation are exhibited in Table&nbsp;\ref{tab:table2}. The precision of estimators, as evidenced by bias and MSE comparisons, benefits significantly from the bootstrap technique, particularly for sample sizes below 81.
 
 
-```{r Plot_bias_mse_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE of entropy estimators for  $\\mathcal{G}_I^0$, $L=8$, $\\alpha=-20$.", fig.width=6,fig.height=5}
+```{r Plot_bias_mse_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE of entropy estimators for  $\\mathcal{G}_I^0$, $L=8$, $\\alpha=-20$.", fig.width=6, fig.height=5}
 # Define sample sizes for analysis
 set.seed(1234567890, kind = "Mersenne-Twister")
 sample_sizes <- c(9, 25, 49, 81, 121)
@@ -634,7 +637,13 @@ print(result_table)
 
 ```
 
-A hypothesis testing was conducted using non-parametric entropy estimators as test statistics. The results in &nbsp;\ref{tab:table_hipotesis} show that data from the $\mathcal{G}_I^0$ distribution exhibit fully developed speckle behavior, specifically in the limit case with parameters $\mu=10$, $L=5$, and $\alpha= -400$. The true entropy of $\Gamma_{\text{SAR}}$ was set at $H_{\Gamma_{\text{SAR}}} = 2.846$.  It is observed that, for different sample sizes, entropy values converge towards the true value of the Gamma SAR distribution. Hypothesis test results were conducted with a 95% confidence level. The $Z$ statistic measures the discrepancy between the estimated entropy and the true entropy. The $p$-values associated with the $Z$ statistic are predominantly greater than $0.05$, for sample sizes above 25, suggesting that the data is consistent with the null hypothesis.
+A hypothesis testing was conducted using non-parametric entropy estimators as test statistics. 
+The results in Table&nbsp;\ref{tab:table_hipotesis} show that data from the $\mathcal{G}_I^0$ distribution exhibit fully developed speckle behavior, specifically in the limit case with parameters $\mu=10$, $L=5$, and $\alpha= -400$. 
+The true entropy of $\Gamma_{\text{SAR}}$ was set at $H_{\Gamma_{\text{SAR}}} = 2.846$.  
+It is observed that, for different sample sizes, entropy values converge towards the true value of the Gamma SAR distribution. 
+Hypothesis test results were conducted with a \SI{95}{\percent} confidence level. 
+The $Z$ statistic measures the discrepancy between the estimated entropy and the true entropy. 
+The $p$-values associated with the $Z$ statistic are predominantly greater than $0.05$, for sample sizes above $25$, suggesting that the data are consistent with the null hypothesis.
 
 
 # Conclusion {#sec:conclusion} 
