@@ -22,6 +22,11 @@ al_omari_1_estimator <- function(data) {
   return(sum_term / n)
 }
 
+# set.seed(123)
+# test_data <- rnorm(10)
+# result <- al_omari_1_estimator(test_data)
+# print(result)
+
 # Example usage:
 # data <- c(1.2, 1.5,3.6, 2.0, 2.1, 2.5, 2.6, 3.0, 3.1, 3.5)
 # result <- al_omari_1_estimator(data)

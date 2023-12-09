@@ -31,6 +31,8 @@ generate_samples_gi0 <- function(sample_size, replication, mu, alpha, L) {
   return(samples)
 }
 
+
+
 calculate_bias_mse_gi0 <- function(sample_sizes, R,B, mu, alpha, L, estimators) {
   true_entropy <- entropy_gI0(mu, alpha, L)
   
@@ -63,6 +65,219 @@ calculate_bias_mse_gi0 <- function(sample_sizes, R,B, mu, alpha, L, estimators) 
   
   return(output)
 }
+
+
+generate_plot_gi0_esp <- function(results_gi0, mu_values, selected_estimators, ncol = 2, nrow = 2) {
+ 
+  plot_list <- list()
+  
+  for (mu_val in mu_values) {
+    
+    df <- results_gi0[[as.character(mu_val)]]
+    
+    
+    df_filtered <- df[df$Estimator %in% names(selected_estimators), ]
+    
+    
+    df_filtered$Estimator <- selected_estimators[df_filtered$Estimator]
+    
+    
+    df_filtered$Estimator <- as.character(df_filtered$Estimator)
+    
+    plot_bias <- ggplot(df_filtered, aes(x = n, y = Bias, color = Estimator)) +
+      geom_hline(yintercept = 0) +
+      geom_point(size = 2) +
+      geom_line(linetype = "solid", linewidth = 0.5) +
+      labs(y = "Bias", x = expression("Sample size"~(n))) +
+      scale_color_discrete(labels = TeX(df_filtered$Estimator)) +
+      annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
+      coord_cartesian(clip = 'off')
+    
+    # 
+    if (mu_val != mu_values[1]) {
+      plot_bias = plot_bias + theme(legend.position = "top")
+    }
+    
+    plot_mse <- ggplot(df_filtered, aes(x = n, y = MSE, color = Estimator)) +
+      geom_hline(yintercept = 0) +
+      geom_point(size = 2) +
+      geom_line(linetype = "solid", linewidth = 0.5) +
+      labs(y = "MSE", x = expression("Sample size"~(n))) +
+      scale_color_discrete(labels = TeX(df_filtered$Estimator)) +
+      annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
+      coord_cartesian(clip = 'off')
+    
+    
+    if (mu_val != mu_values[1]) {
+      plot_mse = plot_mse + theme(legend.position = "top")
+    }
+    
+    
+    plot_list[[as.character(mu_val)]] <- plot_bias + plot_mse
+  }
+  
+  
+  combined_plot <- wrap_plots(plot_list, ncol = ncol, nrow = nrow) +
+    plot_layout(guides = "collect")
+  
+ 
+  return(combined_plot)
+}
+
+# generate_plot_gi0_esp <- function(results_gi0, mu_values, selected_estimators, ncol = 2, nrow = 2) {
+#   # Lista para almacenar los gráficos
+#   plot_list <- list()
+# 
+#   for (mu_val in mu_values) {
+#     # Obtener resultados para el valor actual de mu desde la lista
+#     df <- results_gi0[[as.character(mu_val)]]
+# 
+#     # Filtrar el dataframe para incluir solo los estimadores seleccionados
+#     df_filtered <- df[df$Estimator %in% names(selected_estimators), ]
+# 
+#     # Actualizar los nombres de los estimadores en notación LaTeX
+#     df_filtered$Estimator <- selected_estimators[df_filtered$Estimator]
+# 
+#     plot_bias <- ggplot(df_filtered, aes(x = n, y = Bias, color = as.character(Estimator))) +
+#       geom_hline(yintercept = 0) +
+#       geom_point(size = 2) +
+#       geom_line(linetype = "solid", linewidth = 0.5) +
+#       labs(y = "Bias", x = expression("Sample size"~(n))) +
+#       guides(color = guide_legend(title = "Estimator")) +
+#       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
+#       coord_cartesian(clip = 'off')
+# 
+#     # Eliminar la leyenda para todos los gráficos excepto el primero de cada fila
+#     if (mu_val != mu_values[1]) {
+#       plot_bias = plot_bias + theme(legend.position = "top")
+#     }
+# 
+#     plot_mse <- ggplot(df_filtered, aes(x = n, y = MSE, color = as.character(Estimator))) +
+#       geom_hline(yintercept = 0) +
+#       geom_point(size = 2) +
+#       geom_line(linetype = "solid", linewidth = 0.5) +
+#       labs(y = "MSE", x = expression("Sample size"~(n))) +
+#       guides(color = guide_legend(title = "Estimator")) +
+#       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
+#       coord_cartesian(clip = 'off')
+# 
+#     # Eliminar la leyenda para todos los gráficos excepto el primero de cada fila
+#     if (mu_val != mu_values[1]) {
+#       plot_mse = plot_mse + theme(legend.position = "top")
+#     }
+# 
+#     # Agregar los gráficos a la lista
+#     plot_list[[as.character(mu_val)]] <- plot_bias + plot_mse
+#   }
+# 
+#   # Organizar los gráficos en una sola figura y añadir leyenda común en la parte inferior
+#   combined_plot <- wrap_plots(plot_list, ncol = ncol, nrow = nrow) +
+#     plot_layout(guides = "collect")
+# 
+#   # No mostrar la figura aquí, devolver el objeto combined_plot
+#   return(combined_plot)
+# }
+
+
+# generate_plot_gi0_esp <- function(results_gi0, mu_values, selected_estimators, ncol = 2, nrow = 2) {
+#   # Lista para almacenar los gráficos
+#   plot_list <- list()
+#   
+#   for (mu_val in mu_values) {
+#     # Obtener resultados para el valor actual de mu desde la lista
+#     df <- results_gi0[[as.character(mu_val)]]
+#     
+#     # Filtrar el dataframe para incluir solo los estimadores seleccionados
+#     df_filtered <- df[df$Estimator %in% selected_estimators, ]
+#     
+#     plot_bias <- ggplot(df_filtered, aes(x = n, y = Bias, color = Estimator)) +
+#       geom_hline(yintercept = 0) +
+#       geom_point(size = 2) +
+#       geom_line(linetype = "solid", linewidth = 0.5) +
+#       labs(y = "Bias", x =  expression("Sample size"~(n))) +
+#       guides(color = guide_legend(title = "Estimator")) +
+#       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
+#       coord_cartesian(clip = 'off')
+#     
+#     # Eliminar la leyenda para todos los gráficos excepto el primero de cada fila
+#     if (mu_val != mu_values[1]) {
+#       plot_bias = plot_bias + theme(legend.position = "top")
+#     }
+#     
+#     plot_mse <- ggplot(df_filtered, aes(x = n, y = MSE, color = Estimator)) +
+#       geom_hline(yintercept = 0) +
+#       geom_point(size = 2) +
+#       geom_line(linetype = "solid", linewidth = 0.5) +
+#       labs(y = "MSE", x =  expression("Sample size"~(n))) +
+#       guides(color = guide_legend(title = "Estimator")) +
+#       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
+#       coord_cartesian(clip = 'off')
+#     
+#     # Eliminar la leyenda para todos los gráficos excepto el primero de cada fila
+#     if (mu_val != mu_values[1]) {
+#       plot_mse = plot_mse + theme(legend.position = "top")
+#     }
+#     
+#     # Agregar los gráficos a la lista
+#     plot_list[[as.character(mu_val)]] <- plot_bias + plot_mse
+#   }
+#   
+#   # Organizar los gráficos en una sola figura y añadir leyenda común en la parte inferior
+#   combined_plot <- wrap_plots(plot_list, ncol = ncol, nrow = nrow) +
+#     plot_layout(guides = "collect")
+#   
+#   # No mostrar la figura aquí, devolver el objeto combined_plot
+#   return(combined_plot)
+# }
+
+generate_plot_gi0_new <- function(results_gi0, mu_values, ncol = 2, nrow = 2) {
+  # Lista para almacenar los gráficos
+  plot_list <- list()
+  
+  for (mu_val in mu_values) {
+    # Obtener resultados para el valor actual de mu desde la lista
+    df <- results_gi0[[as.character(mu_val)]]
+    
+    plot_bias <- ggplot(df, aes(x = n, y = Bias, color = Estimator)) +
+      geom_hline(yintercept = 0) +
+      geom_point(size = 2) +
+      geom_line(linetype = "solid", linewidth = 0.5) +
+      labs(y = "Bias", x =  expression("Sample size"~(n))) +
+      guides(color = guide_legend(title = "Estimator")) +
+      annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
+      coord_cartesian(clip = 'off')
+    
+    # Eliminar la leyenda para todos los gráficos excepto el primero de cada fila
+    if (mu_val != mu_values[1]) {
+      plot_bias = plot_bias + theme(legend.position = "top")
+    }
+    
+    plot_mse <- ggplot(df, aes(x = n, y = MSE, color = Estimator)) +
+      geom_hline(yintercept = 0) +
+      geom_point(size = 2) +
+      geom_line(linetype = "solid", linewidth = 0.5) +
+      labs(y = "MSE", x =  expression("Sample size"~(n))) +
+      guides(color = guide_legend(title = "Estimator")) +
+      annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
+      coord_cartesian(clip = 'off')
+    
+    # Eliminar la leyenda para todos los gráficos excepto el primero de cada fila
+    if (mu_val != mu_values[1]) {
+      plot_mse = plot_mse + theme(legend.position = "top")
+    }
+    
+    # Agregar los gráficos a la lista
+    plot_list[[as.character(mu_val)]] <- plot_bias + plot_mse
+  }
+  
+  # Organizar los gráficos en una sola figura y añadir leyenda común en la parte inferior
+  combined_plot <- wrap_plots(plot_list, ncol = ncol, nrow = nrow) +
+    plot_layout(guides = "collect")
+  
+  # No mostrar la figura aquí, devolver el objeto combined_plot
+  return(combined_plot)
+}
+
 
 generate_plot_gi0 <- function(sample_sizes, R, B, mu_values, alpha, L, estimators, ncol = 2, nrow = 2) {
   # Lista para almacenar los gráficos
