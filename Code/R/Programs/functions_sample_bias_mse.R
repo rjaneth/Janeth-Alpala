@@ -33,6 +33,60 @@ generate_samples_gi0 <- function(sample_size, replication, mu, alpha, L) {
 
 
 
+# Function to calculate entropy and perform hypothesis testing
+calculate_entropy_and_test <- function(sample_sizes, R, B, mu, alpha, L, estimators) {
+  true_entropy <- entropy_gamma_sar(L, mu)
+  output <- data.frame(
+    SampleSize = integer(0),
+    Estimator = character(0),
+    MeanEntropy = numeric(0),
+    ZStatistic = numeric(0),
+    PValue = numeric(0)
+  )
+  
+  for (ssize in sample_sizes) {
+    samples <- generate_samples_gi0(ssize, R, mu, alpha, L)
+    
+    for (estimator_name in names(estimators)) {
+      estimator <- estimators[[estimator_name]]
+      v.entropy <- numeric(R)
+      
+      for (r in 1:R) {
+        sample <- samples[[r]]
+        
+        if (grepl(" ", estimator_name)) {
+          v.entropy[r] <- estimator(sample, B = B)
+        } else {
+          v.entropy[r] <- estimator(sample)
+        }
+      }
+      
+      mean_entropy <- mean(v.entropy)
+      
+      z_statistic <- sqrt(R) * (mean_entropy - true_entropy) / sd(v.entropy)
+      p_value <- 2 * (1 - pnorm(abs(z_statistic)))
+      
+      output <- rbind(
+        output,
+        data.frame(
+          SampleSize = ssize,
+          Estimator = estimator_name,
+          MeanEntropy = round(mean_entropy, 5),
+          ZStatistic = round(z_statistic, 5),
+          PValue = round(p_value, 5)
+        )
+      )
+    }
+  }
+  
+  colnames(output) <- c("$n$", "Estimator", "Mean Entropy", "$Z$ Statistic", "$p$ Value")
+  
+  return(output)
+}
+
+
+
+
 calculate_bias_mse_gi0 <- function(sample_sizes, R,B, mu, alpha, L, estimators) {
   true_entropy <- entropy_gI0(mu, alpha, L)
   
