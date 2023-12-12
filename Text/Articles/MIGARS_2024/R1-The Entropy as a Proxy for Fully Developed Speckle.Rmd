@@ -77,7 +77,6 @@ header-includes:
 output:
   rticles::ieee_article:
     number_sections: TRUE
-    #citation_package: biblatex
     citation_package: natbib
 
 bibliography: ../../Common/references.bib
@@ -90,7 +89,7 @@ biblio-style: ieeetr
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, cache=TRUE)
 library(ggplot2)
 library(reshape2)
 #library(plotly)
@@ -187,6 +186,11 @@ This non-parametric strategy offers flexibility to address a wide range of model
 <!-- In this context, we present a two-stage estimation procedure designed to navigate the complexities of SAR data.  -->
 <!-- The first stage tests the hypothesis that the data follow the Gamma distribution, i.e., we are in the presence of fully developed speckle.  -->
 <!-- If this hypothesis is rejected, we proceed to the second stage to estimate the parameters that characterize the $\mathcal{G}^0$ distribution.  -->
+
+\textcolor{red}{Our aim is to develop a test statistic that helps discriminating between fully-developed speckle and heterogeneous clutter.
+We work with non-parametric estimators of the entropy, we reduce the bias of those based on spacings using bootstrap, and select the best ones.
+Next, we study the empirical distribution of these estimators under the null hypothesis, followed by a study of the size and power of the proposed test.
+We conclude the study with applications to SAR data.}
 
 The article is structured as follows: 
 Section&nbsp;\ref{sec:Background} covers statistical modeling and entropy estimation for Intensity SAR data. Section&nbsp;\ref{sec:test} outlines hypothesis testing based on non-parametric entropy. 
