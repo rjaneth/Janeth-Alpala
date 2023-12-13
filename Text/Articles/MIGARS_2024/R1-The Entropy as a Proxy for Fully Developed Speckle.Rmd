@@ -180,7 +180,7 @@ The two-stage technique we propose tackles this problem by using the entropy as 
 <!-- In statistics, Shannon entropy is a crucial descriptive parameter, particularly for assessing data dispersion and conducting tests for normality, exponentiality, and uniformity&nbsp;[@Wieczorkowski1999]. -->
 
 Estimating the entropy faces practical challenges, particularly when the model is unknown; non-parametric methods are utilized in such cases.
-Among non-parametric approaches,&nbsp;\cite{Subhash2021} discussed the use of spacing methods.
+Among non-parametric approaches, Subhash et al.&nbsp;\cite{Subhash2021} discussed the use of spacing methods.
 This non-parametric strategy offers flexibility to address a wide range of models without imposing specific parametric constraints. We extend the exploration of non-parametric entropy estimators by incorporating enhanced bootstrap methodologies.
 
 <!-- In this context, we present a two-stage estimation procedure designed to navigate the complexities of SAR data.  -->
