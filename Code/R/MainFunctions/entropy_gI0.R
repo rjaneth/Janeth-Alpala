@@ -13,10 +13,12 @@
 
 entropy_gI0 <- function(mu, alpha, L) {
   
-  term1 <- L - log(L) + log(gamma(L)) + (1 - L) * digamma(L) + log(mu)   
-  term2 <- -L - log(gamma(L-alpha)) + (L-alpha)*(digamma(L - alpha))- (1-alpha)*digamma(- alpha)+log(-1 - alpha)+log(gamma(-alpha))
+  term1 <- L - log(L) + lgamma(L) + (1 - L) * digamma(L) + log(mu) 
+  term2 <- -L - lgamma(L-alpha) + (L-alpha)*(digamma(L - alpha))- (1-alpha)*digamma(- alpha)+log(-1 - alpha)+lgamma(-alpha)
+  #term2 <- -L - log(gamma(L-alpha)) + (L-alpha)*(digamma(L - alpha))- (1-alpha)*digamma(- alpha)+log(-1 - alpha)+log(gamma(-alpha))
   
   entropy <- term1 + term2 
   return(entropy)
 }
 
+#entropy_gI0( 10,-1.05,  1)

@@ -1,3 +1,5 @@
+
+
 yee_estimator<- function(X) {
   n <- length(X)
   H_Y <- numeric(n-1)
@@ -15,6 +17,30 @@ yee_estimator<- function(X) {
   
   return(estimated_entropy)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # yee_estimator<- function(X) {
 #   n <- length(X)
@@ -34,7 +60,7 @@ yee_estimator<- function(X) {
 #   return(estimated_entropy)
 # }
 
-# # Ejemplo de uso con muestra de tamaño 10000
+
 # set.seed(123)  # Para reproducibilidad
 # X_large <- rnorm(1000)  # Reemplaza esto con tu conjunto de datos
 # system.time(entropy_estimate_large <- yee_entropy_estimator_optimized(X_large))

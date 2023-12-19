@@ -32,7 +32,7 @@ header-includes:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE,cache=TRUE)
 #knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 
@@ -58,12 +58,14 @@ library(ggsci)
 library(wesanderson)
 library(ggpubr)
 library(patchwork)
-options(kableExtra.latex.load_packages = FALSE)
+#options(kableExtra.latex.load_packages = FALSE)
 library(devtools)
-devtools::install_github("haozhu233/kableExtra")
+#devtools::install_github("haozhu233/kableExtra")
 #devtools::install_github("haozhu233/kableExtra")
 library(kableExtra)
 library(ggthemes)
+library(geomtextpath)
+library(latex2exp)
 theme_set(theme_bw()  +
             theme(text=element_text(family="serif"),
                   legend.position = "top")# Gridtop , right , bottom , or left#, panel.grid = element_blank()
@@ -80,6 +82,7 @@ theme_set(theme_bw()  +
 
 source("../MainFunctions/gamma_sar_sample.r")
 source("../MainFunctions/entropy_gamma_sar.r")
+source("../MainFunctions/entropy_gI0.r")
 
 source("../MainFunctions/van_es_estimator.r")
 source("../MainFunctions/correa_estimator.r")
@@ -115,37 +118,20 @@ H_{\Gamma_{\text{SAR}}}(L_0, \mu) &=   L_0 -\ln(L_0/\mu)+\ln\Gamma(L_0)+(1-L_0)\
 where $L_0\geq 1$ is known, and $\mu>0$ is the mean.
 We see that, given $L_0$, the entropy of a random variable following the Gamma-SAR model depends on the logarithm of the mean $\mu$.
 
-```{r FunctionsDefinitions}
-entropy_gamma_sar <- function(L, mu) {
-  
-    return(L - log(L) + log(gamma(L)) + (1 - L) * digamma(L) + log(mu))
-  
-}
 
-entropy_gI0 <- function(mu, alpha, L) {
-  
-  term1 <- L - log(L) + log(gamma(L)) + (1 - L) * digamma(L) + log(mu)   
-  term2 <- -L - log(gamma(L-alpha)) + (L-alpha)*(digamma(L - alpha))- (1-alpha)*digamma(- alpha)+log(-1 - alpha)+log(gamma(-alpha))
-  
-  entropy <- term1 + term2 
-  return(entropy)
-}
-
-gamma_sar_sample <- function(L, mu, n) {
-  samples <- rgamma(n, shape = L, rate = L / mu)
-  return(samples)
-}
-
-
-```
 
 
 
 ```{r PlotGammaSAR, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Simulation of entropy for Gamma SAR"}
 L <- c(1, 3, 8, 12, 100)
 
-
-L_labels <- c("L = 1", "L = 3", "L = 8", "L = 12", "L = 100")
+#L <- c(  12)
+L_labels <- c(expression(italic(L)==1), 
+              expression(italic(L)==3), 
+              expression(italic(L)==8), 
+              expression(italic(L)==12),
+              expression(italic(L)==100)
+              )
 
 mu <- seq(0.1, 10, length.out = 500)
 
@@ -160,11 +146,15 @@ muEntropy.molten <- melt(muEntropy, id.vars = "mu", variable.name = "Looks", val
 
 
 ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = Looks)) +
-  geom_line() +
-  #theme_minimal() +
-  scale_color_manual(values = rainbow(length(L)), labels = L_labels) +
-  labs(col = "Looks") +
-  xlab(expression(paste(mu)))
+  geom_line(linewidth=1) +
+  theme_minimal() +
+   scale_color_manual(values = rainbow(length(L)), labels = L_labels) +
+   labs(col = "Looks") +
+  #scale_color_manual(values = pal_jama()(7)[1:5], labels = L_labels) +
+  #labs(col = "Looks")+
+  xlab(expression(paste(mu))) +
+  theme(text=element_text(family="serif"),
+        legend.position = "bottom")
 
 ```
 
@@ -174,7 +164,7 @@ The Shannon entropy of the GI0-SAR model is given by
 
 \begin{multline}
 \label{E:E-GIO}
-H_{\mathcal{G}_I^0}(\mu, \alpha, L_0) =\underbrace{L_0 -\ln L_0+\ln\Gamma(L_0)+(1-L_0)\psi^{(0)}(L_0) +\ln \mu}_{H_{\Gamma_{\text{SAR}}}} 
+H_{G_I^0}(\mu, \alpha, L_0) =\underbrace{L_0 -\ln L_0+\ln\Gamma(L_0)+(1-L_0)\psi^{(0)}(L_0) +\ln \mu}_{H_{\Gamma_{\text{SAR}}}} 
 -\ln\Gamma(L_0-\alpha)+ (L_0-\alpha) \psi^{(0)}(L_0-\alpha)\\
 -(1-\alpha)\psi^{(0)}(-\alpha)+\ln (-1-\alpha)+\ln\Gamma(-\alpha)-L_0
 \end{multline}
@@ -184,5 +174,357 @@ H_{\mathcal{G}_I^0}(\mu, \alpha, L_0) =\underbrace{L_0 -\ln L_0+\ln\Gamma(L_0)+(
 knitr::include_graphics("../../../Figures/PDF/entropy_plot_3d.pdf")
 ```
 
+
+
+
+
+
+
+
+```{r Plot_GI0_and_gamma_1, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ as $\\alpha$ takes large negative values and $L=1$."}
+
+
+
+L <- c(1)
+alphas <- c(-1.05, -1.5, -3, -8, -1000)
+alpha_labels <- c(expression(italic(alpha) == -1.05), expression(italic(alpha) == -1.5), expression(italic(alpha) == -3), expression(italic(alpha) == -8), expression(italic(alpha) == -1000))
+
+mu <- seq(0.1, 10, length.out = 500)
+
+# Entropy GI0
+
+muEntropy <- data.frame()
+
+for (alpha in alphas) {
+  entropies_GI0 <- sapply(L, function(L) entropy_gI0(mu, alpha, L))
+  muEntropy <- rbind(muEntropy, data.frame(mu = mu, Entropy = entropies_GI0, alpha = as.factor(alpha)))
+}
+
+muEntropy.molten <- melt(muEntropy, id.vars = c("mu", "alpha"),  value.name = "Entropy")
+
+# Entropy Gamma SAR
+
+entropies_gamma <- sapply(L, function(L) entropy_gamma_sar(L, mu))
+
+Entropy_gamma <- data.frame(mu, entropies_gamma)
+
+Entropy_gamma.molten <- melt(Entropy_gamma, id.vars = "mu", value.name = "Entropy Gamma")
+
+#plot
+
+ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = alpha)) +
+  geom_line(linetype = "longdash",  linewidth = 0.8) +
+  geom_line(data = Entropy_gamma.molten, aes(x = mu, y = `Entropy Gamma`), color = "blue", linetype = "dashed", size = 1) + 
+  annotate("text", x = max(mu)+0.2, y = max(Entropy_gamma.molten$`Entropy Gamma`), 
+           label = TeX("$\\Gamma_{\\tiny{SAR}}$"), vjust = 0.9, hjust = 0.1, color = "blue")+
+  theme_minimal() +
+  #scale_color_manual(values =  rainbow(7)[1:5], labels = alpha_labels) +
+  scale_color_manual(values = pal_jama()(7)[1:5], labels = alpha_labels) +
+  #scale_color_manual(values = 	pal_cosmic()(7)[1:5], labels = alpha_labels) +
+  labs(col = "Roughness", linetype = NULL) +
+  xlab(expression(paste(mu))) +
+  ylab("Entropy") +  
+  theme(text = element_text(family = "serif"),
+        legend.position = "bottom")
+
+
+```
+
+
+```{r Plot_GI0_and_gamma_2, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ as $\\alpha$ takes large negative values and $L=2$."}
+
+
+
+L <- c(2)
+alphas <- c(-1.05, -1.5, -3, -8, -1000)
+alpha_labels <- c(expression(italic(alpha) == -1.05), expression(italic(alpha) == -1.5), expression(italic(alpha) == -3), expression(italic(alpha) == -8), expression(italic(alpha) == -1000))
+
+mu <- seq(0.1, 10, length.out = 500)
+
+# Entropy GI0
+
+muEntropy <- data.frame()
+
+for (alpha in alphas) {
+  entropies_GI0 <- sapply(L, function(L) entropy_gI0(mu, alpha, L))
+  muEntropy <- rbind(muEntropy, data.frame(mu = mu, Entropy = entropies_GI0, alpha = as.factor(alpha)))
+}
+
+muEntropy.molten <- melt(muEntropy, id.vars = c("mu", "alpha"),  value.name = "Entropy")
+
+# Entropy Gamma SAR
+
+entropies_gamma <- sapply(L, function(L) entropy_gamma_sar(L, mu))
+
+Entropy_gamma <- data.frame(mu, entropies_gamma)
+
+Entropy_gamma.molten <- melt(Entropy_gamma, id.vars = "mu", value.name = "Entropy Gamma")
+
+#plot
+
+ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = alpha)) +
+  geom_line(linetype = "longdash",  linewidth = 0.8) +
+  geom_line(data = Entropy_gamma.molten, aes(x = mu, y = `Entropy Gamma`), color = "blue", linetype = "dashed", size = 1) + 
+  annotate("text", x = max(mu)+0.1, y = max(Entropy_gamma.molten$`Entropy Gamma`), 
+           label = TeX("$\\Gamma_{\\tiny{SAR}}$"), vjust = 0.9, hjust = 0.1, color = "blue")+
+  theme_minimal() +
+  #scale_color_manual(values =  rainbow(7)[1:5], labels = alpha_labels) +
+  scale_color_manual(values = pal_jama()(7)[1:5], labels = alpha_labels) +
+  #scale_color_manual(values = 	pal_cosmic()(7)[1:5], labels = alpha_labels) +
+  labs(col = "Roughness", linetype = NULL) +
+  xlab(expression(paste(mu))) +
+  ylab("Entropy") +  
+  theme(text = element_text(family = "serif"),
+        legend.position = "bottom")
+
+```
+
+
+```{r Plot_GI0_and_gamma_3, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ as $\\alpha$ takes large negative values and $L=3$."}
+
+
+
+L <- c(3)
+alphas <- c(-1.05, -1.5, -3, -8, -1000)
+alpha_labels <- c(expression(italic(alpha) == -1.05), expression(italic(alpha) == -1.5), expression(italic(alpha) == -3), expression(italic(alpha) == -8), expression(italic(alpha) == -1000))
+
+mu <- seq(0.1, 10, length.out = 500)
+
+# Entropy GI0
+
+muEntropy <- data.frame()
+
+for (alpha in alphas) {
+  entropies_GI0 <- sapply(L, function(L) entropy_gI0(mu, alpha, L))
+  muEntropy <- rbind(muEntropy, data.frame(mu = mu, Entropy = entropies_GI0, alpha = as.factor(alpha)))
+}
+
+muEntropy.molten <- melt(muEntropy, id.vars = c("mu", "alpha"),  value.name = "Entropy")
+
+# Entropy Gamma SAR
+
+entropies_gamma <- sapply(L, function(L) entropy_gamma_sar(L, mu))
+
+Entropy_gamma <- data.frame(mu, entropies_gamma)
+
+Entropy_gamma.molten <- melt(Entropy_gamma, id.vars = "mu", value.name = "Entropy Gamma")
+
+#plot
+
+ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = alpha)) +
+  geom_line(linetype = "longdash",  linewidth = 0.8) +
+  geom_line(data = Entropy_gamma.molten, aes(x = mu, y = `Entropy Gamma`), color = "blue", linetype = "dashed", size = 1) + 
+  annotate("text", x = max(mu)+0.1, y = max(Entropy_gamma.molten$`Entropy Gamma`), 
+           label = TeX("$\\Gamma_{\\tiny{SAR}}$"), vjust = 0.9, hjust = 0.1, color = "blue")+
+  theme_minimal() +
+  #scale_color_manual(values =  rainbow(7)[1:5], labels = alpha_labels) +
+  scale_color_manual(values = pal_jama()(7)[1:5], labels = alpha_labels) +
+  #scale_color_manual(values = 	pal_nejm()(7)[1:5], labels = alpha_labels) +
+  labs(col = "Roughness", linetype = NULL) +
+  xlab(expression(paste(mu))) +
+  ylab("Entropy") +  
+  theme(text = element_text(family = "serif"),
+        legend.position = "bottom")
+
+```
+
+```{r Plot_GI0_and_gamma_4, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ as $\\alpha$ takes large negative values and $L=5$."}
+
+
+
+L <- c(5)
+alphas <- c(-1.05, -1.5, -3, -8, -1000)
+alpha_labels <- c(expression(italic(alpha) == -1.05), expression(italic(alpha) == -1.5), expression(italic(alpha) == -3), expression(italic(alpha) == -8), expression(italic(alpha) == -1000))
+
+mu <- seq(0.1, 10, length.out = 500)
+
+# Entropy GI0
+
+muEntropy <- data.frame()
+
+for (alpha in alphas) {
+  entropies_GI0 <- sapply(L, function(L) entropy_gI0(mu, alpha, L))
+  muEntropy <- rbind(muEntropy, data.frame(mu = mu, Entropy = entropies_GI0, alpha = as.factor(alpha)))
+}
+
+muEntropy.molten <- melt(muEntropy, id.vars = c("mu", "alpha"),  value.name = "Entropy")
+
+# Entropy Gamma SAR
+
+entropies_gamma <- sapply(L, function(L) entropy_gamma_sar(L, mu))
+
+Entropy_gamma <- data.frame(mu, entropies_gamma)
+
+Entropy_gamma.molten <- melt(Entropy_gamma, id.vars = "mu", value.name = "Entropy Gamma")
+
+#plot
+
+ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = alpha)) +
+  geom_line(linetype = "longdash",  linewidth = 0.8) +
+  geom_line(data = Entropy_gamma.molten, aes(x = mu, y = `Entropy Gamma`), color = "blue", linetype = "dashed", size = 1) + 
+  annotate("text", x = max(mu)+0.1, y = max(Entropy_gamma.molten$`Entropy Gamma`), 
+           label = TeX("$\\Gamma_{\\tiny{SAR}}$"), vjust = 0.9, hjust = 0.1, color = "blue")+
+  theme_minimal() +
+  #scale_color_manual(values =  rainbow(7)[1:5], labels = alpha_labels) +
+  scale_color_manual(values = pal_jama()(7)[1:5], labels = alpha_labels) +
+  #scale_color_manual(values = 	pal_nejm()(7)[1:5], labels = alpha_labels) +
+  labs(col = "Roughness", linetype = NULL) +
+  xlab(expression(paste(mu))) +
+  ylab("Entropy") +  
+  theme(text = element_text(family = "serif"),
+        legend.position = "bottom")
+
+
+```
+
+
+```{r Plot_GI0_and_gamma_5, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ as $\\alpha$ takes large negative values and $L=12$."}
+
+
+
+L <- c(12)
+alphas <- c(-1.05, -1.5, -5, -12, -1000)
+alpha_labels <- c(expression(italic(alpha) == -1.05), expression(italic(alpha) == -1.5), expression(italic(alpha) == -5), expression(italic(alpha) == -12), expression(italic(alpha) == -1000))
+
+mu <- seq(0.1, 10, length.out = 500)
+
+# Entropy GI0
+
+muEntropy <- data.frame()
+
+for (alpha in alphas) {
+  entropies_GI0 <- sapply(L, function(L) entropy_gI0(mu, alpha, L))
+  muEntropy <- rbind(muEntropy, data.frame(mu = mu, Entropy = entropies_GI0, alpha = as.factor(alpha)))
+}
+
+muEntropy.molten <- melt(muEntropy, id.vars = c("mu", "alpha"),  value.name = "Entropy")
+
+# Entropy Gamma SAR
+
+entropies_gamma <- sapply(L, function(L) entropy_gamma_sar(L, mu))
+
+Entropy_gamma <- data.frame(mu, entropies_gamma)
+
+Entropy_gamma.molten <- melt(Entropy_gamma, id.vars = "mu", value.name = "Entropy Gamma")
+
+#plot
+
+ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = alpha)) +
+  geom_line(linetype = "longdash",  linewidth = 0.8) +
+  geom_line(data = Entropy_gamma.molten, aes(x = mu, y = `Entropy Gamma`), color = "blue", linetype = "dashed", size = 1) + 
+  annotate("text", x = max(mu)+0.1, y = max(Entropy_gamma.molten$`Entropy Gamma`), 
+           label = TeX("$\\Gamma_{\\tiny{SAR}}$"), vjust = 0.9, hjust = 0.1, color = "blue")+
+  theme_minimal() +
+  #scale_color_manual(values =  rainbow(7)[1:5], labels = alpha_labels) +
+  scale_color_manual(values = pal_jama()(7)[1:5], labels = alpha_labels) +
+  #scale_color_manual(values = 	pal_nejm()(7)[1:5], labels = alpha_labels) +
+  labs(col = "Roughness", linetype = NULL) +
+  xlab(expression(paste(mu))) +
+  ylab("Entropy") +  
+  theme(text = element_text(family = "serif"),
+        legend.position = "bottom")
+
+
+```
+
+
+```{r Plot_GI0_and_gamma_6, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ as $\\alpha$ takes large negative values and $L=18$."}
+
+
+
+L <- c(18)
+alphas <- c( -1.5, -5, 18, -50, -1000)
+alpha_labels <- c(expression(italic(alpha) == -1.5), expression(italic(alpha) == -5), expression(italic(alpha) == -18), expression(italic(alpha) == -50), expression(italic(alpha) == -1000))
+
+mu <- seq(0.1, 10, length.out = 500)
+
+# Entropy GI0
+
+muEntropy <- data.frame()
+
+for (alpha in alphas) {
+  entropies_GI0 <- sapply(L, function(L) entropy_gI0(mu, alpha, L))
+  muEntropy <- rbind(muEntropy, data.frame(mu = mu, Entropy = entropies_GI0, alpha = as.factor(alpha)))
+}
+
+muEntropy.molten <- melt(muEntropy, id.vars = c("mu", "alpha"),  value.name = "Entropy")
+
+# Entropy Gamma SAR
+
+entropies_gamma <- sapply(L, function(L) entropy_gamma_sar(L, mu))
+
+Entropy_gamma <- data.frame(mu, entropies_gamma)
+
+Entropy_gamma.molten <- melt(Entropy_gamma, id.vars = "mu", value.name = "Entropy Gamma")
+
+#plot
+
+ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = alpha)) +
+  geom_line(linetype = "longdash",  linewidth = 0.8) +
+  geom_line(data = Entropy_gamma.molten, aes(x = mu, y = `Entropy Gamma`), color = "blue", linetype = "dashed", size = 1) + 
+  annotate("text", x = max(mu)+0.1, y = max(Entropy_gamma.molten$`Entropy Gamma`), 
+           label = TeX("$\\Gamma_{\\tiny{SAR}}$"), vjust = 0.9, hjust = 0.1, color = "blue")+
+  theme_minimal() +
+  #scale_color_manual(values =  rainbow(7)[1:5], labels = alpha_labels) +
+  scale_color_manual(values = pal_jama()(7)[1:5], labels = alpha_labels) +
+  #scale_color_manual(values = 	pal_nejm()(7)[1:5], labels = alpha_labels) +
+  labs(col = "Roughness", linetype = NULL) +
+  xlab(expression(paste(mu))) +
+  ylab("Entropy") +  
+  theme(text = element_text(family = "serif"),
+        legend.position = "bottom")
+
+
+```
+
+
+```{r Plot_GI0_and_gamma_7, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ as $\\alpha$ takes large negative values and $L=100$."}
+
+
+
+L <- c(100)
+alphas <- c( -1.5, -5, 18,  -50, -10000)
+alpha_labels <- c(expression(italic(alpha) == -1.5), expression(italic(alpha) == -5), expression(italic(alpha) == -18), expression(italic(alpha) == -50), expression(italic(alpha) == -10000))
+
+mu <- seq(0.1, 100, length.out = 500)
+
+# Entropy GI0
+
+muEntropy <- data.frame()
+
+for (alpha in alphas) {
+  entropies_GI0 <- sapply(L, function(L) entropy_gI0(mu, alpha, L))
+  muEntropy <- rbind(muEntropy, data.frame(mu = mu, Entropy = entropies_GI0, alpha = as.factor(alpha)))
+}
+
+muEntropy.molten <- melt(muEntropy, id.vars = c("mu", "alpha"),  value.name = "Entropy")
+
+# Entropy Gamma SAR
+
+entropies_gamma <- sapply(L, function(L) entropy_gamma_sar(L, mu))
+
+Entropy_gamma <- data.frame(mu, entropies_gamma)
+
+Entropy_gamma.molten <- melt(Entropy_gamma, id.vars = "mu", value.name = "Entropy Gamma")
+
+#plot
+
+ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = alpha)) +
+  geom_line(linetype = "longdash",  linewidth = 0.8) +
+  geom_line(data = Entropy_gamma.molten, aes(x = mu, y = `Entropy Gamma`), color = "blue", linetype = "dashed", size = 1) + 
+  annotate("text", x = max(mu)+0.1, y = max(Entropy_gamma.molten$`Entropy Gamma`), 
+           label = TeX("$\\Gamma_{\\tiny{SAR}}$"), vjust = 0.9, hjust = 0.1, color = "blue")+
+  theme_minimal() +
+  #scale_color_manual(values =  rainbow(7)[1:5], labels = alpha_labels) +
+  scale_color_manual(values = pal_jama()(7)[1:5], labels = alpha_labels) +
+  #scale_color_manual(values = 	pal_nejm()(7)[1:5], labels = alpha_labels) +
+  labs(col = "Roughness", linetype = NULL) +
+  xlab(expression(paste(mu))) +
+  ylab("Entropy") +  
+  theme(text = element_text(family = "serif"),
+        legend.position = "bottom")
+
+
+```
 
 

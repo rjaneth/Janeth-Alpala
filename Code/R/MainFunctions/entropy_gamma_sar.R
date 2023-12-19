@@ -11,7 +11,7 @@
 
 entropy_gamma_sar <- function(L, mu) {
   
-  return(L - log(L) + log(gamma(L)) + (1 - L) * digamma(L) + log(mu))
+  return(L - log(L) + lgamma(L) + (1 - L) * digamma(L) + log(mu))
   
 }
 

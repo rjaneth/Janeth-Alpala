@@ -433,12 +433,12 @@ load("./Data/results_gi0.Rdata")
 
 
 estimators_to_plot <- c("Correa", "Ebrahimi", "Al Omari",  "Correa Bootstrap", "Ebrahimi Bootstrap", "Al Omari Bootstrap" )
-  latex_estimator_names <- c("Correa" = expression("$\\widehat{H}_{C}$"),#parse(text=TeX("$H_{2}$")),
-                             "Correa Bootstrap" = expression("$\\widetilde{H}_{C}$"),
-                            "Ebrahimi" = expression("$\\widehat{H}_{E}$"),
-                            "Al Omari" = expression("$\\widehat{H}_{AO}$"),
-                            "Ebrahimi Bootstrap" = expression("$\\widetilde{H}_{E}$"),
-                            "Al Omari Bootstrap" = expression("$\\widetilde{H}_{AO}$"))
+  latex_estimator_names <- c("Correa" = expression("$\\widehat{italic(H)}_{C}$"),#parse(text=TeX("$H_{2}$")),
+                             "Correa Bootstrap" = expression("$\\widetilde{italic(H)}_{C}$"),
+                            "Ebrahimi" = expression("$\\widehat{italic(H)}_{E}$"),
+                            "Al Omari" = expression("$\\widehat{italic(H)}_{AO}$"),
+                            "Ebrahimi Bootstrap" = expression("$\\widetilde{italic(H)}_{E}$"),
+                            "Al Omari Bootstrap" = expression("$\\widetilde{italic(H)}_{AO}$"))
 selected_estimators_latex <- latex_estimator_names[estimators_to_plot]
 
 
@@ -492,7 +492,7 @@ set.seed(1234567890, kind = "Mersenne-Twister")
 sample_sizes <- c(9, 25, 49, 81, 121)
 
 # Number of replications
-R <- 100
+R <- 10
 
 # Number of bootstrap replications
 B <- 10
@@ -501,7 +501,7 @@ alpha <- -1000
 L <- 2
 
   estimators <- list(
-    #" " = bootstrap_vasicek_estimator,
+    #"Correa" = correa_estimator,
     "$\\widetilde{H}_{C}$ " = bootstrap_correa_estimator,
     "$\\widetilde{H}_{E}$ " = bootstrap_ebrahimi_estimator,
     "$\\widetilde{H}_{AO}$ " = bootstrap_al_omari_1_estimator
