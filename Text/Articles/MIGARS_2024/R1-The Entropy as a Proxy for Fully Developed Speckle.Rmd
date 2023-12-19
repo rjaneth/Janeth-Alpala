@@ -77,7 +77,6 @@ header-includes:
 output:
   rticles::ieee_article:
     number_sections: TRUE
-    #citation_package: biblatex
     citation_package: natbib
 
 bibliography: ../../Common/references.bib
@@ -90,7 +89,7 @@ biblio-style: ieeetr
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, cache=TRUE)
 library(ggplot2)
 library(reshape2)
 #library(plotly)
@@ -181,12 +180,17 @@ The two-stage technique we propose tackles this problem by using the entropy as 
 <!-- In statistics, Shannon entropy is a crucial descriptive parameter, particularly for assessing data dispersion and conducting tests for normality, exponentiality, and uniformity&nbsp;[@Wieczorkowski1999]. -->
 
 Estimating the entropy faces practical challenges, particularly when the model is unknown; non-parametric methods are utilized in such cases.
-Among non-parametric approaches,&nbsp;\cite{Subhash2021} discussed the use of spacing methods.
+Among non-parametric approaches, Subhash et al.&nbsp;\cite{Subhash2021} discussed the use of spacing methods.
 This non-parametric strategy offers flexibility to address a wide range of models without imposing specific parametric constraints. We extend the exploration of non-parametric entropy estimators by incorporating enhanced bootstrap methodologies.
 
 <!-- In this context, we present a two-stage estimation procedure designed to navigate the complexities of SAR data.  -->
 <!-- The first stage tests the hypothesis that the data follow the Gamma distribution, i.e., we are in the presence of fully developed speckle.  -->
 <!-- If this hypothesis is rejected, we proceed to the second stage to estimate the parameters that characterize the $\mathcal{G}^0$ distribution.  -->
+
+\textcolor{red}{Our aim is to develop a test statistic that helps discriminating between fully-developed speckle and heterogeneous clutter.
+We work with non-parametric estimators of the entropy, we reduce the bias of those based on spacings using bootstrap, and select the best ones.
+Next, we study the empirical distribution of these estimators under the null hypothesis, followed by a study of the size and power of the proposed test.
+We conclude the study with applications to SAR data.}
 
 The article is structured as follows: 
 Section&nbsp;\ref{sec:Background} covers statistical modeling and entropy estimation for Intensity SAR data. Section&nbsp;\ref{sec:test} outlines hypothesis testing based on non-parametric entropy. 

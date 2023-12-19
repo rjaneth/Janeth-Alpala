@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,linux,r,python,latex
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,linux,r,python,latex
 
+Text/Articles/MIGARS_2024/R1-The-Entropy-as-a-Proxy-for-Fully-Developed-Speckle.pdf
+Text/Articles/MIGARS_2024/R1-The-Entropy-as-a-Proxy-for-Fully-Developed-Speckle.tex
+
 ### LaTeX ###
 ## Core latex/pdflatex auxiliary files:
 *.aux
