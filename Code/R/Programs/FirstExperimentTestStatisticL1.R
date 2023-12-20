@@ -2,6 +2,9 @@ library(ggplot2)
 library(ggsci)
 library(reshape2)
 
+if(!require("rstudioapi")) install("rstudioapi")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
 source("../MainFunctions/ebrahimi_estimator.R")
 source("../MainFunctions/gamma_sar_sample.R")
 
