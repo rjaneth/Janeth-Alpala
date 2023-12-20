@@ -1,8 +1,9 @@
 library(ggplot2)
 library(ggsci)
+library(reshape2)
 
-source("../MainFunctions/ebrahimi_estimator.r")
-source("../MainFunctions/gamma_sar_sample.r")
+source("../MainFunctions/ebrahimi_estimator.R")
+source("../MainFunctions/gamma_sar_sample.R")
 
 
 
@@ -29,7 +30,17 @@ TestStatistics <- data.frame(TestStatistics)
 names(TestStatistics) <- c("Sample Size", "Test Statistics")
 
 # ggplot(TestStatistics, aes(x=`Test Statistics`, col=`Sample Size`, group=`Sample Size`)) +
-#   geom_density()
+#    geom_density()
+
+difference.betweeen.GammaSAR.GI0.OneLook <- function(alpha) {
+  return(
+    -log(gamma(1-alpha)) +
+      (1-alpha) * digamma(1-alpha) -
+      (1-alpha) * digamma(-alpha) +
+      log(-1-alpha) +
+      log(gamma(-alpha)) -1
+  )
+}
 
 
 ggplot(TestStatistics, aes(x = `Test Statistics`, col = factor(`Sample Size`), linetype = factor(`Sample Size`))) +
@@ -42,6 +53,15 @@ ggplot(TestStatistics, aes(x = `Test Statistics`, col = factor(`Sample Size`), l
     values = rep("solid", length(sample.size)),  
     name = "Sample Size"
   ) +
+  # Expected values under H1
+  geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.OneLook(-1.01), col="red") +
+  annotate("text", x=difference.betweeen.GammaSAR.GI0.OneLook(-1.01), y=15, parse=TRUE, label="alpha==-1.01", hjust=-0.1) +
+  geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.OneLook(-1.1), col="red") +
+  annotate("text", x=difference.betweeen.GammaSAR.GI0.OneLook(-1.1), y=15, parse=TRUE, label="alpha==-1.1", hjust=-0.1) +
+  geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.OneLook(-1.5), col="red") +
+  annotate("text", x=difference.betweeen.GammaSAR.GI0.OneLook(-1.5), y=15, parse=TRUE, label="alpha==-1.5", hjust=1.1, vjust=2) +
+  geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.OneLook(-3), col="red") +
+  annotate("text", x=difference.betweeen.GammaSAR.GI0.OneLook(-3), y=15, parse=TRUE, label="alpha==-3", hjust=-.1, vjust=-1) +
   labs(x = "Test Statistics", y = "Density") +
   theme_minimal() +
   theme(
