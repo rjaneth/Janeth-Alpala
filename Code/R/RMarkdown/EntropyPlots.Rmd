@@ -213,8 +213,8 @@ Entropy_gamma.molten <- melt(Entropy_gamma, id.vars = "mu", value.name = "Entrop
 #plot
 
 ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = alpha)) +
-  geom_line(linetype = "longdash",  linewidth = 0.8) +
-  geom_line(data = Entropy_gamma.molten, aes(x = mu, y = `Entropy Gamma`), color = "blue", linetype = "dashed", size = 1) + 
+  geom_line(data = Entropy_gamma.molten, aes(x = mu, y = `Entropy Gamma`), color = "black", linetype = "solid", size = 1) + 
+  geom_line(linetype = "longdash",  linewidth = 1.5, alpha=.7) +
   annotate("text", x = max(mu)+0.2, y = max(Entropy_gamma.molten$`Entropy Gamma`), 
            label = TeX("$\\Gamma_{\\tiny{SAR}}$"), vjust = 0.9, hjust = 0.1, color = "blue")+
   theme_minimal() +
