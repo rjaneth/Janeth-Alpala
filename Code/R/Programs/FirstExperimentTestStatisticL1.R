@@ -58,11 +58,11 @@ ggplot(TestStatistics, aes(x = `Test Statistics`, col = factor(`Sample Size`), l
   ) +
   # Expected values under H1
   geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.OneLook(-1.01), col="red") +
-  annotate("text", x=difference.betweeen.GammaSAR.GI0.OneLook(-1.01), y=15, parse=TRUE, label="alpha==-1.01", hjust=-0.1, col="red") +
+  annotate("text", x=difference.betweeen.GammaSAR.GI0.OneLook(-1.01), y=15, parse=TRUE, label="alpha==-1.01", hjust=-0.1, vjust=-1, col="red") +
   geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.OneLook(-1.1), col="red") +
-  annotate("text", x=difference.betweeen.GammaSAR.GI0.OneLook(-1.1), y=15, parse=TRUE, label="alpha==-1.1", hjust=1.1, col="red") +
+  annotate("text", x=difference.betweeen.GammaSAR.GI0.OneLook(-1.1), y=15, parse=TRUE, label="alpha==-1.1", hjust=1.1, vjust=-1, col="red") +
   geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.OneLook(-1.5), col="red") +
-  annotate("text", x=difference.betweeen.GammaSAR.GI0.OneLook(-1.5), y=15, parse=TRUE, label="alpha==-1.5", hjust=1.1, col="red") +
+  annotate("text", x=difference.betweeen.GammaSAR.GI0.OneLook(-1.5), y=15, parse=TRUE, label="alpha==-1.5", hjust=1.1, vjust=-1, col="red") +
   geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.OneLook(-3), col="red") +
   annotate("text", x=difference.betweeen.GammaSAR.GI0.OneLook(-3), y=15, parse=TRUE, label="alpha==-3", hjust=-.1, vjust=-1, col="red") +
   labs(x = "Test Statistics", y = "Density") +
