@@ -31,9 +31,6 @@ generate_samples_gi0 <- function(sample_size, replication, mu, alpha, L) {
   return(samples)
 }
 
-
-
-# Function to calculate entropy and perform hypothesis testing
 calculate_entropy_and_test <- function(sample_sizes, R, B, mu, alpha, L, estimators) {
   true_entropy <- entropy_gamma_sar(L, mu)
   output <- data.frame(
@@ -65,22 +62,7 @@ calculate_entropy_and_test <- function(sample_sizes, R, B, mu, alpha, L, estimat
       
       z_statistic <- sqrt(R) * (mean_entropy - true_entropy) / sd(v.entropy)
       p_value <- 2 * (1 - pnorm(abs(z_statistic)))
-      # alpha_t = 0.05
-      # reject_null <- abs(z_statistic) > qnorm(1 - alpha_t / 2)
-      # 
-      # output <- rbind(
-      #   output,
-      #   data.frame(
-      #     SampleSize = ssize,
-      #     Estimator = estimator_name,
-      #     MeanEntropy = round(mean_entropy, 5),
-      #     ZStatistic = round(z_statistic, 5),
-      #     PValue = round(p_value, 5),
-      #     RejectNull = reject_null  
-      #   )
-      # )
-      # 
-      
+
       output <- rbind(
         output,
         data.frame(
@@ -92,13 +74,81 @@ calculate_entropy_and_test <- function(sample_sizes, R, B, mu, alpha, L, estimat
         )
       )
     }
-   }
+  }
   
   colnames(output) <- c("$n$", "Estimator", "Mean Entropy", "$Z$ Statistic", "$p$ Value")
   
   return(output)
 }
 
+
+
+# Function to calculate entropy and perform hypothesis testing
+# calculate_entropy_and_test <- function(sample_sizes, R, B, mu, alpha, L, estimators) {
+#   true_entropy <- entropy_gamma_sar(L, mu)
+#   output <- data.frame(
+#     SampleSize = integer(0),
+#     Estimator = character(0),
+#     MeanEntropy = numeric(0),
+#     ZStatistic = numeric(0),
+#     PValue = numeric(0)
+#   )
+#   
+#   for (ssize in sample_sizes) {
+#     samples <- generate_samples_gi0(ssize, R, mu, alpha, L)
+#     
+#     for (estimator_name in names(estimators)) {
+#       estimator <- estimators[[estimator_name]]
+#       v.entropy <- numeric(R)
+#       
+#       for (r in 1:R) {
+#         sample <- samples[[r]]
+#         
+#         if (grepl(" ", estimator_name)) {
+#           v.entropy[r] <- estimator(sample, B = B)
+#         } else {
+#           v.entropy[r] <- estimator(sample)
+#         }
+#       }
+#       
+#       mean_entropy <- mean(v.entropy)
+#       
+#       z_statistic <- sqrt(R) * (mean_entropy - true_entropy) / sd(v.entropy)
+#       p_value <- 2 * (1 - pnorm(abs(z_statistic)))
+#       # alpha_t = 0.05
+#       # reject_null <- abs(z_statistic) > qnorm(1 - alpha_t / 2)
+#       # 
+#       # output <- rbind(
+#       #   output,
+#       #   data.frame(
+#       #     SampleSize = ssize,
+#       #     Estimator = estimator_name,
+#       #     MeanEntropy = round(mean_entropy, 5),
+#       #     ZStatistic = round(z_statistic, 5),
+#       #     PValue = round(p_value, 5),
+#       #     RejectNull = reject_null  
+#       #   )
+#       # )
+#       # 
+#       
+#       output <- rbind(
+#         output,
+#         data.frame(
+#           SampleSize = ssize,
+#           Estimator = estimator_name,
+#           MeanEntropy = round(mean_entropy, 5),
+#           ZStatistic = round(z_statistic, 5),
+#           PValue = round(p_value, 5)
+#         )
+#       )
+#     }
+#    }
+#   
+#   colnames(output) <- c("$n$", "Estimator", "Mean Entropy", "$Z$ Statistic", "$p$ Value")
+#   
+#   return(output)
+# }
+# 
 
 
 

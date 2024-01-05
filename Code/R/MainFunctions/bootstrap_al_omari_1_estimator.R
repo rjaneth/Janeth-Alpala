@@ -2,7 +2,7 @@
 
 
 
-#source("../MainFunctions/al_omari_1_estimator.r")
+#source("../MainFunctions/al_omari_1_estimator.R")
 
 
 bootstrap_al_omari_1_estimator <- function(x, B){

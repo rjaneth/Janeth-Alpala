@@ -1,0 +1,737 @@
+---
+title: "Report: Exploring Non-Parametric Entropy Estimators and Bootstrap Enhancements"
+author: ""
+date: ""
+output: pdf_document
+
+# output: 
+#   pdf_document:
+#     toc: true
+#     toc_depth: 2
+#html_document
+header-includes:
+  - \usepackage{graphicx}
+  - \usepackage{float}
+  - \usepackage{bm}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{wrapfig}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+  - \usepackage{threeparttablex}
+  - \usepackage[normalem]{ulem}
+  - \usepackage{makecell}
+  - \usepackage{xcolor}
+  - \usepackage{amsmath}
+  - \usepackage{mathabx}
+
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(ggplot2)
+library(reshape2)
+#library(plotly)
+library(knitr)
+library(pandoc)
+library(gridExtra)
+library(gtools)
+library(stats4)
+library(rmutil)
+library(scales)
+library(tidyr)
+library(rmutil)
+library(invgamma)
+library(tidyverse)
+#library(RColorBrewer)
+library(ggsci)
+#library(wesanderson)
+library(ggpubr)
+library(patchwork)
+library(dplyr)
+#options(kableExtra.latex.load_packages = FALSE)
+library(devtools)
+#devtools::install_github("haozhu233/kableExtra")
+library(kableExtra)
+library(ggthemes)
+library(latex2exp)
+
+theme_set(theme_minimal() +
+            theme(text=element_text(family="serif"),
+                  legend.position = "bottom")#  top , right , bottom , or left#, panel.grid = element_blank()
+)
+
+
+
+
+source("../MainFunctions/gamma_sar_sample.r")
+source("../MainFunctions/entropy_gamma_sar.r")
+source("../MainFunctions/entropy_gI0.r")
+source("../MainFunctions/gi0_sample.r")
+
+source("../MainFunctions/van_es_estimator.r")
+source("../MainFunctions/correa_estimator.r")
+source("../MainFunctions/adaptive_correa_estimator.r")
+source("../MainFunctions/ebrahimi_estimator.r")
+source("../MainFunctions/noughabi_arghami_estimator.r")
+source("../MainFunctions/vasicek_estimator.r")
+source("../MainFunctions/al_omari_1_estimator.r")
+source("../MainFunctions/al_omari_estimator_m.r")
+source("../MainFunctions/al_omari_2_estimator.r")
+source("../MainFunctions/yee_estimator.r")
+
+source("../MainFunctions/bootstrap_van_es_estimator.r")
+source("../MainFunctions/bootstrap_correa_estimator.r")
+source("../MainFunctions/bootstrap_correa_estimator_opt.r")
+source("../MainFunctions/bootstrap_ebrahimi_estimator.r")
+source("../MainFunctions/bootstrap_noughabi_arghami_estimator.r")
+source("../MainFunctions/bootstrap_vasicek_estimator.r")
+source("../MainFunctions/bootstrap_al_omari_1_estimator.r")
+source("../MainFunctions/bootstrap_al_omari_2_estimator.r")
+source("../MainFunctions/bootstrap_yee_estimator.r")
+source("../MainFunctions/bootstrap_yee_estimator_optimized.r")
+#The next function contains the functions: generate_samples, calculate_bias_mse, generate_plot
+source("../Programs/functions_sample_bias_mse.R")# 
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+```
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.pos = 'H')
+```
+
+
+\newcommand{\bias}{\operatorname{Bias}}
+
+
+
+
+# Mean Entropy for Estimators Gamma SAR
+
+
+
+```{r Plot_mean1, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Mean entropy for Gamma SAR $L= 1$ and $\\mu=1$.", fig.width=6,fig.height=5}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+sample_sizes <- c(9, 25, 49, 81, 121, 225)
+R <- 10
+mu <- 1
+L <- 1
+
+# Function to generate samples for a given sample size and replication
+generate_samples <- function(sample_size, replication, mu, L) {
+  samples <- vector("list", replication)
+  for (r in 1:replication) {
+    samples[[r]] <- gamma_sar_sample(L, mu, sample_size)
+  }
+  return(samples)
+}
+
+# Function to calculate Variance for both non-parametric and bootstrap estimators
+true_entropy <- entropy_gamma_sar(L, mu)
+calculate_entropy <- function(sample_sizes, R, mu, L) {
+ # true_entropy <- entropy_gamma_sar(L, mu)
+  
+  # Define a list of estimators
+  estimators <- list(
+     "Correa" = correa_estimator,
+     "Ebrahimi" = ebrahimi_estimator,
+     "Al Omari 1" = al_omari_1_estimator,
+      "Yee" = yee_estimator,
+      "Correa Bootstrap" = bootstrap_correa_estimator,
+     "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+     "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator
+  )
+  
+  output <- data.frame(SampleSize = integer(0), Estimator = character(0), MeanEntropy = numeric(0))
+  
+  for (ssize in sample_sizes) {
+    samples <- generate_samples(ssize, R, mu, L)
+    
+    for (estimator_name in names(estimators)) {
+      estimator <- estimators[[estimator_name]]
+      v.entropy <- numeric(R)
+      
+      for (r in 1:R) {
+        sample <- samples[[r]]
+        
+        if (grepl("Bootstrap", estimator_name)) {
+          v.entropy[r] <- estimator(sample, B = 10)
+        } else {
+          v.entropy[r] <- estimator(sample)
+        }
+      }
+      
+      mean_entropy <- mean(v.entropy)
+      output <- rbind(output, data.frame(SampleSize = ssize, Estimator = estimator_name, MeanEntropy = round(mean_entropy, 5)))
+      
+      
+    
+    }
+  }
+  
+  return(output)
+}
+
+
+entropy_data <-calculate_entropy(sample_sizes, R, mu, L)
+
+
+ggplot(entropy_data, aes(x = SampleSize, y = MeanEntropy, color = Estimator)) +
+geom_point(size = 2) +
+  geom_line(aes(group = Estimator), linetype = "solid", linewidth = 0.5) +
+  geom_line(aes(y = true_entropy), linetype = "solid", color = "black") + 
+  labs(title = "",
+       x = "Sample Size", y = "Mean Entropy") +
+       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu)), hjust = 1.08, vjust = 1.3, size = 3)
+  
+```
+
+```{r Plot_mean2, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Mean entropy Gamma SAR for $L= 2$ and $\\mu=5$.", fig.width=6,fig.height=5}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+sample_sizes <- c(9, 25, 49, 81, 121)
+R <- 10
+mu <- 5
+L <- 2
+
+# Function to generate samples for a given sample size and replication
+generate_samples <- function(sample_size, replication, mu, L) {
+  samples <- vector("list", replication)
+  for (r in 1:replication) {
+    samples[[r]] <- gamma_sar_sample(L, mu, sample_size)
+  }
+  return(samples)
+}
+
+# Function to calculate Variance for both non-parametric and bootstrap estimators
+true_entropy <- entropy_gamma_sar(L, mu)
+calculate_entropy <- function(sample_sizes, R, mu, L) {
+ # true_entropy <- entropy_gamma_sar(L, mu)
+  
+# Define a list of estimators
+  estimators <- list(
+   # "Van Es" = van_es_estimator,
+   # "Correa" = correa_estimator,
+   # "Adp Correa" = adaptive_correa_estimator,
+    "Ebrahimi" = ebrahimi_estimator,
+    #"Noughabi Arghami" = noughabi_arghami_estimator,
+   # "Vasicek" = vasicek_estimator,
+    "Al Omari 1" = al_omari_1_estimator,
+   #"Al OmariA " = al_omari_estimator_m,
+    #"Al Omari 2" = al_omari_2_estimator,
+    "Yee" = yee_estimator,
+    #"Van Es Bootstrap" = bootstrap_van_es_estimator,
+    "Correa Bootstrap" = bootstrap_correa_estimator,
+    #"Correa_opt Bootstrap" = bootstrap_correa_estimator_opt, 
+    "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+    #"Noughabi Arghami Bootstrap" = bootstrap_noughabi_arghami_estimator,
+    #"Vasicek Bootstrap" = bootstrap_vasicek_estimator,
+    "Al Omari Bootstrap" = bootstrap_al_omari_1_estimator
+    #"Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator
+    #"Yee Bootstrap" = bootstrap_yee_estimator,
+    #"Yee_opt Bootstrap" = bootstrap_yee_estimator_optimized
+  )
+  
+  output <- data.frame(SampleSize = integer(0), Estimator = character(0), MeanEntropy = numeric(0))
+  
+  for (ssize in sample_sizes) {
+    samples <- generate_samples(ssize, R, mu, L)
+    
+    for (estimator_name in names(estimators)) {
+      estimator <- estimators[[estimator_name]]
+      v.entropy <- numeric(R)
+      
+      for (r in 1:R) {
+        sample <- samples[[r]]
+        
+        if (grepl("Bootstrap", estimator_name)) {
+          v.entropy[r] <- estimator(sample, B = 10)
+        } else {
+          v.entropy[r] <- estimator(sample)
+        }
+      }
+      
+      mean_entropy <- mean(v.entropy)
+      output <- rbind(output, data.frame(SampleSize = ssize, Estimator = estimator_name, MeanEntropy = round(mean_entropy, 5)))
+      
+      
+    
+    }
+  }
+  
+  return(output)
+}
+
+
+entropy_data <-calculate_entropy(sample_sizes, R, mu, L)
+
+
+ggplot(entropy_data, aes(x = SampleSize, y = MeanEntropy, color = Estimator)) +
+geom_point(size = 2) +
+  geom_line(aes(group = Estimator), linetype = "solid", linewidth = 0.5) +
+  geom_line(aes(y = true_entropy), linetype = "solid", color = "black") + 
+  labs(title = "",
+       x = "Sample Size", y = "Mean Entropy") +
+       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu)), hjust = 1.08, vjust = 1.3, size = 3)
+  
+```
+
+## Results for  Nonparametric Estimators with  $\mathcal{G}_I^0$
+
+
+```{r Plot_GI0_mean_p, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Mean entropy for GI0, with $L= 2$, $\\mu=5$ and $\\alpha=-1000$.", fig.width=6,fig.height=5}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+sample_sizes <- c(9, 25, 49, 81, 121)
+R <- 10
+mu <- 10
+L <- 3
+alpha <- -1000
+
+# Function to generate samples for a given sample size and replication
+generate_samples <- function(sample_size, replication, mu, alpha, L) {
+  samples <- vector("list", replication)
+  for (r in 1:replication) {
+    samples[[r]] <- gi0_sample(mu, alpha, L, sample_size)
+  }
+  return(samples)
+}
+
+# Function to calculate Variance for both non-parametric and bootstrap estimators
+true_entropy <- entropy_gamma_sar(L, mu)
+calculate_entropy <- function(sample_sizes, R, mu, alpha, L) {
+  # true_entropy <- entropy_gamma_sar(L, mu)
+  
+  # Define a list of estimators
+  estimators <- list(
+    #"Van Es" = van_es_estimator,
+    #"Correa" = correa_estimator,
+    #"Adp Correa" = adaptive_correa_estimator,
+    #"Ebrahimi" = ebrahimi_estimator,
+    #"Noughabi Arghami" = noughabi_arghami_estimator,
+    #"Vasicek" = vasicek_estimator,
+    #"Al Omari 1" = al_omari_1_estimator,
+    #"Al OmariA " = al_omari_estimator_m,
+    #"Yee" = yee_estimator,
+    #"Van Es Bootstrap" = bootstrap_van_es_estimator,
+    "Correa Bootstrap" = bootstrap_correa_estimator,
+    #"Correa_opt Bootstrap" = bootstrap_correa_estimator_opt, 
+    #"Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+    #"Noughabi Arghami Bootstrap" = bootstrap_noughabi_arghami_estimator,
+    #"Vasicek Bootstrap" = bootstrap_vasicek_estimator,
+    "Al Omari Bootstrap" = bootstrap_al_omari_1_estimator
+    #"Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator
+    #"Yee Bootstrap" = bootstrap_yee_estimator,
+    #"Yee_opt Bootstrap" = bootstrap_yee_estimator_optimized
+  )
+  
+  output <- data.frame(SampleSize = integer(0), Estimator = character(0), MeanEntropy = numeric(0))
+  
+  for (ssize in sample_sizes) {
+    samples <- generate_samples(ssize, R, mu, alpha, L)
+    
+    for (estimator_name in names(estimators)) {
+      estimator <- estimators[[estimator_name]]
+      v.entropy <- numeric(R)
+      
+      for (r in 1:R) {
+        sample <- samples[[r]]
+        
+        if (grepl("Bootstrap", estimator_name)) {
+          v.entropy[r] <- estimator(sample, B = 10)
+        } else {
+          v.entropy[r] <- estimator(sample)
+        }
+      }
+      
+      mean_entropy <- mean(v.entropy)
+      output <- rbind(output, data.frame(SampleSize = ssize, Estimator = estimator_name, MeanEntropy = round(mean_entropy, 5)))
+      
+      
+      
+    }
+  }
+  
+  return(output)
+}
+
+
+entropy_data <-calculate_entropy(sample_sizes, R, mu, alpha, L)
+#cat("entropy", entropy_data)
+
+ggplot(entropy_data, aes(x = SampleSize, y = MeanEntropy, color = Estimator)) +
+  geom_point(size = 2) +
+  geom_line(aes(group = Estimator), linetype = "solid", linewidth = 0.5) +
+  geom_line(aes(y = true_entropy), linetype = "solid", color = "black") + 
+  labs(title = "",
+       x = "Sample Size", y = "Mean Entropy") +
+  annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu)), hjust = 1.08, vjust = 1.3, size = 3)
+
+  
+```
+
+<!-- ```{r Plot_CI1, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Confidence Intervals for $L= 2$ and $\\mu=5$.", fig.width=6,fig.height=5} -->
+<!-- set.seed(1234567890, kind = "Mersenne-Twister") -->
+
+<!-- sample_sizes <- c(9, 25, 49, 81, 121, 500) -->
+<!-- R <- 100 -->
+<!-- mu <- 5 -->
+<!-- L <- 2 -->
+<!-- alpha <- -300 -->
+
+<!-- # Function to generate samples for a given sample size and replication -->
+<!-- generate_samples_gi0 <- function(sample_size, replication, mu, alpha, L) { -->
+<!--   samples <- vector("list", replication) -->
+<!--   for (r in 1:replication) { -->
+<!--     samples[[r]] <- gi0_sample(mu, alpha, L, sample_size) -->
+<!--   } -->
+<!--   return(samples) -->
+<!-- } -->
+
+<!-- true_entropy <- entropy_gamma_sar(L, mu) -->
+<!-- # Function to calculate Confidence Intervals for both non-parametric and bootstrap estimators -->
+<!-- calculate_confidence_intervals <- function(sample_sizes, R, mu,alpha, L, confidence_level = 0.95) { -->
+<!--   true_entropy <- entropy_gamma_sar(L, mu) -->
+
+<!--   # Define a list of estimators -->
+<!--   estimators <- list( -->
+<!--       "Correa Bootstrap" = bootstrap_correa_estimator -->
+<!--      #"Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator -->
+<!--     # "Al Omari 1 Bootstrap" = bootstrap_al_omari_1_estimator -->
+<!--     # "Al Omari 2 Bootstrap" = bootstrap_al_omari_2_estimator -->
+<!--   ) -->
+
+<!--   output <- data.frame(SampleSize = integer(0), Estimator = character(0),  -->
+<!--                        LowerCI = numeric(0), UpperCI = numeric(0)) -->
+
+<!--   for (ssize in sample_sizes) { -->
+
+<!--     samples <- generate_samples_gi0(ssize, R, mu, alpha, L) -->
+
+<!--     for (estimator_name in names(estimators)) { -->
+<!--       estimator <- estimators[[estimator_name]] -->
+<!--       v.entropy <- numeric(R) -->
+
+<!--       for (r in 1:R) { -->
+<!--         sample <- samples[[r]] -->
+
+<!--         if (grepl("Bootstrap", estimator_name)) { -->
+<!--           v.entropy[r] <- estimator(sample, B = 10) -->
+<!--         } else { -->
+<!--           v.entropy[r] <- estimator(sample) -->
+<!--         } -->
+
+<!--       } -->
+
+<!--       # Calculate Confidence Interval -->
+<!--       se <- sd(v.entropy) -->
+<!--       margin_of_error <- qt((1 + confidence_level) / 2, R - 1) * se / sqrt(R) -->
+<!--       ci_lower <- mean(v.entropy) - margin_of_error -->
+<!--       ci_upper <- mean(v.entropy) + margin_of_error -->
+
+<!--       output <- rbind(output, data.frame(SampleSize = ssize, Estimator = estimator_name,  -->
+<!--                                          LowerCI = round(ci_lower, 5), UpperCI = round(ci_upper, 5))) -->
+<!--     } -->
+<!--   } -->
+
+<!--   return(output) -->
+<!-- } -->
+
+
+<!-- confidence_intervals_data <- calculate_confidence_intervals(sample_sizes, R, mu,alpha, L,) -->
+
+
+<!-- combined_plot <- ggplot(confidence_intervals_data, aes(x = SampleSize, y = UpperCI, ymin = LowerCI, ymax = UpperCI, color = Estimator)) + -->
+<!--   geom_line(aes(group = Estimator), linetype = "dashed") + -->
+<!--   geom_ribbon(alpha = 0.2) + -->
+<!--   geom_point(aes(y = (LowerCI + UpperCI) / 2), color = "#808080", size = 2) +  -->
+<!--   geom_line(aes(x = SampleSize, y = (LowerCI + UpperCI) / 2, color = Estimator), linetype = "solid", size = 0.5) +   -->
+<!--   geom_line(aes(y = true_entropy), linetype = "solid", color = "black") +   -->
+<!--   labs(title = "", -->
+<!--        x = "Sample Size", y = "Entropy")  -->
+
+<!-- print(combined_plot) -->
+<!-- ``` -->
+
+
+```{r Simulated_data_test_gi0, echo=FALSE, message=FALSE}
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c( 25, 49, 81, 121, 200)
+N<- 200
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 2
+mu_values <- c(1)
+alpha <- -600
+L <- 5
+
+  estimators <- list(
+  
+    "$\\widetilde{H}_{C}$ " = bootstrap_correa_estimator,
+    #"$\\widetilde{H}_{E}$ " = bootstrap_ebrahimi_estimator,
+    "$\\widetilde{H}_{AO}$ " = bootstrap_al_omari_1_estimator
+  )
+ #true_entropy <- entropy_gamma_sar(L, mu) 
+calculate_entropy_and_test_montecarlo <- function(sample_sizes, R, N, B, mu, alpha, L, estimators, true_entropy) {
+  true_entropy <- entropy_gamma_sar(L, mu)
+  output <- data.frame(
+    SampleSize = integer(0),
+    Estimator = character(0),
+    TypeIErrorRate = numeric(0)
+  )
+  
+  for (ssize in sample_sizes) {
+    
+    for (estimator_name in names(estimators)) {
+      estimator <- estimators[[estimator_name]]
+      reject_H0_count <- 0
+      
+      for (n_replication in 1:N) {
+        
+        #samples <- gi0_sample(mu, alpha, L, ssize)
+        v.entropy <- numeric(R)
+        for (r in 1:R) {
+        # Generar muestras aleatorias para cada repetición y cada estimador
+        samples <- gi0_sample(mu, alpha, L, ssize)
+        
+        if (grepl(" ", estimator_name)) {
+          v.entropy[r] <- estimator(samples, B = B)
+        } else {
+          v.entropy[r] <- estimator(samples)
+        }
+      }
+        
+        # if (grepl(" ", estimator_name)) {
+        #   entropy_values <- replicate(R, estimator(samples, B = B))
+        # } else {
+        #   entropy_values <- replicate(R, estimator(samples))
+        # }
+        mean_entropy <- mean(v.entropy)
+      z_statistic <- sqrt(R) * (mean_entropy - true_entropy) / sd(v.entropy)
+      p_value <- 2 * (1 - pnorm(abs(z_statistic)))
+      alpha_t = 0.05
+        
+        # Calcular p-values para cada replicación
+       # p_values <- 2 * (1 - pnorm(abs((mean(entropy_values) - true_entropy) / sd(entropy_values))))
+        
+        # Contar los casos donde se rechaza la hipótesis nula
+        reject_H0_count <- reject_H0_count + sum(p_value < 0.05)
+      }
+      
+      
+      typeI_error_rate <- reject_H0_count / (N)
+      
+      output <- rbind(
+        output,
+        data.frame(
+          SampleSize = ssize,
+          Estimator = estimator_name,
+          TypeIErrorRate = round(typeI_error_rate, 5)
+        )
+      )
+    }
+  }
+  
+  colnames(output) <- c("$n$", "Estimator", "Type I Error Rate")
+  
+  return(output)
+}
+
+
+
+calculate_results_test_gi0_montecarlo <- function(sample_sizes, R, N, B, mu_values, alpha, L, estimators) {
+  results_list <- list()
+
+  for (mu_val in mu_values) {
+    
+    results <- calculate_entropy_and_test_montecarlo(sample_sizes, R, N, B, mu_val, alpha, L, estimators)
+    df <- as.data.frame(results)
+
+    results_list[[as.character(mu_val)]] <- df
+  }
+
+  return(results_list)
+}
+
+results_gi0_1_montecarlo <- calculate_results_test_gi0_montecarlo(sample_sizes, R, N, B, mu_values, alpha, L, estimators)
+print(results_gi0_1_montecarlo)
+save(results_gi0_1_montecarlo, file = "./Data/results_gi0_1_montecarlo.Rdata")
+
+
+# calculate_results_test_gi0 <- function(sample_sizes, R, B, mu_values, alpha, L, estimators) {
+#   results_list <- list()
+# 
+#   for (mu_val in mu_values) {
+#     
+#     results <- calculate_entropy_and_test(sample_sizes, R, B, mu_val, alpha, L, estimators)
+#     df <- as.data.frame(results)
+# 
+#     
+#     results_list[[as.character(mu_val)]] <- df
+#   }
+# 
+#   return(results_list)
+# }
+# 
+# 
+# results_gi0_1 <- calculate_results_test_gi0(sample_sizes, R, B, mu_values, alpha, L, estimators)
+# 
+# 
+# save(results_gi0_1, file = "./Data/results_gi0_1.Rdata")
+
+
+```
+
+```{r Table_test_gi0_montecarlo, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+load("./Data/results_gi0_1_montecarlo.Rdata")
+
+# Interpretación de rechazo o no rechazo
+for (mu_val in mu_values) {
+  results_data <- results_gi0_1_montecarlo[[as.character(mu_val)]]
+
+  table_result <- kbl(
+    results_data,
+   # caption = paste("Hypothesis Testing for $G_I^0$, $\\mu =", mu_val, "$, $L=2$, $\\pha1=-1000$ , #$H_{\\Gamma_{\\text{SAR}}}=2.493$."),
+    format = "latex",
+    booktabs = TRUE,
+    align = "c",
+    escape = FALSE,
+    digits = 4,
+    label = "table_hipotesis"
+  ) %>%
+    collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle")
+
+  #cat("### Results for mu =", mu_val, "\n")
+  print(table_result)
+  
+}
+# # Imprimir los nombres de las columnas en los resultados
+# print(names(results_gi0_1_montecarlo[[1]]))
+# 
+# # Verificar las columnas disponibles en los resultados
+# available_columns <- unique(unlist(lapply(results_gi0_1_montecarlo, names)))
+# 
+# # Seleccionar solo las columnas deseadas si están presentes
+# desired_columns <- c("SampleSize", "Estimator", "TypeIErrorRate")
+# selected_columns <- intersect(available_columns, desired_columns)
+# 
+# results_data <- lapply(results_gi0_1_montecarlo, function(df) {
+#   df[, selected_columns, drop = FALSE]
+# })
+# 
+# # Combinar los resultados en un único dataframe
+# results_combined <- do.call(rbind, results_data)
+# 
+# # Mostrar la tabla
+# table_result <- kbl(
+#   results_combined,
+#   format = "latex",
+#   booktabs = TRUE,
+#   align = "c",
+#   escape = FALSE,
+#   digits = 4,
+#   label = "table_hipotesis_montecarlo"
+# ) %>%
+#   collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle")
+# 
+# print(table_result)
+
+
+
+
+
+```
+<!-- ```{r Table_test_gi0, echo=FALSE, message=FALSE, warning=FALSE, results='asis'} -->
+<!-- load("./Data/results_gi0_1.Rdata") -->
+
+<!-- # Imprimir los nombres de las columnas en los resultados -->
+<!-- print(names(results_gi0_1[[1]])) -->
+
+<!-- # Seleccionar solo las columnas deseadas -->
+<!-- results_data <- lapply(results_gi0_1, function(df) { -->
+<!--   df[, c("SampleSize", "Estimator", "TypeIErrorRate")] -->
+<!-- }) -->
+
+<!-- # Combinar los resultados en un único dataframe -->
+<!-- results_combined <- do.call(rbind, results_data) -->
+
+<!-- # Mostrar la tabla -->
+<!-- table_result <- kbl( -->
+<!--   results_combined, -->
+<!--   format = "latex", -->
+<!--   booktabs = TRUE, -->
+<!--   align = "c", -->
+<!--   escape = FALSE, -->
+<!--   digits = 4, -->
+<!--   label = "table_hipotesis" -->
+<!-- ) %>% -->
+<!--   collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") -->
+
+<!-- print(table_result) -->
+
+
+<!-- ``` -->
+
+
+
+
+
+<!-- ```{r Table_test_gi0, echo=FALSE, message=FALSE, warning=FALSE, results='asis'} -->
+
+<!-- load("./Data/results_gi0_1.Rdata") -->
+
+
+
+
+
+
+<!-- # Interpretación de rechazo o no rechazo -->
+<!-- for (mu_val in mu_values) { -->
+<!--   results_data <- results_gi0_1[[as.character(mu_val)]] -->
+
+<!--   table_result <- kbl( -->
+<!--     results_data, -->
+<!--    # caption = paste("Hypothesis Testing for $G_I^0$, $\\mu =", mu_val, "$, $L=2$, $\\pha1=-1000$ , #$H_{\\Gamma_{\\text{SAR}}}=2.493$."), -->
+<!--     format = "latex", -->
+<!--     booktabs = TRUE, -->
+<!--     align = "c", -->
+<!--     escape = FALSE, -->
+<!--     digits = 4, -->
+<!--     label = "table_hipotesis" -->
+<!--   ) %>% -->
+<!--     collapse_rows(columns = 1:3, latex_hline = "major", valign = "middle") -->
+
+<!--   cat("### Results for mu =", mu_val, "\n") -->
+<!--   print(table_result) -->
+
+<!--   # Interpretación de rechazo o no rechazo -->
+<!--   cat(ifelse(nrow(results_data) > 0, -->
+<!--              paste("For mu =", mu_val, ":\n"), -->
+<!--              paste("No observations for mu =", mu_val, ":\n"))) -->
+
+<!--   cat(ifelse(nrow(results_data) > 0, -->
+<!--              paste( -->
+<!--                "Sample Size ", results_data$`$n$`, " Estimator ", results_data$Estimator, -->
+<!--                ifelse(results_data$RejectNull, -->
+<!--                       " the null hypothesis is rejected.", -->
+<!--                       " the null hypothesis is not rejected." -->
+<!--                ), "\n" -->
+<!--              ), -->
+<!--              "\n")) -->
+<!-- } -->
+
+
+<!-- ``` -->
+
+
