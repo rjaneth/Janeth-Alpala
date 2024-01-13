@@ -488,7 +488,6 @@ Then, if $m,n\rightarrow \infty$ and $m=o(n^{1/2})$, holds that:
 \end{equation*}
 \end{lemma} 
 Consider, starting from the previous lemma, we aim at testing the following hypotheses: 
-
 $$
  \begin{cases}\mathcal{H}_0: \mathcal{D}(\bm{\theta})=\Gamma_{\text{SAR}} \\ 
   \mathcal{H}_1: \mathcal{D}(\bm{\theta})=G_I^0.\end{cases}
