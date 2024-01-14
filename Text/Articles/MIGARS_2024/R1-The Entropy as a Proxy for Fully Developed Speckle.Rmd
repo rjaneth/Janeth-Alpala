@@ -475,6 +475,7 @@ From \eqref{Eq:bias1} and \eqref{Eq:bias2} we have:
 where $B$ is the number of replications in the bootstrap technique.
 Applying this methodology, the original estimators by Correa, Ebrahimi, and Al-Omari are now denoted as the proposed bootstrap-enhanced versions: $\widetilde{H}_{\text{C}}$, $\widetilde{H}_{\text{E}}$, and $\widetilde{H}_{\text{AO}}$, respectively.
 
+
 Simulations are conducted using $G_I^0$ distribution, with $200$ simulated samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\), with parameters \(\mu \in \left\{1, 10\right\}\), \(\alpha=-20\), and \(L=8\). In the case of the bootstrap technique, each sample is replicated $100$ times with replacement.
 We choose to use the following heuristic formula for spacing, $m=\left[\sqrt{n}+0.5\right]$.
 
