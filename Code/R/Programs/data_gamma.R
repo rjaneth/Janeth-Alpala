@@ -6,6 +6,7 @@ library(invgamma)
 library(latex2exp)
 if(!require("rstudioapi")) install("rstudioapi")
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
 source("../MainFunctions/ebrahimi_estimator.R")
 source("../MainFunctions/gamma_sar_sample.R")
 source("../MainFunctions/correa_estimator.R")

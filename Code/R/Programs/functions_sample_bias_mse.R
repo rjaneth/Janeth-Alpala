@@ -207,7 +207,7 @@ generate_plot_gi0_esp <- function(results_gi0, mu_values, selected_estimators, n
       geom_hline(yintercept = 0) +
       geom_point(size = 2) +
       geom_line(linetype = "solid", linewidth = 0.5) +
-      labs(y = "MSE", x = expression("Sample size"~(italic(n)))) +
+      labs(y = "Bias", x = expression(italic(n))) + #x = expression("Sample size"~(italic(n))))
       #labs(y = "Bias", x = expression("Sample size"~"\\big("italic(n)"\\big)")) +
        # scale_color_discrete(labels = TeX(df_filtered$Estimator)) +
       scale_color_manual(values = pal_jama()(7)[1:6], labels = TeX(df_filtered$Estimator)) +
@@ -223,7 +223,7 @@ generate_plot_gi0_esp <- function(results_gi0, mu_values, selected_estimators, n
       geom_hline(yintercept = 0) +
       geom_point(size = 2) +
       geom_line(linetype = "solid", linewidth = 0.5) +
-      labs(y = "MSE", x = expression("Sample size"~(italic(n)))) +
+      labs(y = "MSE", x = expression(italic(n))) +
       #scale_color_discrete(labels = TeX(df_filtered$Estimator)) +
       scale_color_manual(values = pal_jama()(7)[1:6], labels = TeX(df_filtered$Estimator)) +
       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +

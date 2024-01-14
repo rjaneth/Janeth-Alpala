@@ -21,12 +21,12 @@ source("../MainFunctions/gi0_sample.R")
 
 set.seed(1234567890, kind="Mersenne-Twister")
 
-R <- 1000
+R <- 3000 # replicaciones para generar los valores de la entropia
 mu <- 1
 L <- 2
 B <- 5
-#alpha1<- -300
-sample.size <- c(9, 25, 81)
+
+sample.size <- c(9, 25, 49, 81)
 
 TestStatistics <- NULL
 
@@ -36,7 +36,7 @@ for(s in sample.size){
     z <- gamma_sar_sample(L, mu, s) #
     
     TestStat <- bootstrap_correa_estimator_log_mean(z, B) + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
-    TestStat <- bootstrap_correa_estimator_log_mean(z, B) + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
+  
    
     TestStatistics <- rbind(TestStatistics,
                             c(s, TestStat))

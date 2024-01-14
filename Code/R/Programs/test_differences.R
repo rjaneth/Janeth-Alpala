@@ -21,12 +21,12 @@ source("../MainFunctions/gi0_sample.R")
 
 set.seed(1234567890, kind = "Mersenne-Twister")
 
-R <- 3000
+R <- 10
 mu <- 1
 L <- 5
 B <- 1
 alpha1 <- -6
-sample.size <- c( 121)
+sample.size <- c( 9, 25, 49, 81, 121)
 
 TestStatistics1 <- NULL
 TestStatistics2 <- NULL
@@ -47,8 +47,8 @@ for (s in sample.size) {
     #z <- gi0_sample(mu, alpha1, L, s)
     z <- gamma_sar_sample(L, mu, s)
 
-    TestStat1[r] <- -bootstrap_correa_estimator_log_mean(z, B) - (-L + log(L) - lgamma(L) - (1 - L) * digamma(L) + L + lgamma(L - alpha1) - (L - alpha1) * (digamma(L - alpha1)) + (1 - alpha1) * digamma(-alpha1) - log(-1 - alpha1) - lgamma(-alpha1))
-    TestStat2[r] <- bootstrap_correa_estimator_log_mean(z, B) + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
+    #TestStat1[r] <- -bootstrap_correa_estimator_log_mean(z, B) - (-L + log(L) - lgamma(L) - (1 - L) * digamma(L) + L + lgamma(L - alpha1) - (L - alpha1) * (digamma(L - alpha1)) + (1 - alpha1) * digamma(-alpha1) - log(-1 - alpha1) - lgamma(-alpha1))
+    TestStat1[r] <- bootstrap_correa_estimator_log_mean(z, B) + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
     #TestStat4[r] <- bootstrap_correa_estimator(z, B)+( L+lgamma(L-alpha1) - (L-alpha1)*(digamma(L - alpha1))+(1-alpha1)*digamma(- alpha1)-log(-1 - alpha1)-lgamma(-alpha1) ) 
     
     }
@@ -57,8 +57,8 @@ for (s in sample.size) {
   mean_entropy1[sample.size == s] <- mean(TestStat1)
   cat(" mean for TestStat1", mean_entropy1[sample.size == s], "\n")
   
-  mean_entropy2[sample.size == s] <- mean(TestStat2)
-  cat(" mean for TestStat2", mean_entropy2[sample.size == s], "\n")
+  # mean_entropy2[sample.size == s] <- mean(TestStat2)
+  # cat(" mean for TestStat2", mean_entropy2[sample.size == s], "\n")
   # mean_entropy3[sample.size == s] <- mean(TestStat3)
   # cat(" mean for TestStat3", mean_entropy3[sample.size == s], "\n")
   # 
@@ -67,7 +67,7 @@ for (s in sample.size) {
   
   
   TestStatistics1 <- rbind(TestStatistics1, data.frame("Sample_Size" = rep(s, R), "Test_Statistics" = TestStat1))
-  TestStatistics2 <- rbind(TestStatistics2, data.frame("Sample_Size2" = rep(s, R), "Test_Statistics2" = TestStat2))
+  #TestStatistics2 <- rbind(TestStatistics2, data.frame("Sample_Size2" = rep(s, R), "Test_Statistics2" = TestStat2))
   #TestStatistics3 <- rbind(TestStatistics3, data.frame("Sample_Size3" = rep(s, R), "Test_Statistics3" = TestStat3))
   #TestStatistics4 <- rbind(TestStatistics4, data.frame("Sample_Size4" = rep(s, R), "Test_Statistics4" = TestStat4))
 }
@@ -82,21 +82,21 @@ difference.betweeen.GammaSAR.GI0.n.Look <- function(alpha, L) {
   )
 }
 
-max_density1 <- max(density(TestStatistics1$Test_Statistics)$y, na.rm = TRUE)
-max_density2 <- max(density(TestStatistics2$Test_Statistics2)$y, na.rm = TRUE)
+#max_density1 <- max(density(TestStatistics1$Test_Statistics)$y, na.rm = TRUE)
+#max_density2 <- max(density(TestStatistics2$Test_Statistics2)$y, na.rm = TRUE)
 #max_density3 <- max(density(TestStatistics3$Test_Statistics3)$y, na.rm = TRUE)
 
 ggplot(TestStatistics1, aes(x = Test_Statistics, col = factor(Sample_Size), linetype = factor(Sample_Size))) +
   geom_line(stat = "density", linewidth = 1.0) +
-  scale_color_manual(values = rainbow(7)[1:2], name = "Sample Size") +
+  scale_color_manual(values = rainbow(7)[1:5], name = "Sample Size") +
   scale_linetype_manual(values = rep("solid", length(sample.size)), name = "Sample Size") +
-  geom_line(data = TestStatistics2, aes(x = Test_Statistics2, col = factor(Sample_Size2), linetype = factor(Sample_Size2)), stat = "density", color = "blue", linetype = "dashed", linewidth = 1) +
+  #geom_line(data = TestStatistics2, aes(x = Test_Statistics2, col = factor(Sample_Size2), linetype = factor(Sample_Size2)), stat = "density", color = "blue", linetype = "dashed", linewidth = 1) +
   #geom_line(data = TestStatistics3, aes(x = Test_Statistics3, col = factor(Sample_Size3), linetype = factor(Sample_Size3)), stat = "density", color = "green", linetype = "dashed", linewidth = 1) +
   #geom_line(data = TestStatistics4, aes(x = Test_Statistics4, col = factor(Sample_Size4), linetype = factor(Sample_Size4)), stat = "density", color = "black", linetype = "dashed", linewidth = 1) +
-  annotate("text", x = max(TestStatistics1$Test_Statistics) + 0.1, y = max_density1,
-           label = TeX("$\\Gamma_{\\tiny{SAR}}$"), vjust = 5, hjust = 5, color = "red") +
-  annotate("text", x = max(TestStatistics2$Test_Statistics2) + 0.1, y = max_density2,
-           label = TeX("$G_I^0$"), vjust = 5, hjust = 5, color = "blue") +
+  # annotate("text", x = max(TestStatistics1$Test_Statistics) + 0.1, y = max_density1,
+  #          label = TeX("$\\Gamma_{\\tiny{SAR}}$"), vjust = 5, hjust = 5, color = "red") +
+  # annotate("text", x = max(TestStatistics2$Test_Statistics2) + 0.1, y = max_density2,
+  #          label = TeX("$G_I^0$"), vjust = 5, hjust = 5, color = "blue") +
   geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.n.Look(-6, 5), col="red") +
   annotate("text", x=difference.betweeen.GammaSAR.GI0.n.Look(-6, 5), y=10, parse=TRUE, label="alpha==-6", hjust=-.1, vjust=-1, col="red") +
   labs(x = "Test Statistics", y = "Density") +

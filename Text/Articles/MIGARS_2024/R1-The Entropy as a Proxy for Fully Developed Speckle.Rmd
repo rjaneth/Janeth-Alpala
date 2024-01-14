@@ -89,7 +89,8 @@ biblio-style: ieeetr
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, cache=TRUE)
+#knitr::opts_chunk$set(echo = FALSE, cache=TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 library(ggplot2)
 library(reshape2)
 #library(plotly)
@@ -116,6 +117,12 @@ library(devtools)
 library(kableExtra)
 library(ggthemes)
 library(latex2exp)
+library(e1071)# kurtosis
+library(viridis)
+library(nortest)# AD
+
+
+
 
 theme_set(theme_minimal() +
             theme(text=element_text(family="serif"),
@@ -290,22 +297,22 @@ ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = Looks)) +
 
 ```
 
-Fig.&nbsp;\ref{fig:3d_GIO} illustrates the entropy of $G_I^0$ distribution as a function of three key parameters: $\mu$, $\alpha$, and $L$.
+<!-- Fig.&nbsp;\ref{fig:3d_GIO} illustrates the entropy of $G_I^0$ distribution as a function of three key parameters: $\mu$, $\alpha$, and $L$. -->
 
-```{r 3d_GIO, fig.align="center",  out.width = "70%", fig.cap="The Shannon Entropy under ${G}_I^0$ models.", fig.show="hold",  fig.pos="hbt"}
-knitr::include_graphics("../../../Figures/PDF/entropy_plot_3d.pdf")
-```
-As we explore the 3D plot, we can observe how changes in $\mu$, $\alpha$, and $L$ collectively influence the entropy of the $G_I^0$ distribution. 
-We can identify regions where entropy is high or low, providing insights into the predictability and structure of the distribution in various regions of the parameter space.
+<!-- ```{r 3d_GIO, fig.align="center",  out.width = "70%", fig.cap="The Shannon Entropy under ${G}_I^0$ models.", fig.show="hold",  fig.pos="hbt"} -->
+<!-- knitr::include_graphics("../../../Figures/PDF/entropy_plot_3d.pdf") -->
+<!-- ``` -->
+<!-- As we explore the 3D plot, we can observe how changes in $\mu$, $\alpha$, and $L$ collectively influence the entropy of the $G_I^0$ distribution.  -->
+<!-- We can identify regions where entropy is high or low, providing insights into the predictability and structure of the distribution in various regions of the parameter space. -->
 
 In Fig.&nbsp;\ref{fig:Plot_GI0_to_gamma}, we depict the behavior of the entropy of \(G_I^0\) when \(\alpha \in \left\{-\infty, -20, -8, -3\right\}\), observing its convergence towards the entropy of \(\Gamma_{\text{SAR}}\) as \(\alpha\) takes large negative values. 
 
 
-```{r Plot_GI0_to_gamma, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ as $\\alpha$ takes large negative values and $L=5$."}
+```{r Plot_GI0_to_gamma, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ as $\\alpha$ takes large negative values and $L=8$."}
 
 
 
-L <- c(5)
+L <- c(8)
 alphas <- c(  -3, -8, -20, -1000)
 alpha_labels <- c( expression(italic(alpha) == -3), expression(italic(alpha) == -8), expression(italic(alpha) == -20), expression(italic(alpha) == -1000))
 
@@ -352,13 +359,13 @@ ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = alpha)) +
 
 The empirical distributions of $\Gamma_{\text{SAR}}$ and $G_I^0$ entropies are shown in Fig.&nbsp;\ref{fig:Plot_empirical}. It is observed that when $\alpha$ approaches negative infinity, the two distributions are very similar. In other words, the mean entropy of $G_I^0$ approximates the mean entropy of $\Gamma_{\text{SAR}}$.
 
-```{r Plot_empirical, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Empirical distributions of $\\Gamma_{\\text{SAR}}$ and $G_I^0$ entropies as $\\mu=1$, $L=5$ and $\\alpha\\in\\{-1000, -20, -8, -3\\}$."}
+```{r Plot_empirical, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Empirical distributions of $\\Gamma_{\\text{SAR}}$ and $G_I^0$ entropies as $\\mu=1$, $L=8$ and $\\alpha\\in\\{-1000, -20, -8, -3\\}$."}
 
 set.seed(1234567890, kind = "Mersenne-Twister")
 
 R <- 3000
 mu <- 1
-L <- 5
+L <- 8
 B <- 1
 sample.size <- c( 121)
 
@@ -387,15 +394,10 @@ for (alpha_val in alpha1_values) {
       TestStat1[r] <- log(mean(z))  + (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
       TestStat2[r] <- log(mean(z))  + (L - log(L) + lgamma(L) +(1 - L) * digamma(L) - L - lgamma(L - alpha1) + (L - alpha1) * (digamma(L - alpha1)) - (1 - alpha1) * digamma(-alpha1) + log(-1 - alpha1) + lgamma(-alpha1))
       
-      #TestStat1[r] <- log(mean(z))  - (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
-      #TestStat2[r] <- -bootstrap_correa_estimator_log_mean(z, B) - (-L + log(L) - lgamma(L) - (1 - L) * digamma(L) + L + lgamma(L - alpha1) - (L - alpha1) * (digamma(L - alpha1)) + (1 - alpha1) * digamma(-alpha1) - log(-1 - alpha1) - lgamma(-alpha1))
+      
     }
     
-    # mean_entropy1[sample.size == s] <- mean(TestStat1)
-    # #cat(" mean for TestStat1", mean_entropy1[sample.size == s], "\n")
-    # 
-    # mean_entropy2[sample.size == s] <- mean(TestStat2)
-    # cat(" mean for TestStat2", mean_entropy2[sample.size == s], "\n")
+    
     
     TestStatistics1 <- rbind(TestStatistics1, data.frame("Sample_Size" = rep(s, R), "Test_Statistics" = TestStat1))
     TestStatistics2 <- rbind(TestStatistics2, data.frame("Sample_Size2" = rep(s, R), "Test_Statistics2" = TestStat2))
@@ -425,7 +427,6 @@ for (alpha_val in alpha1_values) {
 }
 
 grid.arrange(grobs = plots_list, ncol = 2)
-
 
 ```
 ## Estimation of the Shannon Entropy
@@ -473,43 +474,6 @@ From \eqref{Eq:bias1} and \eqref{Eq:bias2} we have:
 \end{align*}
 where $B$ is the number of replications in the bootstrap technique.
 Applying this methodology, the original estimators by Correa, Ebrahimi, and Al-Omari are now denoted as the proposed bootstrap-enhanced versions: $\widetilde{H}_{\text{C}}$, $\widetilde{H}_{\text{E}}$, and $\widetilde{H}_{\text{AO}}$, respectively.
-
-# Hypothesis testing based on non-parametric entropy {#sec:test}
-General asymptotic results for functions of spacings are detailed&nbsp;\cite{Khashimov1990}, while&nbsp;\cite{Bert1992} developed a correction for the case of Shannon entropy.
-Following the work of these authors, the next result applies: 
-\begin{lemma}
-Suppose that $f(\cdot)$ is a bounded density bounded away from zero and satisfies a Lipschitz condition on its support.
-Then, if $m,n\rightarrow \infty$ and $m=o(n^{1/2})$, holds that:
-\begin{equation*}
-\sqrt{n}\,\Big(\label{Eq:bias_t}
-\widetilde{H}_{i}+\int_{-\infty}^\infty f(z)\ln f(z) \mathrm{d}z\Big)
-\xrightarrow[]{\mathcal{D}}
-\mathcal{N}(0,\operatorname{Var}(\ln f(Z))).
-\end{equation*}
-\end{lemma} 
-Consider, starting from the previous lemma, we aim at testing the following hypotheses: 
-
-$$
- \begin{cases}\mathcal{H}_0: \mathcal{D}(\bm{\theta})=\Gamma_{\text{SAR}} \\ 
-  \mathcal{H}_1: \mathcal{D}(\bm{\theta})=G_I^0.\end{cases}
-$$
-In other words, we verify the hypothesis that the data are fully-developed speckle.
-<!-- \begin{align*} -->
-<!-- \mathcal{H}_1 &: T_{\mathcal{D}}\neq D_0,\\  -->
-<!-- \mathcal{H}_1 &: T_{\mathcal{D}}> D_0,\text{ or}\\ -->
-<!-- \mathcal{H}_1 &: T_{\mathcal{D}}< D_0.  -->
-<!-- \end{align*} -->
-For this purpose, we use the following test statistic:
-\begin{equation}
-\label{Eq:test_e}
-S(Z)= \widetilde{H}(Z)-H(Z).
-\end{equation}
-This test statistic $S(Z)$ aims to assess the behavior of the data under the null hypothesis, through the empirical distribution of the test statistic values for a sample size of $n$. The density should center around zero if the test statistic is capable of detecting that the data are fully-developed speckle, i.e., $S(Z)\approx 0$. Otherwise, under the alternative hypothesis, the empirical distribution of the test statistic values is not centered around zero. This suggests significant differences and implies the presence of heterogeneous clutter.
-
-<!-- so the null hypothesis should be rejected if (i) $Z_{n,m} > z_{\alpha/2}$ or $Z_{n,m} < - z_{\alpha/2}$ for $\Phi_{\mathcal N}(z_{\alpha/2})=1-\alpha/2$ and $\Phi_{\mathcal N}$ being the standard normal cumulative distribution function, (ii) $Z_{n,m} > z_{\alpha/2}$ or (iii) $Z_{n,m} < - z_{\alpha/2}$.   -->
-
-
-# Results {#sec:results} 
 
 Simulations are conducted using $G_I^0$ distribution, with $200$ simulated samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\), with parameters \(\mu \in \left\{1, 10\right\}\), \(\alpha=-20\), and \(L=8\). In the case of the bootstrap technique, each sample is replicated $100$ times with replacement.
 We choose to use the following heuristic formula for spacing, $m=\left[\sqrt{n}+0.5\right]$.
@@ -574,7 +538,7 @@ load("./Data/results_gi0.Rdata")
 
 
 estimators_to_plot <- c("Correa", "Ebrahimi", "Al Omari",  "Correa Bootstrap", "Ebrahimi Bootstrap", "Al Omari Bootstrap" )
-  latex_estimator_names <- c("Correa" = expression("$\\widehat{italic(H)}_{C}$"),#parse(text=TeX("$H_{2}$")),
+  latex_estimator_names <- c("Correa" = expression("$\\widehat{italic(H)}_{C}$"),
                              "Correa Bootstrap" = expression("$\\widetilde{italic(H)}_{C}$"),
                             "Ebrahimi" = expression("$\\widehat{italic(H)}_{E}$"),
                             "Al Omari" = expression("$\\widehat{italic(H)}_{AO}$"),
@@ -607,7 +571,7 @@ reshaped_results <- filtered_results %>%
   pivot_wider(names_from = Estimator, values_from = c(Bias, MSE))
 
 
-colnames(reshaped_results) <- c("$\\bm{\\mu}$", "$\\bm{n}$", "$\\widetilde{H}_{\\text{C}}$", "$\\widetilde{H}_{\\text{E}}$", "$\\widetilde{H}_{\\text{AO}}$", "$\\widetilde{H}_{\\text{C}}$", "$\\widetilde{H}_{\\text{E}}$", "$\\widetilde{H}_{\\text{AO}}$")
+colnames(reshaped_results) <- c("$\\mu$", "$n$", "$\\widetilde{H}_{\\text{C}}$", "$\\widetilde{H}_{\\text{E}}$", "$\\widetilde{H}_{\\text{AO}}$", "$\\widetilde{H}_{\\text{C}}$", "$\\widetilde{H}_{\\text{E}}$", "$\\widetilde{H}_{\\text{AO}}$")
 
 #
 print(
@@ -618,7 +582,7 @@ print(
     booktabs = TRUE,
     align = "c",
     escape = FALSE, 
-    digits = 4,  
+    digits = 3,  
     label = "table2"  
   ) %>%
     add_header_above(c(" ", " ", "Bias" = 3, "MSE" = 3)) %>%
@@ -626,86 +590,287 @@ print(
 )
 ```
 
+# Hypothesis testing based on non-parametric entropy {#sec:test}
+General asymptotic results for functions of spacings are detailed&nbsp;\cite{Khashimov1990}, while&nbsp;\cite{Bert1992} developed a correction for the case of Shannon entropy.
+Following the work of these authors, the next result applies: 
+\begin{lemma}
+Suppose that $f(\cdot)$ is a bounded density bounded away from zero and satisfies a Lipschitz condition on its support.
+Then, if $m,n\rightarrow \infty$ and $m=o(n^{1/2})$, holds that:
+\begin{equation*}
+\sqrt{n}\,\Big(\label{Eq:bias_t}
+\widetilde{H}_{i}+\int_{-\infty}^\infty f(z)\ln f(z) \mathrm{d}z\Big)
+\xrightarrow[]{\mathcal{D}}
+\mathcal{N}(0,\operatorname{Var}(\ln f(Z))).
+\end{equation*}
+\end{lemma} 
+Consider, starting from the previous lemma, we aim at testing the following hypotheses: 
 
-```{r Simulated_data_test_gi0, echo=FALSE, message=FALSE}
+$$
+ \begin{cases}\mathcal{H}_0: \mu_{\widetilde{H}}-\mu_{H}=0 \\ 
+  \mathcal{H}_1:\mu_{\widetilde{H}}-\mu_{H}\neq0 .\end{cases}
+$$
+In other words, we verify the hypothesis that the data are fully-developed speckle.
 
+For this purpose, we use the following test statistic:
+\begin{equation}
+\label{Eq:test_e}
+S(\bm{Z};L_0)= \widetilde{H}(\bm{Z})-\left[H_{\Gamma_{\text{SAR}}}(L_0)+\ln \widebar{\bm{Z}}\right].
+\end{equation}
+This test statistic $S(\bm{Z};L_0)$ aims to assess the behavior of the data under the null hypothesis, through the empirical distribution of the test statistic values for a sample size of $n$. The density should center around zero if the test statistic is capable of detecting that the data are fully-developed speckle, i.e., $S(\bm{Z};L_0)\approx 0$. Otherwise, under the alternative hypothesis, the empirical distribution of the test statistic values is not centered around zero. This suggests significant differences and implies the presence of heterogeneous clutter.
+
+
+
+# Results {#sec:results} 
+
+
+## The Proposed Test
+We analyze the finite sample size behavior of the test statistics defined in \eqref{Eq:test_e}.
+
+Fig. \ref{fig:Plot_density} depicts empirical test statistic densities for various sample sizes, and Table \ref{tab:table_stat_combined} summarizes key statistics, including mean, SD, variance (Var), skewness, kurtosis, and Anderson–Darling $p$-values for normality. Results with $p$-values $> 0.05$  indicate no evidence against normality. 
+Notably, small variance and near-zero skewness and kurtosis suggest limited spread, symmetry, and light tails, aligning with normal distribution expectations.
+
+In Fig. \ref{fig:Plot_normality_qq}, normal QQ-plots visually affirm distributional similarity with the expected normal line, reinforcing our findings.
+
+
+
+```{r Simulated_density, echo=FALSE, message=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
-sample_sizes <- c(9, 25, 49, 81, 121)
-# Number of replications para simulacion montecarlo para calculo de error tipo 1
 
-N <- 1000
+R <- 1000
+mu <- 1
+B <- 2
+alpha1 <- -8
+sample.size <- c(50, 100, 150, 200, 250,300, 350)
+L_values <- c(2, 5, 8, 18)
 
-# Number of replications para calcular las entropias
-R <- 10
+all_summary_stats <- list()
+all_TestStatistics <- list()
+all_TestNormality <- list()
+all_plots <- list()
 
-# Number of bootstrap replications
-B <- 10
-mu_values <- c(5)
-alpha <- -1000
-L <- 2
-
-  estimators <- list(
-    #"Correa" = correa_estimator,
-    "$\\widetilde{H}_{C}$ " = bootstrap_correa_estimator,
-    "$\\widetilde{H}_{E}$ " = bootstrap_ebrahimi_estimator,
-    "$\\widetilde{H}_{AO}$ " = bootstrap_al_omari_1_estimator
-  )
-
-
-calculate_results_test_gi0 <- function(sample_sizes, R, B, mu_values, alpha, L, estimators) {
-  results_list <- list()
-
-  for (mu_val in mu_values) {
+# For each L
+for (L in L_values) {
+  TestStatistics1 <- list()  
+  summary_stats <- data.frame( LValue = character(),
+                              SampleSize = numeric(),
+                              Mean = numeric(),
+                              SD = numeric(),
+                              Variance = numeric(),
+                              Skewness = numeric(),
+                              Kurtosis = numeric(),
+                              adpvalue = numeric()
+                              )  # Nueva columna para  L
+  # summary_normality <- data.frame(Sample_Size = numeric(),
+  #                               lillie_p_value = numeric(),
+  #                               ad_p_value = numeric())
+  #normality_test <- list()#
+  
+  for (s in sample.size) {
+    TestStat1 <- numeric(R)
     
-    results <- calculate_entropy_and_test(sample_sizes, R, B, mu_val, alpha, L, estimators)
-    df <- as.data.frame(results)
+    for (r in 1:R) {
+      z <- gamma_sar_sample(L, mu, s)
+      TestStat1[r] <- bootstrap_correa_estimator_log_mean(z, B) + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
+    }
+    
+    TestStatistics1[[as.character(s)]] <- data.frame("SampleSize" = rep(s, R), "Test_Statistics" = TestStat1)
+    
 
     
-    results_list[[as.character(mu_val)]] <- df
+   
+    mean_val <- mean(TestStat1)
+    sd_val <- sd(TestStat1)
+    var_val <- var(TestStat1)
+    skewness_val <- skewness(TestStat1)
+    kurtosis_val <- kurtosis(TestStat1)
+   # lillie_p_value <- lillie.test(TestStatistics1[[as.character(s)]]$Test_Statistics)$p.value
+    ad_p_value <- ad.test(TestStatistics1[[as.character(s)]]$Test_Statistics)$p.value
+    
+    
+    summary_stats <- rbind(summary_stats, data.frame(LValue = as.character(L),
+                                                     SampleSize = s,
+                                                     Mean = mean_val,
+                                                     SD = sd_val,
+                                                     Variance = var_val,
+                                                     Skewness = skewness_val,
+                                                     Kurtosis = kurtosis_val,
+                                                     adpvalue = ad_p_value
+                                                     )) 
+    
+    
+    # Almacenar resultados de normalidad
+    # summary_normality <- rbind(summary_normality, data.frame(LValue = as.character(L),
+    #                                                          SampleSize = s,
+    #                                                          lilliepvalue = lillie_p_value,
+    #                                                          adpvalue = ad_p_value))
+  }
+  
+  all_TestStatistics[[as.character(L)]] <- TestStatistics1
+  all_summary_stats[[as.character(L)]] <- summary_stats
+  #all_TestNormality[[as.character(L)]] <- summary_normality
+  
+
+#save(all_TestStatistics, all_summary_stats, file = paste0("./Data/results_", L, ".Rdata"))
+  save(all_TestStatistics, all_summary_stats, all_TestNormality, file = paste0("./Data/results_", L, ".Rdata"))
+}
+
+
+
+
+```
+
+```{r Plot_density, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Empirical density  under Gamma SAR model.", fig.width=6, fig.height=5}
+
+
+
+
+theme_set(theme_minimal() +
+            theme(text = element_text(family = "serif"),
+                  legend.position = "bottom",
+                  legend.text = element_text(angle = 0, vjust = 0.5)))
+
+all_plots <- list()
+
+for (L in L_values) {
+  load(paste0("./Data/results_", L, ".Rdata"))
+
+  combined_data <- do.call(rbind, all_TestStatistics[[as.character(L)]])
+  combined_data$L <- L
+
+  p <- ggplot(combined_data, aes(x = Test_Statistics, col = factor(SampleSize), linetype = factor(SampleSize))) +
+    geom_line(stat = "density", linewidth = 1.0) +
+    scale_color_viridis(discrete = TRUE, option = "C", direction = -1, begin = 0.1, end = 0.8, name = "Sample Size") +
+    scale_linetype_manual(values = rep("solid", length(sample.size)), name = "Sample Size") +
+    labs(x = "Test Statistics", y = "Density") +
+    ggtitle(bquote(italic(L) == .(L))) +
+    theme(plot.title = element_text(hjust = 0.5))#titulo centrado
+
+  if (!any(L == L_values)) {
+    p = p
   }
 
-  return(results_list)
+  all_plots[[as.character(L)]] <- p
 }
 
+combined_plot <- wrap_plots(all_plots, ncol = 2, nrow = 2) +
+  plot_layout(guides = "collect")
 
-results_gi0_1 <- calculate_results_test_gi0(sample_sizes, R, B, mu_values, alpha, L, estimators)
+print(combined_plot)
 
-
-save(results_gi0_1, file = "./Data/results_gi0_1.Rdata")
 
 
 ```
 
 
-```{r Table_test_gi0, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
-
-load("./Data/results_gi0_1.Rdata")
+```{r Table_statistic, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
 
+# for (L in L_values) {
+#   summary_stats <- all_summary_stats[[as.character(L)]]
+#   
+#   print(summary_stats)
+# }
 
 
-for (mu_val in mu_values) {
-  results_data <- results_gi0_1[[as.character(mu_val)]]
+# summary_stats_2 <- all_summary_stats[["2"]]
 
+
+
+load("./Data/results_2.Rdata")
+summary_stats_2 <- all_summary_stats[["2"]]
+
+
+load("./Data/results_5.Rdata")
+summary_stats_5 <- all_summary_stats[["5"]]
+
+
+load("./Data/results_8.Rdata")
+summary_stats_8 <- all_summary_stats[["8"]]
+
+
+combined_summary_stats <- rbind(
+  transform(summary_stats_2),
+  transform(summary_stats_5),
+  transform(summary_stats_8)
   
-  table_result <- kbl(
-    results_data,
-    caption = paste("Hypothesis Testing for $G_I^0$, $\\mu =", mu_val, "$, $L=2$, $\\alpha=-1000$ , $H_{\\Gamma_{\\text{SAR}}}=2.493$."),
-    format = "latex",
-    booktabs = TRUE,
-    align = "c",
-    escape = FALSE,
-    digits = 4,
-    label = "table_hipotesis"
-    #label = paste("table_hipotesis", mu_val, sep = "")
-  ) %>%
-    collapse_rows(columns = 1:3, latex_hline = "major", valign = "middle")
+)
+colnames(combined_summary_stats) <- c("$L$", "$n$", "Mean", "SD", "Var", "Skewness", "Kurtosis", "$p$-value")
 
-  
-  print(table_result)
-}
+# table
+table_result_combined <- kbl(
+  combined_summary_stats,
+  caption = "Descriptive analysis of $S(Z)$ for different values of $L$, and $\\mu=1$.",
+  format = "latex",
+  booktabs = TRUE,
+  align = "c",
+  escape = FALSE,
+  digits = 4,
+  label = "table_stat_combined"
+) %>%
+  collapse_rows(latex_hline = "major", valign = "middle")# %>%
+ # kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE)
+
+print(table_result_combined)
+
 
 ```
+
+```{r Plot_normality_qq, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Normal QQ-plots for  $n=100$.", fig.width=6, fig.height=5}
+
+
+
+theme_set(theme_minimal() +
+            theme(text = element_text(family = "serif"),
+                  legend.position = "bottom",
+                  legend.text = element_text(angle = 0, vjust = 0.5)))
+
+
+
+# Cargar los resultados guardados
+load("./Data/results_2.Rdata")
+load("./Data/results_5.Rdata")
+load("./Data/results_8.Rdata")
+load("./Data/results_18.Rdata")
+
+# Tamaño de muestra específico que deseas graficar
+selected_sample_size <- 100
+
+# Crear una lista para almacenar los ggplots
+ggplot_list <- list()
+
+# Para cada valor de L
+for (L in c(2, 5, 8, 18)) {
+  TestStatistics1 <- all_TestStatistics[[as.character(L)]]
+  
+  # Verifica si el tamaño de muestra seleccionado está disponible
+  if (as.character(selected_sample_size) %in% names(TestStatistics1)) {
+    p <- ggplot(TestStatistics1[[as.character(selected_sample_size)]], 
+                aes(sample = Test_Statistics)) +
+      geom_qq(col = "blue", shape = 20) +
+      geom_qq_line(col = "darkgreen", linetype = 2) +
+      labs(title = bquote(italic(L) == .(L)),
+           x = "Theoretical Quantiles",
+           y = "Sample Quantiles") +
+      theme(plot.title = element_text(hjust = 0.5))#titulo centrado
+
+    
+    ggplot_list[[as.character(L)]] <- p
+  } else {
+    warning(paste("No size sample", selected_sample_size, " L =", L))
+  }
+}
+combined_plot1 <- wrap_plots(ggplot_list, ncol = 2, nrow = 2) +
+  plot_layout(guides = "collect")
+
+print(combined_plot1)
+
+
+# }
+
+
+```
+
+
 
 Fig.&nbsp;\ref{fig:Plot_empirical_test} displays the empirical distributions using statistical test \eqref{Eq:test_e}. Under the null hypothesis, we observe that the densities are centered around zero. Conversely, under the alternative hypothesis, such as for $\alpha=8$, the density is not centered around zero. It reveals the difference between the entropy of Gamma SAR and $G_I^0$, indicating that we are in a scenario of heterogeneous clutter.
 
@@ -773,12 +938,7 @@ for (alpha_val in alpha1_values) {
     geom_line(data = TestStatistics2, aes(x = Test_Statistics2), stat = "density", color = "blue", linetype = "dashed", linewidth = 1) +
     geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.n.Look(-8, 5), col="darkgreen", linetype = "dotted", linewidth = 0.6) +
     annotate("text", x=difference.betweeen.GammaSAR.GI0.n.Look(-8, 5), y=7, parse=TRUE, label="alpha==-8", hjust=-.1, vjust=1.0, col="darkgreen") +
-   # geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.n.Look(-20, 5), col="darkgreen", linetype = "dotted", linewidth = 0.6) +
-   # annotate("text", x=difference.betweeen.GammaSAR.GI0.n.Look(-20, 5), y=7, parse=TRUE, label="alpha==-20", hjust=-.1, vjust=2.0, col="darkgreen") +
     geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.n.Look(-1000, 5), col="darkgreen", linetype = "dotted", linewidth = 0.6) +
-    #annotate("text", x=difference.betweeen.GammaSAR.GI0.n.Look(-1000, 5), y=7, parse=TRUE, label="alpha==-1000", hjust=-.1, vjust=4.0, col="darkgreen") +
-    labs(x = "Test Statistics", y = "Empirical Density") +
-    #annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("alpha == %s", alpha_val)), hjust = 1.2, vjust = 1.02, size = 3) +
     theme_minimal() +
     theme(
       text = element_text(family = "serif"),
@@ -794,145 +954,7 @@ grid.arrange(grobs = plots_list, ncol = 1)
 
 ```
 
-A hypothesis testing was conducted using non-parametric entropy estimators as test statistics. 
-The results in Table&nbsp;\ref{tab:table_hipotesis} show that data from the $G_I^0$ distribution exhibit fully developed speckle behavior, specifically in the limit case with parameters $\mu=5$, $L=2$, and $\alpha= -1000$. 
-The true entropy of $\Gamma_{\text{SAR}}$ was set at $H_{\Gamma_{\text{SAR}}} = 2.493$.  
-It is observed that, for different sample sizes, entropy values converge towards the true value of the Gamma SAR distribution. 
 
-```{r Simulated_data_test_gi0_2, echo=FALSE, message=FALSE}
-
-set.seed(1234567890, kind = "Mersenne-Twister")
-sample_sizes <- c(49, 81, 121)
-N<- 100
-# Number of replications
-R <- 100
-
-# Number of bootstrap replications
-B <- 2
-mu_values <- c(1)
-alpha <- -600
-L <- 5
-
-  estimators <- list(
-  
-    "$\\widetilde{H}_{C}$ " = bootstrap_correa_estimator
-    #"$\\widetilde{H}_{E}$ " = bootstrap_ebrahimi_estimator,
-    #"$\\widetilde{H}_{AO}$ " = bootstrap_al_omari_1_estimator
-  )
- #true_entropy <- entropy_gamma_sar(L, mu) 
-calculate_entropy_and_test_montecarlo <- function(sample_sizes, R, N, B, mu, alpha, L, estimators, true_entropy) {
-  true_entropy <- entropy_gamma_sar(L, mu)
-  output <- data.frame(
-    SampleSize = integer(0),
-    Estimator = character(0),
-    TypeIErrorRate = numeric(0)
-  )
-  
-  for (ssize in sample_sizes) {
-    
-    for (estimator_name in names(estimators)) {
-      estimator <- estimators[[estimator_name]]
-      reject_H0_count <- 0
-      
-      for (n_replication in 1:N) {
-        
-        #samples <- gi0_sample(mu, alpha, L, ssize)
-        v.entropy <- numeric(R)
-        for (r in 1:R) {
-       
-        samples <- gi0_sample(mu, alpha, L, ssize)
-        
-        if (grepl(" ", estimator_name)) {
-          v.entropy[r] <- estimator(samples, B = B)
-        } else {
-          v.entropy[r] <- estimator(samples)
-        }
-      }
-        
-
-        mean_entropy <- mean(v.entropy)
-      z_statistic <- sqrt(R) * (mean_entropy - true_entropy) / sd(v.entropy)
-      p_value <- 2 * (1 - pnorm(abs(z_statistic)))
-      alpha_t = 0.05
-        
-
-        reject_H0_count <- reject_H0_count + sum(p_value < 0.05)
-      }
-      
-      
-      typeI_error_rate <- reject_H0_count / (N)
-      
-      output <- rbind(
-        output,
-        data.frame(
-          SampleSize = ssize,
-          Estimator = estimator_name,
-          TypeIErrorRate = round(typeI_error_rate, 5)
-        )
-      )
-    }
-  }
-  
-  colnames(output) <- c("$n$", "Estimator", "Type I Error Rate")
-  
-  return(output)
-}
-
-
-
-calculate_results_test_gi0_montecarlo <- function(sample_sizes, R, N, B, mu_values, alpha, L, estimators) {
-  results_list <- list()
-
-  for (mu_val in mu_values) {
-    
-    results <- calculate_entropy_and_test_montecarlo(sample_sizes, R, N, B, mu_val, alpha, L, estimators)
-    df <- as.data.frame(results)
-
-    results_list[[as.character(mu_val)]] <- df
-  }
-
-  return(results_list)
-}
-
-results_gi0_1_montecarlo <- calculate_results_test_gi0_montecarlo(sample_sizes, R, N, B, mu_values, alpha, L, estimators)
-#print(results_gi0_1_montecarlo)
-save(results_gi0_1_montecarlo, file = "./Data/results_gi0_1_montecarlo.Rdata")
-
-
-```
-
-```{r Table_test_gi0_montecarlo, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
-load("./Data/results_gi0_1_montecarlo.Rdata")
-
-
-for (mu_val in mu_values) {
-  results_data <- results_gi0_1_montecarlo[[as.character(mu_val)]]
-
-  table_result <- kbl(
-    results_data,
-    caption = paste("Type I error with $L=5$, $\\mu=1$ and$\\alpha=\\infty$."),
-    format = "latex",
-    booktabs = TRUE,
-    align = "c",
-    escape = FALSE,
-    digits = 4,
-    label = "table_hipotesis_2"
-  ) %>%
-    collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle")
-
-  #cat("### Results for mu =", mu_val, "\n")
-  print(table_result)
-  
-}
-
-
-
-
-
-```
-Hypothesis test results were conducted with a \SI{95}{\percent} confidence level. 
-The $Z$ statistic measures the discrepancy between the estimated entropy and the true entropy. 
-The $p$-values associated with the $Z$ statistic are predominantly greater than $0.05$, for sample sizes above $25$, suggesting that the data are consistent with the null hypothesis.
 
 
 # Conclusion {#sec:conclusion} 
@@ -945,7 +967,7 @@ Additionally, exploring the impact of the $\alpha$ parameter on estimates and co
 
 
 
-
+  
 # References {#references .numbered}
 
 
