@@ -129,8 +129,8 @@ theme_set(theme_minimal() +
                   legend.position = "bottom")#  top , right , bottom , or left#, panel.grid = element_blank()
 )
 
-if(!require("rstudioapi")) install("rstudioapi")
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+# if(!require("rstudioapi")) install("rstudioapi")
+# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 
 source("../../../Code/R/MainFunctions/gamma_sar_sample.R")
@@ -441,11 +441,11 @@ where $m<n/2$ is a positive integer, $Z_{(i+m)}-Z_{(i-m)}$ is the $m$-spacing an
 
 Several authors have explored adaptations to Vasicek's estimator. In this work, we consider three entropy estimators known for their superior performance:
 
-* \cite{correa1995new}: $\widehat{H}_{\text{C}}$.
+* Correa&nbsp;\cite{correa1995new}: $\widehat{H}_{\text{C}}$.
 
-* \cite{Ebrahimi1994}: $\widehat{H}_{\mathrm{E}}$.
+* Ebrahimi et al&nbsp;\cite{Ebrahimi1994}: $\widehat{H}_{\mathrm{E}}$.
 
-* \cite{IbrahimAlOmari2014}: $\widehat{H}_{\mathrm{AO}}$.
+* Al Omary&nbsp;\cite{IbrahimAlOmari2014}: $\widehat{H}_{\mathrm{AO}}$.
 
 These estimators, along with others, are described and studied in&nbsp;\cite{Cassetti2022}.
  
