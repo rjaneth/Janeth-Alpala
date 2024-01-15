@@ -89,8 +89,8 @@ biblio-style: ieeetr
 ---
 
 ```{r setup, include=FALSE}
-#knitr::opts_chunk$set(echo = FALSE, cache=TRUE)
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, cache=TRUE)
+#knitr::opts_chunk$set(echo = FALSE)
 library(ggplot2)
 library(reshape2)
 #library(plotly)
@@ -357,7 +357,9 @@ ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = alpha)) +
 
 ```
 
-The empirical distributions of $\Gamma_{\text{SAR}}$ and $G_I^0$ entropies are shown in Fig.&nbsp;\ref{fig:Plot_empirical}. It is observed that when $\alpha$ approaches negative infinity, the two distributions are very similar. In other words, the mean entropy of $G_I^0$ approximates the mean entropy of $\Gamma_{\text{SAR}}$.
+The empirical distributions of $\Gamma_{\text{SAR}}$ and $G_I^0$ entropies are shown in Fig.&nbsp;\ref{fig:Plot_empirical}. 
+It is observed that when $\alpha$ approaches negative infinity, the two distributions are very similar. 
+In other words, the mean entropy of $G_I^0$ approximates the mean entropy of $\Gamma_{\text{SAR}}$.
 
 ```{r Plot_empirical, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Empirical distributions of $\\Gamma_{\\text{SAR}}$ and $G_I^0$ entropies as $\\mu=1$, $L=8$ and $\\alpha\\in\\{-1000, -20, -8, -3\\}$."}
 
@@ -476,12 +478,15 @@ where $B$ is the number of replications in the bootstrap technique.
 Applying this methodology, the original estimators by Correa, Ebrahimi, and Al-Omari are now denoted as the proposed bootstrap-enhanced versions: $\widetilde{H}_{\text{C}}$, $\widetilde{H}_{\text{E}}$, and $\widetilde{H}_{\text{AO}}$, respectively.
 
 
-Simulations are conducted using $G_I^0$ distribution, with $200$ simulated samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\), with parameters \(\mu \in \left\{1, 10\right\}\), \(\alpha=-20\), and \(L=8\). In the case of the bootstrap technique, each sample is replicated $100$ times with replacement.
+Simulations are conducted using $G_I^0$ distribution, with $200$ simulated samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\), with parameters \(\mu \in \left\{1, 10\right\}\), \(\alpha=-20\), and \(L=8\). 
+In the case of the bootstrap technique, each sample is replicated $100$ times with replacement.
 We choose to use the following heuristic formula for spacing, $m=\left[\sqrt{n}+0.5\right]$.
 
-In Fig. \ref{fig:Plot_bias_mse_gi0} we depict comparisons of bias and mean squared error (MSE) between the original non-parametric entropy estimators and their respective bootstrap-enhanced versions. The use of the bootstrap technique exhibits more precision, reduced bias and MSE, and improved convergence.
+In Fig. \ref{fig:Plot_bias_mse_gi0} we depict comparisons of bias and mean squared error (MSE) between the original non-parametric entropy estimators and their respective bootstrap-enhanced versions. 
+The use of the bootstrap technique exhibits more precision, reduced bias and MSE, and improved convergence.
 
-The results of simulation are exhibited in Table&nbsp;\ref{tab:table2}. The precision of estimators, as evidenced by bias and MSE comparisons, benefits significantly from the bootstrap technique, particularly for sample sizes below 81.
+The results of simulation are exhibited in Table&nbsp;\ref{tab:table2}. 
+The precision of estimators, as evidenced by bias and MSE comparisons, benefits significantly from the bootstrap technique, particularly for sample sizes below 81.
 
 ```{r Simulated_data_gi0, echo=FALSE, message=FALSE}
 
@@ -617,7 +622,10 @@ For this purpose, we use the following test statistic:
 \label{Eq:test_e}
 S(\bm{Z};L_0)= \widetilde{H}(\bm{Z})-\left[H_{\Gamma_{\text{SAR}}}(L_0)+\ln \widebar{\bm{Z}}\right].
 \end{equation}
-This test statistic $S(\bm{Z};L_0)$ aims to assess the behavior of the data under the null hypothesis, through the empirical distribution of the test statistic values for a sample size of $n$. The density should center around zero if the test statistic is capable of detecting that the data are fully-developed speckle, i.e., $S(\bm{Z};L_0)\approx 0$. Otherwise, under the alternative hypothesis, the empirical distribution of the test statistic values is not centered around zero. This suggests significant differences and implies the presence of heterogeneous clutter.
+This test statistic $S(\bm{Z};L_0)$ aims to assess the behavior of the data under the null hypothesis, through the empirical distribution of the test statistic values for a sample size of $n$. 
+The density should center around zero if the test statistic is capable of detecting that the data are fully-developed speckle, i.e., $S(\bm{Z};L_0)\approx 0$. 
+Otherwise, under the alternative hypothesis, the empirical distribution of the test statistic values is not centered around zero. 
+This suggests significant differences and implies the presence of heterogeneous clutter.
 
 
 
@@ -627,14 +635,15 @@ This test statistic $S(\bm{Z};L_0)$ aims to assess the behavior of the data unde
 ## The Proposed Test
 We analyze the finite sample size behavior of the test statistics defined in \eqref{Eq:test_e}.
 
-Fig. \ref{fig:Plot_density} depicts empirical test statistic densities for various sample sizes, and Table \ref{tab:table_stat_combined} summarizes key statistics, including mean, SD, variance (Var), skewness, kurtosis, and Anderson–Darling $p$-values for normality. Results with $p$-values $> 0.05$  indicate no evidence against normality. 
+Fig. \ref{fig:Plot_density} depicts empirical test statistic densities for various sample sizes, and Table \ref{tab:table_stat_combined} summarizes key statistics, including mean, SD, variance (Var), skewness, kurtosis, and Anderson–Darling $p$-values for normality. 
+Results with $p$-values $> 0.05$  indicate no evidence against normality. 
 Notably, small variance and near-zero skewness and kurtosis suggest limited spread, symmetry, and light tails, aligning with normal distribution expectations.
 
 In Fig. \ref{fig:Plot_normality_qq}, normal QQ-plots visually affirm distributional similarity with the expected normal line, reinforcing our findings.
 
 
 
-```{r Simulated_density, echo=FALSE, message=FALSE}
+```{r Simulated_density, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
 R <- 1000
@@ -646,8 +655,8 @@ L_values <- c(2, 5, 8, 18)
 
 all_summary_stats <- list()
 all_TestStatistics <- list()
-all_TestNormality <- list()
-all_plots <- list()
+#all_TestNormality <- list()
+#all_plots <- list()
 
 # For each L
 for (L in L_values) {
@@ -699,7 +708,7 @@ for (L in L_values) {
                                                      )) 
     
     
-    # Almacenar resultados de normalidad
+    
     # summary_normality <- rbind(summary_normality, data.frame(LValue = as.character(L),
     #                                                          SampleSize = s,
     #                                                          lilliepvalue = lillie_p_value,
@@ -711,8 +720,8 @@ for (L in L_values) {
   #all_TestNormality[[as.character(L)]] <- summary_normality
   
 
-#save(all_TestStatistics, all_summary_stats, file = paste0("./Data/results_", L, ".Rdata"))
-  save(all_TestStatistics, all_summary_stats, all_TestNormality, file = paste0("./Data/results_", L, ".Rdata"))
+#save(all_TestStatistics, all_summary_stats, all_TestNormality, file = paste0("./Data/results_", L, ".Rdata"))
+  save(all_TestStatistics, all_summary_stats, file = paste0("./Data/results_", L, ".Rdata"))
 }
 
 
@@ -766,16 +775,6 @@ print(combined_plot)
 ```{r Table_statistic, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
 
-# for (L in L_values) {
-#   summary_stats <- all_summary_stats[[as.character(L)]]
-#   
-#   print(summary_stats)
-# }
-
-
-# summary_stats_2 <- all_summary_stats[["2"]]
-
-
 
 load("./Data/results_2.Rdata")
 summary_stats_2 <- all_summary_stats[["2"]]
@@ -827,23 +826,23 @@ theme_set(theme_minimal() +
 
 
 
-# Cargar los resultados guardados
+# Load saved results
 load("./Data/results_2.Rdata")
 load("./Data/results_5.Rdata")
 load("./Data/results_8.Rdata")
 load("./Data/results_18.Rdata")
 
-# Tamaño de muestra específico que deseas graficar
+# Specific sample size
 selected_sample_size <- 100
 
-# Crear una lista para almacenar los ggplots
+# 
 ggplot_list <- list()
 
-# Para cada valor de L
+#  L
 for (L in c(2, 5, 8, 18)) {
   TestStatistics1 <- all_TestStatistics[[as.character(L)]]
   
-  # Verifica si el tamaño de muestra seleccionado está disponible
+  # 
   if (as.character(selected_sample_size) %in% names(TestStatistics1)) {
     p <- ggplot(TestStatistics1[[as.character(selected_sample_size)]], 
                 aes(sample = Test_Statistics)) +
@@ -944,7 +943,8 @@ for (alpha_val in alpha1_values) {
     theme(
       text = element_text(family = "serif"),
       legend.position = "none"  
-    )
+    )+
+    labs(x = "Test Statistics", y = "Density")
   
   
 
@@ -961,7 +961,10 @@ grid.arrange(grobs = plots_list, ncol = 1)
 # Conclusion {#sec:conclusion} 
 
 
-In this study, three estimators renowned for their robust performance across diverse distributions were chosen for evaluation. We examine the impact of applying bootstrap techniques on their precision by comparing each estimator's performance with its bootstrap-enhanced counterpart, utilizing metrics such as bias and MSE. The effectiveness of bootstrap-enhanced non-parametric entropy estimators was observed, demonstrating efficacy in most instances. Nonetheless, it is essential to recognize that the applicability of this technique may not be universal across all estimation methods.
+In this study, three estimators renowned for their robust performance across diverse distributions were chosen for evaluation. 
+We examine the impact of applying bootstrap techniques on their precision by comparing each estimator's performance with its bootstrap-enhanced counterpart, utilizing metrics such as bias and MSE. 
+The effectiveness of bootstrap-enhanced non-parametric entropy estimators was observed, demonstrating efficacy in most instances. 
+Nonetheless, it is essential to recognize that the applicability of this technique may not be universal across all estimation methods.
 
 It is worth noting that this analysis represents an initial exploration of SAR Intensity data, and future work will include a more in-depth analysis of effect size and statistical power.
 Additionally, exploring the impact of the $\alpha$ parameter on estimates and conducting more extensive analyses to assess the generalization of results to different parameter configurations is suggested.
