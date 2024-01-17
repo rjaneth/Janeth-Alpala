@@ -646,7 +646,7 @@ In Fig. \ref{fig:Plot_normality_qq}, normal QQ-plots visually affirm distributio
 ```{r Simulated_density, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
-R <- 1000
+R <- 500
 mu <- 1
 B <- 2
 alpha1 <- -8
@@ -666,6 +666,7 @@ for (L in L_values) {
                               Mean = numeric(),
                               SD = numeric(),
                               Variance = numeric(),
+                              CV= numeric(),
                               Skewness = numeric(),
                               Kurtosis = numeric(),
                               adpvalue = numeric()
@@ -695,13 +696,14 @@ for (L in L_values) {
     kurtosis_val <- kurtosis(TestStat1)
    # lillie_p_value <- lillie.test(TestStatistics1[[as.character(s)]]$Test_Statistics)$p.value
     ad_p_value <- ad.test(TestStatistics1[[as.character(s)]]$Test_Statistics)$p.value
-    
+    cv_val <- (sd_val / mean_val)
     
     summary_stats <- rbind(summary_stats, data.frame(LValue = as.character(L),
                                                      SampleSize = s,
                                                      Mean = mean_val,
                                                      SD = sd_val,
                                                      Variance = var_val,
+                                                      CV = cv_val,
                                                      Skewness = skewness_val,
                                                      Kurtosis = kurtosis_val,
                                                      adpvalue = ad_p_value
@@ -794,7 +796,7 @@ combined_summary_stats <- rbind(
   transform(summary_stats_8)
   
 )
-colnames(combined_summary_stats) <- c("$L$", "$n$", "Mean", "SD", "Var", "Skewness", "Kurtosis", "$p$-value")
+colnames(combined_summary_stats) <- c("$L$", "$n$", "Mean", "SD", "Var", "CV", "Skewness", "Kurtosis", "$p$-value")
 
 # table
 table_result_combined <- kbl(
