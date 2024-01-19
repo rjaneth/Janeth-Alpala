@@ -70,6 +70,8 @@ header-includes:
    - \usepackage{xcolor}
    - \usepackage{amsmath}
    - \usepackage{mathabx}
+   - \usepackage{subfig}
+   #- \usepackage{subcaption}
   # - \usepackage{pgf}
    - "\\setcitestyle{square,comma,numbers,sort&compress}" # citation style to numerical, work with \cite{} or [@]
 
@@ -78,6 +80,8 @@ output:
   rticles::ieee_article:
     number_sections: TRUE
     citation_package: natbib
+    #extra_dependencies: "subfig"
+    #keep_tex: yes
 
 bibliography: ../../Common/references.bib
 
@@ -121,7 +125,7 @@ library(e1071)# kurtosis
 library(viridis)
 library(nortest)# AD
 
-
+#library(grid)
 
 
 theme_set(theme_minimal() +
@@ -155,7 +159,8 @@ source("../../../Code/R/MainFunctions/bootstrap_vasicek_estimator.R")
 source("../../../Code/R/MainFunctions/bootstrap_al_omari_1_estimator.R")
 source("../../../Code/R/MainFunctions/bootstrap_al_omari_2_estimator.R")
 #The next function contains the functions: generate_samples, calculate_bias_mse, generate_plot
-source("../../../Code/R/Programs/functions_sample_bias_mse.R")# 
+source("../../../Code/R/Programs/functions_sample_bias_mse.R")# read_ENVI_images
+source("../../../Code/R/Programs/read_ENVI_images.R")
 
 
 ```
@@ -646,7 +651,7 @@ In Fig. \ref{fig:Plot_normality_qq}, normal QQ-plots visually affirm distributio
 ```{r Simulated_density, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
-R <- 500
+R <- 1000
 mu <- 1
 B <- 2
 alpha1 <- -8
@@ -809,7 +814,8 @@ table_result_combined <- kbl(
   digits = 4,
   label = "table_stat_combined"
 ) %>%
-  collapse_rows(latex_hline = "major", valign = "middle")# %>%
+  collapse_rows(latex_hline = "major", valign = "middle") %>%
+   kable_styling(latex_options = "scale_down")
  # kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE)
 
 print(table_result_combined)
@@ -958,6 +964,176 @@ grid.arrange(grobs = plots_list, ncol = 1)
 ```
 
 
+## Real SAR Images
+
+
+
+
+
+
+
+```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.cap='Real SAR images', fig.subcap=c('Amazonas', 'Flevoland','Ottawa', 'Berlin' ), out.width='.48\\linewidth',  fig.ncol=2}
+knitr::include_graphics("../../../Figures/PNG/Brazil_Intensity_VV.png")
+#knitr::include_graphics("../../../Figures/PNG/Berlin_Intensity_VV.png")
+
+knitr::include_graphics("../../../Figures/PNG/Flevoland_Intensity_VV.png")
+knitr::include_graphics("../../../Figures/PNG/Ottawa_Intensity_VV.png")
+knitr::include_graphics("../../../Figures/PNG/BER_Intensity_VV.jpg")
+```
+
+
+
+
+
+
+```{r SAR_simulations, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+#, cache = TRUE, autodep = TRUE
+set.seed(1234567890, kind = "Mersenne-Twister")
+x_Brazil <- myread.ENVI(file='../../../Data/SAR/Brazil/Intensity_VV.img', headerfile='../../../Data/SAR/Brazil/Intensity_VV.hdr')
+x_Berlin<- myread.ENVI(file='../../../Data/SAR/Berlin/Intensity_VV.img', headerfile='../../../Data/SAR/Berlin/Intensity_VV.hdr')
+x_Flevoland <- myread.ENVI(file='../../../Data/SAR/Flevoland/Intensity_VV.img', headerfile='../../../Data/SAR/Flevoland/Intensity_VV.hdr')
+x_Ottawa <- myread.ENVI(file='../../../Data/SAR/Ottawa/Intensity_VV.img', headerfile='../../../Data/SAR/Ottawa/Intensity_VV.hdr')
+
+
+
+#Brazil
+nRows_Brazil <- 518
+nCols_Brazil <- 519
+
+
+centerRow_Brazil <- floor(nRows_Brazil / 2)
+centerCol_Brazil <- floor(nCols_Brazil / 2)
+
+roiSize_Brazil <- 200
+
+# 
+roiStartRow_Brazil <- centerRow_Brazil - floor(roiSize_Brazil / 2) + 1
+roiEndRow_Brazil <- roiStartRow_Brazil + roiSize_Brazil - 1
+
+roiStartCol_Brazil <- centerCol_Brazil - floor(roiSize_Brazil / 2) + 1
+roiEndCol_Brazil <- roiStartCol_Brazil + roiSize_Brazil - 1
+
+# Extraer el ROI
+roi_Brazil <- x_Brazil[roiStartRow_Brazil:roiEndRow_Brazil, roiStartCol_Brazil:roiEndCol_Brazil]
+
+mean_data_brasil <- mean(roi_Brazil)
+Entropy_brasil <- correa_estimator(roi_Brazil)
+entropia_estimada_boot_brasil <- bootstrap_correa_estimator( roi_Brazil, 10)
+True_entropy_brasil <-(log(mean( roi_Brazil)) + (5 - log(5) + lgamma(5) + (1 - 5) * digamma(5)))
+Test_difference_brasil <- bootstrap_correa_estimator_log_mean( roi_Brazil, 10)- ( (5 - log(5) + lgamma(5) + (1 - 5) * digamma(5)))
+#difference_correa_brasil <- correa_estimator( roi_Brazil) - log(mean(roi_Brazil))- ( (5 - log(5) + lgamma(5) + (1 - 5) * digamma(5)))
+
+
+#Berlin
+nCols_Berlin  = 501
+nRows_Berlin  = 501
+
+centerRow_Berlin <- floor(nRows_Berlin / 2)
+centerCol_Berlin <- floor(nCols_Berlin / 2)
+
+roiSize_Berlin <- 200
+
+# Calcular las coordenadas del ROI
+roiStartRow_Berlin <- centerRow_Berlin - floor(roiSize_Berlin / 2) + 1
+roiEndRow_Berlin <- roiStartRow_Berlin + roiSize_Berlin - 1
+
+roiStartCol_Berlin <- centerCol_Berlin - floor(roiSize_Berlin / 2) + 1
+roiEndCol_Berlin <- roiStartCol_Berlin + roiSize_Berlin - 1
+
+# Extraer el ROI
+roi_Berlin<- x_Berlin[roiStartRow_Berlin:roiEndRow_Berlin, roiStartCol_Berlin:roiEndCol_Berlin]
+
+mean_data_Berlin <- mean(roi_Berlin)
+Entropy_Berlin <- correa_estimator(roi_Berlin)
+entropia_estimada_boot_Berlin <- bootstrap_correa_estimator( roi_Berlin, 10)
+True_entropy_Berlin <-(log(mean( roi_Berlin)) + (5 - log(5) + lgamma(5) + (1 - 5) * digamma(5)))
+Test_difference_Berlin <- bootstrap_correa_estimator_log_mean( roi_Berlin, 10)- ( (5 - log(5) + lgamma(5) + (1 - 5) * digamma(5)))
+#difference_correa_Berlin <- correa_estimator( roi_Berlin) - log(mean(roi_Berlin))- ( (5 - log(5) + lgamma(5) + (1 - 5) * digamma(5)))
+
+
+
+# Flevoland
+nCols_Flevoland = 355
+nRows_Flevoland = 354
+
+centerRow_Flevoland <- floor(nRows_Flevoland / 2)
+centerCol_Flevoland <- floor(nCols_Flevoland / 2)
+
+roiSize_Flevoland <- 200
+
+#  coordenadas del ROI
+roiStartRow_Flevoland <- centerRow_Flevoland - floor(roiSize_Flevoland / 2) + 1
+roiEndRow_Flevoland <- roiStartRow_Flevoland + roiSize_Flevoland - 1
+
+roiStartCol_Flevoland <- centerCol_Flevoland - floor(roiSize_Flevoland / 2) + 1
+roiEndCol_Flevoland <- roiStartCol_Flevoland + roiSize_Flevoland - 1
+
+# Extraer el ROI
+roi_Flevoland<- x_Flevoland[roiStartRow_Flevoland:roiEndRow_Flevoland, roiStartCol_Flevoland:roiEndCol_Flevoland]
+
+mean_data_Flevoland <- mean(roi_Flevoland)
+Entropy_Flevoland <- correa_estimator(roi_Flevoland)
+entropia_estimada_boot_Flevoland <- bootstrap_correa_estimator( roi_Berlin, 10)
+True_entropy_Flevoland <-(log(mean( roi_Flevoland)) + (5 - log(5) + lgamma(5) + (1 - 5) * digamma(5)))
+Test_difference_Flevoland <- bootstrap_correa_estimator_log_mean( roi_Flevoland, 10)- ( (5 - log(5) + lgamma(5) + (1 - 5) * digamma(5)))
+#difference_correa_Flevoland <- correa_estimator( roi_Flevoland) - log(mean(roi_Flevoland))- ( (5 - log(5) + lgamma(5) + (1 - 5) * digamma(5)))
+
+#----------------------------------------------
+#ottawa
+nCols_Ottawa = 572
+nRows_Ottawa= 558
+
+centerRow_Ottawa  <- floor(nRows_Ottawa / 2)
+centerCol_Ottawa  <- floor(nCols_Ottawa  / 2)
+
+ roiSize_Ottawa <- 100
+# 
+# # Coordenadas del ROI en la parte superior
+ roiUpperStartRow <- 1
+ roiUpperEndRow <- roiUpperStartRow + roiSize_Ottawa - 1
+# 
+ roiUpperStartCol <- centerCol_Ottawa - floor(roiSize_Ottawa / 2) + 1
+ roiUpperEndCol <- roiUpperStartCol + roiSize_Ottawa - 1
+# 
+# # Extraer el ROI en la parte superior
+ roi_Ottawa<- x_Ottawa[roiUpperStartRow:roiUpperEndRow, roiUpperStartCol:roiUpperEndCol]
+
+
+ mean_data_Ottawa <- mean(roi_Ottawa)
+ Entropy_Ottawa <- correa_estimator(roi_Ottawa)
+ entropia_estimada_boot_Ottawa <- bootstrap_correa_estimator( roi_Ottawa, 10)
+ True_entropy_Ottawa <-(log(mean( roi_Ottawa)) + (5 - log(5) + lgamma(5) + (1 - 5) * digamma(5)))
+ Test_difference_Ottawa <- bootstrap_correa_estimator_log_mean( roi_Ottawa, 10)- ( (5 - log(5) + lgamma(5) + (1 - 5) * digamma(5)))
+ #difference_correa_Ottawa <- correa_estimator( roi_Ottawa) - log(mean(roi_Ottawa))- ( (5 - log(5) + lgamma(5) + (1 - 5) * digamma(5)))
+
+ resultados_df <- data.frame(
+   Ciudad = c("Amazonas", "Berlin", "Flevoland", "Ottawa"),
+   Media = c(mean_data_brasil, mean_data_Berlin, mean_data_Flevoland, mean_data_Ottawa),
+   Entropia_Estimada = c(Entropy_brasil, Entropy_Berlin, Entropy_Flevoland, Entropy_Ottawa),
+   Entropia_Estimada_Boot = c(entropia_estimada_boot_brasil, entropia_estimada_boot_Berlin, entropia_estimada_boot_Flevoland, entropia_estimada_boot_Ottawa),
+   Entropia_Verdadera = c(True_entropy_brasil, True_entropy_Berlin, True_entropy_Flevoland, True_entropy_Ottawa),
+   Diferencia_Test_Entropia = c(Test_difference_brasil, Test_difference_Berlin, Test_difference_Flevoland, Test_difference_Ottawa)
+   
+ )
+ 
+ 
+ colnames(resultados_df) <- c("Area", "mean", "$\\widehat{H}_{\\text{C}}$", "$\\widetilde{H}_{\\text{C}}$", "$H_{\\Gamma_{\\text{SAR}}}$", "$S(Z)$")
+
+#
+print(
+  kbl(
+    resultados_df,
+    caption = "Results of applying the statistical test to SAR images.",
+    format = "latex",
+    booktabs = TRUE,
+    align = "c",
+    escape = FALSE, 
+    digits = 4,  
+    label = "table_sar", 
+  ) %>%
+    collapse_rows( latex_hline = "major", valign = "middle")
+)
+```
 
 
 # Conclusion {#sec:conclusion} 

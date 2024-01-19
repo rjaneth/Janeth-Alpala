@@ -21,7 +21,7 @@ source("../MainFunctions/gi0_sample.R")
 
 set.seed(1234567890, kind="Mersenne-Twister")
 
-R <- 3000 # replicaciones para generar los valores de la entropia
+R <- 1000 # 
 mu <- 1
 L <- 2
 B <- 5
