@@ -806,7 +806,7 @@ colnames(combined_summary_stats) <- c("$L$", "$n$", "Mean", "SD", "Var", "CV", "
 # table
 table_result_combined <- kbl(
   combined_summary_stats,
-  caption = "Descriptive analysis of $S(Z)$ for different values of $L$, and $\\mu=1$.",
+  caption = "Descriptive analysis of $S(\\bm Z; L)$ for different values of $L$, and $\\mu=1$.",
   format = "latex",
   booktabs = TRUE,
   align = "c",
@@ -964,13 +964,7 @@ grid.arrange(grobs = plots_list, ncol = 1)
 ```
 
 
-## Real SAR Images
-
-
-
-
-
-
+## SAR Images
 
 ```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.cap='Real SAR images', fig.subcap=c('Amazonas', 'Flevoland','Ottawa', 'Berlin' ), out.width='.48\\linewidth',  fig.ncol=2}
 knitr::include_graphics("../../../Figures/PNG/Brazil_Intensity_VV.png")
@@ -981,11 +975,6 @@ knitr::include_graphics("../../../Figures/PNG/Ottawa_Intensity_VV.png")
 knitr::include_graphics("../../../Figures/PNG/BER_Intensity_VV.jpg")
 ```
 
-
-
-
-
-
 ```{r SAR_simulations, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 #, cache = TRUE, autodep = TRUE
 set.seed(1234567890, kind = "Mersenne-Twister")
@@ -994,12 +983,9 @@ x_Berlin<- myread.ENVI(file='../../../Data/SAR/Berlin/Intensity_VV.img', headerf
 x_Flevoland <- myread.ENVI(file='../../../Data/SAR/Flevoland/Intensity_VV.img', headerfile='../../../Data/SAR/Flevoland/Intensity_VV.hdr')
 x_Ottawa <- myread.ENVI(file='../../../Data/SAR/Ottawa/Intensity_VV.img', headerfile='../../../Data/SAR/Ottawa/Intensity_VV.hdr')
 
-
-
 #Brazil
 nRows_Brazil <- 518
 nCols_Brazil <- 519
-
 
 centerRow_Brazil <- floor(nRows_Brazil / 2)
 centerCol_Brazil <- floor(nCols_Brazil / 2)
@@ -1117,7 +1103,7 @@ centerCol_Ottawa  <- floor(nCols_Ottawa  / 2)
  )
  
  
- colnames(resultados_df) <- c("Area", "mean", "$\\widehat{H}_{\\text{C}}$", "$\\widetilde{H}_{\\text{C}}$", "$H_{\\Gamma_{\\text{SAR}}}$", "$S(Z)$")
+ colnames(resultados_df) <- c("Area", "mean", "$\\widehat{H}_{\\text{C}}$", "$\\widetilde{H}_{\\text{C}}$", "$H_{\\Gamma_{\\text{SAR}}}$", "$S(\\bm Z)$")
 
 #
 print(
