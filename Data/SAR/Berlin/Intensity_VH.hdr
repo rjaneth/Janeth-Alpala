@@ -1,7 +1,7 @@
 ENVI
 description = {Intensity from complex data - Unit: intensity}
-samples = 501
-lines = 501
+samples = 512
+lines = 512
 bands = 1
 header offset = 0
 file type = ENVI Standard
@@ -9,7 +9,7 @@ data type = 4
 interleave = bsq
 byte order = 1
 band names = { Intensity_VH }
-map info = {Geographic Lat/Lon,252.0,252.0,13.410316666281684,52.53652087613692,8.983152841195166E-5,8.983152841195166E-5,WGS84,units=Degrees}
+map info = {Geographic Lat/Lon,257.5,257.5,13.401827586846755,52.54500995557185,8.983152841195163E-5,8.983152841195163E-5,WGS84,units=Degrees}
 coordinate system string = {GEOGCS["WGS84(DD)", DATUM["WGS84", SPHEROID["WGS84", 6378137.0, 298.257223563]], PRIMEM["Greenwich", 0.0], UNIT["degree", 0.017453292519943295], AXIS["Geodetic longitude", EAST], AXIS["Geodetic latitude", NORTH]]}
 data gain values = {1.0}
 data offset values = {0.0}
