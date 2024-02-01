@@ -13,7 +13,7 @@ source("../MainFunctions/gamma_sar_sample.R")
 
 set.seed(1234567890, kind="Mersenne-Twister")
 
-R <- 3000
+R <- 500
 mu <- 1
 sample.size <- c(49, 81, 121)
 

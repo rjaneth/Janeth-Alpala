@@ -15,7 +15,7 @@ nRows_Ottawa <- 512
 centerRow_Ottawa <- floor(nRows_Ottawa / 2)
 centerCol_Ottawa <- floor(nCols_Ottawa / 2)
 
-roiSize_Ottawa <- 50
+roiSize_Ottawa <- 200
 
 roiUpperStartRow <- 1
 roiUpperEndRow <- roiUpperStartRow + roiSize_Ottawa - 1

@@ -426,7 +426,7 @@ for (alpha_val in alpha1_values) {
              label = TeX("$\\Gamma_{\\tiny{SAR}}$"), vjust = 5, hjust = 5, color = "red") +
     annotate("text", x = max(plot_data$TestStatistics2$Test_Statistics2) + 0.1, y = max_density2,
              label = TeX("$G_I^0$"), vjust = 5, hjust = 5, color = "blue") +
-    labs(x = "Entropy", y = "Empirical Density") +
+    labs(x = "Entropy", y = "Density") +
     annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("alpha == %s", alpha_val)), hjust = 1.2, vjust = 1.02, size = 3) +
     theme_minimal() +
     theme(
@@ -639,8 +639,8 @@ Then, if $m,n\rightarrow \infty$ and $m=o(n^{1/2})$, holds that:
 Consider, starting from the previous lemma, we aim at testing the following hypotheses: 
 
 $$
- \begin{cases}\mathcal{H}_0: \mu_{\widetilde{H}}-\mu_{H}=0 \\ 
-  \mathcal{H}_1:\mu_{\widetilde{H}}-\mu_{H}\neq0 .\end{cases}
+ \begin{cases}\mathcal{H}_0: \widetilde{H}(\bm{Z})-H(\bm{Z})=0 \\ 
+  \mathcal{H}_1:\widetilde{H}(\bm{Z})-H(\bm{Z})\neq0 .\end{cases}
 $$
 In other words, we verify the hypothesis that the data are fully-developed speckle.
 
@@ -670,15 +670,15 @@ In Fig. \ref{fig:Plot_normality_qq}, normal QQ-plots visually affirm distributio
 
 
 
-```{r Simulated_density, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
+```{r Simulated_density, echo=FALSE, message=FALSE}
 #, cache = TRUE, autodep = TRUE
 set.seed(1234567890, kind = "Mersenne-Twister")
 
-R <- 100
+R <- 500
 mu <- 1
-B <- 1
+B <- 2
 alpha1 <- -8
-sample.size <- c(50, 100, 150, 200, 250,300)
+sample.size <- c(50, 100, 150)
 L_values <- c(2, 5, 8, 18)
 
 all_summary_stats <- list()
@@ -705,6 +705,7 @@ for (L in L_values) {
     
     for (r in 1:R) {
       z <- gamma_sar_sample(L, mu, s)
+      #z <- gi0_sample(mu, alpha1, L, s)
       TestStat1[r] <- bootstrap_correa_estimator_log_mean(z, B) + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
     }
     
@@ -817,7 +818,7 @@ colnames(combined_summary_stats) <- c("$L$", "$n$", "Mean", "SD", "Var", "CV", "
 
 
 
-# LaTeX notation for negative numbers and integers
+# LaTeX notation 
 combined_summary_stats[] <- lapply(combined_summary_stats, function(x) {
   if (is.numeric(x)) {
     if (all(x %% 1 == 0)) {
@@ -907,11 +908,243 @@ print(combined_plot1)
 
 ```
 
+We proceeded to explore the capabilities of the proposed test in terms of size and power. Under $\mathcal{H}_0$ the test statistic  is asymptotically distributed as $\mathcal{N}(0,\sigma_S^2))$, and therefore, the $p$-value of the observed test statistic is $2(1-\Phi(\varepsilon))$, where $\Phi$ is the standard Gaussian cumulative distribution function and 
+$$
+\varepsilon=\frac{\tilde{H}(\bm{Z})-H(\bm{Z})}{\sigma_S}.
+$$
+Nominal levels of $1\%$, $5\%$, and $10\%$ were considered. In reference to the size, $1000$ simulations have been used for various sample sizes with  satisfactory results. In all cases, the nominal level has been achieved. The power, in general, improves with the increase in the number of looks. The results are presented in Table \ref{tab:table_size_power}, providing a more detailed insight into the effectiveness of the test under different conditions.
 
 
-Fig.&nbsp;\ref{fig:Plot_empirical_test} displays the empirical distributions using statistical test \eqref{Eq:test_e}. Under the null hypothesis, we observe that the densities are centered around zero. Conversely, under the alternative hypothesis, such as for $\alpha=8$, the density is not centered around zero. It reveals the difference between the entropy of Gamma SAR and $G_I^0$, indicating that we are in a scenario of heterogeneous clutter.
 
-```{r Plot_empirical_test, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Empirical distributions under null hypothesis (centered around zero) and alternative hypothesis (e.g., $\\alpha=8$, showing a shift from zero), with $\\mu=1$ and $L=5$."}
+```{r Simulated_power, echo=FALSE, message=FALSE}
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+# Function to calculate p-value
+calculate_p_value <- function(test_statistic, mu_W, sigma_W) {
+  epsilon <- test_statistic  / sigma_W
+  p_value <- 2 * (1 - pnorm(abs(epsilon)))
+  
+  return(p_value)
+}
+
+# Function to calculate Type II Error Rate
+calculate_type_II_error_rate <- function(p_values, alpha_nominal) {
+  type_II_error_rate <- sum(p_values >= alpha_nominal) / length(p_values)
+  return(type_II_error_rate)
+}
+
+# Function to calculate power for different L values and alpha_nominals
+calculate_power <- function(R, mu, L_values, B, sample_sizes, alpha_nominals) {
+  results <- data.frame()
+  
+  for (L in L_values) {
+    for (alpha_nominal in alpha_nominals) {
+      TestStatistics <- list()
+      mean_entropy <- numeric(length(sample_sizes))
+      sd_entropy <- numeric(length(sample_sizes))
+      
+      for (s in sample_sizes) {
+        TestStat <- numeric(R)
+        
+        for (r in 1:R) {
+          z <- gi0_sample(mu, -8, L, s)
+          TestStat[r] <- bootstrap_correa_estimator_log_mean(z, B) - (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
+        }
+        
+        mean_entropy[sample_sizes == s] <- mean(TestStat)
+        sd_entropy[sample_sizes == s] <- sd(TestStat)
+        
+        TestStatistics[[as.character(s)]] <- TestStat
+      }
+      
+      mu_W <-  mean_entropy  
+      sigma_W <- sqrt(sd_entropy^2)  
+      
+      p_values <- lapply(TestStatistics, function(TestStat) {
+        apply(data.frame("Test_Statistics" = TestStat), 1, function(row) {
+          calculate_p_value(row["Test_Statistics"], mu_W, sigma_W[as.numeric(names(TestStatistics)) == as.numeric(s)])
+        })
+      })
+      
+      type_II_error_rates <- sapply(p_values, function(p_values_for_size) {
+        calculate_type_II_error_rate(p_values_for_size, alpha_nominal)
+      })
+      
+      power <- 1 - type_II_error_rates
+      
+      result_row <- data.frame(
+        L = L,
+        alpha_nominal = alpha_nominal,
+        Sample_Size = sample_sizes,
+        power = power
+      )
+      
+      results <- rbind(results, result_row)
+    }
+  }
+  
+  return(results)
+}
+
+
+R <- 500
+mu <- 1
+L_values <- c(2, 5, 8, 18)
+B <- 3
+sample_sizes <- c(50, 100, 200, 300)
+alpha_nominals <- c(0.01, 0.05, 0.1)
+
+results_power <- calculate_power(R, mu, L_values, B, sample_sizes, alpha_nominals)
+save(results_power, file = "./Data/results_power.Rdata")
+
+```
+
+
+```{r Simulated_error_type_I, echo=FALSE, message=FALSE}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+
+
+# Function to calculate p-value
+calculate_p_value <- function(test_statistic, mu_W, sigma_W, alpha_nominal) {
+  epsilon <- test_statistic / sigma_W
+  p_value <- 2 * (1 - pnorm(abs(epsilon)))
+  
+  return(p_value < alpha_nominal)  # Return TRUE if p_value is less than alpha_nominal
+}
+
+R <- 500
+mu <- 1
+B <- 3
+L_values <- c(2, 5, 8, 18)
+sample_sizes <- c( 50, 100, 200, 300)
+alpha_nominals <- c(0.01, 0.05, 0.1)
+
+results <- data.frame()
+
+for (L in L_values) {
+  for (alpha_nominal in alpha_nominals) {
+    TestStatistics <- NULL
+    mean_entropy <- numeric(length(sample_sizes))
+    sd_entropy <- numeric(length(sample_sizes))
+    
+    for (s in sample_sizes) {
+      TestStat <- numeric(R)
+      
+      for (r in 1:R) {
+        z <- gamma_sar_sample(L, mu, s)
+        TestStat[r] <- bootstrap_correa_estimator_log_mean(z, B) - (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
+      }
+      mean_entropy[sample_sizes == s] <- mean(TestStat)
+      sd_entropy[sample_sizes == s] <- sd(TestStat)
+      
+      TestStatistics <- rbind(TestStatistics, data.frame("L" = rep(L, R), "Sample_Size" = rep(s, R), "Test_Statistics" = TestStat))
+    }
+    
+    mu_W <- mean_entropy
+    sigma_W <- sqrt(sd_entropy^2)
+    
+    p_values <- apply(TestStatistics, 1, function(row) {
+      calculate_p_value(row["Test_Statistics"], mu_W[sample_sizes == row["Sample_Size"]], sigma_W[sample_sizes == row["Sample_Size"]], alpha_nominal)
+    })
+    
+    result <- data.frame("L" = TestStatistics$L, "Sample_Size" = TestStatistics$Sample_Size, "Alpha_Nominal" = alpha_nominal, "P_Value" = p_values)
+    results <- rbind(results, result)
+  }
+}
+
+
+
+
+save(results, file = "./Data/type_I_results.Rdata")
+
+```
+
+
+```{r Table_size_and_power, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+cat("\\setlength{\\tabcolsep}{4pt}\n")
+# Load Type I Error Rates
+load("./Data/type_I_results.Rdata")
+
+
+type_I_error_rates <- tapply(results$P_Value, INDEX = list(results$L, results$Sample_Size, results$Alpha_Nominal), FUN = function(p_values) {
+  sum(p_values) / length(p_values)  
+})
+
+
+type_I_error_results <- as.data.frame(as.table(type_I_error_rates))
+
+colnames(type_I_error_results) <- c("L", "Sample_Size", "Alpha_Nominal", "Type_I_Error_Rate")
+
+spread_results <- spread(type_I_error_results, key = Alpha_Nominal, value = Type_I_Error_Rate)
+
+
+spread_results <- spread_results %>% 
+  select(L, Sample_Size, `0.01`, `0.05`, `0.1`)
+
+load("./Data/results_power.Rdata")
+
+
+summary_stats <- results_power %>%
+  spread(key = alpha_nominal, value = power) %>%
+  select(L, Sample_Size, `0.01`, `0.05`, `0.1`)
+
+# Combine the two datasets based on L and sample size
+combined_results <- merge(spread_results, summary_stats, by = c("L", "Sample_Size"))
+combined_results <- combined_results %>% 
+  arrange(L, Sample_Size)
+# Reorder the columns
+combined_results <- combined_results %>% 
+  select(L, Sample_Size, `0.01.x`, `0.05.x`, `0.1.x`, `0.01.y`, `0.05.y`, `0.1.y`)
+
+# Rename columns
+colnames(combined_results) <- c("$L$", "$n$", "$1\\%$", "$5\\%$", "$10\\%$", "$1\\%$", "$5\\%$", "$10\\%$")
+
+# LaTeX notation 
+combined_results[] <- lapply(combined_results, function(x) {
+  if (is.numeric(x)) {
+    if (all(x %% 1 == 0)) {
+      formatted_numbers <- sprintf("$%d$", x)
+    } else {
+      formatted_numbers <- ifelse(x < 0, sprintf("$%.3f$", x), sprintf("$\\phantom{-}%.3f$", x))
+    }
+    return(formatted_numbers)
+  } else {
+    return(x)
+  }
+})
+
+# Print the combined table
+table_combined_result <- kbl(
+  combined_results,
+  caption = "Size and Power of the proposed test.",
+  format = "latex",
+  booktabs = TRUE,
+  align = "lcccccccc",
+  escape = FALSE,
+  digits = 3,
+  label = "table_size_power"
+)%>%
+  add_header_above(c(" ", " ", "Size" = 3,  "Power" = 3)) %>%
+  collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") %>%
+  row_spec(0,  align = "c")
+
+print(table_combined_result)
+
+
+
+```
+
+
+
+
+
+Fig.&nbsp;\ref{fig:Plot_empirical_test} displays the empirical distributions using statistical test \eqref{Eq:test_e}. Under the null hypothesis, we observe that the densities are centered around zero. Conversely, under the alternative hypothesis, such as for $\alpha=-8$, the density is not centered around zero. It reveals the difference between the entropy of Gamma SAR and $G_I^0$, indicating that we are in a scenario of heterogeneous clutter.
+
+
+
+```{r Sim_empirical_test, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
 
 set.seed(1234567890, kind = "Mersenne-Twister")
 
@@ -921,17 +1154,14 @@ L <- 5
 B <- 2
 sample.size <- c( 81)
 
-alpha1_values <- c( -8)
+alpha1_values <- c( -2)
 
-
-plots_list <- list()
+TestStatistics1 <- NULL
+TestStatistics2 <- NULL
 
 for (alpha_val in alpha1_values) {
 
   alpha1 <- alpha_val
-  
-  TestStatistics1 <- NULL
-  TestStatistics2 <- NULL
   
   mean_entropy1 <- numeric(length(sample.size))
   mean_entropy2 <- numeric(length(sample.size))
@@ -946,20 +1176,26 @@ for (alpha_val in alpha1_values) {
       TestStat1[r] <- bootstrap_correa_estimator_log_mean(z, B) - (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
       z1 <- gi0_sample(mu, alpha1, L, s)
       TestStat2[r] <- bootstrap_correa_estimator_log_mean(z1, B) - (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
-        #(L - log(L) + lgamma(L) + (1 - L) * digamma(L) - L - lgamma(L - alpha1) + (L - alpha1) * (digamma(L - alpha1))- (1 - alpha1) * digamma(-alpha1) + log(-1 - alpha1) + lgamma(-alpha1))
+        
       
     }
-    
-    mean_entropy1[sample.size == s] <- mean(TestStat1)
-   # cat(" mean for TestStat1", mean_entropy1[sample.size == s], "\n")
-    
-    mean_entropy2[sample.size == s] <- mean(TestStat2)
-   # cat(" mean for TestStat2", mean_entropy2[sample.size == s], "\n")
     
     TestStatistics1 <- rbind(TestStatistics1, data.frame("Sample_Size" = rep(s, R), "Test_Statistics" = TestStat1))
     TestStatistics2 <- rbind(TestStatistics2, data.frame("Sample_Size2" = rep(s, R), "Test_Statistics2" = TestStat2))
   }
-  
+}
+
+# 
+save(TestStatistics1, TestStatistics2, file = "./Data/sim_empirical_test.Rdata")
+
+
+```
+
+```{r Plot_empirical_test, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Empirical distributions under null hypothesis (centered around zero) and alternative hypothesis (e.g., $\\alpha=-8$, showing a shift from zero), with $\\mu=1$ and $L=5$."}
+
+# 
+load("./Data/sim_empirical_test.Rdata")
+
   difference.betweeen.GammaSAR.GI0.n.Look <- function(alpha, L) {
     return(
       -L - lgamma(L-alpha) + 
@@ -969,10 +1205,11 @@ for (alpha_val in alpha1_values) {
         lgamma(-alpha)
     )
   }
-  
-  max_density1 <- max(density(TestStatistics1$Test_Statistics)$y, na.rm = TRUE)
-  max_density2 <- max(density(TestStatistics2$Test_Statistics2)$y, na.rm = TRUE)
-  
+
+
+plots_list <- list()
+
+for (alpha_val in alpha1_values) {
   plot <- ggplot(TestStatistics1, aes(x = Test_Statistics)) +
     geom_line(aes(col = factor(Sample_Size), linetype = factor(Sample_Size)), stat = "density", linewidth = 1.0) +
     geom_line(data = TestStatistics2, aes(x = Test_Statistics2), stat = "density", color = "blue", linetype = "dashed", linewidth = 1) +
@@ -986,8 +1223,6 @@ for (alpha_val in alpha1_values) {
     )+
     labs(x = "Test Statistics", y = "Density")
   
-  
-
   plots_list[[as.character(alpha_val)]] <- plot
 }
 
@@ -995,11 +1230,9 @@ grid.arrange(grobs = plots_list, ncol = 1)
 
 ```
 
-
-
 ## Experiments on Real SAR Images
 
-To assess the practical efficacy of the proposed test, we conducted experiments using real SAR images acquired by the Sentinel-1A system operating in the C band,with  HH polarization, and intensity format. The set of four SAR images, depicted in Fig.&nbsp;\ref{fig:Real_SAR_Images}(a)-(d) represent diverse scenes: a forested area in the Amazonas region, agricultural fields in Flevoland, and urban areas in Berlin and Ottawa, each with sizes of $512 \times 512$ pixels. 
+To assess the practical efficacy of the proposed test, we conducted experiments using real SAR images acquired by the Sentinel-1A system operating in the C band, with  HH polarization, and intensity format. The set of four SAR images, depicted in Fig.&nbsp;\ref{fig:Real_SAR_Images}(a)-(d) represent diverse scenes: a forested area in the Amazonas region, agricultural fields in Flevoland, and urban areas in Berlin and Ottawa, each with sizes of $512 \times 512$ pixels. 
 
 We evaluate the test accuracy with small data portions. Ensuring resistance to contamination is crucial, especially in small samples with $5\times 5$, $7\times 7$, or $9\times 9$ windows that may contain data from areas with varying textures. Our assessment determines if the test can produce reasonable estimations, even when some data deviates from the assumed model.
 
@@ -1009,7 +1242,9 @@ Table&nbsp;\ref{tab:table_sar} shows the results for $5 \times 5$ windows, detai
 The openly accessible Sentinel-1 data used in this study was downloaded as Level-1 Ground Range Detected (GRD) products from the Copernicus Data Space Ecosystem (\url{https://dataspace.copernicus.eu}). This format, gaining popularity among operational and application users, containing only the co-polarized and cross-polarized backscatter intensities (VV, VH). 
 
 
-
+```{r window, fig.align="center",  out.width = "80%", fig.cap=" Sketch of sliding window.", fig.show="hold",  fig.pos="hbt"}
+knitr::include_graphics("../../../Figures/PDF/sliding2.pdf")
+```
 
 
 
@@ -1027,6 +1262,8 @@ set.seed(1234567890, kind = "Mersenne-Twister")
 x_Brazil <- myread.ENVI(file='../../../Data/SAR/Brazil/Intensity_VV.img', headerfile='../../../Data/SAR/Brazil/Intensity_VV.hdr')
 x_Berlin<- myread.ENVI(file='../../../Data/SAR/Berlin/Intensity_VV.img', headerfile='../../../Data/SAR/Berlin/Intensity_VV.hdr')
 x_Flevoland <- myread.ENVI(file='../../../Data/SAR/Flevoland/Intensity_VV.img', headerfile='../../../Data/SAR/Flevoland/Intensity_VV.hdr')
+
+x_Flevoland2 <- myread.ENVI(file='../../../Data/SAR/Flevoland2/Intensity_VV.img', headerfile='../../../Data/SAR/Flevoland2/Intensity_VV.hdr')
 x_Ottawa <- myread.ENVI(file='../../../Data/SAR/Ottawa/Intensity_VV.img', headerfile='../../../Data/SAR/Ottawa/Intensity_VV.hdr')
 
 L <- 5
