@@ -26,13 +26,15 @@ affiliation:
 keywords: ["SAR", "entropy estimation", "non-parametric analysis", "order statistics"]
 abstract: |
   SAR Data are affected by speckle, a non-additive and non-gaussian interference noise-like pattern.
-  The type of distribution these data follow is paramount for their processing and analysis.
+  The distribution these data follow is paramount for their processing and analysis.
   Good statistical models provide flexibility and accuracy, often at the cost of using several parameters.
   The $\mathcal{G}^0$ distribution is one of the most successful models for SAR data. 
   It includes the Gamma law as a particular case which arises in the presence of fully developed speckle.
   Although the latter is a limit distribution of the former, using the same estimation technique for the more general model is numerically unfeasible.
-  We propose a two-stage estimation procedure: first, we verify the hypothesis that the data are fully-developed speckle. If this assumption is rejected, we proceed to estimate the parameters that index the $\mathcal G^0$ distribution; otherwise, we proceed with the Gamma model.
-  Given the uncertainty of the underlying distribution, and the negative impact that using an inadequate model has on maximum likelihood estimation, we employ a non-parametric approach to estimate entropy under the fully-developed speckle hypothesis.
+  We developed a test statistic based on an bootstrap-improved non-parametric estimator of the Shannon entropy for assessing departures from the fully-developed speckle hypothesis.
+  We show the adequacy of the proposal with simulated and SAR data.
+  <!-- We propose a two-stage estimation procedure: first, we verify the hypothesis that the data are fully-developed speckle. If this assumption is rejected, we proceed to estimate the parameters that index the $\mathcal G^0$ distribution; otherwise, we proceed with the Gamma model. -->
+  <!-- Given the uncertainty of the underlying distribution, and the negative impact that using an inadequate model has on maximum likelihood estimation, we employ a non-parametric approach to estimate entropy under the fully-developed speckle hypothesis. -->
 
 # use some specific Tex packages if needed. 
 #with_ifpdf: true
@@ -177,11 +179,11 @@ source("../../../Code/R/Programs/read_ENVI_images.R")
 Synthetic aperture radar (SAR) has become a fundamental technology for environmental monitoring and disaster management because of its ability to provide daytime and nighttime imagery in all weather conditions&nbsp;\cite{Mu2019}. 
 However, the utility of SAR data depends on a thorough understanding of their statistical properties.
 Speckle is part of SAR data because of the imaging process' coherent nature.
-Its non-additivity and non-Gaussianity require robust statistical models that can accurately characterize the data.
+Its non-additivity and non-Gaussianity require statistical models that can accurately characterize them.
 
-Among these models, the $\mathcal{G}^0$ distribution stands out as a powerful framework. 
-Notably, this distribution encompasses the well-known Gamma distribution as a special case, particularly under the assumption of fully developed speckle. 
-The interplay between these two distributions is apparent, with the Gamma distribution representing a limiting case of the more general $\mathcal{G}^0$ model. 
+Among these models, the $\mathcal{G}^0$ law is a flexible and tractable model. 
+Notably, this distribution encompasses the well-known Gamma distribution as the fully developed speckle case. 
+<!-- The interplay between these two distributions is apparent, with the Gamma distribution representing a limiting case of the more general $\mathcal{G}^0$ model.  -->
 
 When deciding which model is the best, practitioners face a problem.
 On the one hand, if they opt for the Gamma law when the data come from the $\mathcal{G}^0$ distribution, they lose all the information about the number of scatterers, which is revealed by one of the parameters of the latter model&nbsp;\cite{Yue2021}.
@@ -189,7 +191,7 @@ On the other hand, if they apply the $\mathcal{G}^0$ distribution under fully de
 maximum likelihood estimation is tricky: 
 bias increases making estimation unreliable&nbsp;\cite{VasconcellosFrerySilva:CompStat}, and
 the likelihood is flat, so numerical optimization may not converge&nbsp;\cite{FreryCribariSouza:JASP:04}.
-The two-stage technique we propose tackles this problem by using the entropy as a proxy to decide which is the best model.
+The test statistic we propose tackles this problem using the entropy as a proxy.
 
 <!-- The entropy is a fundamental concept in information theory with broad applications to pattern recognition, statistical physics, stochastic dynamics, and statistics. -->
 <!-- Shannon introduced it for a random variable in 1948&nbsp;[@Shannon1948] as a measure of information and uncertainty.  -->
@@ -197,19 +199,16 @@ The two-stage technique we propose tackles this problem by using the entropy as 
 
 Estimating the entropy faces practical challenges, particularly when the model is unknown; non-parametric methods are utilized in such cases.
 Among non-parametric approaches, Subhash et al.&nbsp;\cite{Subhash2021} discussed the use of spacing methods.
-This non-parametric strategy offers flexibility to address a wide range of models without imposing specific parametric constraints. We extend the exploration of non-parametric entropy estimators by incorporating enhanced bootstrap methodologies.
+This strategy offers flexibility to address a wide range of models without imposing specific parametric constraints. 
+We improve this non-parametric entropy estimator with bootstrap.
 
+We develop a test statistic that helps discriminating between fully-developed speckle and heterogeneous clutter based a non-parametric estimator of the entropy, and we reduce its mean square error using bootstrap.
+Next, we study its empirical distribution under the null hypothesis, and we conclude the study with an application to SAR data.
 
-
-Our aim is to develop a test statistic that helps discriminating between fully-developed speckle and heterogeneous clutter.
-We work with non-parametric estimators of the entropy, we reduce the bias of those based on spacings using bootstrap, and select the best ones.
-Next, we study the empirical distribution of these estimators under the null hypothesis, followed by a study of the size and power of the proposed test.
-We conclude the study with applications to SAR data.
-
-The article is structured as follows: 
-Section&nbsp;\ref{sec:Background} covers statistical modeling and entropy estimation for Intensity SAR data. Section&nbsp;\ref{sec:test} outlines hypothesis testing based on non-parametric entropy. 
-In Section&nbsp;\ref{sec:results}, we present experimental results. 
-Finally, in Section&nbsp;\ref{sec:conclusion} conclusions are exhibited.
+<!-- The article is structured as follows:  -->
+<!-- Section&nbsp;\ref{sec:Background} covers statistical modeling and entropy estimation for Intensity SAR data. Section&nbsp;\ref{sec:test} outlines hypothesis testing based on non-parametric entropy.  -->
+<!-- In Section&nbsp;\ref{sec:results}, we present experimental results.  -->
+<!-- Finally, in Section&nbsp;\ref{sec:conclusion} conclusions are exhibited. -->
 
 
 
@@ -217,23 +216,23 @@ Finally, in Section&nbsp;\ref{sec:conclusion} conclusions are exhibited.
 
 ## Statistical modeling of Intensity SAR data 
 
-The primary models used for intensity SAR data include the Gamma and $\mathcal{G}_I^0$  distributions&nbsp;\cite{Frery1997}. 
-The first is suitable for fully developed speckle and is a limiting case of the second, which is appealing due to its versatility in accurately representing regions with various roughness characteristics&nbsp;\cite{Cassetti2022}.
+The primary models used for intensity SAR data include the Gamma and $\mathcal{G}_I^0$  distributions&nbsp. 
+The first is suitable for fully developed speckle and is a limiting case of the second, which is appealing due to its versatility in accurately representing regions with various roughness characteristics&nbsp;\cite{Yue2021}.
 We denote $Z \sim \Gamma_{\text{SAR}}(L, \mu)$ and $Z \sim \mathcal{G}_I^0(\alpha, \gamma, L)$ to indicate that $Z$ follows the distributions characterized by the respective probability density functions:
 \begin{align}
 	f_Z(z;L, \mu)&=\frac{L^L}{\Gamma(L)\mu^L}z^{L-1}\exp\left\{-Lz/\mu\right\} \mathbbm 1_{\mathbbm R_+}(z),\label{E:gamma1}\\
 	f_Z(z; \alpha, \gamma, L)&=\frac{L^L\Gamma(L-\alpha)}{\gamma^{\alpha}\Gamma(-\alpha)\Gamma(L)}\cdot\frac{z^{L-1}}{(\gamma+Lz)^{L-\alpha}} \mathbbm 1_{\mathbbm R_+}(z),\label{E:gi01}
 \end{align}
-where, in&nbsp;\eqref{E:gamma1} $\mu > 0$ is the mean; in&nbsp;\eqref{E:gi01}  $\gamma > 0$ is the scale, $\alpha < -1$ measures the roughness,  $L \geq 1$ is the number of looks, $\Gamma(\cdot)$ is the gamma function, and $\mathbbm 1_{A}(z)$ is the indicator function of the set $A$.
+where $L \geq 1$ is the number of looks, $\Gamma(\cdot)$ is the gamma function, and $\mathbbm 1_{A}(z)$ is the indicator function of the set $A$.
+In&nbsp;\eqref{E:gamma1}, $\mu > 0$ is the mean; in&nbsp;\eqref{E:gi01}  $\gamma > 0$ is the scale, $\alpha < -1$ measures the roughness,  
 
-From&nbsp;\eqref{E:gi01}, the $r$th moment of $Z$ is expressed as:
-\begin{align}
-	\mathbbm E_{\mathcal{G}_I^0}\left(Z^r\right)=\left(\frac{\gamma}{L}\right)^r\frac{\Gamma(-\alpha-r)}{\Gamma(-\alpha)}\cdot\frac{\Gamma(L+r)}{\gamma(L)}, \quad \alpha <-r. 
-	\label{E:rmom}
-\end{align}
+<!-- From&nbsp;\eqref{E:gi01}, the $r$th moment of $Z$ is expressed as: -->
+<!-- \begin{align} -->
+<!-- 	\mathbbm E_{\mathcal{G}_I^0}\left(Z^r\right)=\left(\frac{\gamma}{L}\right)^r\frac{\Gamma(-\alpha-r)}{\Gamma(-\alpha)}\cdot\frac{\Gamma(L+r)}{\gamma(L)}, \quad \alpha <-r.  -->
+<!-- 	\label{E:rmom} -->
+<!-- \end{align} -->
  
-Even though the $\mathcal{G}_I^0$  distribution is defined by the parameters $\alpha$ and $\gamma$, SAR literature commonly utilizes the texture $\alpha$ and the mean $\mu$&nbsp;\cite{Nascimento2010}.
-In this way, we compute the expected value $\mu$ using the expression in&nbsp;\eqref{E:rmom}, and we reparametrize&nbsp;\eqref{E:gi01} using $\mu$, $\alpha$, and $L$. Then
+We can parametrize&nbsp;\eqref{E:gi01} by the mean value:
 \begin{align*}
 	\mu=\left(\frac{\gamma}{L}\right)\frac{\Gamma(-\alpha-1)}{\Gamma(-\alpha)}\cdot\frac{\Gamma(L+1)}{\gamma(L)}=-\frac{\gamma}{\alpha+1}.
 \end{align*}
@@ -243,6 +242,7 @@ Thus, the probability density function that characterize the $G_I^0(\mu, \alpha,
 \end{multline}
 
 ## The Shannon Entropy
+
 The parametric representation of Shannon entropy for a system described by a continuous random variable is:
 \begin{equation}
   \label{E:entropy2}
@@ -250,7 +250,7 @@ The parametric representation of Shannon entropy for a system described by a con
 \end{equation}
 here, $f(\cdot)$ is the probability density function that characterizes the distribution of the real-valued random variable $Z$.
 
-Using&nbsp;\eqref{E:entropy2}, we can express the Shannon entropy of $\Gamma_{\text{SAR}}$in&nbsp;\eqref{E:gamma1} and $G_I^0$in&nbsp;\eqref{E:gi02} based on&nbsp;\cite{Cassetti2022} and&nbsp;\cite{Ferreira2020}:
+Using&nbsp;\eqref{E:entropy2}, we can express the Shannon entropy of $\Gamma_{\text{SAR}}$ in&nbsp;\eqref{E:gamma1} and $G_I^0$ in&nbsp;\eqref{E:gi02}:
 \begin{multline}
 \label{E:E-gamma}
 H_{\Gamma_{\text{SAR}}}(L, \mu) =   L -\ln L+\ln\Gamma(L)+(1-L)\psi^{(0)}(L) + \ln \mu, 
@@ -262,9 +262,6 @@ H_{G_I^0}(\mu, \alpha, L) =L -\ln L+\ln\Gamma(L)+(1-L)\psi^{(0)}(L) +\ln \mu \\
 -(1-\alpha)\psi^{(0)}(-\alpha)+\ln (-1-\alpha)+\ln\Gamma(-\alpha)-L,
 \end{multline}
 where $\psi^{(0)}(\cdot)$ is the digamma function. 
-
-
-
 
 In Fig.&nbsp;\ref{fig:Plot_GI0_to_gamma}, we depict the behavior of the entropy of \(G_I^0\) when \(\alpha \in \left\{-\infty, -20, -8, -3\right\}\), observing its convergence towards the entropy of \(\Gamma_{\text{SAR}}\) as \(\alpha\) takes large negative values. 
 
@@ -321,7 +318,7 @@ ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = alpha)) +
 
 ## Estimation of the Shannon Entropy
 
-One of the earliest non-parametric estimators relying on spacings was introduced by&nbsp;\cite{vasicek1976test}. 
+One of the earliest non-parametric estimators relying on spacings was introduced by Vasicek&nbsp;\cite{vasicek1976test}. 
 Assuming that $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ is a random sample from the distribution $F(z)$, the estimator is defined as:
 \begin{equation*}
 \label{E:Vas}
@@ -329,7 +326,8 @@ Assuming that $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ is a random sample from the distrib
 	\end{equation*}
 where $m<n/2$ is a positive integer, $Z_{(i+m)}-Z_{(i-m)}$ is the $m$-spacing and $Z_{(1)}\leq Z_{(2)}\leq\ldots\leq Z_{(n)}$ are the order statistics and $Z_{(i)}= Z_{(1)}$ if $i<1$, $Z_{(i)}= Z_{(n)}$ if $i>n$.
 
-Several authors have explored adaptations to Vasicek's estimator. In this work, we consider three entropy estimators known for their superior performance:
+Several authors have explored adaptations to Vasicek's estimator. 
+We consider three estimators known for their superior performance&nbsp;\cite{Cassetti2022}:
 
 * Correa&nbsp;\cite{correa1995new}: $\widehat{H}_{\text{C}}$.
 
@@ -337,28 +335,25 @@ Several authors have explored adaptations to Vasicek's estimator. In this work, 
 
 * Al Omary&nbsp;\cite{IbrahimAlOmari2014}: $\widehat{H}_{\mathrm{AO}}$.
 
-These estimators, along with others, are described and studied in&nbsp;\cite{Cassetti2022}.
- 
-
-
 
 ## Enhanced Bootstrap Technique
 
 We employ the bootstrap technique to refine the precision of existing non-parametric entropy estimators. 
-This approach involves generating new datasets through resampling with repetition from an existing one.
+<!-- This approach involves generating new datasets through resampling with repetition from an existing one. -->
 
 Let's assume that non-parametric entropy estimators \(\widehat{H}=\widehat{\theta}(\bm{Z})\) are inherently biased, that is:
 \begin{equation}
 \label{Eq:bias1}
-\bias\big(\widehat{\theta}(\bm{Z})\big) = E\big[\widehat{\theta}(\bm{Z})\big] - \theta.
+\bias\big(\widehat{\theta}(\bm{Z})\big) = E\big[\widehat{\theta}(\bm{Z})\big] - \theta \neq 0.
 \end{equation}
-Our objective is to devise unbiased estimators with reduced variance. To achieve this, we introduce an "ideal estimator" \(\check{\theta}(\bm{Z})\) using the bias information:
-\begin{equation}
-\label{Eq:bias2}
-\widecheck{\theta}(\bm{Z}) = \widehat{\theta}(\bm{Z}) - \bias\big(\widehat{\theta}(\bm{Z})\big).
-\end{equation}
-However, \(\check{\theta}(\bm{Z})\) is not an estimator, because it depends on the true parameter \(\theta\), prompting the formulation of a new estimator \(\widetilde{H}\). 
-From&nbsp;\eqref{Eq:bias1} and&nbsp;\eqref{Eq:bias2} we have:
+Our bootstrap-improved estimators are of the form:
+<!-- introducing an "ideal unbiased estimator" \(\check{\theta}(\bm{Z})\): -->
+<!-- \begin{equation} -->
+<!-- \label{Eq:bias2} -->
+<!-- \widecheck{\theta}(\bm{Z}) = \widehat{\theta}(\bm{Z}) - \bias\big(\widehat{\theta}(\bm{Z})\big). -->
+<!-- \end{equation} -->
+<!-- However, \(\check{\theta}(\bm{Z})\) is not an estimator, because it depends on the true parameter \(\theta\), prompting the formulation of a new estimator \(\widetilde{H}\).  -->
+<!-- From&nbsp;\eqref{Eq:bias1} and&nbsp;\eqref{Eq:bias2} we have: -->
 \begin{align*}
 \widetilde{H} &= 2\widehat{\theta}(\bm{Z}) - \frac{1}{B}\sum_{b=1}^B \widehat{\theta}_b(\bm{Z}^{(b)}),
 \end{align*}
@@ -372,6 +367,7 @@ We choose to use the following heuristic formula for spacing, $m=\left[\sqrt{n}+
 
 In Fig.&nbsp;\ref{fig:Plot_bias_mse_gi0} we depict comparisons of bias and mean squared error (MSE) between the original non-parametric entropy estimators and their respective bootstrap-enhanced versions. 
 The use of the bootstrap technique exhibits more precision, reduced bias and MSE, and improved convergence.
+<!-- ACF Show only the first line, i.e., for mu=1, and state that the results are consistent for other values of the mean -->
 
 The results of simulation are exhibited in Table&nbsp;\ref{tab:table2}. 
 The precision of estimators, as evidenced by bias and MSE comparisons, benefits significantly from the bootstrap technique, particularly for sample sizes below 81.
@@ -500,7 +496,8 @@ print(
 ```
 
 # Hypothesis testing based on non-parametric entropy {#sec:test}
-General asymptotic results for functions of spacings are detailed&nbsp;\cite{Khashimov1990}, while&nbsp;\cite{Bert1992} developed a correction for the case of Shannon entropy.
+
+General asymptotic results for functions of spacings are detailed in Ref.&nbsp;\cite{Khashimov1990}, while Van Es&nbsp;\cite{Bert1992} developed a correction for the case of Shannon entropy.
 Following the work of these authors, the next result applies: 
 \begin{lemma}
 Suppose that $f(\cdot)$ is a bounded density bounded away from zero and satisfies a Lipschitz condition on its support.
@@ -509,7 +506,7 @@ Then, if $m,n\rightarrow \infty$ and $m=o(n^{1/2})$, holds that:
 \sqrt{n}\,\Big(\label{Eq:bias_t}
 \widetilde{H}_{i}+\int_{-\infty}^\infty f(z)\ln f(z) \mathrm{d}z\Big)
 \xrightarrow[]{\mathcal{D}}
-\mathcal{N}(0,\operatorname{Var}(\ln f(Z))).
+\mathcal{N}\big(0,\operatorname{Var}(\ln f(Z))\big).
 \end{equation*}
 \end{lemma} 
 Consider, starting from the previous lemma, we aim at testing the following hypotheses: 
@@ -518,30 +515,27 @@ $$
  \begin{cases}\mathcal{H}_0: \widetilde{H}(\bm{Z})-H_{\Gamma_{\text{SAR}}}(\bm{Z})=0 \\ 
   \mathcal{H}_1:\widetilde{H}(\bm{Z})-H_{\Gamma_{\text{SAR}}}(\bm{Z})\neq0 .\end{cases}
 $$
-In other words, we verify the hypothesis that the data are fully-developed speckle.
-For this purpose, we propose the following test statistic:
+In other words, we verify the hypothesis that the data are fully-developed speckle with the following test statistic:
 \begin{equation}
 \label{Eq:test_e}
 S(\bm{Z};L_0)= \widetilde{H}_{\text{C}}(\bm{Z})-\left[H_{\Gamma_{\text{SAR}}}(L_0)+\ln \widebar{\bm{Z}}\right].
 \end{equation}
-This test statistic $S(\bm{Z};L_0)$ aims to assess the behavior of the data under the null hypothesis, through the empirical distribution. 
-The density should center around zero if the test statistic is capable of detecting that the data are fully-developed speckle, i.e., $S(\bm{Z};L_0)\approx 0$. 
-Otherwise, under the alternative hypothesis, the empirical distribution of the test statistic values is not centered around zero. 
-This suggests significant differences and implies the presence of heterogeneous clutter.
-
-
+<!-- This test statistic assess the behavior of the data under the null hypothesis, through the empirical distribution.  -->
+The values should be around zero under the null hypothesis and far otherwise. 
+<!-- This suggests significant differences and implies the presence of heterogeneous clutter. -->
 
 # Results {#sec:results} 
 
 
 ## The Proposed Test
 Fig.&nbsp;\ref{fig:Plot_density} depicts empirical test statistic densities for various sample sizes, and Table&nbsp;\ref{tab:table_stat_combined} summarizes key statistics, including mean, SD, variance (Var), coefficient of variation (CV), skewness, kurtosis, and Anderson–Darling $p$-values for normality. 
+<!-- ACF Only show L=2 and L=8 -->
 Results with $p$-values $> 0.05$  indicate no evidence against normality. 
-Small variance and near-zero skewness and kurtosis suggest limited spread, symmetry, and light tails. The coefficient of variation shows that as the sample size increases, variability with respect to the mean decreases.
+Small variance and near-zero skewness and kurtosis suggest limited spread, symmetry, and light tails. 
+The coefficient of variation shows that as the sample size increases, variability with respect to the mean decreases.
+Normal QQ-plots, omitted for brevity, confirm that there is no evidence to reject the normal distribution.
 
-In Fig.&nbsp;\ref{fig:Plot_normality_qq}, normal QQ-plots visually affirm distributional similarity with the expected normal line.
-
-
+<!-- In Fig.&nbsp;\ref{fig:Plot_normality_qq}, normal QQ-plots visually affirm distributional similarity with the expected normal line. -->
 
 ```{r Simulated_density, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
 #, cache = TRUE, autodep = TRUE
@@ -623,9 +617,6 @@ for (L in L_values) {
 ```
 
 ```{r Plot_density, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Empirical density  under null hypothesis.", fig.width=6, fig.height=5}
-
-
-
 
 theme_set(theme_minimal() +
             theme(text = element_text(family = "serif"),
@@ -726,7 +717,7 @@ print(table_result_combined)
 
 ```
 
-```{r Plot_normality_qq, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Normal QQ-plots for  $n=100$.", fig.width=6, fig.height=5}
+```{r Plot_normality_qq, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Normal QQ-plots for  $n=100$.", fig.width=6, fig.height=5, eval=FALSE}
 
 
 
@@ -786,10 +777,10 @@ Under $\mathcal{H}_0$ the test statistic  is asymptotically distributed as $\mat
 $$
 \varepsilon=\frac{\tilde{H}(\bm{Z})-H_{\Gamma_{\text{SAR}}}(\bm{Z})}{\sigma_S}.
 $$
-Nominal levels of $1\%$, $5\%$, and $10\%$ were considered. In reference to the size, $1000$ simulations have been used for various sample sizes with  satisfactory results. In all cases, the nominal level has been achieved. The power, in general, improves with the increase in the sample size and the number of looks. The results are presented in Table&nbsp;\ref{tab:table_size_power}.
-
-
-
+We considered nominal levels of \SI{1}{\percent}, \SI{5}{\percent}, and \SI{10}{\percent}. 
+In reference to the size, $1000$ simulations have been used for various sample sizes with  satisfactory results. In all cases, the nominal level has been achieved. 
+The power, in general, improves with the increase in the sample size and the number of looks. 
+The results are presented in Table&nbsp;\ref{tab:table_size_power}.
 
 ```{r Simulated_error_type_I, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
 set.seed(1234567890, kind = "Mersenne-Twister")
@@ -1009,10 +1000,8 @@ print(table_combined_result)
 
 ```
 
-
-
-
-Fig.&nbsp;\ref{fig:Plot_empirical_test} displays the empirical distributions using the test statistical&nbsp;\eqref{Eq:test_e}. Under the null hypothesis, the density centers around zero. 
+Fig.&nbsp;\ref{fig:Plot_empirical_test} shows the test statistic&nbsp;\eqref{Eq:test_e} empirical distribution. 
+Under the null hypothesis, the density centers around zero. 
 
 
 ```{r Sim_empirical_test, echo=FALSE, message=FALSE}
@@ -1062,7 +1051,7 @@ save(TestStatistics1, TestStatistics2, file = "./Data/sim_empirical_test.Rdata")
 
 ```
 
-```{r Plot_empirical_test, echo=FALSE, message=FALSE, warning=FALSE, out.width="90%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Empirical distributions under null hypothesis (centered around zero) and alternative hypothesis (e.g., $\\alpha=-8$, showing a shift from zero), with $\\mu=1$ and $L=5$."}
+```{r Plot_empirical_test, echo=FALSE, message=FALSE, warning=FALSE, out.width="90%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Empirical distributions under the null (centered around zero) and alternative hypotheses (e.g., $\\alpha=-8$, showing a shift from zero), with $\\mu=1$ and $L=5$."}
 
 # 
 load("./Data/sim_empirical_test.Rdata")
@@ -1103,21 +1092,15 @@ grid.arrange(grobs = plots_list, ncol = 1)
 
 ## Application to Actual Data
 
-We applied the test statistical to a real SAR image of Flevoland province, Netherlands, acquired by the Sentinel-1A system operating in the C band, with  HH polarization, and intensity format.
-This image has $300 \times 300$ pixels and covers two different areas, urban areas and agricultural fields. 
-The metadata associated with these original SAR images includes a number of looks $L = 5$.
+We applied the test statistical to a SAR image of Flevoland, Netherlands, acquired by the Sentinel-1A system operating in the C band, with  HH polarization, intensity format, and $L=5$ nominal looks.
+This image has $300 \times 300$ pixels and covers urban areas and agricultural fields. 
+<!-- The metadata associated with these original SAR images includes a number of looks $L = 5$. -->
 
-Fig.&nbsp;\ref{fig:Real_SAR_Images}(a) shows the SAR image, from which we selected $7 \times 7$ local sliding windows covering the entire image. 
-The test statistical is applied to each window. 
-In Fig.&nbsp;\ref{fig:Real_SAR_Images}(b), the test results and corresponding $p$-values, computed over each $7\times 7$ sample, are shown as pixels. 
-This assessment aims to determine the test's effectiveness in identifying data origin. 
-The new image reveals two distinct regions: lighter backgrounds indicate homogeneity, while darker backgrounds represent heterogeneous areas.
+Fig.&nbsp;\ref{fig:Real_SAR_Images}(a) shows the SAR image.
+We used $7 \times 7$ local sliding windows to compute the test, and Fig.&nbsp;\ref{fig:Real_SAR_Images}(b) shows the $p$-values.
+The new image reveals two distinct regions: lighter background indicates homogeneity, while darker backgrounds represent heterogeneous areas.
 
-
-
-
-
-```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.cap='Results of applying the test statistical to actual data.', fig.subcap=c('SAR image.', '$p$-values calculated.' ), out.width='.48\\linewidth',  fig.ncol=2}
+```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.cap='Results of applying the test statistical to actual data.', fig.subcap=c('SAR image.', '$p$-values.' ), out.width='.48\\linewidth',  fig.ncol=2}
 knitr::include_graphics("../../../Figures/PNG/Intensity.png")
 knitr::include_graphics("../../../Figures/PNG/pvalue7x7.png")
 
@@ -1128,24 +1111,19 @@ knitr::include_graphics("../../../Figures/PNG/pvalue7x7.png")
 
 # Conclusion {#sec:conclusion} 
 
-Conclusively, in this work, we propose a testing procedure for distinguishing between fully-developed speckle and heterogeneous clutter. 
-We focus on the estimation of Shannon entropy using non-parametric estimators, enhancing precision through bootstrap techniques. 
-The Correa estimator ($\widetilde{H}_{\text{C}}$) stands out as the optimal choice, exhibiting superior performance in bias and MSE across simulations involving the $G_I^0$ distribution. 
-This superiority becomes particularly pronounced when the number of looks exceeds 2.
+We propose a testing procedure for distinguishing between fully-developed speckle and heterogeneous clutter with a test statistic based on a bootstrap-improved estimator of the Shannon entropy. 
+<!-- The Correa estimator ($\widetilde{H}_{\text{C}}$) stands out as the optimal choice, exhibiting superior performance in bias and MSE across simulations involving the $G_I^0$ distribution.  -->
+<!-- This superiority becomes particularly pronounced when the number of looks exceeds $2$. -->
+Our proposal includes the empirical size and power considering various sample sizes, numbers of looks, and nominal levels. 
 
-
-Furthermore, our assessment of the proposed test involved the calculation of empirical size and power, considering various sample sizes, numbers of looks, and nominal levels. 
-The results demonstrate its capabilities under both null and alternative hypotheses. Notably, the test performs acceptably with sample sizes larger than 50. 
+The results show that the test performs acceptably with sample sizes larger than $50$. 
 However, practical scenarios often involve smaller sample sizes, typically obtained over windows of size $7 \times 7$.
-
 
 The application of the test to actual SAR data yielded promising outcomes, effectively discerning distinct regions in the image and showing its potential for discriminating between homogeneous and heterogeneous zones.
 
 # Acknowledgement {-}
 
 This study was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior  (CAPES) and the Fundação de Amparo à Ciência e Tecnologia de Pernambuco (FACEPE), Brazil.
-
-
 
 # References {#references .numbered}
 
