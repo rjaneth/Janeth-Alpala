@@ -22,9 +22,9 @@ source("../MainFunctions/gi0_sample.R")
 
 set.seed(1234567890, kind="Mersenne-Twister")
 
-R <- 3000
+R <- 1000
 mu <- 1
-L <- 2
+L <- 5
 B <- 5
 
 sample.size <- c(81)

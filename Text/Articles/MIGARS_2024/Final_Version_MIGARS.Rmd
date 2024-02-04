@@ -133,8 +133,8 @@ theme_set(theme_minimal() +
                   legend.position = "bottom")#  top , right , bottom , or left#, panel.grid = element_blank()
 )
 
-# if(!require("rstudioapi")) install("rstudioapi")
-# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+if(!require("rstudioapi")) install("rstudioapi")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 
 source("../../../Code/R/MainFunctions/gamma_sar_sample.R")
@@ -214,7 +214,7 @@ Next, we study its empirical distribution under the null hypothesis, and we conc
 
 # Background {#sec:Background} 
 
-## Statistical modeling of Intensity SAR data 
+## Statistical Modeling of Intensity SAR Data 
 
 The primary models used for intensity SAR data include the Gamma and $\mathcal{G}_I^0$  distributions&nbsp. 
 The first is suitable for fully developed speckle and is a limiting case of the second, which is appealing due to its versatility in accurately representing regions with various roughness characteristics&nbsp;\cite{Yue2021}.
@@ -361,30 +361,31 @@ where $B$ is the number of replications in the bootstrap technique.
 Applying this methodology, the original estimators by Correa, Ebrahimi, and Al-Omari are now denoted as the proposed bootstrap-enhanced versions: $\widetilde{H}_{\text{C}}$, $\widetilde{H}_{\text{E}}$, and $\widetilde{H}_{\text{AO}}$, respectively.
 
 
-Simulations are conducted using $G_I^0$ distribution, with $200$ simulated samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\), with parameters \(\mu \in \left\{1, 10\right\}\), \(\alpha=-20\), and \(L=8\). 
+Simulations are conducted using $G_I^0$ distribution, with $500$ simulated samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\). For brevity, we present the results with \(\mu=1\), \(\alpha=-10\), and \(L=5\). The results are consistent for other values of the mean. 
 In the case of the bootstrap technique, each sample is replicated $100$ times with replacement.
 We choose to use the following heuristic formula for spacing, $m=\left[\sqrt{n}+0.5\right]$.
+
 
 In Fig.&nbsp;\ref{fig:Plot_bias_mse_gi0} we depict comparisons of bias and mean squared error (MSE) between the original non-parametric entropy estimators and their respective bootstrap-enhanced versions. 
 The use of the bootstrap technique exhibits more precision, reduced bias and MSE, and improved convergence.
 <!-- ACF Show only the first line, i.e., for mu=1, and state that the results are consistent for other values of the mean -->
 
-The results of simulation are exhibited in Table&nbsp;\ref{tab:table2}. 
+The results of simulation are exhibited in Table&nbsp;\ref{tab:table2}.
 The precision of estimators, as evidenced by bias and MSE comparisons, benefits significantly from the bootstrap technique, particularly for sample sizes below 81.
 
 ```{r Simulated_data_gi0, echo=FALSE, message=FALSE}
 
 set.seed(1234567890, kind = "Mersenne-Twister")
-sample_sizes <- c(9, 25, 49, 81, 121)
+sample_sizes <- c(9, 25, 49, 81, 121 )
 
 # Number of replications
-R <- 200
+R <-500
 
 # Number of bootstrap replications
-B <- 20
-mu_values <- c(1, 10)
-alpha <- -20
-L <- 8
+B1 <- 100
+mu_values <- c(1)
+alpha <- -10
+L <- 5
 
 estimators <- list(
   "Correa" = correa_estimator,
@@ -396,12 +397,12 @@ estimators <- list(
 )
 
 
-calculate_results_gi0 <- function(sample_sizes, R, B, mu_values, alpha, L, estimators) {
+calculate_results_gi0 <- function(sample_sizes, R, B1, mu_values, alpha, L, estimators) {
   results_list <- list()
 
   for (mu_val in mu_values) {
     
-    results <- calculate_bias_mse_gi0(sample_sizes, R, B, mu_val, alpha, L, estimators)
+    results <- calculate_bias_mse_gi0(sample_sizes, R, B1, mu_val, alpha, L, estimators)
     df <- as.data.frame(results)
 
     
@@ -412,7 +413,7 @@ calculate_results_gi0 <- function(sample_sizes, R, B, mu_values, alpha, L, estim
 }
 
 
-results_gi0 <- calculate_results_gi0(sample_sizes, R, B, mu_values, alpha, L, estimators)
+results_gi0 <- calculate_results_gi0(sample_sizes, R, B1, mu_values, alpha, L, estimators)
 
 
 save(results_gi0, file = "./Data/results_gi0.Rdata")
@@ -421,7 +422,7 @@ save(results_gi0, file = "./Data/results_gi0.Rdata")
 ```
 
 
-```{r Plot_bias_mse_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE of entropy estimators for  $G_I^0$, $L=8$, $\\alpha=-20$.", fig.width=6, fig.height=5}
+```{r Plot_bias_mse_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE of entropy estimators for  $G_I^0$, $L=5$, $\\alpha=-10$.", fig.width=6, fig.height=3.0}
 
 
 load("./Data/results_gi0.Rdata")
@@ -437,7 +438,7 @@ estimators_to_plot <- c("Correa", "Ebrahimi", "Al Omari",  "Correa Bootstrap", "
 selected_estimators_latex <- latex_estimator_names[estimators_to_plot]
 
 
-combined_plot_gi0 <- generate_plot_gi0_esp(results_gi0, mu_values, selected_estimators_latex, ncol = 1, nrow = 2)
+combined_plot_gi0 <- generate_plot_gi0_esp(results_gi0, mu_values, selected_estimators_latex, ncol = 1, nrow = 1)
 
 
 print(combined_plot_gi0)
@@ -479,7 +480,7 @@ reshaped_results[] <- lapply(reshaped_results, function(x) {
 print(
   kbl(
     reshaped_results,
-    caption = "Bias and MSE of bootstrap estimators for $G_I^0$, $L=8$, $\\alpha=-20$.",
+    caption = "Bias and MSE of bootstrap estimators for $G_I^0$, $L=5$, $\\alpha=-10$.",
     format = "latex",
     booktabs = TRUE,
     align = "lrrrrrrrr",
@@ -537,16 +538,16 @@ Normal QQ-plots, omitted for brevity, confirm that there is no evidence to rejec
 
 <!-- In Fig.&nbsp;\ref{fig:Plot_normality_qq}, normal QQ-plots visually affirm distributional similarity with the expected normal line. -->
 
-```{r Simulated_density, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
+```{r Simulated_density, echo=FALSE, message=FALSE}
 #, cache = TRUE, autodep = TRUE
 set.seed(1234567890, kind = "Mersenne-Twister")
 
-R <- 1000
+R <- 800
 mu <- 1
-B <- 2
-alpha1 <- -8
-sample.size <- c(50, 100, 200, 300)
-L_values <- c(2, 5, 8, 18)
+B <- 5
+
+sample.size <- c(25,50, 100, 200, 300)
+L_values <- c(2,  8)
 
 all_summary_stats <- list()
 all_TestStatistics <- list()
@@ -664,8 +665,8 @@ load("./Data/results_2.Rdata")
 summary_stats_2 <- all_summary_stats[["2"]]
 
 
-load("./Data/results_5.Rdata")
-summary_stats_5 <- all_summary_stats[["5"]]
+# load("./Data/results_5.Rdata")
+# summary_stats_5 <- all_summary_stats[["5"]]
 
 
 load("./Data/results_8.Rdata")
@@ -674,7 +675,7 @@ summary_stats_8 <- all_summary_stats[["8"]]
 
 combined_summary_stats <- rbind(
   transform(summary_stats_2),
-  transform(summary_stats_5),
+  #transform(summary_stats_5),
   transform(summary_stats_8)
   
 )
@@ -699,7 +700,7 @@ combined_summary_stats[] <- lapply(combined_summary_stats, function(x) {
 
 table_result_combined <- kbl(
   combined_summary_stats,
-  caption = "Descriptive analysis of $S(\\bm Z; L)$ for different values of $L$, and $\\mu=1$.",
+  caption = "Descriptive analysis of $S(\\bm Z; L)$ with $L\\in\\left\\{2, 8\\right\\}$ and $\\mu=1$.",
   format = "latex",
   booktabs = TRUE,
   align = "lrrrrrrr",
@@ -773,7 +774,7 @@ print(combined_plot1)
 ```
 
 After verifying the normality of the data, we proceeded to explore the capabilities of the proposed test in terms of size and power.
-Under $\mathcal{H}_0$ the test statistic  is asymptotically distributed as $\mathcal{N}(0,\sigma_S^2))$, and therefore, the $p$-value of the observed test statistic is $2\Phi(\varepsilon)-1$, where $\Phi$ is the standard Gaussian cumulative distribution function and 
+Under $\mathcal{H}_0$ the test statistic  is asymptotically distributed as $\mathcal{N}(0,\sigma_S^2)$, and therefore, the $p$-value of the observed test statistic is $2\Phi(\varepsilon)-1$, where $\Phi$ is the standard Gaussian cumulative distribution function and 
 $$
 \varepsilon=\frac{\tilde{H}(\bm{Z})-H_{\Gamma_{\text{SAR}}}(\bm{Z})}{\sigma_S}.
 $$
@@ -782,7 +783,7 @@ In reference to the size, $1000$ simulations have been used for various sample s
 The power, in general, improves with the increase in the sample size and the number of looks. 
 The results are presented in Table&nbsp;\ref{tab:table_size_power}.
 
-```{r Simulated_error_type_I, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
+```{r Simulated_error_type_I, echo=FALSE, message=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
 
@@ -795,11 +796,11 @@ calculate_p_value <- function(test_statistic, mu_W, sigma_W, alpha_nominal) {
   return(p_value < alpha_nominal)  
 }
 
-R <- 500
+R <- 1000
 mu <- 1
 B <- 2
-L_values <- c(2, 5, 8)
-sample_sizes <- c( 50, 100, 150, 200)
+L_values <- c( 5, 8)
+sample_sizes <- c( 25, 50, 100, 200, 300)
 alpha_nominals <- c(0.01, 0.05, 0.1)
 
 results <- data.frame()
@@ -842,7 +843,7 @@ save(results, file = "./Data/type_I_results.Rdata")
 
 ```
 
-```{r Simulated_power, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
+```{r Simulated_power, echo=FALSE, message=FALSE}
 
 set.seed(1234567890, kind = "Mersenne-Twister")
 
@@ -874,7 +875,7 @@ calculate_power <- function(R, mu, L_values, B, sample_sizes, alpha_nominals) {
         TestStat <- numeric(R)
         
         for (r in 1:R) {
-          z <- gi0_sample(mu, -8, L, s)
+          z <- gi0_sample(mu, -5, L, s)
           TestStat[r] <- bootstrap_correa_estimator_log_mean(z, B) - (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
         }
         
@@ -914,11 +915,11 @@ calculate_power <- function(R, mu, L_values, B, sample_sizes, alpha_nominals) {
 }
 
 
-R <- 500
+R <- 1000
 mu <- 1
-L_values <- c(2, 5, 8)
-B <- 3
-sample_sizes <- c(50, 100, 150, 200)
+L_values <- c(5,  8)
+B <- 1
+sample_sizes <- c(25, 50, 100, 200, 300)
 alpha_nominals <- c(0.01, 0.05, 0.1)
 
 results_power <- calculate_power(R, mu, L_values, B, sample_sizes, alpha_nominals)
@@ -1008,13 +1009,13 @@ Under the null hypothesis, the density centers around zero.
 
 set.seed(1234567890, kind = "Mersenne-Twister")
 
-R <- 500
+R <- 2000
 mu <- 1
-L <- 5
-B <- 5
+L <- 8
+B <- 1
 sample.size <- c( 81)
 
-alpha1_values <- c( -8)
+alpha1_values <- c( -5)
 
 TestStatistics1 <- NULL
 TestStatistics2 <- NULL
@@ -1051,7 +1052,7 @@ save(TestStatistics1, TestStatistics2, file = "./Data/sim_empirical_test.Rdata")
 
 ```
 
-```{r Plot_empirical_test, echo=FALSE, message=FALSE, warning=FALSE, out.width="90%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Empirical distributions under the null (centered around zero) and alternative hypotheses (e.g., $\\alpha=-8$, showing a shift from zero), with $\\mu=1$ and $L=5$."}
+```{r Plot_empirical_test, echo=FALSE, message=FALSE, warning=FALSE, out.width="90%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Empirical distributions under the null (centered around zero) and alternative hypotheses (e.g., $\\alpha=-5$, showing a shift from zero), with $\\mu=1$ and $L=8$."}
 
 # 
 load("./Data/sim_empirical_test.Rdata")
@@ -1073,9 +1074,9 @@ for (alpha_val in alpha1_values) {
   plot <- ggplot(TestStatistics1, aes(x = Test_Statistics)) +
     geom_line(aes(col = factor(Sample_Size), linetype = factor(Sample_Size)), stat = "density", linewidth = 1.0) +
     geom_line(data = TestStatistics2, aes(x = Test_Statistics2), stat = "density", color = "blue", linetype = "dashed", linewidth = 1) +
-    geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.n.Look(-8, 5), col="darkgreen", linetype = "dotted", linewidth = 0.6) +
-    annotate("text", x=difference.betweeen.GammaSAR.GI0.n.Look(-8, 5), y=6, parse=TRUE, label="alpha==-8", hjust=-.1, vjust=1.0, col="darkgreen") +
-    geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.n.Look(-1000, 5), col="darkgreen", linetype = "dotted", linewidth = 0.6) +
+    geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.n.Look(-5, 8), col="darkgreen", linetype = "dotted", linewidth = 0.6) +
+    annotate("text", x=difference.betweeen.GammaSAR.GI0.n.Look(-5, 8), y=5, parse=TRUE, label="alpha==-5", hjust=-.1, vjust=1.0, col="darkgreen") +
+    geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.n.Look(-1000, 8), col="darkgreen", linetype = "dotted", linewidth = 0.6) +
     theme_minimal() +
     theme(
       text = element_text(family = "serif"),
@@ -1100,7 +1101,7 @@ Fig.&nbsp;\ref{fig:Real_SAR_Images}(a) shows the SAR image.
 We used $7 \times 7$ local sliding windows to compute the test, and Fig.&nbsp;\ref{fig:Real_SAR_Images}(b) shows the $p$-values.
 The new image reveals two distinct regions: lighter background indicates homogeneity, while darker backgrounds represent heterogeneous areas.
 
-```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.cap='Results of applying the test statistical to actual data.', fig.subcap=c('SAR image.', '$p$-values.' ), out.width='.48\\linewidth',  fig.ncol=2}
+```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",fig.pos = 'H', fig.cap='Results of applying the test statistical to actual data.', fig.subcap=c('SAR image.', '$p$-values.' ), out.width='.48\\linewidth',  fig.ncol=2}
 knitr::include_graphics("../../../Figures/PNG/Intensity.png")
 knitr::include_graphics("../../../Figures/PNG/pvalue7x7.png")
 
