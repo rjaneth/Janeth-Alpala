@@ -37,13 +37,11 @@ abstract: |
   <!-- Given the uncertainty of the underlying distribution, and the negative impact that using an inadequate model has on maximum likelihood estimation, we employ a non-parametric approach to estimate entropy under the fully-developed speckle hypothesis. -->
 
 # use some specific Tex packages if needed. 
-#with_ifpdf: true
-#with_cite: true
+
 # amsmath need to be true to use with bookdown for referencing equations.
 with_amsmath: true
-# with_algorithmic: true
-# with_array: true
-# with_dblfloatfix: true
+#with_subfig:true
+
 
 
 header-includes:
@@ -61,9 +59,7 @@ header-includes:
    - \usepackage[utf8]{inputenc}
    - \usepackage{hyperref}
    - \hypersetup{draft}
-   - \usepackage{graphicx}
    - \usepackage{float}
-   - \usepackage{booktabs}
    - \usepackage{array}
    - \usepackage{multirow}
    - \usepackage{wrapfig}
@@ -73,8 +69,8 @@ header-includes:
    - \usepackage{amsmath}
    - \usepackage{mathabx}
    - \usepackage{subfig}
-   #- \usepackage{subcaption}
-   - \usepackage{pgf}
+   #- \usepackage{caption}
+   #- \captionsetup[table]{skip=0pt}
    - "\\setcitestyle{square,comma,numbers,sort&compress}" # citation style to numerical, work with \cite{} or [@]
 
 
@@ -82,14 +78,16 @@ output:
   rticles::ieee_article:
     number_sections: TRUE
     citation_package: natbib
+   
+    #extra_dependencies: "subfig"
+
+    
 
 
 bibliography: ../../Common/references.bib
 
 biblio-style: ieeetr
 
-
-#link-citations: yes
 
 ---
 
@@ -172,7 +170,10 @@ source("../../../Code/R/Programs/read_ENVI_images.R")
 \newcommand{\bias}{\operatorname{Bias}}
 \setlength{\tabcolsep}{4pt} 
 
-
+\let\oldtablename\tablename
+\renewcommand{\tablename}{\MakeUppercase{\oldtablename}}
+\let\oldfigurename\figurename
+\renewcommand{\figurename}{Fig.}
 
 # Introduction {#sec:Introduction}
 
@@ -364,13 +365,13 @@ Applying this methodology, the original estimators by Correa, Ebrahimi, and Al-O
 Simulations are conducted using $G_I^0$ distribution, with $500$ simulated samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\). For brevity, we present the results with \(\mu=1\), \(\alpha=-10\), and \(L=5\). The results are consistent for other values of the mean. 
 In the case of the bootstrap technique, each sample is replicated $100$ times with replacement.
 We choose to use the following heuristic formula for spacing, $m=\left[\sqrt{n}+0.5\right]$.
+<!-- ACF Show only the first line, i.e., for mu=1, and state that the results are consistent for other values of the mean -->
 
 
 In Fig.&nbsp;\ref{fig:Plot_bias_mse_gi0} we depict comparisons of bias and mean squared error (MSE) between the original non-parametric entropy estimators and their respective bootstrap-enhanced versions. 
 The use of the bootstrap technique exhibits more precision, reduced bias and MSE, and improved convergence.
-<!-- ACF Show only the first line, i.e., for mu=1, and state that the results are consistent for other values of the mean -->
-
 The results of simulation are exhibited in Table&nbsp;\ref{tab:table2}.
+
 The precision of estimators, as evidenced by bias and MSE comparisons, benefits significantly from the bootstrap technique, particularly for sample sizes below 81.
 
 ```{r Simulated_data_gi0, echo=FALSE, message=FALSE}
@@ -422,7 +423,7 @@ save(results_gi0, file = "./Data/results_gi0.Rdata")
 ```
 
 
-```{r Plot_bias_mse_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE of entropy estimators for  $G_I^0$, $L=5$, $\\alpha=-10$.", fig.width=6, fig.height=3.0}
+```{r Plot_bias_mse_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE, $L=5$ and  $\\alpha=-10$.", fig.width=6, fig.height=3.0}
 
 
 load("./Data/results_gi0.Rdata")
@@ -476,11 +477,10 @@ reshaped_results[] <- lapply(reshaped_results, function(x) {
   }
 })
 
-
 print(
   kbl(
     reshaped_results,
-    caption = "Bias and MSE of bootstrap estimators for $G_I^0$, $L=5$, $\\alpha=-10$.",
+    caption = "Bias and MSE of bootstrap estimators.",
     format = "latex",
     booktabs = TRUE,
     align = "lrrrrrrrr",
@@ -617,7 +617,7 @@ for (L in L_values) {
 
 ```
 
-```{r Plot_density, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Empirical density  under null hypothesis.", fig.width=6, fig.height=5}
+```{r Plot_density, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Empirical density  under null hypothesis.", fig.width=6, fig.height=3.0}
 
 theme_set(theme_minimal() +
             theme(text = element_text(family = "serif"),
@@ -647,7 +647,7 @@ for (L in L_values) {
   all_plots[[as.character(L)]] <- p
 }
 
-combined_plot <- wrap_plots(all_plots, ncol = 2, nrow = 2) +
+combined_plot <- wrap_plots(all_plots, ncol = 2, nrow = 1) +
   plot_layout(guides = "collect")
 
 print(combined_plot)
@@ -706,7 +706,7 @@ table_result_combined <- kbl(
   align = "lrrrrrrr",
   escape = FALSE,
   digits = 4,
-  label = "table_stat_combined"
+  label = "table_stat_combined",
   #table.env = 'table*' # to span multiple columns
 ) %>%
   collapse_rows(latex_hline = "major", valign = "middle") %>%
@@ -1092,7 +1092,6 @@ grid.arrange(grobs = plots_list, ncol = 1)
 ```
 
 ## Application to Actual Data
-
 We applied the test statistical to a SAR image of Flevoland, Netherlands, acquired by the Sentinel-1A system operating in the C band, with  HH polarization, intensity format, and $L=5$ nominal looks.
 This image has $300 \times 300$ pixels and covers urban areas and agricultural fields. 
 <!-- The metadata associated with these original SAR images includes a number of looks $L = 5$. -->
@@ -1101,14 +1100,13 @@ Fig.&nbsp;\ref{fig:Real_SAR_Images}(a) shows the SAR image.
 We used $7 \times 7$ local sliding windows to compute the test, and Fig.&nbsp;\ref{fig:Real_SAR_Images}(b) shows the $p$-values.
 The new image reveals two distinct regions: lighter background indicates homogeneity, while darker backgrounds represent heterogeneous areas.
 
-```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",fig.pos = 'H', fig.cap='Results of applying the test statistical to actual data.', fig.subcap=c('SAR image.', '$p$-values.' ), out.width='.48\\linewidth',  fig.ncol=2}
+
+```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",fig.pos = 'H', fig.cap='Results of applying the test statistical to actual data.',  fig.subcap=c('SAR image.', '$p$-values.' ), out.width='.48\\linewidth',  fig.ncol=2}
 knitr::include_graphics("../../../Figures/PNG/Intensity.png")
 knitr::include_graphics("../../../Figures/PNG/pvalue7x7.png")
 
+
 ```
-
-
-
 
 # Conclusion {#sec:conclusion} 
 

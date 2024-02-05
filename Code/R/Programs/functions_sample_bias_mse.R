@@ -212,12 +212,15 @@ generate_plot_gi0_esp <- function(results_gi0, mu_values, selected_estimators, n
        # scale_color_discrete(labels = TeX(df_filtered$Estimator)) +
       scale_color_manual(values = pal_jama()(7)[1:6], labels = TeX(df_filtered$Estimator)) +
       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
-      coord_cartesian(clip = 'off')
+      coord_cartesian(clip = 'off')+
+      theme(legend.position = "bottom", legend.box = "horizontal", legend.box.margin = margin(0, 0, 0, 0)) +
+      guides(color = guide_legend(nrow = 1))
     
-    # 
-    if (mu_val != mu_values[1]) {
-      plot_bias = plot_bias + theme(legend.position = "top")
-    }
+    
+    # # 
+    # if (mu_val != mu_values[1]) {
+    #   plot_bias = plot_bias + theme(legend.position = "top")
+    # }
     
     plot_mse <- ggplot(df_filtered, aes(x = n, y = MSE, color = Estimator)) +
       geom_hline(yintercept = 0) +
@@ -227,21 +230,25 @@ generate_plot_gi0_esp <- function(results_gi0, mu_values, selected_estimators, n
       #scale_color_discrete(labels = TeX(df_filtered$Estimator)) +
       scale_color_manual(values = pal_jama()(7)[1:6], labels = TeX(df_filtered$Estimator)) +
       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
-      coord_cartesian(clip = 'off')
+      coord_cartesian(clip = 'off')+
+      theme(legend.position = "bottom", legend.box = "horizontal", legend.box.margin = margin(0, 0, 0, 0)) +
+      guides(color = guide_legend(nrow = 1))
     
     
-    if (mu_val != mu_values[1]) {
-      plot_mse = plot_mse + theme(legend.position = "top")
-    }
+    
+    # if (mu_val != mu_values[1]) {
+    #   plot_mse = plot_mse + theme(legend.position = "top")
+    # }
     
     
     plot_list[[as.character(mu_val)]] <- plot_bias + plot_mse
   }
   
   
+  # combined_plot <- wrap_plots(plot_list, ncol = ncol, nrow = nrow) +
+  #   plot_layout(guides = "collect")
   combined_plot <- wrap_plots(plot_list, ncol = ncol, nrow = nrow) +
     plot_layout(guides = "collect")
-  
  
   return(combined_plot)
 }
