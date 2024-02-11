@@ -1,6 +1,16 @@
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,linux,r,python,latex
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,linux,r,python,latex
 
+Text/Articles/MIGARS_2024/Data/results_2.Rdata
+Text/Articles/MIGARS_2024/Data/results_8.Rdata
+Text/Articles/MIGARS_2024/Data/results_gi0.Rdata
+Text/Articles/MIGARS_2024/Data/results_power.Rdata
+Text/Articles/MIGARS_2024/Data/sim_empirical_test.Rdata
+Text/Articles/MIGARS_2024/Data/type_I_results.Rdata
+Text/Articles/MIGARS_2024/Final_Version_MIGARS_files/figure-latex/Plot_bias_mse_gi0-1.pdf
+Text/Articles/MIGARS_2024/Final_Version_MIGARS_files/figure-latex/Plot_density-1.pdf
+Text/Articles/MIGARS_2024/Final_Version_MIGARS_files/figure-latex/Plot_empirical_test-1.pdf
+Text/Articles/MIGARS_2024/Final_Version_MIGARS.tex		
 Text/Articles/MIGARS_2024/Data/results_gi0.Rdata
 Text/Articles/MIGARS_2024/Data/results_gi0_1.Rdata
 Text/Articles/MIGARS_2024/Data/results_gi0_1_montecarlo.Rdata

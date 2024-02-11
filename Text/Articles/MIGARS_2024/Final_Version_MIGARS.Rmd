@@ -361,12 +361,12 @@ Our bootstrap-improved estimators are of the form:
 where $B$ is the number of replications in the bootstrap technique.
 Applying this methodology, the original estimators by Correa, Ebrahimi, and Al-Omari are now denoted as the proposed bootstrap-enhanced versions: $\widetilde{H}_{\text{C}}$, $\widetilde{H}_{\text{E}}$, and $\widetilde{H}_{\text{AO}}$, respectively.
 
-
-Simulations are conducted using $G_I^0$ distribution, with $500$ simulated samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\). For brevity, we present the results with \(\mu=1\), \(\alpha=-10\), and \(L=5\). The results are consistent for other values of the mean. 
+We analyzed the performance of these estimators with a Monte Carlo study:
+$500$ samples of $G_I^0$ of size \(n\in\left\{9, 25, 49, 81, 121\right\}\) and several values of the mean, number of looks and roughness.
+For brevity, we present the results with \(\mu=1\), \(\alpha=-10\), and \(L=5\). 
+The results are consistent for the other situations. 
 In the case of the bootstrap technique, each sample is replicated $100$ times with replacement.
 We choose to use the following heuristic formula for spacing, $m=\left[\sqrt{n}+0.5\right]$.
-<!-- ACF Show only the first line, i.e., for mu=1, and state that the results are consistent for other values of the mean -->
-
 
 In Fig.&nbsp;\ref{fig:Plot_bias_mse_gi0} we depict comparisons of bias and mean squared error (MSE) between the original non-parametric entropy estimators and their respective bootstrap-enhanced versions. 
 The use of the bootstrap technique exhibits more precision, reduced bias and MSE, and improved convergence.
@@ -531,7 +531,7 @@ The values should be around zero under the null hypothesis and far otherwise.
 ## The Proposed Test
 Fig.&nbsp;\ref{fig:Plot_density} depicts empirical test statistic densities for various sample sizes, and Table&nbsp;\ref{tab:table_stat_combined} summarizes key statistics, including mean, SD, variance (Var), coefficient of variation (CV), skewness, kurtosis, and Anderson–Darling $p$-values for normality. 
 <!-- ACF Only show L=2 and L=8 -->
-Results with $p$-values $> 0.05$  indicate no evidence against normality. 
+Results with $p$-values larger than $0.05$  indicate no evidence against normality. 
 Small variance and near-zero skewness and kurtosis suggest limited spread, symmetry, and light tails. 
 The coefficient of variation shows that as the sample size increases, variability with respect to the mean decreases.
 Normal QQ-plots, omitted for brevity, confirm that there is no evidence to reject the normal distribution.
