@@ -217,7 +217,7 @@ Next, we study its empirical distribution under the null hypothesis, and we conc
 
 ## Statistical Modeling of Intensity SAR Data 
 
-The primary models used for intensity SAR data include the Gamma and $\mathcal{G}_I^0$  distributions&nbsp. 
+The primary models used for intensity SAR data include the Gamma and $\mathcal{G}_I^0$ distributions&nbsp;\cite{Frery1997}. 
 The first is suitable for fully developed speckle and is a limiting case of the second, which is appealing due to its versatility in accurately representing regions with various roughness characteristics&nbsp;\cite{Yue2021}.
 We denote $Z \sim \Gamma_{\text{SAR}}(L, \mu)$ and $Z \sim \mathcal{G}_I^0(\alpha, \gamma, L)$ to indicate that $Z$ follows the distributions characterized by the respective probability density functions:
 \begin{align}
