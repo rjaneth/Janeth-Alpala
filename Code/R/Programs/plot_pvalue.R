@@ -1,5 +1,5 @@
 
-#rm(list = ls())
+rm(list = ls())
 if(!require("rstudioapi")) install("rstudioapi")
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
@@ -68,7 +68,7 @@ imagematrixPNG(imagematrix(p_values_matrix), name="pvalue7x7.png")
 # p_values_df <- as.data.frame(as.table(p_values_matrix))
 # colnames(p_values_df) <- c("Row", "Column", "P_Value")
 # 
-# # Crear el gráfico con ggplot2
+# # Crear el grC!fico con ggplot2
 # ggplot(p_values_df, aes(x = as.factor(Column), y = as.factor(Row), fill = P_Value)) +
 #   geom_tile() +
 #   scale_fill_gradient(low = "white", high = "blue") +
@@ -81,7 +81,7 @@ imagematrixPNG(imagematrix(p_values_matrix), name="pvalue7x7.png")
 # p_values_df <- as.data.frame(as.table(p_values_matrix))
 # colnames(p_values_df) <- c("Row", "Column", "P_Value")
 # 
-# # Crear el gráfico con ggplot2
+# # Crear el grC!fico con ggplot2
 # ggplot(p_values_df, aes(x = Column, y = Row, fill = P_Value)) +
 #   geom_tile() +
 #   scale_fill_gradient(low = "white", high = "blue") +

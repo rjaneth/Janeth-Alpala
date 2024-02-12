@@ -217,8 +217,7 @@ Next, we study its empirical distribution under the null hypothesis, and we conc
 
 ## Statistical Modeling of Intensity SAR Data 
 
-The primary models used for intensity SAR data include the Gamma and $\mathcal{G}_I^0$ distributions&nbsp;\cite{Frery1997}. 
-The first is suitable for fully developed speckle and is a limiting case of the second, which is appealing due to its versatility in accurately representing regions with various roughness characteristics&nbsp;\cite{Yue2021}.
+The primary models used for intensity SAR data include the Gamma and $\mathcal{G}_I^0$ distributions. The first is suitable for fully developed speckle and is a limiting case of the second, which is appealing due to its versatility in accurately representing regions with various roughness characteristics&nbsp;\cite{Yue2021}.
 We denote $Z \sim \Gamma_{\text{SAR}}(L, \mu)$ and $Z \sim \mathcal{G}_I^0(\alpha, \gamma, L)$ to indicate that $Z$ follows the distributions characterized by the respective probability density functions:
 \begin{align}
 	f_Z(z;L, \mu)&=\frac{L^L}{\Gamma(L)\mu^L}z^{L-1}\exp\left\{-Lz/\mu\right\} \mathbbm 1_{\mathbbm R_+}(z),\label{E:gamma1}\\
@@ -264,10 +263,10 @@ H_{G_I^0}(\mu, \alpha, L) =L -\ln L+\ln\Gamma(L)+(1-L)\psi^{(0)}(L) +\ln \mu \\
 \end{multline}
 where $\psi^{(0)}(\cdot)$ is the digamma function. 
 
-In Fig.&nbsp;\ref{fig:Plot_GI0_to_gamma}, we depict the behavior of the entropy of \(G_I^0\) when \(\alpha \in \left\{-\infty, -20, -8, -3\right\}\), observing its convergence towards the entropy of \(\Gamma_{\text{SAR}}\) as \(\alpha\) takes large negative values. 
+In Fig.&nbsp;\ref{fig:Plot_GI0_to_gamma1}, we depict the behavior of the entropy of \(G_I^0\) when \(\alpha \in \left\{-\infty, -20, -8, -3\right\}\), observing its convergence towards the entropy of \(\Gamma_{\text{SAR}}\) as \(\alpha\) takes large negative values. 
 
 
-```{r Plot_GI0_to_gamma, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ as $\\alpha$ takes large negative values and $L=8$."}
+```{r Plot_GI0_to_gamma1, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ as $\\alpha$ takes large negative values and $L=8$."}
 
 
 
@@ -417,7 +416,7 @@ calculate_results_gi0 <- function(sample_sizes, R, B1, mu_values, alpha, L, esti
 results_gi0 <- calculate_results_gi0(sample_sizes, R, B1, mu_values, alpha, L, estimators)
 
 
-save(results_gi0, file = "./Data/results_gi0.Rdata")
+save(results_gi0, file = "./Data/resultsgi0.Rdata")
 
 
 ```
@@ -426,7 +425,7 @@ save(results_gi0, file = "./Data/results_gi0.Rdata")
 ```{r Plot_bias_mse_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE, $L=5$ and  $\\alpha=-10$.", fig.width=6, fig.height=3.0}
 
 
-load("./Data/results_gi0.Rdata")
+load("./Data/resultsgi0.Rdata")
 
 
 estimators_to_plot <- c("Correa", "Ebrahimi", "Al Omari",  "Correa Bootstrap", "Ebrahimi Bootstrap", "Al Omari Bootstrap" )
@@ -450,7 +449,7 @@ print(combined_plot_gi0)
 
 
 ```{r Table_gi0, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
-load("./Data/results_gi0.Rdata")
+load("./Data/resultsgi0.Rdata")
 
 # Define estimators
 estimators_to_table <- c("Correa Bootstrap", "Ebrahimi Bootstrap", "Al Omari Bootstrap")
@@ -609,7 +608,7 @@ for (L in L_values) {
   
   
 
-  save(all_TestStatistics, all_summary_stats, file = paste0("./Data/results_", L, ".Rdata"))
+  save(all_TestStatistics, all_summary_stats, file = paste0("./Data/results1_", L, ".Rdata"))
 }
 
 
@@ -627,7 +626,7 @@ theme_set(theme_minimal() +
 all_plots <- list()
 
 for (L in L_values) {
-  load(paste0("./Data/results_", L, ".Rdata"))
+  load(paste0("./Data/results1_", L, ".Rdata"))
 
   combined_data <- do.call(rbind, all_TestStatistics[[as.character(L)]])
   combined_data$L <- L
@@ -661,15 +660,15 @@ print(combined_plot)
 
 cat("\\setlength{\\tabcolsep}{1.0pt}\n")
 
-load("./Data/results_2.Rdata")
+load("./Data/results1_2.Rdata")
 summary_stats_2 <- all_summary_stats[["2"]]
 
 
-# load("./Data/results_5.Rdata")
+# load("./Data/results1_5.Rdata")
 # summary_stats_5 <- all_summary_stats[["5"]]
 
 
-load("./Data/results_8.Rdata")
+load("./Data/results1_8.Rdata")
 summary_stats_8 <- all_summary_stats[["8"]]
 
 
@@ -730,10 +729,10 @@ theme_set(theme_minimal() +
 
 
 # Load saved results
-load("./Data/results_2.Rdata")
-load("./Data/results_5.Rdata")
-load("./Data/results_8.Rdata")
-load("./Data/results_18.Rdata")
+load("./Data/results1_2.Rdata")
+load("./Data/results1_5.Rdata")
+load("./Data/results1_8.Rdata")
+load("./Data/results1_18.Rdata")
 
 # Specific sample size
 selected_sample_size <- 100
@@ -839,7 +838,7 @@ for (L in L_values) {
 
 
 
-save(results, file = "./Data/type_I_results.Rdata")
+save(results, file = "./Data/type_I_results1.Rdata")
 
 ```
 
@@ -923,14 +922,14 @@ sample_sizes <- c(25, 50, 100, 200, 300)
 alpha_nominals <- c(0.01, 0.05, 0.1)
 
 results_power <- calculate_power(R, mu, L_values, B, sample_sizes, alpha_nominals)
-save(results_power, file = "./Data/results_power.Rdata")
+save(results_power, file = "./Data/results_power1.Rdata")
 
 ```
 
 ```{r Table_size_and_power, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 cat("\\setlength{\\tabcolsep}{4pt}\n")
 
-load("./Data/type_I_results.Rdata")
+load("./Data/type_I_results1.Rdata")
 
 
 type_I_error_rates <- tapply(results$P_Value, INDEX = list(results$L, results$Sample_Size, results$Alpha_Nominal), FUN = function(p_values) {
@@ -948,7 +947,7 @@ spread_results <- spread(type_I_error_results, key = Alpha_Nominal, value = Type
 spread_results <- spread_results %>% 
   select(L, Sample_Size, `0.01`, `0.05`, `0.1`)
 
-load("./Data/results_power.Rdata")
+load("./Data/results_power1.Rdata")
 
 
 summary_stats <- results_power %>%
@@ -1047,7 +1046,7 @@ for (alpha_val in alpha1_values) {
 }
 
 # 
-save(TestStatistics1, TestStatistics2, file = "./Data/sim_empirical_test.Rdata")
+save(TestStatistics1, TestStatistics2, file = "./Data/sim_empirical_test1.Rdata")
 
 
 ```
@@ -1055,7 +1054,7 @@ save(TestStatistics1, TestStatistics2, file = "./Data/sim_empirical_test.Rdata")
 ```{r Plot_empirical_test, echo=FALSE, message=FALSE, warning=FALSE, out.width="90%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Empirical distributions under the null (centered around zero) and alternative hypotheses (e.g., $\\alpha=-5$, showing a shift from zero), with $\\mu=1$ and $L=8$."}
 
 # 
-load("./Data/sim_empirical_test.Rdata")
+load("./Data/sim_empirical_test1.Rdata")
 
   difference.betweeen.GammaSAR.GI0.n.Look <- function(alpha, L) {
     return(
