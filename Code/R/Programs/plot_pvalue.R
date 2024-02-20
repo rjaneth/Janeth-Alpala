@@ -1,7 +1,7 @@
-
-rm(list = ls())
-if(!require("rstudioapi")) install("rstudioapi")
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+# 
+# rm(list = ls())
+# if(!require("rstudioapi")) install("rstudioapi")
+# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 library(ggplot2)
 library(e1071)
@@ -12,6 +12,7 @@ library(nortest)
 
 load("./Data/results_data_Flevoland_300_7.Rdata")
 #load("./Data/results_data_Flevoland_300_9.Rdata")
+
 calculate_p_values_matrix <- function(data_matrix, sigma) {
   rows <- nrow(data_matrix)
   cols <- ncol(data_matrix)
@@ -22,14 +23,14 @@ calculate_p_values_matrix <- function(data_matrix, sigma) {
     for (j in 1:cols) {
       test_difference <- data_matrix[i, j]
       
-      epsilon <- test_difference / sigma
-      p_value <- 2 * pnorm(abs(epsilon)) - 1
+      epsilon <- (test_difference - 0.0) / sigma
+      p_value <-2 * pnorm(-abs(epsilon))  
       
       p_values_matrix[i, j] <- p_value
     }
   }
   
-  return(p_values_matrix)
+  return(p_values_matrix )
 }
 
 
@@ -39,27 +40,24 @@ sd_difference_values <- sd(difference_values, na.rm = TRUE)
 
 p_values_matrix <- calculate_p_values_matrix(difference_values, sd_difference_values)
 
+save(p_values_matrix, file = "./Data/results_pvalue_Flevoland_300_7_n.Rdata")
 
-# p_values_df <- as.data.frame(as.table(p_values_matrix))
-# colnames(p_values_df) <- c("Row", "Column", "P_Value")
-# 
-# 
-# ggplot(p_values_df, aes(x = as.factor(Column), y = as.factor(Row), fill = P_Value)) +
-#   geom_tile() +
-#   scale_fill_gradient(low = "white", high = "blue") +
-#   labs(title = "Matrix de P-Values") +
-#   theme_minimal() +
-#   theme(axis.text = element_blank(), axis.title = element_blank())
+
+
 
 source("../imagematrix.R")
 
-hist(p_values_matrix)
-par(mfrow=c(1,2))
-plot(imagematrix(equalize(x)))
-plot(imagematrix(p_values_matrix))
+#hist(p_values_matrix)
+#par(mfrow=c(1,2))
+#plot(imagematrix(equalize(x)))
+plot(imagematrix(p_values_matrix>.01))
 
-imagematrixPNG(imagematrix(equalize(x)), name = "Intensity.png")
-imagematrixPNG(imagematrix(p_values_matrix), name="pvalue7x7.png")
+#imagematrixPNG(imagematrix(equalize(x)), name = "Intensity.png")
+#imagematrixPNG(imagematrix(p_values_matrix>0.01), name="pvalue7x7-5.png")
+
+
+
+
 
 
 

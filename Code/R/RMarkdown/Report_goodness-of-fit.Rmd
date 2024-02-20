@@ -1,0 +1,232 @@
+---
+title: "Goodness-of-fit test "
+author: ""
+date: ""
+output: pdf_document
+
+# output: 
+#   pdf_document:
+#     toc: true
+#     toc_depth: 2
+#html_document
+header-includes:
+  - \usepackage{graphicx}
+  - \usepackage{float}
+  - \usepackage{bm}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{wrapfig}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+  - \usepackage{threeparttablex}
+  - \usepackage[normalem]{ulem}
+  - \usepackage{makecell}
+  - \usepackage{xcolor}
+
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,cache=TRUE)
+#knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+
+library(reshape2)
+#library(plotly)
+library(knitr)
+library(pandoc)
+library(gridExtra)
+library(tidyr)
+library(gtools)
+library(stats4)
+library(rmutil)
+library(scales)
+library(tidyr)
+library(gtools)
+library(stats4)
+library(rmutil)
+library(invgamma)
+library(tidyverse)
+library(scales)
+library(RColorBrewer)
+library(ggsci)
+library(wesanderson)
+library(ggpubr)
+library(patchwork)
+#options(kableExtra.latex.load_packages = FALSE)
+library(devtools)
+#devtools::install_github("haozhu233/kableExtra")
+#devtools::install_github("haozhu233/kableExtra")
+library(kableExtra)
+library(ggthemes)
+library(geomtextpath)
+library(latex2exp)
+library(univariateML)
+#install.packages('univariateML')
+#univariateML::univariateML_models
+
+library(fitdistrplus)
+library(logspline)
+theme_set(theme_bw()  +
+            theme(text=element_text(family="serif"),
+                  legend.position = "top")# Gridtop , right , bottom , or left#, panel.grid = element_blank()
+)
+# Helpful for latex tables
+# library(xtable)
+# options(xtable.caption.placement='top',
+#         xtable.table.placement='!t',
+#         xtable.include.rownames=F,
+#         xtable.comment=F)
+# #library(rgl)
+
+
+
+source("../MainFunctions/gamma_sar_sample.r")
+source("../MainFunctions/entropy_gamma_sar.r")
+source("../MainFunctions/entropy_gI0.r")
+
+source("../MainFunctions/van_es_estimator.r")
+source("../MainFunctions/correa_estimator.r")
+source("../MainFunctions/ebrahimi_estimator.r")
+source("../MainFunctions/noughabi_arghami_estimator.r")
+source("../MainFunctions/vasicek_estimator.r")
+source("../MainFunctions/al_omari_1_estimator.r")
+source("../MainFunctions/al_omari_2_estimator.r")
+
+source("../MainFunctions/bootstrap_van_es_estimator.r")
+source("../MainFunctions/bootstrap_correa_estimator.r")
+source("../MainFunctions/bootstrap_ebrahimi_estimator.r")
+source("../MainFunctions/bootstrap_noughabi_arghami_estimator.r")
+source("../MainFunctions/bootstrap_vasicek_estimator.r")
+source("../MainFunctions/bootstrap_al_omari_1_estimator.r")
+source("../MainFunctions/bootstrap_al_omari_2_estimator.r")
+#The next function contains the functions: generate_samples, calculate_bias_mse, generate_plot
+source("../Programs/functions_sample_bias_mse.R")# 
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+```
+
+
+
+The p-values of a Kolmogorov-Smirnov-Test (KS-Test) with estimated parameters can be quite wrong because the p-value does not take the uncertainty of the estimation into account. So unfortunately, you can't just fit a distribution and then use the estimated parameters in a Kolmogorov-Smirnov-Test to test your sample. There is a normality test called Lilliefors test which is a modified version of the KS-Test that allows for estimated parameters.
+
+
+
+
+```{r Plot1, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
+
+load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
+
+ggplot() +
+  geom_density(aes(x = as.vector(cv_values)), fill = "skyblue", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+```
+
+
+
+```{r 2, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Simulation of entropy for Gamma SAR"}
+load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
+x1<-as.vector(cv_values)
+
+descdist(x1, discrete = FALSE)
+
+fit.weibull <- fitdist(x1, "weibull")
+plot(fit.weibull)
+fit.weibull$aic
+fit.norm <- fitdist(x1, "norm")
+fit.norm$aic
+plot(fit.norm)
+```
+
+```{r}
+load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
+x1<-as.vector(cv_values)
+mydata_dist <- univariateML::model_select(x1)
+mydata_dist
+```
+
+
+
+<!-- ```{r} -->
+<!-- load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata") -->
+<!-- x1<-as.vector(cv_values) -->
+<!-- n.sims <- 100 -->
+
+<!-- stats <- replicate(n.sims, { -->
+<!--   r <- rweibull(n = length(x1) -->
+<!--                 , shape= fit.weibull$estimate["shape"] -->
+<!--                 , scale = fit.weibull$estimate["scale"] -->
+<!--   ) -->
+<!--   estfit.weibull <- fitdist(r, "weibull") # added to account for the estimated parameters -->
+<!--   as.numeric(ks.test(r -->
+<!--                      , "pweibull" -->
+<!--                      , shape= estfit.weibull$estimate["shape"] -->
+<!--                      , scale = estfit.weibull$estimate["scale"])$statistic -->
+<!--   ) -->
+<!-- }) -->
+
+<!-- plot(ecdf(stats), las = 1, main = "KS-test statistic simulation (CDF)", col = "darkorange", lwd = 1.7) -->
+<!-- grid() -->
+
+
+<!-- ``` -->
+
+
+```{r}
+# load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
+# x1<-as.vector(cv_values)
+# n.sims <- 5
+# 
+# stats_gamma <- replicate(n.sims, {
+#   r <- rgamma(n = length(x1),
+#               shape = fit.gamma$estimate["shape"],
+#               scale = fit.gamma$estimate["scale"]
+#   )
+#   estfit_gamma <- fitdist(r, "gamma") # Añadido para tener en cuenta los parámetros estimados
+#   as.numeric(ks.test(r,
+#                      "pgamma",
+#                      shape = estfit_gamma$estimate["shape"],
+#                      scale = estfit_gamma$estimate["scale"])$statistic
+#   )
+# })
+# # Suponiendo que has ejecutado la simulación con la distribución gamma y guardado los resultados en stats_gamma
+# 
+# # Gráfico de la ECDF de las estadísticas de la prueba KS simuladas
+# plot(ecdf(stats_gamma), las = 1, main = "KS-test statistic simulation (CDF) - Gamma Distribution", col = "darkorange", lwd = 1.7)
+# grid()
+
+
+```
+
+
+<!-- ```{r} -->
+<!-- # Suponiendo que ya has cargado los datos y ajustado la distribución Rayleigh -->
+<!-- load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata") -->
+<!-- x1 <- as.vector(cv_values) -->
+<!-- n.sims <- 10 -->
+
+<!-- stats_rayleigh <- replicate(n.sims, { -->
+<!--   r <- rrayleigh(n = length(x1), -->
+<!--                  scale = fit_rayleigh$estimate["scale"] -->
+<!--   ) -->
+<!--   estfit_rayleigh <- fitdist(r, "rayleigh") # Añadido para tener en cuenta los parámetros estimados -->
+<!--   as.numeric(ks.test(r, -->
+<!--                      "prayleigh", -->
+<!--                      scale = estfit_rayleigh$estimate["scale"] -->
+<!--                )$statistic -->
+<!--   ) -->
+<!-- }) -->
+
+<!-- plot(ecdf(stats_rayleigh), las = 1, main = "KS-test statistic simulation (CDF) - Rayleigh Distribution", col = "darkorange", lwd = 1.7) -->
+<!-- grid() -->
+
+<!-- ``` -->
+
+
+

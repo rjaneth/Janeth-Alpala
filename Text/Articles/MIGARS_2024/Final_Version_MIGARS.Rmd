@@ -114,7 +114,7 @@ library(ggpubr)
 library(patchwork)
 library(dplyr)
 #options(kableExtra.latex.load_packages = FALSE)
-library(devtools)
+#library(devtools)
 #devtools::install_github("haozhu233/kableExtra")
 library(kableExtra)
 library(ggthemes)
@@ -131,8 +131,8 @@ theme_set(theme_minimal() +
                   legend.position = "bottom")#  top , right , bottom , or left#, panel.grid = element_blank()
 )
 
-if(!require("rstudioapi")) install("rstudioapi")
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+# if(!require("rstudioapi")) install("rstudioapi")
+# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 
 source("../../../Code/R/MainFunctions/gamma_sar_sample.R")
@@ -266,7 +266,7 @@ where $\psi^{(0)}(\cdot)$ is the digamma function.
 In Fig.&nbsp;\ref{fig:Plot_GI0_to_gamma1}, we depict the behavior of the entropy of \(G_I^0\) when \(\alpha \in \left\{-\infty, -20, -8, -3\right\}\), observing its convergence towards the entropy of \(\Gamma_{\text{SAR}}\) as \(\alpha\) takes large negative values. 
 
 
-```{r Plot_GI0_to_gamma1, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ as $\\alpha$ takes large negative values and $L=8$."}
+```{r Plot_GI0_to_gamma1, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$, $L=8$."}
 
 
 
@@ -501,24 +501,27 @@ General asymptotic results for functions of spacings are detailed in Ref.&nbsp;\
 Following the work of these authors, the next result applies: 
 \begin{lemma}
 Suppose that $f(\cdot)$ is a bounded density bounded away from zero and satisfies a Lipschitz condition on its support.
-Then, if $m,n\rightarrow \infty$ and $m=o(n^{1/2})$, holds that:
+Then, if $m,n\rightarrow \infty$ and $m=o(n^{1/2})$, one holds that:
 \begin{equation*}
 \sqrt{n}\,\Big(\label{Eq:bias_t}
 \widetilde{H}_{i}+\int_{-\infty}^\infty f(z)\ln f(z) \mathrm{d}z\Big)
 \xrightarrow[]{\mathcal{D}}
-\mathcal{N}\big(0,\operatorname{Var}(\ln f(Z))\big).
+\mathcal{N}\big(0,\operatorname{Var}(\ln f(Z))\big),
 \end{equation*}
+where $o(\cdot)$ represents the little-o.
 \end{lemma} 
+
+
 Consider, starting from the previous lemma, we aim at testing the following hypotheses: 
 
 $$
- \begin{cases}\mathcal{H}_0: \widetilde{H}(\bm{Z})-H_{\Gamma_{\text{SAR}}}(\bm{Z})=0 \\ 
-  \mathcal{H}_1:\widetilde{H}(\bm{Z})-H_{\Gamma_{\text{SAR}}}(\bm{Z})\neq0 .\end{cases}
+ \begin{cases}\mathcal{H}_0: \widetilde{H}= H_{\Gamma_{\text{SAR}}}\\ 
+  \mathcal{H}_1:\widetilde{H}\neq H_{\Gamma_{\text{SAR}}}.\end{cases}
 $$
 In other words, we verify the hypothesis that the data are fully-developed speckle with the following test statistic:
 \begin{equation}
 \label{Eq:test_e}
-S(\bm{Z};L_0)= \widetilde{H}_{\text{C}}(\bm{Z})-\left[H_{\Gamma_{\text{SAR}}}(L_0)+\ln \widebar{\bm{Z}}\right].
+S(\bm{Z};L)= \widetilde{H}-\left[H_{\Gamma_{\text{SAR}}}(L)+\ln \widebar{\bm{Z}}\right].
 \end{equation}
 <!-- This test statistic assess the behavior of the data under the null hypothesis, through the empirical distribution.  -->
 The values should be around zero under the null hypothesis and far otherwise. 
@@ -528,11 +531,10 @@ The values should be around zero under the null hypothesis and far otherwise.
 
 
 ## The Proposed Test
-Fig.&nbsp;\ref{fig:Plot_density} depicts empirical test statistic densities for various sample sizes, and Table&nbsp;\ref{tab:table_stat_combined} summarizes key statistics, including mean, SD, variance (Var), coefficient of variation (CV), skewness, kurtosis, and Anderson–Darling $p$-values for normality. 
+Fig.&nbsp;\ref{fig:Plot_density} depicts empirical test statistic densities for various sample sizes, and Table&nbsp;\ref{tab:table_stat_combined} summarizes key statistics, including mean, SD, variance (Var), coefficient of variation (CV), skewness (SK), excess kurtosis (EK), and Anderson–Darling $p$-values for normality. 
 <!-- ACF Only show L=2 and L=8 -->
 Results with $p$-values larger than $0.05$  indicate no evidence against normality. 
-Small variance and near-zero skewness and kurtosis suggest limited spread, symmetry, and light tails. 
-The coefficient of variation shows that as the sample size increases, variability with respect to the mean decreases.
+Small variance and near-zero skewness and excess kurtosis suggest limited spread, symmetry, and light tails. Increasing sample size reduces variability relative to the mean. 
 Normal QQ-plots, omitted for brevity, confirm that there is no evidence to reject the normal distribution.
 
 <!-- In Fig.&nbsp;\ref{fig:Plot_normality_qq}, normal QQ-plots visually affirm distributional similarity with the expected normal line. -->
@@ -678,7 +680,7 @@ combined_summary_stats <- rbind(
   transform(summary_stats_8)
   
 )
-colnames(combined_summary_stats) <- c("$L$", "$n$", "Mean", "SD", "Var", "CV", "Skewness", "Kurtosis", "$p$-value")
+colnames(combined_summary_stats) <- c("$L$", "$n$", "Mean", "SD", "Var", "CV", "SK", "EK", "$p$-value")
 
 
 
@@ -773,10 +775,11 @@ print(combined_plot1)
 ```
 
 After verifying the normality of the data, we proceeded to explore the capabilities of the proposed test in terms of size and power.
-Under $\mathcal{H}_0$ the test statistic  is asymptotically distributed as $\mathcal{N}(0,\sigma_S^2)$, and therefore, the $p$-value of the observed test statistic is $2\Phi(\varepsilon)-1$, where $\Phi$ is the standard Gaussian cumulative distribution function and 
+Under $\mathcal{H}_0$, the distribution of test statistic is asymptotically normal. Therefore, the $p$-value  is calculated as $2\Phi(-\mid \varepsilon\mid)$, where  $\Phi$ is the standard Gaussian cumulative distribution and $\varepsilon$ is the standardized test statistic given by:
 $$
-\varepsilon=\frac{\tilde{H}(\bm{Z})-H_{\Gamma_{\text{SAR}}}(\bm{Z})}{\sigma_S}.
+\varepsilon=\frac{\tilde{H}-H_{\Gamma_{\text{SAR}}}}{\hat\sigma}.
 $$
+
 We considered nominal levels of \SI{1}{\percent}, \SI{5}{\percent}, and \SI{10}{\percent}. 
 In reference to the size, $1000$ simulations have been used for various sample sizes with  satisfactory results. In all cases, the nominal level has been achieved. 
 The power, in general, improves with the increase in the sample size and the number of looks. 
@@ -790,7 +793,7 @@ set.seed(1234567890, kind = "Mersenne-Twister")
 # 
 calculate_p_value <- function(test_statistic, mu_W, sigma_W, alpha_nominal) {
   epsilon <- test_statistic / sigma_W
-  p_value <- 2*pnorm(abs(epsilon))-1
+  p_value <- 2 * (1 - pnorm(abs(epsilon)))
   
   return(p_value < alpha_nominal)  
 }
@@ -1003,7 +1006,6 @@ print(table_combined_result)
 Fig.&nbsp;\ref{fig:Plot_empirical_test} shows the test statistic&nbsp;\eqref{Eq:test_e} empirical distribution. 
 Under the null hypothesis, the density centers around zero. 
 
-
 ```{r Sim_empirical_test, echo=FALSE, message=FALSE}
 
 set.seed(1234567890, kind = "Mersenne-Twister")
@@ -1096,32 +1098,28 @@ This image has $300 \times 300$ pixels and covers urban areas and agricultural f
 <!-- The metadata associated with these original SAR images includes a number of looks $L = 5$. -->
 
 Fig.&nbsp;\ref{fig:Real_SAR_Images}(a) shows the SAR image.
-We used $7 \times 7$ local sliding windows to compute the test, and Fig.&nbsp;\ref{fig:Real_SAR_Images}(b) shows the $p$-values.
-The new image reveals two distinct regions: lighter background indicates homogeneity, while darker backgrounds represent heterogeneous areas.
-
-
+We used $7 \times 7$ local sliding windows for the test. In Fig.&nbsp;\ref{fig:Real_SAR_Images}(b), $p$-values higher than a $10\%$ significance level are shown. This approach allows to emphasize regions where there is not enough evidence against the null hypothesis. The new image reveals two distinct regions: darker background indicates homogeneity, while lighter backgrounds represent heterogeneous areas.
 ```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",fig.pos = 'H', fig.cap='Results of applying the test statistical to actual data.',  fig.subcap=c('SAR image.', '$p$-values.' ), out.width='.48\\linewidth',  fig.ncol=2}
 knitr::include_graphics("../../../Figures/PNG/Intensity.png")
-knitr::include_graphics("../../../Figures/PNG/pvalue7x7.png")
+knitr::include_graphics("../../../Figures/PNG/pvalue7x7-10.png")
 
 
 ```
 
 # Conclusion {#sec:conclusion} 
 
-We propose a testing procedure for distinguishing between fully-developed speckle and heterogeneous clutter with a test statistic based on a bootstrap-improved estimator of the Shannon entropy. 
+We proposed a testing procedure for distinguishing between fully-developed speckle and heterogeneous clutter. This tool is equipped with a test statistic based on a bootstrap-improved estimator of the Shannon entropy. 
 <!-- The Correa estimator ($\widetilde{H}_{\text{C}}$) stands out as the optimal choice, exhibiting superior performance in bias and MSE across simulations involving the $G_I^0$ distribution.  -->
 <!-- This superiority becomes particularly pronounced when the number of looks exceeds $2$. -->
-Our proposal includes the empirical size and power considering various sample sizes, numbers of looks, and nominal levels. 
+Using empirical test size and power as figures of merit, our proposal was assessed for various sample sizes, numbers of looks, and nominal levels. 
 
-The results show that the test performs acceptably with sample sizes larger than $50$. 
-However, practical scenarios often involve smaller sample sizes, typically obtained over windows of size $7 \times 7$.
+Results showed that the test presented good performance for sample sizes larger than $50$, scenarios that frequently occur in SAR image processing practice.
 
-The application of the test to actual SAR data yielded promising outcomes, effectively discerning distinct regions in the image and showing its potential for discriminating between homogeneous and heterogeneous zones.
+Applying the test to actual SAR data yielded promising results. Different regions in the image were effectively distinguished and the potential of the test to distinguish between homogeneous and heterogeneous zones was demonstrated.
 
 # Acknowledgement {-}
 
-This study was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior  (CAPES) and the Fundação de Amparo à Ciência e Tecnologia de Pernambuco (FACEPE), Brazil.
+This study was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior  (CAPES), the Fundação de Amparo à Ciência e Tecnologia de Pernambuco (FACEPE), and National Council for Scientific and Technological Development, Brazil.
 
 # References {#references .numbered}
 

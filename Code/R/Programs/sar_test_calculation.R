@@ -24,7 +24,7 @@ B <- 1
 #difference_total <- bootstrap_correa_estimator_log_mean(x_Flevoland2, B)-  (L - log(L) + lgamma(L) + (1 - L) * digamma(L)) 
 
 
-window_size <- 9
+window_size <- 7
 
 
 rows <- nrow(x)

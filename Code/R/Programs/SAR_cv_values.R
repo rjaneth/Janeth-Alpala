@@ -46,25 +46,18 @@ for (i in 1:(rows - window_size + 1)) {
     # Seleccionar ventana local
     window_data <- x[i:(i + window_size - 1), j:(j + window_size - 1)]
     
-    # Almacenar valores de x para cada ventana 
+     
     x_values <- window_data
     
     
-    # Calcular la media y la desviación estándar
+    # 
     mean_values[i, j] <- mean(window_data)
     sd_values <- sd(window_data)
     
-    # Calcular el coeficiente de variación
+    # 
     cv_values[i, j] <- sd_values / mean_values[i, j]
     
-    # Calcular entropC-a con el estimador no paramC)trico
-    #entropy_values[i, j] <- correa_estimator(window_data)
-    
-    # Calcular entropC-a verdadera
-    # true_entropy_values[i, j] <- (log(mean(window_data)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
-    
-    # difference test
-    
+
    # difference_values[i, j] <- bootstrap_correa_estimator_log_mean(window_data, B)-  (L - log(L) + lgamma(L) + (1 - L) * digamma(L)) 
     #correa_estimator(window_data)- (log(mean(window_data)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
     #test_difference_vector <- c(test_difference_vector, difference_values[i, j])
