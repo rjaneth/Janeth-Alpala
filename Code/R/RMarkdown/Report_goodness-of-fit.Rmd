@@ -67,6 +67,7 @@ library(ggthemes)
 library(geomtextpath)
 library(latex2exp)
 library(univariateML)
+library(viridis)
 #install.packages('univariateML')
 #univariateML::univariateML_models
 
@@ -107,7 +108,8 @@ source("../MainFunctions/bootstrap_al_omari_1_estimator.r")
 source("../MainFunctions/bootstrap_al_omari_2_estimator.r")
 #The next function contains the functions: generate_samples, calculate_bias_mse, generate_plot
 source("../Programs/functions_sample_bias_mse.R")# 
-
+source("../imagematrix.R")
+source("../imagematrix1.R")
 set.seed(1234567890, kind = "Mersenne-Twister")
 
 ```
@@ -121,7 +123,7 @@ The p-values of a Kolmogorov-Smirnov-Test (KS-Test) with estimated parameters ca
 
 ```{r Plot1, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
 
-load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
+load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
 
 ggplot() +
   geom_density(aes(x = as.vector(cv_values)), fill = "skyblue", color = "black") +
@@ -139,19 +141,274 @@ descdist(x1, discrete = FALSE)
 fit.weibull <- fitdist(x1, "weibull")
 plot(fit.weibull)
 fit.weibull$aic
-fit.norm <- fitdist(x1, "norm")
-fit.norm$aic
-plot(fit.norm)
+# fit.norm <- fitdist(x1, "norm")
+# fit.norm$aic
+# plot(fit.norm)
 ```
 
-```{r}
-load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
+
+```{r, eval=FALSE}
+load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
 x1<-as.vector(cv_values)
 mydata_dist <- univariateML::model_select(x1)
 mydata_dist
 ```
 
+```{r cv5, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 5x5, Flevoland"}
+load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
+alpha <- 5.452
+beta <- 2.061
 
+
+pgamma_inv <- function(x, alpha, beta) {
+  1 - pgamma(1/x, shape = alpha, rate = beta)
+}
+
+
+p_values_matrix <- matrix(NA, nrow = nrow(cv_values), ncol = ncol(cv_values))
+
+for (i in 1:nrow(cv_values)) {
+  for (j in 1:ncol(cv_values)) {
+    cv_value <- cv_values[i, j]
+    
+    
+    p_values_matrix[i, j] <- pgamma_inv(cv_value, alpha, beta)
+  }
+}
+
+
+#save(p_values_matrix, file = "./Data/results_pvalue_Flevoland_cv_300_5.Rdata")
+
+
+#source("../imagematrix.R")
+source("../imagematrix1.R")
+#hist(p_values_matrix)
+#par(mfrow=c(1,2))
+#plot(imagematrix(p_values_matrix ))
+plot(imagematrix1(p_values_matrix ))
+#plot(imagematrix(p_values_matrix >0.1))
+```
+
+
+
+
+
+```{r Plot2, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Density cv, window 7x7, Flevoland" }
+
+load("../Programs/Data/results_data_Flevoland_cv_300_7.Rdata")
+
+ggplot() +
+  geom_density(aes(x = as.vector(cv_values)), fill = "blue", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+source("../imagematrix.R")
+#hist(cv_values)
+```
+
+
+
+```{r, eval=FALSE}
+load("../Programs/Data/results_data_Flevoland_cv_300_7.Rdata")
+x2<-as.vector(cv_values)
+mydata_dist <- univariateML::model_select(x2)
+mydata_dist
+```
+```{r cv7, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 7x7, Flevoland"}
+load("../Programs/Data/results_data_Flevoland_cv_300_7.Rdata")
+alpha <- 5.762
+beta <- 2.611
+
+
+pgamma_inv <- function(x, alpha, beta) {
+  1 - pgamma(1/x, shape = alpha, rate = beta)
+}
+
+
+p_values_matrix <- matrix(NA, nrow = nrow(cv_values), ncol = ncol(cv_values))
+
+for (i in 1:nrow(cv_values)) {
+  for (j in 1:ncol(cv_values)) {
+    cv_value <- cv_values[i, j]
+    
+    
+    p_values_matrix[i, j] <- pgamma_inv(cv_value, alpha, beta)
+  }
+}
+
+
+#save(p_values_matrix, file = "./Data/results_pvalue_Flevoland_cv_300_5.Rdata")
+
+
+source("../imagematrix.R")
+#hist(p_values_matrix)
+par(mfrow=c(1,2))
+#plot(imagematrix(equalize(x)))
+plot(imagematrix(p_values_matrix))
+plot(imagematrix(p_values_matrix >0.1))
+```
+
+
+
+```{r, eval=FALSE}
+load("../Programs/Data/results_data_Flevoland_cv_300_9.Rdata")
+x2<-as.vector(cv_values)
+mydata_dist <- univariateML::model_select(x2)
+mydata_dist
+```
+
+
+```{r cv9, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 9x9, Flevoland"}
+
+#Los parametros fueron estimados con phitter.io
+load("../Programs/Data/results_data_Flevoland_cv_300_9.Rdata")
+alpha <- 3.58
+beta <- 1.32
+
+
+pgamma_inv <- function(x, alpha, beta) {
+  1 - pgamma(1/x, shape = alpha, rate = beta)
+}
+
+
+p_values_matrix <- matrix(NA, nrow = nrow(cv_values), ncol = ncol(cv_values))
+
+for (i in 1:nrow(cv_values)) {
+  for (j in 1:ncol(cv_values)) {
+    cv_value <- cv_values[i, j]
+    
+    
+    p_values_matrix[i, j] <- pgamma_inv(cv_value, alpha, beta)
+  }
+}
+
+
+#save(p_values_matrix, file = "./Data/results_pvalue_Flevoland_cv_300_5.Rdata")
+
+
+source("../imagematrix.R")
+#hist(p_values_matrix)
+par(mfrow=c(1,2))
+#plot(imagematrix(equalize(x)))
+plot(imagematrix(p_values_matrix))
+plot(imagematrix(p_values_matrix >0.1))
+```
+
+```{r Plot3, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Density cv, window 5x5, Ottawa" }
+
+load("../Programs/Data/results_data_Ottawa_cv_512_5.Rdata")
+
+ggplot() +
+  geom_density(aes(x = as.vector(cv_values)), fill = "red", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+```
+
+
+
+```{r 5ottawa, eval=FALSE}
+load("../Programs/Data/results_data_Ottawa_cv_512_5.Rdata")
+x2<-as.vector(cv_values)
+mydata_dist <- univariateML::model_select(x2)
+mydata_dist
+```
+
+
+```{r cvOttawa, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 5x5, Ottawa"}
+
+#Los parametros fueron estimados con phitter.io
+load("../Programs/Data/results_data_Ottawa_cv_512_5.Rdata")
+alpha <- 5.29
+beta <- 2.20 
+
+
+pgamma_inv <- function(x, alpha, beta) {
+  1 - pgamma(1/x, shape = alpha, rate = beta)
+}
+
+
+p_values_matrix <- matrix(NA, nrow = nrow(cv_values), ncol = ncol(cv_values))
+
+for (i in 1:nrow(cv_values)) {
+  for (j in 1:ncol(cv_values)) {
+    cv_value <- cv_values[i, j]
+    
+    
+    p_values_matrix[i, j] <- pgamma_inv(cv_value, alpha, beta)
+  }
+}
+
+
+#save(p_values_matrix, file = "./Data/results_pvalue_Flevoland_cv_300_5.Rdata")
+
+
+source("../imagematrix.R")
+#hist(p_values_matrix)
+par(mfrow=c(1,2))
+#plot(imagematrix(equalize(x)))
+plot(imagematrix(p_values_matrix))
+plot(imagematrix(p_values_matrix >0.1))
+```
+
+```{r Plotcqv, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Density cqv, window 5x5, Ottawa" }
+
+load("../Programs/Data/results_data_Ottawa_cqv_512_5.Rdata")
+
+ggplot() +
+  geom_density(aes(x = as.vector(cv_values)), fill = "green", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+```
+
+
+```{r 5ottawa_cqv, eval=FALSE}
+load("../Programs/Data/results_data_Ottawa_cqv_512_5.Rdata")
+x2<-as.vector(cv_values)
+mydata_dist <- univariateML::model_select(x2)
+mydata_dist
+```
+
+
+
+```{r cqvOttawa_5, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 5x5, Ottawa"}
+
+#Los parametros fueron estimados con phitter.io
+load("../Programs/Data/results_data_Ottawa_cv_512_5.Rdata")
+alpha <- 3.58
+beta <- 1.32
+
+
+pgamma_inv <- function(x, alpha, beta) {
+  1 - pgamma(1/x, shape = alpha, rate = beta)
+}
+
+
+p_values_matrix <- matrix(NA, nrow = nrow(cv_values), ncol = ncol(cv_values))
+
+for (i in 1:nrow(cv_values)) {
+  for (j in 1:ncol(cv_values)) {
+    cv_value <- cv_values[i, j]
+    
+    
+    p_values_matrix[i, j] <- pgamma_inv(cv_value, alpha, beta)
+  }
+}
+
+
+#save(x, p_values_matrix, file = "./Data/results_pvalue_Flevoland_cv_300_5.Rdata")
+
+
+source("../imagematrix.R")
+hist(p_values_matrix)
+par(mfrow=c(1,2))
+plot(imagematrix(equalize(x)))
+plot(imagematrix(p_values_matrix))
+plot(imagematrix(p_values_matrix >0.05))
+```
+```{r Plotcqvmad, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Density cqv, window 5x5, Ottawa" }
+
+load("../Programs/Data/results_data_Ottawa_cd_mad_matrix_512_5.Rdata")
+
+ggplot() +
+  geom_density(aes(x = as.vector(cv_values)), fill = "pink", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+```
 
 <!-- ```{r} -->
 <!-- load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata") -->
@@ -176,57 +433,3 @@ mydata_dist
 
 
 <!-- ``` -->
-
-
-```{r}
-# load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
-# x1<-as.vector(cv_values)
-# n.sims <- 5
-# 
-# stats_gamma <- replicate(n.sims, {
-#   r <- rgamma(n = length(x1),
-#               shape = fit.gamma$estimate["shape"],
-#               scale = fit.gamma$estimate["scale"]
-#   )
-#   estfit_gamma <- fitdist(r, "gamma") # Añadido para tener en cuenta los parámetros estimados
-#   as.numeric(ks.test(r,
-#                      "pgamma",
-#                      shape = estfit_gamma$estimate["shape"],
-#                      scale = estfit_gamma$estimate["scale"])$statistic
-#   )
-# })
-# # Suponiendo que has ejecutado la simulación con la distribución gamma y guardado los resultados en stats_gamma
-# 
-# # Gráfico de la ECDF de las estadísticas de la prueba KS simuladas
-# plot(ecdf(stats_gamma), las = 1, main = "KS-test statistic simulation (CDF) - Gamma Distribution", col = "darkorange", lwd = 1.7)
-# grid()
-
-
-```
-
-
-<!-- ```{r} -->
-<!-- # Suponiendo que ya has cargado los datos y ajustado la distribución Rayleigh -->
-<!-- load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata") -->
-<!-- x1 <- as.vector(cv_values) -->
-<!-- n.sims <- 10 -->
-
-<!-- stats_rayleigh <- replicate(n.sims, { -->
-<!--   r <- rrayleigh(n = length(x1), -->
-<!--                  scale = fit_rayleigh$estimate["scale"] -->
-<!--   ) -->
-<!--   estfit_rayleigh <- fitdist(r, "rayleigh") # Añadido para tener en cuenta los parámetros estimados -->
-<!--   as.numeric(ks.test(r, -->
-<!--                      "prayleigh", -->
-<!--                      scale = estfit_rayleigh$estimate["scale"] -->
-<!--                )$statistic -->
-<!--   ) -->
-<!-- }) -->
-
-<!-- plot(ecdf(stats_rayleigh), las = 1, main = "KS-test statistic simulation (CDF) - Rayleigh Distribution", col = "darkorange", lwd = 1.7) -->
-<!-- grid() -->
-
-<!-- ``` -->
-
-
-

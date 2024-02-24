@@ -186,72 +186,120 @@ calculate_bias_mse_gi0 <- function(sample_sizes, R,B, mu, alpha, L, estimators) 
 }
 
 
+# generate_plot_gi0_esp <- function(results_gi0, mu_values, selected_estimators, ncol = 2, nrow = 2) {
+#  
+#   plot_list <- list()
+#   
+#   for (mu_val in mu_values) {
+#     
+#     df <- results_gi0[[as.character(mu_val)]]
+#     
+#     
+#     df_filtered <- df[df$Estimator %in% names(selected_estimators), ]
+#     
+#     
+#     df_filtered$Estimator <- selected_estimators[df_filtered$Estimator]
+#     
+#     
+#     df_filtered$Estimator <- as.character(df_filtered$Estimator)
+#     
+#     plot_bias <- ggplot(df_filtered, aes(x = n, y = Bias, color = Estimator)) +
+#       geom_hline(yintercept = 0) +
+#       geom_point(size = 2) +
+#       geom_line(linetype = "solid", linewidth = 0.5) +
+#       labs(y = "Bias", x = expression(italic(n))) + #x = expression("Sample size"~(italic(n))))
+#       #labs(y = "Bias", x = expression("Sample size"~"\\big("italic(n)"\\big)")) +
+#        # scale_color_discrete(labels = TeX(df_filtered$Estimator)) +
+#       scale_color_manual(values = pal_jama()(7)[1:6], labels = TeX(df_filtered$Estimator)) +
+#       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
+#       coord_cartesian(clip = 'off')+
+#       theme(legend.position = "bottom", legend.box = "horizontal", legend.box.margin = margin(0, 0, 0, 0)) +
+#       guides(color = guide_legend(nrow = 1))
+#     
+#     
+#     # # 
+#     # if (mu_val != mu_values[1]) {
+#     #   plot_bias = plot_bias + theme(legend.position = "top")
+#     # }
+#     
+#     plot_mse <- ggplot(df_filtered, aes(x = n, y = MSE, color = Estimator)) +
+#       geom_hline(yintercept = 0) +
+#       geom_point(size = 2) +
+#       geom_line(linetype = "solid", linewidth = 0.5) +
+#       labs(y = "MSE", x = expression(italic(n))) +
+#       #scale_color_discrete(labels = TeX(df_filtered$Estimator)) +
+#       scale_color_manual(values = pal_jama()(7)[1:6], labels = TeX(df_filtered$Estimator)) +
+#       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
+#       coord_cartesian(clip = 'off')+
+#       theme(legend.position = "bottom", legend.box = "horizontal", legend.box.margin = margin(0, 0, 0, 0)) +
+#       guides(color = guide_legend(nrow = 1))
+#     
+#     
+#     
+#     # if (mu_val != mu_values[1]) {
+#     #   plot_mse = plot_mse + theme(legend.position = "top")
+#     # }
+#     
+#     
+#     plot_list[[as.character(mu_val)]] <- plot_bias + plot_mse
+#   }
+#   
+#   
+#   # combined_plot <- wrap_plots(plot_list, ncol = ncol, nrow = nrow) +
+#   #   plot_layout(guides = "collect")
+#   combined_plot <- wrap_plots(plot_list, ncol = ncol, nrow = nrow) +
+#     plot_layout(guides = "collect")
+#  
+#   return(combined_plot)
+# }
+
+# el anterior codigo genera escala automatica en el eje x
+
 generate_plot_gi0_esp <- function(results_gi0, mu_values, selected_estimators, ncol = 2, nrow = 2) {
- 
+  
   plot_list <- list()
   
   for (mu_val in mu_values) {
     
     df <- results_gi0[[as.character(mu_val)]]
     
-    
     df_filtered <- df[df$Estimator %in% names(selected_estimators), ]
-    
-    
     df_filtered$Estimator <- selected_estimators[df_filtered$Estimator]
-    
-    
     df_filtered$Estimator <- as.character(df_filtered$Estimator)
     
     plot_bias <- ggplot(df_filtered, aes(x = n, y = Bias, color = Estimator)) +
       geom_hline(yintercept = 0) +
       geom_point(size = 2) +
       geom_line(linetype = "solid", linewidth = 0.5) +
-      labs(y = "Bias", x = expression(italic(n))) + #x = expression("Sample size"~(italic(n))))
-      #labs(y = "Bias", x = expression("Sample size"~"\\big("italic(n)"\\big)")) +
-       # scale_color_discrete(labels = TeX(df_filtered$Estimator)) +
-      scale_color_manual(values = pal_jama()(7)[1:6], labels = TeX(df_filtered$Estimator)) +
+      labs(y = "Bias", x = expression(italic(n))) +
+      scale_x_continuous(breaks = c(9, 25, 49, 81, 121)) +  # Añadir esta línea para escala personalizada
+      scale_color_manual(values = pal_jama()(7)[1:6], labels = TeX(df_filtered$Estimator)) + # Eliminar labels y TeX
       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
-      coord_cartesian(clip = 'off')+
+      coord_cartesian(clip = 'off') +
       theme(legend.position = "bottom", legend.box = "horizontal", legend.box.margin = margin(0, 0, 0, 0)) +
       guides(color = guide_legend(nrow = 1))
-    
-    
-    # # 
-    # if (mu_val != mu_values[1]) {
-    #   plot_bias = plot_bias + theme(legend.position = "top")
-    # }
     
     plot_mse <- ggplot(df_filtered, aes(x = n, y = MSE, color = Estimator)) +
       geom_hline(yintercept = 0) +
       geom_point(size = 2) +
       geom_line(linetype = "solid", linewidth = 0.5) +
       labs(y = "MSE", x = expression(italic(n))) +
-      #scale_color_discrete(labels = TeX(df_filtered$Estimator)) +
-      scale_color_manual(values = pal_jama()(7)[1:6], labels = TeX(df_filtered$Estimator)) +
+      scale_x_continuous(breaks = c(9, 25, 49, 81, 121)) +  # Añadir esta línea
+      scale_color_manual(values = pal_jama()(7)[1:6], labels = TeX(df_filtered$Estimator)) + # Eliminar labels y TeX
       annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("mu == %s", mu_val)), hjust = 4.0, vjust = -0.1, size = 3) +
-      coord_cartesian(clip = 'off')+
+      coord_cartesian(clip = 'off') +
       theme(legend.position = "bottom", legend.box = "horizontal", legend.box.margin = margin(0, 0, 0, 0)) +
       guides(color = guide_legend(nrow = 1))
-    
-    
-    
-    # if (mu_val != mu_values[1]) {
-    #   plot_mse = plot_mse + theme(legend.position = "top")
-    # }
-    
     
     plot_list[[as.character(mu_val)]] <- plot_bias + plot_mse
   }
   
-  
-  # combined_plot <- wrap_plots(plot_list, ncol = ncol, nrow = nrow) +
-  #   plot_layout(guides = "collect")
   combined_plot <- wrap_plots(plot_list, ncol = ncol, nrow = nrow) +
     plot_layout(guides = "collect")
- 
+  
   return(combined_plot)
 }
+
 
 # generate_plot_gi0_esp <- function(results_gi0, mu_values, selected_estimators, ncol = 2, nrow = 2) {
 #   # Lista para almacenar los gráficos

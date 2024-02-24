@@ -69,7 +69,9 @@ header-includes:
    - \usepackage{amsmath}
    - \usepackage{mathabx}
    - \usepackage{subfig}
-   #- \usepackage{caption}
+   - \usepackage{subcaption}
+   - \usepackage{caption}
+   
    #- \captionsetup[table]{skip=0pt}
    - "\\setcitestyle{square,comma,numbers,sort&compress}" # citation style to numerical, work with \cite{} or [@]
 
@@ -416,7 +418,7 @@ calculate_results_gi0 <- function(sample_sizes, R, B1, mu_values, alpha, L, esti
 results_gi0 <- calculate_results_gi0(sample_sizes, R, B1, mu_values, alpha, L, estimators)
 
 
-save(results_gi0, file = "./Data/resultsgi0.Rdata")
+save(results_gi0, file = "./Data/resultsgi0_1.Rdata")
 
 
 ```
@@ -425,7 +427,7 @@ save(results_gi0, file = "./Data/resultsgi0.Rdata")
 ```{r Plot_bias_mse_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE, $L=5$ and  $\\alpha=-10$.", fig.width=6, fig.height=3.0}
 
 
-load("./Data/resultsgi0.Rdata")
+load("./Data/resultsgi0_1.Rdata")
 
 
 estimators_to_plot <- c("Correa", "Ebrahimi", "Al Omari",  "Correa Bootstrap", "Ebrahimi Bootstrap", "Al Omari Bootstrap" )
@@ -1098,13 +1100,21 @@ This image has $300 \times 300$ pixels and covers urban areas and agricultural f
 <!-- The metadata associated with these original SAR images includes a number of looks $L = 5$. -->
 
 Fig.&nbsp;\ref{fig:Real_SAR_Images}(a) shows the SAR image.
-We used $7 \times 7$ local sliding windows for the test. In Fig.&nbsp;\ref{fig:Real_SAR_Images}(b), $p$-values higher than a $10\%$ significance level are shown. This approach allows to emphasize regions where there is not enough evidence against the null hypothesis. The new image reveals two distinct regions: darker background indicates homogeneity, while lighter backgrounds represent heterogeneous areas.
-```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",fig.pos = 'H', fig.cap='Results of applying the test statistical to actual data.',  fig.subcap=c('SAR image.', '$p$-values.' ), out.width='.48\\linewidth',  fig.ncol=2}
-knitr::include_graphics("../../../Figures/PNG/Intensity.png")
-knitr::include_graphics("../../../Figures/PNG/pvalue7x7-10.png")
+We used $7 \times 7$ local sliding windows for the test. 
+In Fig. \ref{fig:Real_SAR_Images}(b), the heatmap of the $p$-values refers to the decisions at the $5\%$ significance level, with the orange areas representing a rejection of the null hypothesis, i.e., heterogeneous areas, while the blue areas representing non-rejection at the $5\%$ significance level, indicating homogeneity.
+```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",fig.pos = 'H', fig.cap='Results of applying the test statistical to actual data.',  fig.subcap=c('SAR image.', '$p$-values.' ), out.width = c("40mm", "60mm"),  fig.ncol=2, fig.width = 20, fig.height = 10}
+knitr::include_graphics("../../../Figures/PNG/Intensity.png")#out.width='.55\\linewidth'
+knitr::include_graphics("../../../Figures/PDF/color7x7.pdf")
 
 
 ```
+
+
+
+
+
+
+
 
 # Conclusion {#sec:conclusion} 
 

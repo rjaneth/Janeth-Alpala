@@ -13,7 +13,9 @@ source("../../../Code/R/MainFunctions/correa_estimator.R")
 #                             headerfile='../../../Data/SAR/Flevoland_100/Intensity_VV.hdr')
 
 x <- myread.ENVI(file='../../../Data/SAR/Flevoland_300/Intensity_VV.img', 
-                            headerfile='../../../Data/SAR/Flevoland_300/Intensity_VV.hdr')
+                             headerfile='../../../Data/SAR/Flevoland_300/Intensity_VV.hdr')
+x <- myread.ENVI(file='../../../Data/SAR/Ottawa_512/Intensity_VV.img', 
+                 headerfile='../../../Data/SAR/Ottawa_512/Intensity_VV.hdr')
 
 
 
@@ -24,7 +26,7 @@ B <- 1
 #difference_total <- bootstrap_correa_estimator_log_mean(x_Flevoland2, B)-  (L - log(L) + lgamma(L) + (1 - L) * digamma(L)) 
 
 
-window_size <- 7
+window_size <- 5
 
 
 rows <- nrow(x)
@@ -67,7 +69,7 @@ for (i in 1:(rows - window_size + 1)) {
 
 #save(mean_values, entropy_values, true_entropy_values, difference_values, test_difference_vector, file = "results_data.Rdata")
 #save(test_difference_vector, file = "./Data/results_data_Flevoland_100_5.Rdata")
-save(difference_values, test_difference_vector, file = "./Data/results_data_Flevoland_300_9.Rdata")
+save(difference_values, test_difference_vector, file = "./Data/results_data_Ottawa_512_5.Rdata")
 
 
 
