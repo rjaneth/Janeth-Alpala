@@ -1104,7 +1104,7 @@ We used $7 \times 7$ local sliding windows for the test.
 In Fig. \ref{fig:Real_SAR_Images}(b), the heatmap of the $p$-values refers to the decisions at the $5\%$ significance level, with the orange areas representing a rejection of the null hypothesis, i.e., heterogeneous areas, while the blue areas representing non-rejection at the $5\%$ significance level, indicating homogeneity.
 ```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",fig.pos = 'H', fig.cap='Results of applying the test statistical to actual data.',  fig.subcap=c('SAR image.', '$p$-values.' ), out.width = c("40mm", "60mm"),  fig.ncol=2, fig.width = 20, fig.height = 10}
 knitr::include_graphics("../../../Figures/PNG/Intensity.png")#out.width='.55\\linewidth'
-knitr::include_graphics("../../../Figures/PDF/color7x7.pdf")
+knitr::include_graphics("../../../Figures/PDF/pvalues_7x7_col.pdf")
 
 
 ```

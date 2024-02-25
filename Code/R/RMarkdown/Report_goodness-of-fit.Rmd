@@ -243,7 +243,10 @@ source("../imagematrix.R")
 par(mfrow=c(1,2))
 #plot(imagematrix(equalize(x)))
 plot(imagematrix(p_values_matrix))
-plot(imagematrix(p_values_matrix >0.1))
+plot(imagematrix(p_values_matrix <0.05))
+valores_menores_que_0_05 <- sum(p_values_matrix < 0.05)
+cat("Número de valores menores que 0.05:", valores_menores_que_0_05, "\n")
+
 ```
 
 
@@ -340,7 +343,7 @@ for (i in 1:nrow(cv_values)) {
 
 
 source("../imagematrix.R")
-#hist(p_values_matrix)
+hist(p_values_matrix)
 par(mfrow=c(1,2))
 #plot(imagematrix(equalize(x)))
 plot(imagematrix(p_values_matrix))
