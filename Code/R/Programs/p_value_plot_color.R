@@ -33,6 +33,8 @@ calculate_p_values_matrix <- function(data_matrix, sigma) {
 }
 
 
+
+
 mean_difference_values <- mean(difference_values, na.rm = TRUE)
 sd_difference_values <- sd(difference_values, na.rm = TRUE)
 
@@ -41,6 +43,6 @@ p_values_matrix <- calculate_p_values_matrix(difference_values, sd_difference_va
 
 
 source("../imagematrix.R")
-
-plot(imagematrix(p_values_matrix),significance_level = 0.3)
+#hist(p_values_matrix)
+plot(imagematrix(p_values_matrix),significance_level = 0.05)
 

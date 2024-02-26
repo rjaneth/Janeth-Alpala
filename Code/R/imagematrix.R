@@ -41,8 +41,8 @@ imageType <- function(x) {
 
 
 
-
-plot.imagematrix <- function(x, significance_level = 0.05, colors = colorRampPalette(c("#FF6600","#9ECAE1","#253494" ))(100), ...) {
+#"#9ECAE1",
+plot.imagematrix <- function(x, significance_level = 0.05, colors = colorRampPalette(c("#FF6600","#253494" ))(100), ...) {
   if (is.null(attr(x, "type"))) stop("Type should be specified.")
 
   colmat <- matrix(0, nrow = nrow(x), ncol = ncol(x))
@@ -59,7 +59,7 @@ plot.imagematrix <- function(x, significance_level = 0.05, colors = colorRampPal
   color_palette <- colorRampPalette(colors)(100)
 
   layout(matrix(c(1, 2), nrow = 1), widths = c(1, 0.2))
-  par(mar = c(0, 0, 0, 5))
+  par(mar = c(0, 0, 0, 4))
   par(oma = c(0, 0, 0, 0))
   par(omi = c(0, 0, 0, 0))
 
@@ -68,11 +68,14 @@ plot.imagematrix <- function(x, significance_level = 0.05, colors = colorRampPal
         z = t(colmat[nrow(colmat):1, , drop = FALSE]), col = color_palette,
         xlab = "", ylab = "", axes = FALSE, asp = 1, ...)
 
+
  
- image.plot(zlim = c(0, 1), legend.only = TRUE, col = colors, horizontal = FALSE,
+ color_palette2 <- colorRampPalette(c("#FF6600","#253494", "#253494","#253494", "#253494", "#253494"))(100)
+ image.plot(zlim = c(0, 1), legend.only = TRUE, col = color_palette2, horizontal = FALSE,
             axis.args = list(at = c(0, 0.2, 0.4, 0.6, 0.8, significance_level, 1), 
                              labels = c("0", "0.2", "0.4", "0.6", "0.8", as.character(significance_level), "1")),
             legend.shrink = 0.8)
+
 
 
 }
