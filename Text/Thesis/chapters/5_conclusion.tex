@@ -1,0 +1,27 @@
+\chapter{Conclusions and future perspectives}\label{chp:conclusions}
+
+This work provides a practical and theoretical answer to the
+following physical question: How to detect heterogeneity in SAR images,
+assuming that the SAR intensity follows the \(\Gamma_{\text{SAR}}\)
+model. To this end, we proposed three novel hypothesis tests, one from
+the Shannon entropy and two from the variation coefficient variants. The
+performance of our proposals was evaluated using a Monte Carlo study.
+The results showed that they were conservative in estimating the
+probability of a type I error (false alarm rate) and the test power
+(probability of detection), which increases with sample size. An
+application to three recent SAR images was performed. The results showed
+that the Shannon entropy-based test was more robust than the CV-based
+tests. In addition, all tests could recognize images with different
+textures and identify edges where the texture type changes.
+
+
+\section*{Future perspectives}
+
+For future research directions, there is a promising avenue in estimating the equivalent number of looks (ENL), a crucial parameter in the statistical modeling of multi-look synthetic aperture radar (SAR) imagery. This parameter serves as an indicator of heterogeneity and can significantly impact the accuracy of statistical analyses.
+
+Additionally, we plan to explore the estimation of ENL in polarimetric SAR (PolSAR) data. This extension will involve:
+\begin{itemize}
+	\item Estimating the test on each of the three intensity channels of fully PolSAR data
+	\item Analyzing the joint distribution
+	\item Proposing techniques that generalize the test statistic  into the analysis of PolSAR data.
+\end{itemize}

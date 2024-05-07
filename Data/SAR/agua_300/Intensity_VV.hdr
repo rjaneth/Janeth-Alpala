@@ -1,0 +1,15 @@
+ENVI
+description = {Intensity from complex data - Unit: intensity}
+samples = 300
+lines = 300
+bands = 1
+header offset = 0
+file type = ENVI Standard
+data type = 4
+interleave = bsq
+byte order = 1
+band names = { Intensity_VV }
+map info = {Geographic Lat/Lon,151.5,151.5,-105.33200207180653,20.615368116019937,3.593261136478058E-4,3.593261136478058E-4,WGS84,units=Degrees}
+coordinate system string = {GEOGCS["WGS84(DD)", DATUM["WGS84", SPHEROID["WGS84", 6378137.0, 298.257223563]], PRIMEM["Greenwich", 0.0], UNIT["degree", 0.017453292519943295], AXIS["Geodetic longitude", EAST], AXIS["Geodetic latitude", NORTH]]}
+data gain values = {1.0}
+data offset values = {0.0}

@@ -1,5 +1,5 @@
 ---
-title: Identifying Departures from the Fully Developed Speckle Hypothesis in Intensity SAR Data with Non-Parametric Estimation of the Entropy
+title: Identifying departures from the fully developed speckle hypothesis in intensity SAR data with non-parametric estimation of the entropy
 affiliation:
   
   author-columnar: true # uncomment this line to use
@@ -1101,15 +1101,16 @@ This image has $300 \times 300$ pixels and covers urban areas and agricultural f
 
 Fig.&nbsp;\ref{fig:Real_SAR_Images}(a) shows the SAR image.
 We used $7 \times 7$ local sliding windows for the test. 
-In Fig. \ref{fig:Real_SAR_Images}(b), the heatmap of the $p$-values refers to the decisions at the $5\%$ significance level, with the orange areas representing a rejection of the null hypothesis, i.e., heterogeneous areas, while the blue areas representing non-rejection at the $5\%$ significance level, indicating homogeneity.
+Fig.&nbsp;\ref{fig:Real_SAR_Images}(b) shows the heatmap of the $p$-values.
+The color table maps all above $0.05$ into dark blue (no evidence to reject the fully-developed speckly hypothesis), and those below  $0.05$ into a gradient between blue and orange (evidence to reject the hypothesis).
+
+
 ```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",fig.pos = 'H', fig.cap='Results of applying the test statistical to actual data.',  fig.subcap=c('SAR image.', '$p$-values.    ' ), out.width = c("40mm", "59mm"),  fig.ncol=2, fig.width = 20, fig.height = 10}
 knitr::include_graphics("../../../Figures/PNG/Intensity.png")#out.width='.55\\linewidth'
 knitr::include_graphics("../../../Figures/PDF/pvalue_f.pdf")
-
-
 ```
 
-
+These results show that the map of $p$-values correctly identify regions with different levels of heterogeneity.
 
 
 

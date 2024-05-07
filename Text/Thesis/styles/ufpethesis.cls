@@ -76,7 +76,7 @@
 }
 
 % Default options
-\ExecuteOptions{en,phd,modern,print,twoside}
+\ExecuteOptions{en,qual,modern,print,twoside}
 \ProcessOptions
 
 \LoadClass[12pt,a4paper]{book}
@@ -136,7 +136,7 @@
 \gdef\@femalecoadvisertitle{Co-orientadora}
 \gdef\@bachelordissertation{Trabalho de Graduação}
 \gdef\@mastersdissertation{Dissertação de Mestrado}
-\gdef\@phdqualifying{Monografia de Qualificação}
+\gdef\@phdqualifying{Qualificação de Doutorado}
 \gdef\@phdproposal{Proposta de Tese de Doutorado}
 \gdef\@phdthesis{Tese de Doutorado}
 \gdef\@bachelordegree{Bacharel}
@@ -146,7 +146,7 @@
 Trabalho apresentado ao Programa de
 \@program\ do \if\@showdepartment1\@department\ \else\@institute\ \fi
 da \@university\ como requisito para obtenção do
-grau de \@phddegree\ em \@majorfield.}
+grau de \@phdqualifying\ em \@majorfield.}
 \gdef\resumoname{Resumo}
 \gdef\abstrname{Abstract}
 \gdef\keywordsnamePT{Palavras-chave}
@@ -319,10 +319,13 @@ grau de \@phddegree\ em \@majorfield.}
 
 \setlength{\topmargin}{0mm}
 \setlength{\textheight}{\paperheight-\headheight-\headsep-\footskip-2in}
+%\setlength{\oddsidemargin}{10mm}
 \setlength{\oddsidemargin}{0mm}
 \setlength{\evensidemargin}{0mm}
+%\setlength{\evensidemargin}{10mm}
 \setlength{\marginparwidth}{0mm}
 \setlength{\marginparsep}{0mm}
+%\setlength{\textwidth}{\paperwidth-2in-20mm}
 \setlength{\textwidth}{\paperwidth-2in}
 
 
@@ -791,14 +794,25 @@ grau de \@phddegree\ em \@majorfield.}
   \if\@showdepartment1\\\@department\fi
   \vskip 25mm
   \@program
-  \vskip 45mm
+	\vskip\baselineskip	
+      \vskip\baselineskip
+	\@texttype	
+  \vskip 20mm
   \begin{minipage}{110mm}
     \begin{center}
       {\Large\bfseries\@title}
       \vskip\baselineskip
+			\vskip\baselineskip
       \@author
-      \vskip\baselineskip
-      \@texttype
+		   \vskip\baselineskip      		
+    \end{center}
+		\vskip\baselineskip		
+		\vskip\baselineskip
+		\begin{center}
+    \begin{tabular}{rl}
+    {\@advisertitle:}&\@adviser\\
+    \if\@showcoadviser1{\@coadvisertitle:}&\@coadviser\\\fi
+    \end{tabular}
     \end{center}
   \end{minipage}\\
   \vfill

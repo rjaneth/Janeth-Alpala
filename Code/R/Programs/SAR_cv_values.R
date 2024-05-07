@@ -15,10 +15,22 @@ source("../../../Code/R/MainFunctions/correa_estimator.R")
 # x <- myread.ENVI(file='../../../Data/SAR/Flevoland_300/Intensity_VV.img', 
 #                  headerfile='../../../Data/SAR/Flevoland_300/Intensity_VV.hdr')
 
-x <- myread.ENVI(file='../../../Data/SAR/Ottawa_512/Intensity_VV.img', 
+x <- myread.ENVI(file='../../../Data/SAR/Ottawa_512/Intensity_VV.img',
                  headerfile='../../../Data/SAR/Ottawa_512/Intensity_VV.hdr')
 
+# x <- myread.ENVI(file='../../../Data/SAR/Flevoland_600/Intensity_VV.img', 
+#                  headerfile='../../../Data/SAR/Flevoland_600/Intensity_VV.hdr')
 
+# x <- myread.ENVI(file='../../../Data/SAR/Ottawa_512/Intensity_VV.img',
+#                  headerfile='../../../Data/SAR/Ottawa_512/Intensity_VV.hdr')
+
+# x <- myread.ENVI(file='../../../Data/SAR/SanFrancisco_650/Intensity_VV.img', 
+#                  headerfile='../../../Data/SAR/SanFrancisco_650/Intensity_VV.hdr')
+# x <- myread.ENVI(file='../../../Data/SAR/Flevoland_600/Intensity_VV.img', 
+#                  headerfile='../../../Data/SAR/Flevoland_600/Intensity_VV.hdr')
+
+# x <- myread.ENVI(file='../../../Data/SAR/Frankfurt_512/Intensity_VV.img', 
+#                  headerfile='../../../Data/SAR/Frankfurt_512/Intensity_VV.hdr')
 
 L <- 5
 #B <- 1
@@ -26,7 +38,7 @@ L <- 5
 
 
 
-window_size <- 5
+window_size <- 7
 
 
 rows <- nrow(x)
@@ -62,8 +74,8 @@ for (i in 1:(rows - window_size + 1)) {
 
 
 #save(test_difference_vector, file = "./Data/results_data_Flevoland_100_5.Rdata")
-save( cv_values, x, file = "./Data/results_data_Ottawa_cv_512_5.Rdata")
-
+#save( cv_values, x, file = "./Data/results_data_Frankfurt_512_cv_7.Rdata")Ottawa_512
+save( cv_values, x, file = "./Data/results_data_Ottawa_512_CV.Rdata")
 
 
 # print(mean_values)

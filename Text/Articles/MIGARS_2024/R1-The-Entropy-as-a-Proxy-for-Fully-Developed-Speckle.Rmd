@@ -1,0 +1,1445 @@
+---
+title: Identifying Departures from the Fully Developed Speckle Hypothesis in Intensity SAR Data with Non-Parametric Estimation of the Entropy
+affiliation:
+  
+  author-columnar: true # uncomment this line to use
+  
+
+  institution:
+    - name: Universidade Federal de Pernambuco
+      department: Departamento de Estatística
+      location: Recife, PE, Brazil
+      email: janeth.alpala@ufpe.br, abraao@de.ufpe.br 
+      mark: 1
+      author:
+      - name: Rosa Janeth Alpala, Abraão D.\ C.\ Nascimento 
+      
+    - name: Victoria University of Wellington
+      department: School of Mathematics and Statistics
+      location: Wellington, New Zealand
+      email: alejandro.frery@vuw.ac.nz
+      mark: 2
+      author:
+        - name: Alejandro C.\ Frery
+    
+
+keywords: ["SAR", "entropy estimation", "non-parametric analysis", "order statistics"]
+abstract: |
+  SAR Data are affected by speckle, a non-additive and non-gaussian interference noise-like pattern.
+  The type of distribution these data follow is paramount for their processing and analysis.
+  Good statistical models provide flexibility and accuracy, often at the cost of using several parameters.
+  The $\mathcal{G}^0$ distribution is one of the most successful models for SAR data. 
+  It includes the Gamma law as a particular case which arises in the presence of fully developed speckle.
+  Although the latter is a limit distribution of the former, using the same estimation technique for the more general model is numerically unfeasible.
+  We propose a two-stage estimation procedure: first, we verify the hypothesis that the data are fully-developed speckle. If this assumption is rejected, we proceed to estimate the parameters that index the $\mathcal G^0$ distribution; otherwise, we proceed with the Gamma model.
+  Given the uncertainty of the underlying distribution, and the negative impact that using an inadequate model has on maximum likelihood estimation, we employ a non-parametric approach to estimate entropy under the fully-developed speckle hypothesis.
+
+# use some specific Tex packages if needed. 
+#with_ifpdf: true
+#with_cite: true
+# amsmath need to be true to use with bookdown for referencing equations.
+with_amsmath: true
+# with_algorithmic: true
+# with_array: true
+# with_dblfloatfix: true
+
+
+header-includes:
+   - \usepackage[english]{babel}
+   - \usepackage{bm,bbm}
+   - \usepackage{mathrsfs}
+   - \usepackage{siunitx}
+   - \usepackage{graphicx}
+   - \usepackage{url}
+   - \usepackage[T1]{fontenc}
+   - \usepackage{polski}
+   - \usepackage{booktabs}
+   - \usepackage{color}
+   - \usepackage{mathtools}
+   - \usepackage[utf8]{inputenc}
+   - \usepackage{hyperref}
+   - \hypersetup{draft}
+   - \usepackage{graphicx}
+   - \usepackage{float}
+   - \usepackage{booktabs}
+   - \usepackage{array}
+   - \usepackage{multirow}
+   - \usepackage{wrapfig}
+   - \usepackage{colortbl}
+   - \usepackage{pdflscape}
+   - \usepackage{xcolor}
+   - \usepackage{amsmath}
+   - \usepackage{mathabx}
+   - \usepackage{subfig}
+   #- \usepackage{subcaption}
+   - \usepackage{pgf}
+   - "\\setcitestyle{square,comma,numbers,sort&compress}" # citation style to numerical, work with \cite{} or [@]
+
+
+output:
+  rticles::ieee_article:
+    number_sections: TRUE
+    citation_package: natbib
+
+
+bibliography: ../../Common/references.bib
+
+biblio-style: ieeetr
+
+
+#link-citations: yes
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache=TRUE)
+#knitr::opts_chunk$set(echo = FALSE)
+library(ggplot2)
+library(reshape2)
+#library(plotly)
+library(knitr)
+library(pandoc)
+library(gridExtra)
+library(gtools)
+library(stats4)
+library(rmutil)
+library(scales)
+library(tidyr)
+library(rmutil)
+library(invgamma)
+library(tidyverse)
+library(RColorBrewer)
+library(ggsci)
+library(ggpubr)
+library(patchwork)
+library(dplyr)
+#options(kableExtra.latex.load_packages = FALSE)
+library(devtools)
+#devtools::install_github("haozhu233/kableExtra")
+library(kableExtra)
+library(ggthemes)
+library(latex2exp)
+library(e1071)# kurtosis
+library(viridis)
+library(nortest)# AD
+
+
+
+
+theme_set(theme_minimal() +
+            theme(text=element_text(family="serif"),
+                  legend.position = "bottom")#  top , right , bottom , or left#, panel.grid = element_blank()
+)
+
+# if(!require("rstudioapi")) install("rstudioapi")
+# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+
+source("../../../Code/R/MainFunctions/gamma_sar_sample.R")
+source("../../../Code/R/MainFunctions/entropy_gamma_sar.R")
+source("../../../Code/R/MainFunctions/entropy_gI0.R")
+source("../../../Code/R/MainFunctions/gi0_sample.R")
+
+source("../../../Code/R/MainFunctions/van_es_estimator.R")
+source("../../../Code/R/MainFunctions/correa_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_correa_estimator_log_mean.R")
+source("../../../Code/R/MainFunctions/ebrahimi_estimator.R")
+source("../../../Code/R/MainFunctions/noughabi_arghami_estimator.R")
+source("../../../Code/R/MainFunctions/vasicek_estimator.R")
+source("../../../Code/R/MainFunctions/al_omari_1_estimator.R")
+source("../../../Code/R/MainFunctions/al_omari_2_estimator.R")
+
+source("../../../Code/R/MainFunctions/bootstrap_van_es_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_correa_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_ebrahimi_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_noughabi_arghami_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_vasicek_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_al_omari_1_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_al_omari_2_estimator.R")
+#The next function contains the functions: generate_samples, calculate_bias_mse, generate_plot
+source("../../../Code/R/Programs/functions_sample_bias_mse.R")# read_ENVI_images
+source("../../../Code/R/Programs/read_ENVI_images.R")
+
+
+```
+
+
+
+\newtheorem{lemma}{Lemma}
+
+\newcommand{\bias}{\operatorname{Bias}}
+\setlength{\tabcolsep}{4pt} 
+
+
+
+# Introduction {#sec:Introduction}
+
+Synthetic aperture radar (SAR) has become a fundamental technology for environmental monitoring and disaster management because of its ability to provide daytime and nighttime imagery in all weather conditions&nbsp;\cite{Mu2019}. 
+However, the utility of SAR data depends on a thorough understanding of their statistical properties.
+Speckle is part of SAR data because of the imaging process' coherent nature.
+Its non-additivity and non-Gaussianity require robust statistical models that can accurately characterize the data.
+
+Among these models, the $\mathcal{G}^0$ distribution stands out as a powerful framework. 
+Notably, this distribution encompasses the well-known Gamma distribution as a special case, particularly under the assumption of fully developed speckle. 
+The interplay between these two distributions is apparent, with the Gamma distribution representing a limiting case of the more general $\mathcal{G}^0$ model. 
+
+When deciding which model is the best, practitioners face a problem.
+On the one hand, if they opt for the Gamma law when the data come from the $\mathcal{G}^0$ distribution, they lose all the information about the number of scatterers, which is revealed by one of the parameters of the latter model&nbsp;\cite{Yue2021}.
+On the other hand, if they apply the $\mathcal{G}^0$ distribution under fully developed speckle,
+maximum likelihood estimation is tricky: 
+bias increases making estimation unreliable&nbsp;\cite{VasconcellosFrerySilva:CompStat}, and
+the likelihood is flat, so numerical optimization may not converge&nbsp;\cite{FreryCribariSouza:JASP:04}.
+The two-stage technique we propose tackles this problem by using the entropy as a proxy to decide which is the best model.
+
+<!-- The entropy is a fundamental concept in information theory with broad applications to pattern recognition, statistical physics, stochastic dynamics, and statistics. -->
+<!-- Shannon introduced it for a random variable in 1948&nbsp;[@Shannon1948] as a measure of information and uncertainty.  -->
+<!-- In statistics, Shannon entropy is a crucial descriptive parameter, particularly for assessing data dispersion and conducting tests for normality, exponentiality, and uniformity&nbsp;[@Wieczorkowski1999]. -->
+
+Estimating the entropy faces practical challenges, particularly when the model is unknown; non-parametric methods are utilized in such cases.
+Among non-parametric approaches, Subhash et al.&nbsp;\cite{Subhash2021} discussed the use of spacing methods.
+This non-parametric strategy offers flexibility to address a wide range of models without imposing specific parametric constraints. We extend the exploration of non-parametric entropy estimators by incorporating enhanced bootstrap methodologies.
+
+<!-- In this context, we present a two-stage estimation procedure designed to navigate the complexities of SAR data.  -->
+<!-- The first stage tests the hypothesis that the data follow the Gamma distribution, i.e., we are in the presence of fully developed speckle.  -->
+<!-- If this hypothesis is rejected, we proceed to the second stage to estimate the parameters that characterize the $\mathcal{G}^0$ distribution.  --> 
+
+Our aim is to develop a test statistic that helps discriminating between fully-developed speckle and heterogeneous clutter.
+We work with non-parametric estimators of the entropy, we reduce the bias of those based on spacings using bootstrap, and select the best ones.
+Next, we study the empirical distribution of these estimators under the null hypothesis, followed by a study of the size and power of the proposed test.
+We conclude the study with applications to SAR data.
+
+The article is structured as follows: 
+Section&nbsp;\ref{sec:Background} covers statistical modeling and entropy estimation for Intensity SAR data. Section&nbsp;\ref{sec:test} outlines hypothesis testing based on non-parametric entropy estimators and and coefficient of variation. 
+In Section&nbsp;\ref{sec:results}, we present experimental results. 
+Finally, in Section&nbsp;\ref{sec:conclusion} conclusions are exhibited.
+
+
+
+# Background {#sec:Background} 
+
+## Statistical modeling of Intensity SAR data 
+
+The primary models used for intensity SAR data include the Gamma and $\mathcal{G}_I^0$  distributions&nbsp;\cite{Frery1997}. 
+The first is suitable for fully developed speckle and is a limiting case of the second, which is appealing due to its versatility in accurately representing regions with various roughness characteristics&nbsp;\cite{Cassetti2022}.
+We denote $Z \sim \Gamma_{\text{SAR}}(L, \mu)$ and $Z \sim \mathcal{G}_I^0(\alpha, \gamma, L)$ to indicate that $Z$ follows the distributions characterized by the respective probability density functions:
+\begin{align}
+	f_Z(z;L, \mu)&=\frac{L^L}{\Gamma(L)\mu^L}z^{L-1}\exp\left\{-Lz/\mu\right\} \mathbbm 1_{\mathbbm R_+}(z),\label{E:gamma1}\\
+	f_Z(z; \alpha, \gamma, L)&=\frac{L^L\Gamma(L-\alpha)}{\gamma^{\alpha}\Gamma(-\alpha)\Gamma(L)}\cdot\frac{z^{L-1}}{(\gamma+Lz)^{L-\alpha}} \mathbbm 1_{\mathbbm R_+}(z),\label{E:gi01}
+\end{align}
+where, in&nbsp;\eqref{E:gamma1} $\mu > 0$ is the mean; in&nbsp;\eqref{E:gi01}  $\gamma > 0$ is the scale, $\alpha < -1$ measures the roughness,  $L \geq 1$ is the number of looks, $\Gamma(\cdot)$ is the gamma function, and $\mathbbm 1_{A}(z)$ is the indicator function of the set $A$.
+
+From \eqref{E:gi01}, the $r$th moment of $Z$ is expressed as:
+\begin{align}
+	\mathbbm E_{\mathcal{G}_I^0}\left(Z^r\right)=\left(\frac{\gamma}{L}\right)^r\frac{\Gamma(-\alpha-r)}{\Gamma(-\alpha)}\cdot\frac{\Gamma(L+r)}{\gamma(L)}, \quad \alpha <-r. 
+	\label{E:rmom}
+\end{align}
+ 
+Even though the $\mathcal{G}_I^0$  distribution is defined by the parameters $\alpha$ and $\gamma$, SAR literature commonly utilizes the texture $\alpha$ and the mean $\mu$&nbsp;\cite{Nascimento2010}.
+In this way, we compute the expected value $\mu$ using the expression in&nbsp;\eqref{E:rmom}, and we reparametrize&nbsp;\eqref{E:gi01} using $\mu$, $\alpha$, and $L$. Then
+\begin{align*}
+	\mu=\left(\frac{\gamma}{L}\right)\frac{\Gamma(-\alpha-1)}{\Gamma(-\alpha)}\cdot\frac{\Gamma(L+1)}{\gamma(L)}=-\frac{\gamma}{\alpha+1}.
+\end{align*}
+Thus, the probability density function that characterize the $G_I^0(\mu, \alpha, L)$ law is
+\begin{multline}
+		f_Z(z; \mu, \alpha, L)=\frac{L^L\Gamma(L-\alpha)}{\big(-\mu(\alpha+1)\big)^{\alpha}\Gamma(-\alpha)\Gamma(L)}\\ \frac{z^{L-1}}{\big(-\mu(\alpha+1)+Lz\big)^{L-\alpha}}.\label{E:gi02}
+\end{multline}
+
+## The Shannon Entropy
+The parametric representation of Shannon entropy for a system described by a continuous random variable is:
+\begin{equation}
+  \label{E:entropy2}
+  H(Z)=-\int_{-\infty }^\infty \ f(z)\ln f(z)\, \mathrm{d}z,
+\end{equation}
+here, $f(\cdot)$ is the probability density function that characterizes the distribution of the real-valued random variable $Z$.
+
+Using&nbsp;\eqref{E:entropy2}, we can express the Shannon entropy of $\Gamma_{\text{SAR}}$in&nbsp;\eqref{E:gamma1} and $G_I^0$in&nbsp;\eqref{E:gi02} based on&nbsp;\cite{Cassetti2022} and&nbsp;\cite{Ferreira2020}:
+\begin{multline}
+\label{E:E-gamma}
+H_{\Gamma_{\text{SAR}}}(L, \mu) =   L -\ln L+\ln\Gamma(L)+(1-L)\psi^{(0)}(L) + \ln \mu, 
+\end{multline}
+\begin{multline}
+\label{E:E-GIO}
+H_{G_I^0}(\mu, \alpha, L) =L -\ln L+\ln\Gamma(L)+(1-L)\psi^{(0)}(L) +\ln \mu \\
+-\ln\Gamma(L-\alpha)+ (L-\alpha) \psi^{(0)}(L-\alpha)\\
+-(1-\alpha)\psi^{(0)}(-\alpha)+\ln (-1-\alpha)+\ln\Gamma(-\alpha)-L,
+\end{multline}
+where $\psi^{(0)}(\cdot)$ is the digamma function. 
+
+In Fig.&nbsp;\ref{fig:PlotGammaSAR} we see how the Entropy of the Gamma SAR distribution changes with $\mu$ for various values of $L$.
+
+
+
+```{r PlotGammaSAR, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="The Shannon Entropy under the Gamma SAR model."}
+L <- c(1, 3, 8, 12, 100)
+
+
+L_labels <- c(expression(italic(L)==1), 
+              expression(italic(L)==3), 
+              expression(italic(L)==8), 
+              expression(italic(L)==12), 
+              expression(italic(L)==100))
+
+mu <- seq(0.1, 10, length.out = 500)
+
+
+entropies <- sapply(L, function(L) entropy_gamma_sar(L, mu))
+
+
+muEntropy <- data.frame(mu, entropies)
+
+
+muEntropy.molten <- melt(muEntropy, id.vars = "mu", variable.name = "Looks", value.name = "Entropy")
+
+
+ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = Looks)) +
+  geom_line(linewidth=2) +
+  theme_minimal() +
+  scale_color_manual(values = rainbow(length(L)), labels = L_labels) +
+  labs(col = "Looks") +
+  xlab(expression(paste(mu))) +
+  theme(text=element_text(family="serif"),
+        legend.position = "bottom")
+
+```
+
+<!-- Fig.&nbsp;\ref{fig:3d_GIO} illustrates the entropy of $G_I^0$ distribution as a function of three key parameters: $\mu$, $\alpha$, and $L$. -->
+
+<!-- ```{r 3d_GIO, fig.align="center",  out.width = "70%", fig.cap="The Shannon Entropy under ${G}_I^0$ models.", fig.show="hold",  fig.pos="hbt"} -->
+<!-- knitr::include_graphics("../../../Figures/PDF/entropy_plot_3d.pdf") -->
+<!-- ``` -->
+<!-- As we explore the 3D plot, we can observe how changes in $\mu$, $\alpha$, and $L$ collectively influence the entropy of the $G_I^0$ distribution.  -->
+<!-- We can identify regions where entropy is high or low, providing insights into the predictability and structure of the distribution in various regions of the parameter space. -->
+
+In Fig.&nbsp;\ref{fig:Plot_GI0_to_gamma}, we depict the behavior of the entropy of \(G_I^0\) when \(\alpha \in \left\{-\infty, -20, -8, -3\right\}\), observing its convergence towards the entropy of \(\Gamma_{\text{SAR}}\) as \(\alpha\) takes large negative values. 
+
+
+```{r Plot_GI0_to_gamma, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ as $\\alpha$ takes large negative values and $L=8$."}
+
+
+
+L <- c(8)
+alphas <- c(  -3, -8, -20, -1000)
+alpha_labels <- c( expression(italic(alpha) == -3), expression(italic(alpha) == -8), expression(italic(alpha) == -20), expression(italic(alpha) == -1000))
+
+mu <- seq(0.1, 10, length.out = 500)
+
+# Entropy GI0
+
+muEntropy <- data.frame()
+
+for (alpha in alphas) {
+  entropies_GI0 <- sapply(L, function(L) entropy_gI0(mu, alpha, L))
+  muEntropy <- rbind(muEntropy, data.frame(mu = mu, Entropy = entropies_GI0, alpha = as.factor(alpha)))
+}
+
+muEntropy.molten <- melt(muEntropy, id.vars = c("mu", "alpha"),  value.name = "Entropy")
+
+# Entropy Gamma SAR
+
+entropies_gamma <- sapply(L, function(L) entropy_gamma_sar(L, mu))
+
+Entropy_gamma <- data.frame(mu, entropies_gamma)
+
+Entropy_gamma.molten <- melt(Entropy_gamma, id.vars = "mu", value.name = "Entropy Gamma")
+
+#plot
+
+ggplot(muEntropy.molten, aes(x = mu, y = Entropy, col = alpha)) +
+  geom_line(data = Entropy_gamma.molten, aes(x = mu, y = `Entropy Gamma`), color = "blue", linetype = "solid",linewidth = 1.5) + 
+  geom_line(linetype = "longdash",  linewidth = 2, alpha=.7) +
+  annotate("text", x = max(mu)+0.2, y = max(Entropy_gamma.molten$`Entropy Gamma`), 
+           label = TeX("$\\Gamma_{\\tiny{SAR}}$"), vjust = 0.9, hjust = 0.1, color = "blue")+
+  theme_minimal() +
+  scale_color_manual(values = brewer.pal(7, "Dark2")[1:5], labels = alpha_labels) +
+  #scale_color_manual(values = pal_jama()(7)[2:5], labels = alpha_labels) +
+  #scale_color_manual(values = 	pal_cosmic()(7)[1:5], labels = alpha_labels) +
+  labs(col = "Roughness", linetype = NULL) +
+  xlab(expression(paste(mu))) +
+  ylab("Entropy") +  
+  theme(text = element_text(family = "serif"),
+        legend.position = "bottom")
+
+
+```
+
+The empirical distributions of $\Gamma_{\text{SAR}}$ and $G_I^0$ entropies are shown in Fig.&nbsp;\ref{fig:Plot_empirical_gamma_and_gi0}. 
+It is observed that when $\alpha$ approaches negative infinity, the two distributions are very similar. 
+In other words, the mean entropy of $G_I^0$ approximates the mean entropy of $\Gamma_{\text{SAR}}$.
+
+
+```{r Simulated_empirical_gamma_and_gi0, echo=FALSE, message=FALSE}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+R <- 3000
+mu <- 1
+L <- 8
+B <- 1
+sample.size <- c(121)
+alpha1_values <- c(-3, -8, -20, -1000)
+
+TestStatisticsList <- list()
+
+for (alpha_val in alpha1_values) {
+  alpha1 <- alpha_val
+  TestStatistics1 <- NULL
+  TestStatistics2 <- NULL
+  
+  for (s in sample.size) {
+    TestStat1 <- numeric(R)
+    TestStat2 <- numeric(R)
+    
+    for (r in 1:R) {
+      z <- gi0_sample(mu, alpha1, L, s)
+      TestStat1[r] <- log(mean(z))  + (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
+      TestStat2[r] <- log(mean(z))  + (L - log(L) + lgamma(L) +(1 - L) * digamma(L) - L - lgamma(L - alpha1) + (L - alpha1) * (digamma(L - alpha1)) - (1 - alpha1) * digamma(-alpha1) + log(-1 - alpha1) + lgamma(-alpha1))
+    }
+    
+    TestStatistics1 <- rbind(TestStatistics1, data.frame("Sample_Size" = rep(s, R), "Test_Statistics" = TestStat1))
+    TestStatistics2 <- rbind(TestStatistics2, data.frame("Sample_Size2" = rep(s, R), "Test_Statistics2" = TestStat2))
+  }
+  
+  TestStatisticsList[[as.character(alpha_val)]] <- list(TestStatistics1 = TestStatistics1, TestStatistics2 = TestStatistics2)
+}
+
+
+save(TestStatisticsList, file = "./Data/data_empirical_entropy.RData")
+
+```
+
+```{r Plot_empirical_gamma_and_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Empirical distributions of $\\Gamma_{\\text{SAR}}$ and $G_I^0$ entropies as $\\mu=1$, $L=8$ and $\\alpha\\in\\{-1000, -20, -8, -3\\}$."}
+
+
+
+load("./Data/data_empirical_entropy.Rdata")
+plots_list <- list()
+
+for (alpha_val in alpha1_values) {
+  plot_data <- TestStatisticsList[[as.character(alpha_val)]]
+  
+  max_density1 <- max(density(plot_data$TestStatistics1$Test_Statistics)$y, na.rm = TRUE)
+  max_density2 <- max(density(plot_data$TestStatistics2$Test_Statistics2)$y, na.rm = TRUE)
+  
+  plot <- ggplot(plot_data$TestStatistics1, aes(x = Test_Statistics)) +
+    geom_line(aes(col = factor(Sample_Size), linetype = factor(Sample_Size)), stat = "density", linewidth = 1.0) +
+    geom_line(data = plot_data$TestStatistics2, aes(x = Test_Statistics2), stat = "density", color = "blue", linetype = "dashed", linewidth = 1) +
+    annotate("text", x = max(plot_data$TestStatistics1$Test_Statistics) + 0.1, y = max_density1,
+             label = TeX("$\\Gamma_{\\tiny{SAR}}$"), vjust = 5, hjust = 5, color = "red") +
+    annotate("text", x = max(plot_data$TestStatistics2$Test_Statistics2) + 0.1, y = max_density2,
+             label = TeX("$G_I^0$"), vjust = 5, hjust = 5, color = "blue") +
+    labs(x = "Entropy", y = "Density") +
+    annotate("text", x = Inf, y = Inf, label = parse(text = sprintf("alpha == %s", alpha_val)), hjust = 1.2, vjust = 1.02, size = 3) +
+    theme_minimal() +
+    theme(
+      text = element_text(family = "serif"),
+      legend.position = "none"  
+    )
+  
+  plots_list[[as.character(alpha_val)]] <- plot
+}
+
+grid.arrange(grobs = plots_list, ncol = 2)
+
+```
+
+
+
+## Estimation of the Shannon Entropy
+
+One of the earliest non-parametric estimators relying on spacings was introduced by&nbsp;\cite{vasicek1976test}. 
+Assuming that $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ is a random sample from the distribution $F(z)$, the estimator is defined as:
+\begin{equation*}
+\label{E:Vas}
+	\widehat{H}_{\text{V}}(\bm{Z})=\frac{1}{n}\sum_{i=1}^{n}\ln\left[\frac{n}{2m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right],
+	\end{equation*}
+where $m<n/2$ is a positive integer, $Z_{(i+m)}-Z_{(i-m)}$ is the $m$-spacing and $Z_{(1)}\leq Z_{(2)}\leq\ldots\leq Z_{(n)}$ are the order statistics and $Z_{(i)}= Z_{(1)}$ if $i<1$, $Z_{(i)}= Z_{(n)}$ if $i>n$.
+
+Several authors have explored adaptations to Vasicek's estimator. In this work, we consider three entropy estimators known for their superior performance:
+
+* Correa&nbsp;\cite{correa1995new}: $\widehat{H}_{\text{C}}$.
+
+* Ebrahimi et al&nbsp;\cite{Ebrahimi1994}: $\widehat{H}_{\mathrm{E}}$.
+
+* Al Omary&nbsp;\cite{IbrahimAlOmari2014}: $\widehat{H}_{\mathrm{AO}}$.
+
+These estimators, along with others, are described and studied in&nbsp;\cite{Cassetti2022}.
+ 
+
+
+
+## Enhanced Bootstrap Technique
+
+We employ the bootstrap technique to refine the precision of existing non-parametric entropy estimators. 
+This approach involves generating new datasets through resampling with repetition from an existing one.
+
+Let's assume that non-parametric entropy estimators \(\widehat{H}=\widehat{\theta}(\bm{Z})\) are inherently biased, that is:
+\begin{equation}
+\label{Eq:bias1}
+\bias\big(\widehat{\theta}(\bm{Z})\big) = E\big[\widehat{\theta}(\bm{Z})\big] - \theta.
+\end{equation}
+Our objective is to devise unbiased estimators with reduced variance. To achieve this, we introduce an "ideal estimator" \(\check{\theta}(\bm{Z})\) using the bias information:
+\begin{equation}
+\label{Eq:bias2}
+\widecheck{\theta}(\bm{Z}) = \widehat{\theta}(\bm{Z}) - \bias\big(\widehat{\theta}(\bm{Z})\big).
+\end{equation}
+However, \(\check{\theta}(\bm{Z})\) is not an estimator, because it depends on the true parameter \(\theta\), prompting the formulation of a new estimator \(\widetilde{H}\). 
+From \eqref{Eq:bias1} and \eqref{Eq:bias2} we have:
+\begin{align*}
+\widetilde{H} &= 2\widehat{\theta}(\bm{Z}) - \frac{1}{B}\sum_{b=1}^B \widehat{\theta}_b(\bm{Z}^{(b)}),
+\end{align*}
+where $B$ is the number of replications in the bootstrap technique.
+Applying this methodology, the original estimators by Correa, Ebrahimi, and Al-Omari are now denoted as the proposed bootstrap-enhanced versions: $\widetilde{H}_{\text{C}}$, $\widetilde{H}_{\text{E}}$, and $\widetilde{H}_{\text{AO}}$, respectively.
+
+
+Simulations are conducted using $G_I^0$ distribution, with $200$ simulated samples of size \(n\in\left\{9, 25, 49, 81, 121\right\}\), with parameters \(\mu \in \left\{1, 10\right\}\), \(\alpha=-20\), and \(L=8\). 
+In the case of the bootstrap technique, each sample is replicated $100$ times with replacement.
+We choose to use the following heuristic formula for spacing, $m=\left[\sqrt{n}+0.5\right]$.
+
+In Fig.&nbsp;\ref{fig:Plot_bias_mse_gi0} we depict comparisons of bias and mean squared error (MSE) between the original non-parametric entropy estimators and their respective bootstrap-enhanced versions. 
+The use of the bootstrap technique exhibits more precision, reduced bias and MSE, and improved convergence.
+
+The results of simulation are exhibited in Table&nbsp;\ref{tab:table2}. 
+The precision of estimators, as evidenced by bias and MSE comparisons, benefits significantly from the bootstrap technique, particularly for sample sizes below 81.
+
+```{r Simulated_data_gi0, echo=FALSE, message=FALSE}
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample_sizes <- c(9, 25, 49, 81, 121)
+
+# Number of replications
+R <- 100
+
+# Number of bootstrap replications
+B <- 10
+mu_values <- c(1, 10)
+alpha <- -20
+L <- 8
+
+estimators <- list(
+  "Correa" = correa_estimator,
+  "Ebrahimi" = ebrahimi_estimator,
+  "Al Omari" = al_omari_1_estimator,
+  "Correa Bootstrap" = bootstrap_correa_estimator,
+  "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+  "Al Omari Bootstrap" = bootstrap_al_omari_1_estimator
+)
+
+
+calculate_results_gi0 <- function(sample_sizes, R, B, mu_values, alpha, L, estimators) {
+  results_list <- list()
+
+  for (mu_val in mu_values) {
+    
+    results <- calculate_bias_mse_gi0(sample_sizes, R, B, mu_val, alpha, L, estimators)
+    df <- as.data.frame(results)
+
+    
+    results_list[[as.character(mu_val)]] <- df
+  }
+
+  return(results_list)
+}
+
+
+results_gi0 <- calculate_results_gi0(sample_sizes, R, B, mu_values, alpha, L, estimators)
+
+
+save(results_gi0, file = "./Data/results_gi0.Rdata")
+
+
+```
+
+
+```{r Plot_bias_mse_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Bias and MSE of entropy estimators for  $G_I^0$, $L=8$, $\\alpha=-20$.", fig.width=6, fig.height=5}
+
+
+load("./Data/results_gi0.Rdata")
+
+
+estimators_to_plot <- c("Correa", "Ebrahimi", "Al Omari",  "Correa Bootstrap", "Ebrahimi Bootstrap", "Al Omari Bootstrap" )
+  latex_estimator_names <- c("Correa" = expression("$\\widehat{italic(H)}_{C}$"),
+                             "Correa Bootstrap" = expression("$\\widetilde{italic(H)}_{C}$"),
+                            "Ebrahimi" = expression("$\\widehat{italic(H)}_{E}$"),
+                            "Al Omari" = expression("$\\widehat{italic(H)}_{AO}$"),
+                            "Ebrahimi Bootstrap" = expression("$\\widetilde{italic(H)}_{E}$"),
+                            "Al Omari Bootstrap" = expression("$\\widetilde{italic(H)}_{AO}$"))
+selected_estimators_latex <- latex_estimator_names[estimators_to_plot]
+
+
+combined_plot_gi0 <- generate_plot_gi0_esp(results_gi0, mu_values, selected_estimators_latex, ncol = 1, nrow = 2)
+
+
+print(combined_plot_gi0)
+
+
+```
+
+
+
+```{r Table_gi0, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+load("./Data/results_gi0.Rdata")
+
+# Define estimators
+estimators_to_table <- c("Correa Bootstrap", "Ebrahimi Bootstrap", "Al Omari Bootstrap")
+
+# Filter and reshape data
+filtered_results <- purrr::map_dfr(results_gi0, ~ .x %>% filter(Estimator %in% estimators_to_table), .id = "mu")
+
+reshaped_results <- filtered_results %>%
+  pivot_wider(names_from = Estimator, values_from = c(Bias, MSE))
+
+colnames(reshaped_results) <- c("$\\mu$", "$n$", "$\\widetilde{H}_{\\text{C}}$", "$\\widetilde{H}_{\\text{E}}$", "$\\widetilde{H}_{\\text{AO}}$", "$\\widetilde{H}_{\\text{C}}$", "$\\widetilde{H}_{\\text{E}}$", "$\\widetilde{H}_{\\text{AO}}$")
+
+
+reshaped_results[] <- lapply(reshaped_results, function(x) {
+  if (is.numeric(x)) {
+    if (all(x %% 1 == 0)) {
+      formatted_numbers <- sprintf("$%d$", x)
+    } else {
+      formatted_numbers <- ifelse(x < 0, sprintf("$%.3f$", x), sprintf("$\\phantom{-}%.3f$", x))
+    }
+    return(formatted_numbers)
+  } else {
+    return(x)
+  }
+})
+
+
+print(
+  kbl(
+    reshaped_results,
+    caption = "Bias and MSE of bootstrap estimators for $G_I^0$, $L=8$, $\\alpha=-20$.",
+    format = "latex",
+    booktabs = TRUE,
+    align = "lrrrrrrrr",
+    escape = FALSE, 
+    digits = 3,  
+    label = "table2"
+  ) %>%
+    add_header_above(c(" ", " ", "Bias" = 3, "MSE" = 3)) %>%
+    collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") %>%
+    row_spec(0,  align = "c")
+    #kable_styling(latex_options = "hold_position", "scale_down")
+  )
+
+```
+
+# Hypothesis testing based on non-parametric entropy {#sec:test}
+General asymptotic results for functions of spacings are detailed&nbsp;\cite{Khashimov1990}, while&nbsp;\cite{Bert1992} developed a correction for the case of Shannon entropy.
+Following the work of these authors, the next result applies: 
+\begin{lemma}
+Suppose that $f(\cdot)$ is a bounded density bounded away from zero and satisfies a Lipschitz condition on its support.
+Then, if $m,n\rightarrow \infty$ and $m=o(n^{1/2})$, holds that:
+\begin{equation*}
+\sqrt{n}\,\Big(\label{Eq:bias_t}
+\widetilde{H}_{i}+\int_{-\infty}^\infty f(z)\ln f(z) \mathrm{d}z\Big)
+\xrightarrow[]{\mathcal{D}}
+\mathcal{N}(0,\operatorname{Var}(\ln f(Z))).
+\end{equation*}
+\end{lemma} 
+Consider, starting from the previous lemma, we aim at testing the following hypotheses: 
+
+$$
+ \begin{cases}\mathcal{H}_0: \widetilde{H}(\bm{Z})-H(\bm{Z})=0 \\ 
+  \mathcal{H}_1:\widetilde{H}(\bm{Z})-H(\bm{Z})\neq0 .\end{cases}
+$$
+In other words, we verify the hypothesis that the data are fully-developed speckle.
+
+For this purpose, we use the following test statistic:
+\begin{equation}
+\label{Eq:test_e}
+S(\bm{Z};L_0)= \widetilde{H}(\bm{Z})-\left[H_{\Gamma_{\text{SAR}}}(L_0)+\ln \widebar{\bm{Z}}\right].
+\end{equation}
+This test statistic $S(\bm{Z};L_0)$ aims to assess the behavior of the data under the null hypothesis, through the empirical distribution of the test statistic values for a sample size of $n$. 
+The density should center around zero if the test statistic is capable of detecting that the data are fully-developed speckle, i.e., $S(\bm{Z};L_0)\approx 0$. 
+Otherwise, under the alternative hypothesis, the empirical distribution of the test statistic values is not centered around zero. 
+This suggests significant differences and implies the presence of heterogeneous clutter.
+
+
+
+# Results {#sec:results} 
+
+
+## The Proposed Test
+We analyze the finite sample size behavior of the test statistics defined in \eqref{Eq:test_e}.
+
+Fig. \ref{fig:Plot_density} depicts empirical test statistic densities for various sample sizes, and Table \ref{tab:table_stat_combined} summarizes key statistics, including mean, SD, variance (Var), coefficient of variation (CV), skewness, kurtosis, and Anderson–Darling $p$-values for normality. 
+Results with $p$-values $> 0.05$  indicate no evidence against normality. 
+Notably, small variance and near-zero skewness and kurtosis suggest limited spread, symmetry, and light tails. The coefficient of variation shows that as the sample size increases, variability with respect to the mean decreases, aligning with normal distribution expectations.
+
+In Fig. \ref{fig:Plot_normality_qq}, normal QQ-plots visually affirm distributional similarity with the expected normal line, reinforcing our findings.
+
+
+
+```{r Simulated_density, echo=FALSE, message=FALSE}
+#, cache = TRUE, autodep = TRUE
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+R <- 500
+mu <- 1
+B <- 2
+alpha1 <- -8
+sample.size <- c(50, 100, 150)
+L_values <- c(2, 5, 8, 18)
+
+all_summary_stats <- list()
+all_TestStatistics <- list()
+
+
+# For each L
+for (L in L_values) {
+  TestStatistics1 <- list()  
+  summary_stats <- data.frame( LValue = character(),
+                              SampleSize = numeric(),
+                              Mean = numeric(),
+                              SD = numeric(),
+                              Variance = numeric(),
+                              CV= numeric(),
+                              Skewness = numeric(),
+                              Kurtosis = numeric(),
+                              adpvalue = numeric()
+                              )  
+ 
+  
+  for (s in sample.size) {
+    TestStat1 <- numeric(R)
+    
+    for (r in 1:R) {
+      z <- gamma_sar_sample(L, mu, s)
+      #z <- gi0_sample(mu, alpha1, L, s)
+      TestStat1[r] <- bootstrap_correa_estimator_log_mean(z, B) + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
+    }
+    
+    TestStatistics1[[as.character(s)]] <- data.frame("SampleSize" = rep(s, R), "Test_Statistics" = TestStat1)
+    
+
+    
+   
+    mean_val <- mean(TestStat1)
+    sd_val <- sd(TestStat1)
+    var_val <- var(TestStat1)
+    skewness_val <- skewness(TestStat1)
+    kurtosis_val <- kurtosis(TestStat1)
+   # lillie_p_value <- lillie.test(TestStatistics1[[as.character(s)]]$Test_Statistics)$p.value
+    ad_p_value <- ad.test(TestStatistics1[[as.character(s)]]$Test_Statistics)$p.value
+    cv_val <- (sd_val / mean_val)
+    
+    summary_stats <- rbind(summary_stats, data.frame(LValue = as.character(L),
+                                                     SampleSize = s,
+                                                     Mean = mean_val,
+                                                     SD = sd_val,
+                                                     Variance = var_val,
+                                                      CV = cv_val,
+                                                     Skewness = skewness_val,
+                                                     Kurtosis = kurtosis_val,
+                                                     adpvalue = ad_p_value
+                                                     )) 
+  
+  }
+  
+  all_TestStatistics[[as.character(L)]] <- TestStatistics1
+  all_summary_stats[[as.character(L)]] <- summary_stats
+  
+  
+
+  save(all_TestStatistics, all_summary_stats, file = paste0("./Data/results_", L, ".Rdata"))
+}
+
+
+
+
+```
+
+```{r Plot_density, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Empirical density  under Gamma SAR model.", fig.width=6, fig.height=5}
+
+
+
+
+theme_set(theme_minimal() +
+            theme(text = element_text(family = "serif"),
+                  legend.position = "bottom",
+                  legend.text = element_text(angle = 0, vjust = 0.5)))
+
+all_plots <- list()
+
+for (L in L_values) {
+  load(paste0("./Data/results_", L, ".Rdata"))
+
+  combined_data <- do.call(rbind, all_TestStatistics[[as.character(L)]])
+  combined_data$L <- L
+
+  p <- ggplot(combined_data, aes(x = Test_Statistics, col = factor(SampleSize), linetype = factor(SampleSize))) +
+    geom_line(stat = "density", linewidth = 1.0) +
+    scale_color_viridis(discrete = TRUE, option = "C", direction = -1, begin = 0.1, end = 0.8, name = "Sample Size") +
+    scale_linetype_manual(values = rep("solid", length(sample.size)), name = "Sample Size") +
+    labs(x = "Test Statistics", y = "Density") +
+    ggtitle(bquote(italic(L) == .(L))) +
+    theme(plot.title = element_text(hjust = 0.5))#titulo centrado
+
+  if (!any(L == L_values)) {
+    p = p
+  }
+
+  all_plots[[as.character(L)]] <- p
+}
+
+combined_plot <- wrap_plots(all_plots, ncol = 2, nrow = 2) +
+  plot_layout(guides = "collect")
+
+print(combined_plot)
+
+
+
+```
+
+
+```{r Table_statistic, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+cat("\\setlength{\\tabcolsep}{1.0pt}\n")
+
+load("./Data/results_2.Rdata")
+summary_stats_2 <- all_summary_stats[["2"]]
+
+
+load("./Data/results_5.Rdata")
+summary_stats_5 <- all_summary_stats[["5"]]
+
+
+load("./Data/results_8.Rdata")
+summary_stats_8 <- all_summary_stats[["8"]]
+
+
+combined_summary_stats <- rbind(
+  transform(summary_stats_2),
+  transform(summary_stats_5),
+  transform(summary_stats_8)
+  
+)
+colnames(combined_summary_stats) <- c("$L$", "$n$", "Mean", "SD", "Var", "CV", "Skewness", "Kurtosis", "$p$-value")
+
+
+
+# LaTeX notation 
+combined_summary_stats[] <- lapply(combined_summary_stats, function(x) {
+  if (is.numeric(x)) {
+    if (all(x %% 1 == 0)) {
+      formatted_numbers <- sprintf("$%d$", x)
+    } else {
+      formatted_numbers <- ifelse(x < 0, sprintf("$%.4f$", x), sprintf("$\\phantom{-}%.4f$", x))
+    }
+    return(formatted_numbers)
+  } else {
+    return(x)
+  }
+})
+
+
+table_result_combined <- kbl(
+  combined_summary_stats,
+  caption = "Descriptive analysis of $S(\\bm Z; L)$ for different values of $L$, and $\\mu=1$.",
+  format = "latex",
+  booktabs = TRUE,
+  align = "lrrrrrrr",
+  escape = FALSE,
+  digits = 4,
+  label = "table_stat_combined"
+  #table.env = 'table*' # to span multiple columns
+) %>%
+  collapse_rows(latex_hline = "major", valign = "middle") %>%
+  row_spec(0,  align = "c")
+  
+
+print(table_result_combined)
+
+
+```
+
+```{r Plot_normality_qq, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center",  fig.cap="Normal QQ-plots for  $n=100$.", fig.width=6, fig.height=5}
+
+
+
+theme_set(theme_minimal() +
+            theme(text = element_text(family = "serif"),
+                  legend.position = "bottom",
+                  legend.text = element_text(angle = 0, vjust = 0.5)))
+
+
+
+# Load saved results
+load("./Data/results_2.Rdata")
+load("./Data/results_5.Rdata")
+load("./Data/results_8.Rdata")
+load("./Data/results_18.Rdata")
+
+# Specific sample size
+selected_sample_size <- 100
+
+# 
+ggplot_list <- list()
+
+#  L
+for (L in c(2, 5, 8, 18)) {
+  TestStatistics1 <- all_TestStatistics[[as.character(L)]]
+  
+  # 
+  if (as.character(selected_sample_size) %in% names(TestStatistics1)) {
+    p <- ggplot(TestStatistics1[[as.character(selected_sample_size)]], 
+                aes(sample = Test_Statistics)) +
+      geom_qq(col = "blue", shape = 20) +
+      geom_qq_line(col = "darkgreen", linetype = 2) +
+      labs(title = bquote(italic(L) == .(L)),
+           x = "Theoretical Quantiles",
+           y = "Sample Quantiles") +
+      theme(plot.title = element_text(hjust = 0.5))#titulo centrado
+
+    
+    ggplot_list[[as.character(L)]] <- p
+  } else {
+    warning(paste("No size sample", selected_sample_size, " L =", L))
+  }
+}
+combined_plot1 <- wrap_plots(ggplot_list, ncol = 2, nrow = 2) +
+  plot_layout(guides = "collect")
+
+print(combined_plot1)
+
+
+# }
+
+
+```
+
+We proceeded to explore the capabilities of the proposed test in terms of size and power. Under $\mathcal{H}_0$ the test statistic  is asymptotically distributed as $\mathcal{N}(0,\sigma_S^2))$, and therefore, the $p$-value of the observed test statistic is $2(1-\Phi(\varepsilon))$, where $\Phi$ is the standard Gaussian cumulative distribution function and 
+$$
+\varepsilon=\frac{\tilde{H}(\bm{Z})-H(\bm{Z})}{\sigma_S}.
+$$
+Nominal levels of $1\%$, $5\%$, and $10\%$ were considered. In reference to the size, $1000$ simulations have been used for various sample sizes with  satisfactory results. In all cases, the nominal level has been achieved. The power, in general, improves with the increase in the number of looks. The results are presented in Table \ref{tab:table_size_power}, providing a more detailed insight into the effectiveness of the test under different conditions.
+
+
+
+```{r Simulated_power, echo=FALSE, message=FALSE}
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+# Function to calculate p-value
+calculate_p_value <- function(test_statistic, mu_W, sigma_W) {
+  epsilon <- test_statistic  / sigma_W
+  p_value <- 2 * (1 - pnorm(abs(epsilon)))
+  
+  return(p_value)
+}
+
+# Function to calculate Type II Error Rate
+calculate_type_II_error_rate <- function(p_values, alpha_nominal) {
+  type_II_error_rate <- sum(p_values >= alpha_nominal) / length(p_values)
+  return(type_II_error_rate)
+}
+
+# Function to calculate power for different L values and alpha_nominals
+calculate_power <- function(R, mu, L_values, B, sample_sizes, alpha_nominals) {
+  results <- data.frame()
+  
+  for (L in L_values) {
+    for (alpha_nominal in alpha_nominals) {
+      TestStatistics <- list()
+      mean_entropy <- numeric(length(sample_sizes))
+      sd_entropy <- numeric(length(sample_sizes))
+      
+      for (s in sample_sizes) {
+        TestStat <- numeric(R)
+        
+        for (r in 1:R) {
+          z <- gi0_sample(mu, -8, L, s)
+          TestStat[r] <- bootstrap_correa_estimator_log_mean(z, B) - (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
+        }
+        
+        mean_entropy[sample_sizes == s] <- mean(TestStat)
+        sd_entropy[sample_sizes == s] <- sd(TestStat)
+        
+        TestStatistics[[as.character(s)]] <- TestStat
+      }
+      
+      mu_W <-  mean_entropy  
+      sigma_W <- sqrt(sd_entropy^2)  
+      
+      p_values <- lapply(TestStatistics, function(TestStat) {
+        apply(data.frame("Test_Statistics" = TestStat), 1, function(row) {
+          calculate_p_value(row["Test_Statistics"], mu_W, sigma_W[as.numeric(names(TestStatistics)) == as.numeric(s)])
+        })
+      })
+      
+      type_II_error_rates <- sapply(p_values, function(p_values_for_size) {
+        calculate_type_II_error_rate(p_values_for_size, alpha_nominal)
+      })
+      
+      power <- 1 - type_II_error_rates
+      
+      result_row <- data.frame(
+        L = L,
+        alpha_nominal = alpha_nominal,
+        Sample_Size = sample_sizes,
+        power = power
+      )
+      
+      results <- rbind(results, result_row)
+    }
+  }
+  
+  return(results)
+}
+
+
+R <- 500
+mu <- 1
+L_values <- c(2, 5, 8, 18)
+B <- 3
+sample_sizes <- c(50, 100, 200, 300)
+alpha_nominals <- c(0.01, 0.05, 0.1)
+
+results_power <- calculate_power(R, mu, L_values, B, sample_sizes, alpha_nominals)
+save(results_power, file = "./Data/results_power.Rdata")
+
+```
+
+
+```{r Simulated_error_type_I, echo=FALSE, message=FALSE}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+
+
+# Function to calculate p-value
+calculate_p_value <- function(test_statistic, mu_W, sigma_W, alpha_nominal) {
+  epsilon <- test_statistic / sigma_W
+  p_value <- 2 * (1 - pnorm(abs(epsilon)))
+  
+  return(p_value < alpha_nominal)  # Return TRUE if p_value is less than alpha_nominal
+}
+
+R <- 500
+mu <- 1
+B <- 3
+L_values <- c(2, 5, 8, 18)
+sample_sizes <- c( 50, 100, 200, 300)
+alpha_nominals <- c(0.01, 0.05, 0.1)
+
+results <- data.frame()
+
+for (L in L_values) {
+  for (alpha_nominal in alpha_nominals) {
+    TestStatistics <- NULL
+    mean_entropy <- numeric(length(sample_sizes))
+    sd_entropy <- numeric(length(sample_sizes))
+    
+    for (s in sample_sizes) {
+      TestStat <- numeric(R)
+      
+      for (r in 1:R) {
+        z <- gamma_sar_sample(L, mu, s)
+        TestStat[r] <- bootstrap_correa_estimator_log_mean(z, B) - (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
+      }
+      mean_entropy[sample_sizes == s] <- mean(TestStat)
+      sd_entropy[sample_sizes == s] <- sd(TestStat)
+      
+      TestStatistics <- rbind(TestStatistics, data.frame("L" = rep(L, R), "Sample_Size" = rep(s, R), "Test_Statistics" = TestStat))
+    }
+    
+    mu_W <- mean_entropy
+    sigma_W <- sqrt(sd_entropy^2)
+    
+    p_values <- apply(TestStatistics, 1, function(row) {
+      calculate_p_value(row["Test_Statistics"], mu_W[sample_sizes == row["Sample_Size"]], sigma_W[sample_sizes == row["Sample_Size"]], alpha_nominal)
+    })
+    
+    result <- data.frame("L" = TestStatistics$L, "Sample_Size" = TestStatistics$Sample_Size, "Alpha_Nominal" = alpha_nominal, "P_Value" = p_values)
+    results <- rbind(results, result)
+  }
+}
+
+
+
+
+save(results, file = "./Data/type_I_results.Rdata")
+
+```
+
+
+```{r Table_size_and_power, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+cat("\\setlength{\\tabcolsep}{4pt}\n")
+# Load Type I Error Rates
+load("./Data/type_I_results.Rdata")
+
+
+type_I_error_rates <- tapply(results$P_Value, INDEX = list(results$L, results$Sample_Size, results$Alpha_Nominal), FUN = function(p_values) {
+  sum(p_values) / length(p_values)  
+})
+
+
+type_I_error_results <- as.data.frame(as.table(type_I_error_rates))
+
+colnames(type_I_error_results) <- c("L", "Sample_Size", "Alpha_Nominal", "Type_I_Error_Rate")
+
+spread_results <- spread(type_I_error_results, key = Alpha_Nominal, value = Type_I_Error_Rate)
+
+
+spread_results <- spread_results %>% 
+  select(L, Sample_Size, `0.01`, `0.05`, `0.1`)
+
+load("./Data/results_power.Rdata")
+
+
+summary_stats <- results_power %>%
+  spread(key = alpha_nominal, value = power) %>%
+  select(L, Sample_Size, `0.01`, `0.05`, `0.1`)
+
+# Combine the two datasets based on L and sample size
+combined_results <- merge(spread_results, summary_stats, by = c("L", "Sample_Size"))
+combined_results <- combined_results %>% 
+  arrange(L, Sample_Size)
+# Reorder the columns
+combined_results <- combined_results %>% 
+  select(L, Sample_Size, `0.01.x`, `0.05.x`, `0.1.x`, `0.01.y`, `0.05.y`, `0.1.y`)
+
+# Rename columns
+colnames(combined_results) <- c("$L$", "$n$", "$1\\%$", "$5\\%$", "$10\\%$", "$1\\%$", "$5\\%$", "$10\\%$")
+
+# LaTeX notation 
+combined_results[] <- lapply(combined_results, function(x) {
+  if (is.numeric(x)) {
+    if (all(x %% 1 == 0)) {
+      formatted_numbers <- sprintf("$%d$", x)
+    } else {
+      formatted_numbers <- ifelse(x < 0, sprintf("$%.3f$", x), sprintf("$\\phantom{-}%.3f$", x))
+    }
+    return(formatted_numbers)
+  } else {
+    return(x)
+  }
+})
+
+# Print the combined table
+table_combined_result <- kbl(
+  combined_results,
+  caption = "Size and Power of the proposed test.",
+  format = "latex",
+  booktabs = TRUE,
+  align = "lcccccccc",
+  escape = FALSE,
+  digits = 3,
+  label = "table_size_power"
+)%>%
+  add_header_above(c(" ", " ", "Size" = 3,  "Power" = 3)) %>%
+  collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") %>%
+  row_spec(0,  align = "c")
+
+print(table_combined_result)
+
+
+
+```
+
+
+
+
+
+Fig.&nbsp;\ref{fig:Plot_empirical_test} displays the empirical distributions using statistical test \eqref{Eq:test_e}. Under the null hypothesis, we observe that the densities are centered around zero. Conversely, under the alternative hypothesis, such as for $\alpha=-8$, the density is not centered around zero. It reveals the difference between the entropy of Gamma SAR and $G_I^0$, indicating that we are in a scenario of heterogeneous clutter.
+
+
+
+```{r Sim_empirical_test, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+R <- 3000
+mu <- 1
+L <- 5
+B <- 2
+sample.size <- c( 81)
+
+alpha1_values <- c( -2)
+
+TestStatistics1 <- NULL
+TestStatistics2 <- NULL
+
+for (alpha_val in alpha1_values) {
+
+  alpha1 <- alpha_val
+  
+  mean_entropy1 <- numeric(length(sample.size))
+  mean_entropy2 <- numeric(length(sample.size))
+  
+  for (s in sample.size) {
+    TestStat1 <- numeric(R)
+    TestStat2 <- numeric(R)
+    
+    for (r in 1:R) {
+      
+      z <- gamma_sar_sample(L, mu, s)
+      TestStat1[r] <- bootstrap_correa_estimator_log_mean(z, B) - (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
+      z1 <- gi0_sample(mu, alpha1, L, s)
+      TestStat2[r] <- bootstrap_correa_estimator_log_mean(z1, B) - (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
+        
+      
+    }
+    
+    TestStatistics1 <- rbind(TestStatistics1, data.frame("Sample_Size" = rep(s, R), "Test_Statistics" = TestStat1))
+    TestStatistics2 <- rbind(TestStatistics2, data.frame("Sample_Size2" = rep(s, R), "Test_Statistics2" = TestStat2))
+  }
+}
+
+# 
+save(TestStatistics1, TestStatistics2, file = "./Data/sim_empirical_test.Rdata")
+
+
+```
+
+```{r Plot_empirical_test, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Empirical distributions under null hypothesis (centered around zero) and alternative hypothesis (e.g., $\\alpha=-8$, showing a shift from zero), with $\\mu=1$ and $L=5$."}
+
+# 
+load("./Data/sim_empirical_test.Rdata")
+
+  difference.betweeen.GammaSAR.GI0.n.Look <- function(alpha, L) {
+    return(
+      -L - lgamma(L-alpha) + 
+        (L-alpha)*(digamma(L - alpha))- 
+        (1-alpha)*digamma(- alpha)+
+        log(-1 - alpha)+
+        lgamma(-alpha)
+    )
+  }
+
+
+plots_list <- list()
+
+for (alpha_val in alpha1_values) {
+  plot <- ggplot(TestStatistics1, aes(x = Test_Statistics)) +
+    geom_line(aes(col = factor(Sample_Size), linetype = factor(Sample_Size)), stat = "density", linewidth = 1.0) +
+    geom_line(data = TestStatistics2, aes(x = Test_Statistics2), stat = "density", color = "blue", linetype = "dashed", linewidth = 1) +
+    geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.n.Look(-8, 5), col="darkgreen", linetype = "dotted", linewidth = 0.6) +
+    annotate("text", x=difference.betweeen.GammaSAR.GI0.n.Look(-8, 5), y=7, parse=TRUE, label="alpha==-8", hjust=-.1, vjust=1.0, col="darkgreen") +
+    geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.n.Look(-1000, 5), col="darkgreen", linetype = "dotted", linewidth = 0.6) +
+    theme_minimal() +
+    theme(
+      text = element_text(family = "serif"),
+      legend.position = "none"  
+    )+
+    labs(x = "Test Statistics", y = "Density")
+  
+  plots_list[[as.character(alpha_val)]] <- plot
+}
+
+grid.arrange(grobs = plots_list, ncol = 1)
+
+```
+
+## Experiments on Real SAR Images
+
+To assess the practical efficacy of the proposed test, we conducted experiments using real SAR images acquired by the Sentinel-1A system operating in the C band, with  HH polarization, and intensity format. The set of four SAR images, depicted in Fig.&nbsp;\ref{fig:Real_SAR_Images}(a)-(d) represent diverse scenes: a forested area in the Amazonas region, agricultural fields in Flevoland, and urban areas in Berlin and Ottawa, each with sizes of $512 \times 512$ pixels. 
+
+We evaluate the test accuracy with small data portions. Ensuring resistance to contamination is crucial, especially in small samples with $5\times 5$, $7\times 7$, or $9\times 9$ windows that may contain data from areas with varying textures. Our assessment determines if the test can produce reasonable estimations, even when some data deviates from the assumed model.
+
+Table&nbsp;\ref{tab:table_sar} shows the results for $5 \times 5$ windows, detailing the performance of the proposed test in accurately identifying the origin of the data. The metadata associated with these original SAR images includes a number of looks $L = 5$.
+
+
+The openly accessible Sentinel-1 data used in this study was downloaded as Level-1 Ground Range Detected (GRD) products from the Copernicus Data Space Ecosystem (\url{https://dataspace.copernicus.eu}). This format, gaining popularity among operational and application users, containing only the co-polarized and cross-polarized backscatter intensities (VV, VH). 
+
+
+```{r window, fig.align="center",  out.width = "80%", fig.cap=" Sketch of sliding window.", fig.show="hold",  fig.pos="hbt"}
+knitr::include_graphics("../../../Figures/PDF/sliding2.pdf")
+```
+
+
+
+```{r Real_SAR_Images, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%", fig.show="hold", fig.align="center", fig.cap='Real SAR images', fig.subcap=c('Amazonas', 'Flevoland','Ottawa', 'Berlin' ), out.width='.48\\linewidth',  fig.ncol=2}
+knitr::include_graphics("../../../Figures/PNG/Brazil_Intensity_VV.png")
+knitr::include_graphics("../../../Figures/PNG/Flevoland_Intensity_VV.png")
+knitr::include_graphics("../../../Figures/PNG/Ottawa_Intensity_VV.png")
+knitr::include_graphics("../../../Figures/PNG/Berlin_Intensity_VV.png")
+```
+
+
+```{r SAR_simulations, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
+#, cache = TRUE, autodep = TRUE
+set.seed(1234567890, kind = "Mersenne-Twister")
+x_Brazil <- myread.ENVI(file='../../../Data/SAR/Brazil/Intensity_VV.img', headerfile='../../../Data/SAR/Brazil/Intensity_VV.hdr')
+x_Berlin<- myread.ENVI(file='../../../Data/SAR/Berlin/Intensity_VV.img', headerfile='../../../Data/SAR/Berlin/Intensity_VV.hdr')
+x_Flevoland <- myread.ENVI(file='../../../Data/SAR/Flevoland/Intensity_VV.img', headerfile='../../../Data/SAR/Flevoland/Intensity_VV.hdr')
+
+x_Flevoland2 <- myread.ENVI(file='../../../Data/SAR/Flevoland2/Intensity_VV.img', headerfile='../../../Data/SAR/Flevoland2/Intensity_VV.hdr')
+x_Ottawa <- myread.ENVI(file='../../../Data/SAR/Ottawa/Intensity_VV.img', headerfile='../../../Data/SAR/Ottawa/Intensity_VV.hdr')
+
+L <- 5
+B <- 10
+
+# Brazil
+nRows_Brazil <- 512
+nCols_Brazil <- 512
+
+centerRow_Brazil <- floor(nRows_Brazil / 2)
+centerCol_Brazil <- floor(nCols_Brazil / 2)
+
+roiSize_Brazil <- 5
+
+# Coordinates of the ROI
+roiStartRow_Brazil <- centerRow_Brazil - floor(roiSize_Brazil / 2) + 1
+roiEndRow_Brazil <- roiStartRow_Brazil + roiSize_Brazil - 1
+
+roiStartCol_Brazil <- centerCol_Brazil - floor(roiSize_Brazil / 2) + 1
+roiEndCol_Brazil <- roiStartCol_Brazil + roiSize_Brazil - 1
+
+# Extract the ROI
+roi_Brazil <- x_Brazil[roiStartRow_Brazil:roiEndRow_Brazil, roiStartCol_Brazil:roiEndCol_Brazil]
+
+mean_data_brasil <- mean(roi_Brazil)
+Entropy_brasil <- correa_estimator(roi_Brazil)
+entropia_estimada_boot_brasil <- bootstrap_correa_estimator(roi_Brazil, B)
+True_entropy_brasil <- (log(mean(roi_Brazil)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+Test_difference_brasil <- bootstrap_correa_estimator_log_mean(roi_Brazil, B) - ((L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+
+# Berlin
+nCols_Berlin = 512
+nRows_Berlin = 512
+
+centerRow_Berlin <- floor(nRows_Berlin / 2)
+centerCol_Berlin <- floor(nCols_Berlin / 2)
+
+roiSize_Berlin <- 5
+
+# Calculate ROI coordinates
+roiStartRow_Berlin <- centerRow_Berlin - floor(roiSize_Berlin / 2) + 1
+roiEndRow_Berlin <- roiStartRow_Berlin + roiSize_Berlin - 1
+
+roiStartCol_Berlin <- centerCol_Berlin - floor(roiSize_Berlin / 2) + 1
+roiEndCol_Berlin <- roiStartCol_Berlin + roiSize_Berlin - 1
+
+# Extract the ROI
+roi_Berlin <- x_Berlin[roiStartRow_Berlin:roiEndRow_Berlin, roiStartCol_Berlin:roiEndCol_Berlin]
+
+mean_data_Berlin <- mean(roi_Berlin)
+Entropy_Berlin <- correa_estimator(roi_Berlin)
+entropia_estimada_boot_Berlin <- bootstrap_correa_estimator(roi_Berlin, B)
+True_entropy_Berlin <- (log(mean(roi_Berlin)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+Test_difference_Berlin <- bootstrap_correa_estimator_log_mean(roi_Berlin, B) - ((L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+
+
+# Flevoland
+nCols_Flevoland = 512
+nRows_Flevoland = 512
+
+centerRow_Flevoland <- floor(nRows_Flevoland / 2)
+centerCol_Flevoland <- floor(nCols_Flevoland / 2)
+
+roiSize_Flevoland <- 5
+
+# ROI coordinates
+roiStartRow_Flevoland <- centerRow_Flevoland - floor(roiSize_Flevoland / 2) + 1
+roiEndRow_Flevoland <- roiStartRow_Flevoland + roiSize_Flevoland - 1
+
+roiStartCol_Flevoland <- centerCol_Flevoland - floor(roiSize_Flevoland / 2) + 1
+roiEndCol_Flevoland <- roiStartCol_Flevoland + roiSize_Flevoland - 1
+
+# Extract the ROI
+roi_Flevoland <- x_Flevoland[roiStartRow_Flevoland:roiEndRow_Flevoland, roiStartCol_Flevoland:roiEndCol_Flevoland]
+
+mean_data_Flevoland <- mean(roi_Flevoland)
+Entropy_Flevoland <- correa_estimator(roi_Flevoland)
+entropia_estimada_boot_Flevoland <- bootstrap_correa_estimator(roi_Berlin, B)
+True_entropy_Flevoland <- (log(mean(roi_Flevoland)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+Test_difference_Flevoland <- bootstrap_correa_estimator_log_mean(roi_Flevoland, B) - ((L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+
+
+# Ottawa
+nCols_Ottawa = 512
+nRows_Ottawa = 512
+
+centerRow_Ottawa <- floor(nRows_Ottawa / 2)
+centerCol_Ottawa <- floor(nCols_Ottawa / 2)
+
+roiSize_Ottawa <- 5
+
+# ROI coordinates in the upper part
+roiUpperStartRow <- 1
+roiUpperEndRow <- roiUpperStartRow + roiSize_Ottawa - 1
+
+roiUpperStartCol <- centerCol_Ottawa - floor(roiSize_Ottawa / 2) + 1
+roiUpperEndCol <- roiUpperStartCol + roiSize_Ottawa - 1
+
+# Extract the ROI in the upper part
+roi_Ottawa <- x_Ottawa[roiUpperStartRow:roiUpperEndRow, roiUpperStartCol:roiUpperEndCol]
+
+mean_data_Ottawa <- mean(roi_Ottawa)
+Entropy_Ottawa <- correa_estimator(roi_Ottawa)
+entropia_estimada_boot_Ottawa <- bootstrap_correa_estimator(roi_Ottawa, B)
+True_entropy_Ottawa <- (log(mean(roi_Ottawa)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+Test_difference_Ottawa <- bootstrap_correa_estimator_log_mean(roi_Ottawa, B) - ((L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+
+
+# Save results
+resultados_df <- data.frame(
+  Ciudad = c("Amazonas", "Berlin", "Flevoland", "Ottawa"),
+  Media = c(mean_data_brasil, mean_data_Berlin, mean_data_Flevoland, mean_data_Ottawa),
+  Entropia_Estimada = c(Entropy_brasil, Entropy_Berlin, Entropy_Flevoland, Entropy_Ottawa),
+  Entropia_Estimada_Boot = c(entropia_estimada_boot_brasil, entropia_estimada_boot_Berlin, entropia_estimada_boot_Flevoland, entropia_estimada_boot_Ottawa),
+  Entropia_Verdadera = c(True_entropy_brasil, True_entropy_Berlin, True_entropy_Flevoland, True_entropy_Ottawa),
+  Diferencia_Test_Entropia = c(Test_difference_brasil, Test_difference_Berlin, Test_difference_Flevoland, Test_difference_Ottawa)
+)
+
+colnames(resultados_df) <- c("Area", "Mean", "$\\widehat{H}_{\\text{C}}$", "$\\widetilde{H}_{\\text{C}}$", "$H_{\\Gamma_{\\text{SAR}}}$", "$S(\\bm Z)$")
+
+save(resultados_df, file = "./Data/resultados_df.Rdata")
+
+
+```
+
+```{r Table_SAR_simulations, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+cat("\\setlength{\\tabcolsep}{4pt}\n")
+ load("./Data/resultados_df.Rdata")
+
+resultados_df[] <- lapply(resultados_df, function(x) {
+  if (is.numeric(x)) {
+    if (all(x %% 1 == 0)) {
+      formatted_numbers <- sprintf("$%d$", x)
+    } else {
+      formatted_numbers <- ifelse(x < 0, sprintf("$%.3f$", x), sprintf("$\\phantom{-}%.3f$", x))
+    }
+    return(formatted_numbers)
+  } else {
+    return(x)
+  }
+})
+
+print(
+  kbl(
+    resultados_df,
+    caption = "Results of applying the statistical test to SAR images.",
+    format = "latex",
+    booktabs = TRUE,
+    align = "lrrrrrrr",
+    escape = FALSE,
+    digits = 4,
+    label = "table_sar",
+    linesep = "",
+  ) %>%
+    #kable_styling(latex_options = "hold_position") %>%
+    row_spec(0,  align = "c")# %>% 
+ 
+)
+
+```
+
+
+# Conclusion {#sec:conclusion} 
+
+
+In this study, three estimators renowned for their robust performance across diverse distributions were chosen for evaluation. 
+We examine the impact of applying bootstrap techniques on their precision by comparing each estimator's performance with its bootstrap-enhanced counterpart, utilizing metrics such as bias and MSE. 
+The effectiveness of bootstrap-enhanced non-parametric entropy estimators was observed, demonstrating efficacy in most instances. 
+Nonetheless, it is essential to recognize that the applicability of this technique may not be universal across all estimation methods.
+
+It is worth noting that this analysis represents an initial exploration of SAR Intensity data, and future work will include a more in-depth analysis of effect size and statistical power.
+Additionally, exploring the impact of the $\alpha$ parameter on estimates and conducting more extensive analyses to assess the generalization of results to different parameter configurations is suggested.
+
+
+
+  
+# References {#references .numbered}
+
+

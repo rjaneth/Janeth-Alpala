@@ -3,89 +3,136 @@
 %	INTRO INTRO
 %------------------------------------
 
-The use of Statistical Information Theory (SIT) and Statistical Information Geometry (SIG) in image processing and analysis problems has the potential to provide several solutions to the same problem. Considering that these solutions are evidences, or estimates of the solution, this project aims to propose techniques for fusing them into a single solution potentially better than the individual evidences.
 
-The starting point is the paper by de Borba et al. \cite{de2020fusion}, in which the authors obtain several evidences of the location of edge points in images with low signal/noise relation. In this work, the estimations are treated deterministically, that is, without taking into account the variability of the estimator that produces them. These estimations go through fusion processes to obtain an edge point that summarizes the evidence.
+The technology of Synthetic Aperture Radar (SAR) imaging operates on the comprehensive aperture principle to produce high-resolution SAR images.
+In contrast to conventional optical remote sensing images, SAR images remain unaffected by external factors, making them suitable for identifying ground targets in diverse weather conditions and expansive areas.  
+Consequently, SAR imagery has become essential for environmental monitoring, disaster management, agriculture, topography mapping, geological exploration, maritime navigation, defense, and climatology~\citep{Moreira2013, iglesias2013atmospheric, Mu2019}.  
+However, the effective use of SAR
+data depends on a thorough understanding of its statistical properties
+because it is corrupted by speckle. This noise-like interference effect
+is inherent in SAR data due to the coherent nature of the imaging
+process~\citep{Argenti2013}.
 
-The project proposes to create fusion techniques that take into account the quality of each evidence. In this way, evidence that is subject to high variability, or that is inconsistent with most other evidence, will have less influence on the final result.
+Speckle in intensity format is non-Gaussian. 
+Thus, SAR data require reliable statistical models for accurate processing. 
+The \(\mathcal{G}^0\) distribution, which is suitable for SAR data, includes
+the Gamma law as the limiting case for fully-developed
+speckle~\citep{Ferreira2020} and provides flexibility with fewer
+parameters for analysis.
 
-On the one hand, the project is challenging because there are no theoretical results to assess the quality (bias, variance, etc.) of the evidence. On the other hand, when they come from an analysis based on the SIT/GIS approach, there is the possibility of advancing the frontier of knowledge since there is a powerful statistical tool (although little explored) for this purpose.
+When deciding which model is the best, practitioners face a problem. 
+On the one hand, if they opt for the Gamma law when the data come from the
+\(\mathcal{G}^0\) distribution, they lose all the information about the
+number of scatterers, which is revealed by one of the parameters of the
+latter model~\citep{Yue2021}. 
+On the other hand, if they apply the \(\mathcal{G}^0\) distribution under fully developed speckle, maximum
+likelihood estimation is tricky: bias increases making estimation
+unreliable~\citep{VasconcellosFrerySilva:CompStat}, and the likelihood is
+flat, so numerical optimization may not
+converge~\citep{FreryCribariSouza:JASP:04}. 
 
-An explainable fusion of this type of evidence will be able to provide semantically valuable information on the contribution of each component to the composition of the final result. With this, end-users will be able to extract relevant information about the information content (and reliability) of each source of evidence. This knowledge will allow, for example, discarding unreliable sources, or those that, being redundant, contribute little to the quality of the product.
+Our work aims to improve the identification of potential roughness
+features in SAR intensity data. 
+Physical modeling of SAR data allows the
+use of the Gamma distribution in the presence of fully-developed
+speckle, where an infinite number of independent backscatterers per
+resolution unit is assumed, commonly referred to as homogeneous regions.
 
-The work will focus on SAR/PolSAR (Synthetic Aperture Radar/Polarimetric SAR) images. These images are of great relevance in Remote Sensing \cite{cloude2009polarisation}, and present high levels of non-Gaussian and non-additive noise. This last feature makes them attractive and challenging for the development of new techniques \cite{lee2017polarimetric}.
+In this context, we present a set of three novel test statistics that
+aim to distinguish between homogeneous and non-homogeneous returns,
+particularly between gamma and \(\mathcal{G}^0\) distributed data,
+assuming the number of looks is known.
+ We use properties such as entropy and coefficient of variation.
 
-The statistical approach to edge detection in SAR/PolSAR images has provided comparable or better results than techniques previously considered state-of-the-art. Among the edge detection results to be highlighted for SAR images (in which each pixel has a non-negative value), we mention the works of \cite{gambini2008accuracy, giron2012nonparametric}.
+Entropy is a fundamental concept in information theory with far-reaching
+applications in pattern recognition, statistical physics, image
+processing, edge detection and SAR image
+analysis~\citep{Presse2013,MohammadDjafari2015,Avval2021, Nascimento2014,Nascimento2019}.
+\citet{Shannon1948} this concept for a random variable to measure information and uncertainty. 
+Shannon entropy is a crucial descriptive parameter in statistics, especially for evaluating data
+dispersion and performing tests for normality, exponentiality and
+uniformity~\citep{Wieczorkowski1999,Zamanzade2012}. 
+Entropy estimation is challenging, especially when the model is unknown. In these cases,
+non-parametric methods are used. Spacing methods have been discussed as
+a non-parametric approach in Refs.~\citep{AlizadehNoughabi2010,Subhash2021}. This strategy is flexible
+and robust because it does not enforce a model or parametric
+constraints.
+
+The coefficient of variation (CV), introduced in 1896 by~\citet{Pearson1896}, is a relative dispersion measure widely used
+in various fields of applied statistics, including sampling,
+biostatistics, medical and biological research, climatology and other
+fields~\citep{hendricks1936sampling,Tian2005,SubrahmanyaNairy2003,Chankham2024}.
+It facilitates the comparison of variability between different
+populations and is particularly valuable for relating variables with
+different units. This is because when the primary purpose is to compare
+the variations of several variables, the standard deviation can only
+serve as an adequate measure of variation if all variables are expressed
+in the same unit of measurement and have identical means. If these
+conditions are not met, then the CV is the relative measure that is
+usually used in real applications. The variable with the highest CV
+value has the largest relative dispersion around the mean
+value~\citep{Banik2011}. The coefficient of variation is the primary
+measure of heterogeneity in SAR data~\citep{Ulaby1986,Touzi1988}. We
+study two ways of estimating the coefficient of variation.
+
+The other parameter we study is the Shannon entropy. Different roughness
+levels materialized as models for SAR data, have different entropy
+values, but this fundamental quantity can also be estimated in a
+model-agnostic way. We exploit this property and design a
+bootstrap-improved non-parametric estimator for the Shannon entropy.
+
+We devise test statistics based on these three estimators: the classical
+coefficient of variation, a robust version, and the Shannon entropy
+estimator. We apply these test statistics to generate maps of evidence
+of homogeneity that reveal different types of targets in the SAR data.
+We show that our proposed method is superior to existing approaches with
+simulated data and SAR images.
 
 
-\section{Literature Review}
-A. Fink \cite{fink2019conducting} provides the following definition: ``A literature review is a systematic, explicit, and reproducible project to identify, evaluate, and interpret the existing body of recorded documents.''  Literature reviews generally aim at two goals: first, they summarize existing research by identifying patterns, themes, and issues. Second, this helps identify the conceptual content of the field and can contribute to theory development.
 
-\subsection{Search Strategy}
-
-In order to select the most relevant articles for this study, we started by searching for papers on edge detection in SAR/PolSAR images in the most common scientific databases: Scopus, Web of Science (WoS), Science Direct (SD), Google Scholar (GS), Emerald insight (Emerald), Wiley Online Library (Wiley), Taylor \& Francis Online (T\&F), Springer Link (Springer), Inderscience (IS), and Informs PubsOnline (IPO). \\ %The Search Terms employed in the field of Title are the following:
-The employed keywords were the following focused on the fields Title-Abstract-Keywords:
-\begin{itemize}
-	\item ("bias correction" OR "improve estimators" OR "new estimator" OR "MLE" OR "efficient estimators" OR "maximum-likelihood estimation" OR "statistical information theory")  
-\item	AND ("boundary detection" OR "edge detection" OR "edge detection method" OR "edge detector") 
-\item ("PolSAR images" OR "Polarimetric Synthetic Aperture Radar" OR "single-polarimetric synthetic aperture radar images" OR "SAR images")
-\end{itemize}
-Some works related to this topic can be seen in Table \ref{tab:1}.
-\begin{longtable}{P{\dimexpr0.26\textwidth-2\tabcolsep-2\arrayrulewidth\relax}
-                        P{\dimexpr0.39\textwidth-2\tabcolsep-\arrayrulewidth\relax}
-                        P{\dimexpr0.30\textwidth-2\tabcolsep-\arrayrulewidth\relax}
-                        %P{\dimexpr0.20\textwidth-2\tabcolsep-\arrayrulewidth\relax}
-                        }
-\toprule
-Author & Title & Source \\\midrule
-\rowcolor{Gray}\multicolumn{3}{c}{Edge detection}\\
-Nascimento, A. D., Horta, M. M., Frery, A. C., and Cintra, R. J. (2013)\cite{nascimento2013comparing}. & Comparing edge detection methods based on stochastic entropies and distances for PolSAR imagery & IEEE journal of selected topics in applied earth observations and remote sensing\\ \midrule
-%\rowcolor{gray!20}\multicolumn{3}{c}{Music}\\
-Xiang, Y., Wang, F., Wan, L., and You, H. (2017) \cite{xiang2017sar} & SAR-PC: Edge detection in SAR images via an advanced phase congruency model. & Remote Sensing\\ \midrule
-
-Qin, X., Hu, T., Yu, W., Wang, P., Li, J.,  Zou, H. (2018) \cite{qin2018edge}& Edge detection of PolSAR images using statistical distance between automatically refined samples.& IEEE International Geoscience and Remote Sensing Symposium\\
-\bottomrule
-Nascimento, A. D., Frery, A. C.,  Cintra, R. J. (2019) \cite{nascimento2018detecting}& Detecting changes in fully polarimetric SAR imagery with statistical information theory.& IEEE Transactions on Geoscience and Remote Sensing\\
-\bottomrule
-Quan, S., Xiang, D., Xiong, B.,  Kuang, G. (2020) \cite{quan2019edge}& Edge detection for PolSAR images integrating scattering characteristics and optimal contrast.& IEEE Geoscience and Remote Sensing Letters\\
-\bottomrule
-\caption[Papers related to edge detection]{Papers related to edge detection}\label{tab:1}
-%\caption{\label{Pesquisa de documentos.} works that use Machine Learning}
-\end{longtable}
-
-
-
-
-%("REVIEW" OR "STATE OF THE ART" OR "SURVEY" OR "CONCEPTUAL FRAMEWORK" ) AND ("LAYOUT DESIGN" OR "DESIGN OF LAYOUT" OR "MANUFACTURING LAYOUT"
-%OR "FACILITY LAYOUT" OR "PLANT LAYOUT" OR "FACILITY LAYOUT PLANNING" ). 
 
 %---------------------------------------------------------------------------------------------------------------------
-\section{Project objectives}
-The objective of this thesis is to contribute to the state of the art in the fusion of evidence using a statistical approach to achieve explainable and relevant results. \\
 
-The main specific objectives are:
+\section{Objectives}
+
+The aim of this work is the identification of roughness features in SAR intensity data by developing novel test statistics for distinguishing between homogeneous and heterogeneous domains. To achieve this goal, we propose the following procedure:
 
 \begin{itemize}
-	\item Obtain the statistical properties (bias, variance) of edge point estimators in SAR/PolSAR images.
-	\item Propose and evaluate new fusion and evidence selection techniques that take these properties into account.
-	\item Develop new features for production software, e.g. PolSARpro and SNAP.
+    \item Select the optimal non-parametric estimator of entropy, refined through bootstrap techniques, aiming to reduce bias and mean square error.
+    \item Propose three test statistics: the first based on the selected non-parametric estimator of entropy; the second utilizing the classical coefficient of variation; and the third using a robust approach of CV variant.
+    \item Conduct computational experiments to evaluate the performance of the proposed test statistics across various simulated data scenarios.
+    \item Apply the test statistics to SAR data to assess their effectiveness in identifying roughness features.
 \end{itemize}
 
-\section{Thesis organization}\label{sec:research_questions}
+\subsection{Submitted Articles}
+
+The results obtained in this work were submitted for publication as follows:
+\begin{itemize}
+    \item  MIGARS 2024 proceedings in the IEEE Xplore Digital Library®, titled "Identifying Departures from the Fully Developed Speckle Hypothesis in Intensity SAR Data with Non-Parametric Estimation of the Entropy".
+    \item  Remote Sensing journal from MDPI, titled "Identifying Heterogeneity in SAR Data with New Test Statistics".
+\end{itemize}
+The articles were written in Rmarkdown and are fully reproducible. 
+The code and data are accessible at 
+\href{https://github.com/rjaneth/identifying-heterogeneity-in-sar-data-with-new-test-statistics}{\textcolor[rgb]{0,0,1}{Repository Link}}
+
+
+\section{Manuscript organization}\label{sec:research_questions}
 
 % colocar para citar los capitulos
 \hypersetup{linkcolor=blue}
-
-This thesis is structured in 5 chapters. In the upcoming sections of the current chapter a general overview on ... \\
- Chapter~\ref{chp:obs} details ...\\
-Chapter ~\ref{chp:models} explains ...
+This document is organized as follows: 
+Chapter~\ref{chp:background} provides a background on remote sensing and SAR images. 
+Chapter~\ref{chp:methods} discusses methodological aspects, including statistical modeling, entropy estimation for intensity SAR data, and hypothesis testing. 
+Chapter~\ref{chp:results} presents the main results obtained in our study with both simulated and actual data. Finally,
+In Chapter~\ref{chp:conclusions}, the conclusions and future work are presented.
+%Chapter ~\ref{chp:models} explains ...
 %------------------------------------
 %	HAZARD: OVERVIEW
 %------------------------------------
 
 
-\section{Computing platforms}
-This  project required a vast amount of computing, preprocessing, analysis and plotting.
+%\section{Computing platforms}
+%This  project required a vast amount of computing, preprocessing, analysis and plotting.
 
 %------------------------------------
 %	TODO STUFF

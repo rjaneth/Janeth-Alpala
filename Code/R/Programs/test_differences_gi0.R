@@ -18,7 +18,7 @@ source("../MainFunctions/gi0_sample.R")
 
 set.seed(1234567890, kind = "Mersenne-Twister")
 
-R <- 3000
+R <- 1000
 mu <- 1
 L <- 5
 B <- 2
@@ -42,7 +42,7 @@ for (s in sample.size) {
   
   for (r in 1:R) {
     z <- gi0_sample(mu, alpha1, L, s)
-    TestStat1[r] <- log(mean(z))  - (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
+    TestStat1[r] <- mean(z)  #- (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
     TestStat2[r] <- bootstrap_correa_estimator_log_mean(z, B) + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L) + L + lgamma(L - alpha1) - (L - alpha1) * (digamma(L - alpha1)) + (1 - alpha1) * digamma(-alpha1) - log(-1 - alpha1) - lgamma(-alpha1))
     TestStat3[r] <- bootstrap_correa_estimator_log_mean(z, B) + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
     TestStat4[r] <- bootstrap_correa_estimator(z, B)

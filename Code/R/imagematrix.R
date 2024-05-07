@@ -6,85 +6,49 @@
 ## Copyright (c) 2003 Nikon Systems Inc.
 ## For complete license terms see file LICENSE
 
-
-
-imagematrix <- function(mat, type = NULL, ncol = dim(mat)[1], nrow = dim(mat)[2],
-                        noclipping = FALSE) {
+imagematrix <- function(mat, type=NULL, ncol=dim(mat)[1], nrow=dim(mat)[2],
+                        noclipping=FALSE) {
   if (is.null(dim(mat)) && is.null(type)) stop("Type should be specified.")
   if (length(dim(mat)) == 2 && is.null(type)) type <- "grey"
   if (length(dim(mat)) == 3 && is.null(type)) type <- "rgb"
   if (type != "rgb" && type != "grey") stop("Type is incorrect.")
   if (is.null(ncol) || is.null(nrow)) stop("Dimension is uncertain.")
-
   imgdim <- c(ncol, nrow, if (type == "rgb") 3 else NULL)
-
   if (length(imgdim) == 3 && type == "grey") {
     # force to convert grey image
     mat <- rgb2grey(mat)
   }
-
-  if (noclipping == FALSE && ((min(mat, na.rm = TRUE) < 0) || (1 < max(mat, na.rm = TRUE)))) {
-    warning("Pixel values were automatically clipped because of range over.")
+  if (noclipping == FALSE && ((min(mat) < 0) || (1 < max(mat)))) {
+    warning("Pixel values were automatically clipped because of range over.") 
     mat <- clipping(mat)
   }
-
-  mat <- array(mat, dim = imgdim)
+  mat <- array(mat, dim=imgdim)
   attr(mat, "type") <- type
   class(mat) <- c("imagematrix", class(mat))
   mat
 }
 
+print.imagematrix <- function(x, ...) {
+  x.dim <- dim(x)
+  cat("size: ", x.dim[1], "x", x.dim[2], "\n")
+  cat("type: ", attr(x, "type"), "\n")
+}
+
+plot.imagematrix <- function(x, ...) {
+  colvec <- switch(attr(x, "type"),
+                grey=grey(x),
+                rgb=rgb(x[,,1], x[,,2], x[,,3]))
+  if (is.null(colvec)) stop("image matrix is broken.")
+  colors <- unique(colvec)
+  colmat <- array(match(colvec, colors), dim=dim(x)[1:2])
+  image(x = 0:(dim(colmat)[2]), y=0:(dim(colmat)[1]),
+        z = t(colmat[nrow(colmat):1, ]), col=colors,
+        xlab="", ylab="", axes=FALSE, asp=1, ...)
+}
 
 imageType <- function(x) {
   attr(x, "type")
 }
-
-
-
-#"#9ECAE1",
-plot.imagematrix <- function(x, significance_level = 0.05, colors = colorRampPalette(c("#FF6600","#253494" ))(100), ...) {
-  if (is.null(attr(x, "type"))) stop("Type should be specified.")
-
-  colmat <- matrix(0, nrow = nrow(x), ncol = ncol(x))
-
-  
-  colmat[x > 1 - significance_level] <- 1
-
-  
-  colmat[x <= 1 - significance_level & x > significance_level] <- (x[x <= 1 - significance_level & x > significance_level] - significance_level) / (1 - significance_level)
-
-  
-  colmat[x <= significance_level] <- -x[x <= significance_level] / significance_level
-
-  color_palette <- colorRampPalette(colors)(100)
-
-  layout(matrix(c(1, 2), nrow = 1), widths = c(1, 0.2))
-  par(mar = c(0, 0, 0, 4))
-  par(oma = c(0, 0, 0, 0))
-  par(omi = c(0, 0, 0, 0))
-
-  
- image(x = seq(0, ncol(colmat) - 1), y = seq(0, nrow(colmat) - 1),
-        z = t(colmat[nrow(colmat):1, , drop = FALSE]), col = color_palette,
-        xlab = "", ylab = "", axes = FALSE, asp = 1, ...)
-
-
- 
- color_palette2 <- colorRampPalette(c("#FF6600","#253494", "#253494","#253494", "#253494", "#253494"))(100)
- image.plot(zlim = c(0, 1), legend.only = TRUE, col = color_palette2, horizontal = FALSE,
-            axis.args = list(at = c(0, 0.2, 0.4, 0.6, 0.8, significance_level, 1), 
-                             labels = c("0", "0.2", "0.4", "0.6", "0.8", as.character(significance_level), "1")),
-            legend.shrink = 0.8)
-
-
-
-}
-
-
-
-
-
-
 
 rgb2grey <- function(img, coefs=c(0.30, 0.59, 0.11)) {
   if (is.null(dim(img))) stop("image matrix isn't correct.")
@@ -101,7 +65,7 @@ normalize <- function(img) {
   (img - min(img))/(max(img) - min(img))
 }
 
-
+# the end of file
 
 ### Added by Alejandro C. Frery
 ### 24 April 2014
@@ -115,7 +79,6 @@ imagematrixPNG <- function(x, name){
   dev.off()
 }
 
-
 imagematrixEPS <- function(x, name){
   dimensions <- dim(x)
   zero4 <- rep(0,4)
@@ -125,7 +88,7 @@ imagematrixEPS <- function(x, name){
   dev.off()
 }
 
-# Finalmente! FunC'C#o que equaliza uma imagem de uma banda
+# Finalmente! Função que equaliza uma imagem de uma banda
 equalize <- function(imagem) {
   imagemeq <- ecdf(imagem)(imagem)
   dim(imagemeq) <- dim(imagem)
@@ -135,7 +98,7 @@ equalize <- function(imagem) {
 
 ### Added by Alejandro C. Frery
 ### 31 January 2018
-# FunC'C#o que equaliza trC*s bandas independentemente
+# Função que equaliza três bandas independentemente
 equalize_indep <- function(imagem) {
 	req <- ecdf(imagem[,,1])(imagem[,,1])
 	geq <- ecdf(imagem[,,2])(imagem[,,2])
@@ -150,7 +113,7 @@ equalize_indep <- function(imagem) {
 
 ### Added by Alejandro C. Frery
 ### 5 March 2018
-# FunC'C#o que lineariza trC*s bandas independentemente
+# Função que lineariza três bandas independentemente
 normalize_indep <- function(imagem) {
   rlin <- normalize(imagem[,,1])
   glin <- normalize(imagem[,,2])
@@ -198,3 +161,36 @@ HistogramMatching <- function(reference, destination) {
 # Author: mstokely@google.com (Murray Stokely)
 
 
+HistToEcdf <- function(h, method="constant", f=0, inverse=FALSE) {
+  # Compute an empirical cumulative distribution function from a histogram.
+  #
+  # Args:
+  #   h:  An S3 histogram object.
+  #   method: specifies the interpolation method to be used in call to
+  #      approxfun().  Choices are ‘"linear"’ or ‘"constant"’.
+  #   f: for ‘method="constant"’ a number between 0 and 1 inclusive,
+  #      indicating a compromise between left- and right-continuous
+  #      step functions.  See ?approxfun
+  #   inverse: If TRUE, return the inverse function.
+  #
+  # Returns:
+  #   An empirical cumulative distribution function (see ?ecdf)
+  
+  n <- sum(h$counts)
+  # We don't want to use h$mids here, because we want at least
+  # to get the correct answers at the breakpoints.
+  x.vals <- h$breaks
+  y.vals <- c(0, cumsum(h$counts) / n)
+  if (inverse) {
+    vals.tmp <- x.vals
+    x.vals <- y.vals
+    y.vals <- vals.tmp
+  }
+  rval <- approxfun(x.vals, y.vals,
+                    method = method, yleft = 0, yright = 1, f = f,
+                    ties = "ordered")
+  class(rval) <- c("ecdf", "stepfun", class(rval))
+  assign("nobs", n, envir = environment(rval))
+  attr(rval, "call") <- sys.call()
+  rval
+}

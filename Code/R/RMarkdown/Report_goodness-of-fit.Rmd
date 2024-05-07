@@ -109,7 +109,7 @@ source("../MainFunctions/bootstrap_al_omari_2_estimator.r")
 #The next function contains the functions: generate_samples, calculate_bias_mse, generate_plot
 source("../Programs/functions_sample_bias_mse.R")# 
 source("../imagematrix.R")
-source("../imagematrix1.R")
+#source("../imagematrix.R")
 set.seed(1234567890, kind = "Mersenne-Twister")
 
 ```
@@ -118,32 +118,257 @@ set.seed(1234567890, kind = "Mersenne-Twister")
 
 The p-values of a Kolmogorov-Smirnov-Test (KS-Test) with estimated parameters can be quite wrong because the p-value does not take the uncertainty of the estimation into account. So unfortunately, you can't just fit a distribution and then use the estimated parameters in a Kolmogorov-Smirnov-Test to test your sample. There is a normality test called Lilliefors test which is a modified version of the KS-Test that allows for estimated parameters.
 
-
-
-
-```{r Plot1, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
+save(difference_values, x, file = "./Data/results_Lake_512_9W_AO_100b_36L.Rdata")
+save(difference_values, x, file = "./Data/results_Lake_without_bootstrap.Rdata")
+save(difference_values, x, file = "./Data/results_Lake_without_bootstrap1.Rdata")
+load("./Data/results_mexico_600_9W_AO_100b_6L.Rdata")
+```{r Plot_chicago_lake, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
 
 load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")#save(difference_values, x, file = "./Data/results_data_otawa_512_7_correa_300b.Rdata")
+#load("../Programs/Data/results_ottawa_city_512_7_AO_300b.Rdata")#results_ottawa_city_512_7_AO_300b.Rdata
+#load("../Programs/Data/results_Chicago_1024_9_AO_100b_6L.Rdata")
+#results_Chicago_1024_9_AO_100b_6L
+#save(difference_values, x, file = "./Data/results_data_crop_chicago_200_7_n.Rdata")results_chicago_city_512_7_AO_100b.Rdata
+#save(difference_values, x, file = "./Data/results_ottawa_city_512_7_AO_100b.Rdata")
+#save(p_values_matrix, epsilon_matrix, file = "./Data/results_pvalue_epsilon.Rdata")
+load("../Programs/Data/results_Chicago_1024_9_AO_200b_36L.Rdata")
+#x1<-as.vector(epsilon_matrix)
+source("../imagematrix.R")
+hist(difference_values)
 
 ggplot() +
-  geom_density(aes(x = as.vector(cv_values)), fill = "skyblue", color = "black") +
+  geom_density(aes(x = as.vector(difference_values)), fill = "skyblue", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+
+```
+
+```{r Plot_ottawa_AO_300, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
+
+#load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")#save(difference_values, x, file = "./Data/results_data_otawa_512_7_correa_300b.Rdata")
+#load("../Programs/Data/results_ottawa_city_512_7_AO_300b.Rdata")#results_ottawa_city_512_7_AO_300b.Rdata
+#load("../Programs/Data/results_Chicago_1024_9_AO_100b_6L.Rdata")
+#results_Chicago_1024_9_AO_100b_6L
+#save(difference_values, x, file = "./Data/results_data_crop_chicago_200_7_n.Rdata")results_chicago_city_512_7_AO_100b.Rdata
+#save(difference_values, x, file = "./Data/results_ottawa_city_512_7_AO_100b.Rdata")
+#save(p_values_matrix, epsilon_matrix, file = "./Data/results_pvalue_epsilon.Rdata")
+load("../Programs/Data/results_pvalue_epsilon.Rdata")
+#x1<-as.vector(epsilon_matrix)
+source("../imagematrix.R")
+hist(p_values_matrix)
+
+ggplot() +
+  geom_density(aes(x = as.vector(epsilon_matrix)), fill = "skyblue", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+
+```
+
+```{r normal2, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Simulation of entropy for Gamma SAR", eval=FALSE}
+load("../Programs/Data/results_pvalue_epsilon.Rdata")
+x1<-as.vector(epsilon_matrix)
+#save(p_values_matrix, epsilon_matrix, file = "./Data/results_pvalue_epsilon.Rdata")
+descdist(x1, discrete = FALSE)
+
+#fit.weibull <- fitdist(x1, "weibull")
+#plot(fit.weibull)
+#fit.weibull$aic
+ fit.norm <- fitdist(x1, "norm")
+ fit.norm$aic
+ plot(fit.norm)
+```
+
+```{r Plot_ottawa_AO_100, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
+
+#load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")#save(difference_values, x, file = "./Data/results_data_otawa_512_7_correa_300b.Rdata")
+load("../Programs/Data/results_ottawa_city_512_7_AO_100b.Rdata")#results_ottawa_city_512_7_AO_300b.Rdata
+#save(difference_values, x, file = "./Data/results_data_crop_chicago_200_7_n.Rdata")results_chicago_city_512_7_AO_100b.Rdata
+#save(difference_values, x, file = "./Data/results_ottawa_city_512_7_AO_100b.Rdata")
+source("../imagematrix.R")
+hist(difference_values)
+
+ggplot() +
+  geom_density(aes(x = as.vector(difference_values)), fill = "skyblue", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+
+```
+
+```{r Plot_ottawa_ebra_50, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
+
+#load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")#save(difference_values, x, file = "./Data/results_data_otawa_512_7_correa_300b.Rdata")
+load("../Programs/Data/results_ottawa_city_512_7_AO_300b.Rdata")#save(difference_values, x, file = "./Data/results_data_otawa_512_5_Ebr_50b.Rdata")
+#save(difference_values, x, file = "./Data/results_data_crop_chicago_200_7_n.Rdata")results_chicago_city_512_7_AO_100b.Rdata
+#save(difference_values, x, file = "./Data/results_ottawa_city_512_7_Ebrahimi_100b.Rdata")
+source("../imagematrix.R")
+hist(difference_values)
+
+ggplot() +
+  geom_density(aes(x = as.vector(difference_values)), fill = "skyblue", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+
+```
+```{r Plot_ottawa_ebra_100, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
+
+#load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")#save(difference_values, x, file = "./Data/results_data_otawa_512_7_correa_300b.Rdata")
+load("../Programs/Data/results_ottawa_city_512_7_Ebrahimi_100b.Rdata")#save(difference_values, x, file = "./Data/results_data_otawa_512_5_Ebr_50b.Rdata")
+#save(difference_values, x, file = "./Data/results_data_crop_chicago_200_7_n.Rdata")results_chicago_city_512_7_AO_100b.Rdata
+#save(difference_values, x, file = "./Data/results_ottawa_city_512_7_Ebrahimi_100b.Rdata")
+source("../imagematrix.R")
+hist(difference_values)
+
+ggplot() +
+  geom_density(aes(x = as.vector(difference_values)), fill = "skyblue", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+
+```
+
+
+```{r PlotAO, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
+
+#load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")
+load("../Programs/Data/results_data_agua_300_7_AO.Rdata")#save(difference_values, x, file = "./Data/results_data_otawa_512_5_Ebr_50b.Rdata")
+#save(difference_values, x, file = "./Data/results_data_crop_chicago_200_7_n.Rdata")results_chicago_city_512_7_AO_100b.Rdata
+
+source("../imagematrix.R")
+hist(difference_values)
+
+ggplot() +
+  geom_density(aes(x = as.vector(difference_values)), fill = "skyblue", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+
+```
+
+
+```{r PlotAO_chicago_city, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
+
+#load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")
+load("../Programs/Data/results_chicago_city_512_7_AO_100b.Rdata")
+#save(difference_values, x, file = "./Data/results_data_crop_chicago_200_7_n.Rdata")results_chicago_city_512_7_AO_100b.Rdata
+#save(difference_values, x, file = "./Data/results_data_mexico_512_5_Ebr_50b.Rdata")
+#save(difference_values, x, file = "./Data/results_data_panama_512_5_Ebr_100b.Rdata")
+source("../imagematrix.R")
+hist(difference_values)
+
+ggplot() +
+  geom_density(aes(x = as.vector(difference_values)), fill = "skyblue", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+
+```
+
+```{r PlotAO_panama_city, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
+
+#load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")
+load("../Programs/Data/results_Mexico_512_7_AO_300b.Rdata")
+#save(difference_values, x, file = "./Data/results_data_crop_chicago_200_7_n.Rdata")results_chicago_city_512_7_AO_100b.Rdata
+#save(difference_values, x, file = "./Data/results_data_mexico_512_5_Ebr_50b.Rdata")
+#save(difference_values, x, file = "./Data/results_data_panama_512_5_Ebr_100b.Rdata")
+source("../imagematrix.R")
+hist(difference_values)
+
+ggplot() +
+  geom_density(aes(x = as.vector(difference_values)), fill = "skyblue", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+
+```
+
+```{r, eval=FALSE}
+load("../Programs/Data/results_data_simulated_z_up_le_entropy_250_7.Rdata")
+#load("../Programs/Data/results_data_agua_300_7_AO.Rdata")
+
+x2<-as.vector(difference_values)
+mydata_dist <- univariateML::model_select(x2)
+mydata_dist
+```
+
+
+```{r Plot_EBra, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
+
+#load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")
+load("../Programs/Data/results_data_agua_300_5_E.Rdata")
+#save(difference_values, x, file = "./Data/results_data_crop_chicago_200_7_n.Rdata")results_data_agua_300_5_Eb_300b.Rdata
+
+source("../imagematrix.R")
+hist(difference_values)
+
+ggplot() +
+  geom_density(aes(x = as.vector(difference_values)), fill = "skyblue", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+```
+```{r Plot_EBra300, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
+
+#load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")
+load("../Programs/Data/results_data_agua_300_5_Eb_300b.Rdata")
+#save(difference_values, x, file = "./Data/results_data_crop_chicago_200_7_n.Rdata")results_data_agua_300_5_Eb_1b.Rdata
+
+source("../imagematrix.R")
+hist(difference_values)
+
+ggplot() +
+  geom_density(aes(x = as.vector(difference_values)), fill = "skyblue", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+```
+
+```{r Plot_EBra1b, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
+
+#load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")
+load("../Programs/Data/results_data_agua_300_5_Eb_1b.Rdata")
+#save(difference_values, x, file = "./Data/results_data_crop_chicago_200_7_n.Rdata")results_data_agua_300_5_Eb_1b.Rdata
+
+source("../imagematrix.R")
+hist(difference_values)
+
+ggplot() +
+  geom_density(aes(x = as.vector(difference_values)), fill = "skyblue", color = "black") +
   labs(title = " ", x = "cv", y = "Density")
 ```
 
 
+```{r Plot_correa, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt"}
 
-```{r 2, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Simulation of entropy for Gamma SAR"}
-load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
-x1<-as.vector(cv_values)
+#load("../Programs/Data/results_data_Flevoland_cv_300_5_v2.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")
+load("../Programs/Data/results_data_agua_300_9_correa.Rdata")
+#save(difference_values, x, file = "./Data/results_data_crop_chicago_200_7_n.Rdata")
+
+source("../imagematrix.R")
+hist(difference_values)
+
+ggplot() +
+  geom_density(aes(x = as.vector(difference_values)), fill = "skyblue", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+```
+
+```{r, eval=FALSE}
+#load("../Programs/Data/results_data_simulated_z_up_le_entropy_250_7.Rdata")
+load("../Programs/Data/results_data_agua_300_5_Eb_300b.Rdata")
+
+x2<-as.vector(difference_values)
+mydata_dist <- univariateML::model_select(x2)
+mydata_dist
+```
+
+
+```{r 2, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Simulation of entropy for Gamma SAR", eval=FALSE}
+load("../Programs/Data/results_chicago_city_512_7_AO_100b.Rdata")
+x1<-as.vector(difference_values)
 
 descdist(x1, discrete = FALSE)
 
-fit.weibull <- fitdist(x1, "weibull")
-plot(fit.weibull)
-fit.weibull$aic
-# fit.norm <- fitdist(x1, "norm")
-# fit.norm$aic
-# plot(fit.norm)
+#fit.weibull <- fitdist(x1, "weibull")
+#plot(fit.weibull)
+#fit.weibull$aic
+ fit.norm <- fitdist(x1, "norm")
+ fit.norm$aic
+ plot(fit.norm)
 ```
 
 
@@ -154,7 +379,7 @@ mydata_dist <- univariateML::model_select(x1)
 mydata_dist
 ```
 
-```{r cv5, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 5x5, Flevoland"}
+```{r cv5, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 5x5, Flevoland",eval=FALSE }
 load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
 alpha <- 5.452
 beta <- 2.061
@@ -177,21 +402,263 @@ for (i in 1:nrow(cv_values)) {
 }
 
 
+save(p_values_matrix, file = "./Data/results_pvalue_Flevoland_cv_300_5.Rdata")
+
+
+#source("../imagematrix.R")
+source("../imagematrix.R")
+#hist(p_values_matrix)
+#par(mfrow=c(1,2))
+#plot(imagematrix(p_values_matrix ))
+plot(imagematrix(p_values_matrix ))
+#plot(imagematrix(p_values_matrix >0.1))
+```
+
+```{r cv_lognormal, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 5x5, Flevoland",eval=FALSE }
+#load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
+load("../Programs/Data/results_data_simulated_z_up_le_cv_250_7.Rdata")
+# Definir la función de distribución acumulativa inversa de la distribución lognormal
+plnorm_inv <- function(x, meanlog, sdlog) {
+  pnorm(log(x), mean = meanlog, sd = sdlog)
+}
+
+# Cargar los datos y parámetros de ajuste de la distribución lognormal
+meanlog <- -0.1931404
+sdlog <- 0.4293747
+
+# Crear una matriz para almacenar los p-valores
+p_values_matrix <- matrix(NA, nrow = nrow(cv_values), ncol = ncol(cv_values))
+
+# Calcular los p-valores para cada dato en la matriz de coeficientes de variación
+for (i in 1:nrow(cv_values)) {
+  for (j in 1:ncol(cv_values)) {
+    cv_value <- cv_values[i, j]
+    
+    # Calcular el p-valor utilizando la función de distribución acumulativa inversa de la distribución lognormal
+    p_values_matrix[i, j] <- plnorm_inv(cv_value, meanlog, sdlog)
+  }
+}
+
+# Guardar la matriz de p-valores
 #save(p_values_matrix, file = "./Data/results_pvalue_Flevoland_cv_300_5.Rdata")
 
 
 #source("../imagematrix.R")
-source("../imagematrix1.R")
+source("../imagematrix.R")
 #hist(p_values_matrix)
 #par(mfrow=c(1,2))
 #plot(imagematrix(p_values_matrix ))
-plot(imagematrix1(p_values_matrix ))
-#plot(imagematrix(p_values_matrix >0.1))
+plot(imagematrix(equalize(z.up.le)))
+plot(imagematrix(equalize(cv_values)))#z.up.le
+plot(imagematrix(p_values_matrix ))
+plot(imagematrix(p_values_matrix <0.1))
+plot(imagematrix(p_values_matrix >0.1))
+```
+
+```{r cv_lognormal2, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 5x5, Flevoland",eval=FALSE }
+#load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
+#load("../Programs/Data/results_data_simulated_z_up_le_cv_250_7.Rdata")
+load("../Programs/Data/results_data_simulated_Phantom_7.Rdata")
+# Definir la función de distribución acumulativa inversa de la distribución lognormal
+# plnorm_inv <- function(x, meanlog, sdlog) {
+#   pnorm(log(x), mean = meanlog, sd = sdlog)
+# }
+
+# Cargar los datos y parámetros de ajuste de la distribución lognormal
+# Cargar los datos y parámetros de ajuste de la distribución lognormal
+meanlog <- -0.1503808
+sdlog <-  0.4504363
+
+# Crear una matriz para almacenar los p-valores
+p_values_matrix <- matrix(NA, nrow = nrow(cv_values), ncol = ncol(cv_values))
+
+# Calcular los p-valores para cada dato en la matriz de coeficientes de variación
+for (i in 1:nrow(cv_values)) {
+  for (j in 1:ncol(cv_values)) {
+    cv_value <- cv_values[i, j]
+    
+    # Calcular el p-valor utilizando la función plnorm()
+    p_values_matrix[i, j] <- 1-plnorm(cv_value, meanlog = meanlog, sdlog = sdlog)
+  }
+}
+
+# Guardar la matriz de p-valores
+#save(p_values_matrix, file = "./Data/results_pvalue_Flevoland_cv_300_5.Rdata")
+
+
+# Guardar la matriz de p-valores
+#save(p_values_matrix, file = "./Data/results_pvalue_Flevoland_cv_300_5.Rdata")
+
+
+#source("../imagematrix.R")
+source("../imagematrix.R")
+#hist(p_values_matrix)
+#par(mfrow=c(1,2))
+#plot(imagematrix(p_values_matrix ))
+#plot(imagematrix(equalize(z.up.le)))
+plot(imagematrix(equalize(cv_values)))#z.up.le
+plot(imagematrix(p_values_matrix ))
+plot(imagematrix(p_values_matrix <0.1))
+plot(imagematrix(p_values_matrix >0.1))
 ```
 
 
 
 
+
+
+
+```{r cv_lognormal3_mnad, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 5x5, Flevoland",eval=FALSE }
+#load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
+#load("../Programs/Data/results_data_simulated_z_up_le_cv_250_7.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")
+load("../Programs/Data/results_data_simulated_z_up_le_mnad_250_7.Rdata")
+# Definir la función de distribución acumulativa inversa de la distribución lognormal
+# plnorm_inv <- function(x, meanlog, sdlog) {
+#   pnorm(log(x), mean = meanlog, sd = sdlog)
+# }
+
+# Cargar los datos y parámetros de ajuste de la distribución lognormal
+# Cargar los datos y parámetros de ajuste de la distribución lognormal
+meanlog <- -0.2861518
+sdlog <- 0.5366815
+
+# Crear una matriz para almacenar los p-valores
+p_values_matrix <- matrix(NA, nrow = nrow(cd_values_mnad), ncol = ncol(cd_values_mnad))
+
+# Calcular los p-valores para cada dato en la matriz de coeficientes de variación
+for (i in 1:nrow(cd_values_mnad)) {
+  for (j in 1:ncol(cd_values_mnad)) {
+    cd_value_mnad <- cd_values_mnad[i, j]
+    
+    # Calcular el p-valor utilizando la función plnorm()
+    p_values_matrix[i, j] <- 1-plnorm(cd_value_mnad, meanlog = meanlog, sdlog = sdlog)
+  }
+}
+
+# Guardar la matriz de p-valores
+#save(p_values_matrix, file = "./Data/results_pvalue_Flevoland_cv_300_5.Rdata")
+
+
+# Guardar la matriz de p-valores
+#save(p_values_matrix, file = "./Data/results_pvalue_Flevoland_cv_300_5.Rdata")
+
+
+#source("../imagematrix.R")
+source("../imagematrix.R")
+#hist(p_values_matrix)
+#par(mfrow=c(1,2))
+#plot(imagematrix(p_values_matrix ))
+#plot(imagematrix(equalize(z.up.le)))
+plot(imagematrix(equalize(cd_values_mnad)))#z.up.le
+plot(imagematrix(p_values_matrix ))
+plot(imagematrix(p_values_matrix <0.1))
+plot(imagematrix(p_values_matrix >0.05))
+```
+
+```{r cv_lognormal3_entropy, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 5x5, Flevoland",eval=FALSE }
+
+load("../Programs/Data/results_data_simulated_z_up_le_entropy_250_7.Rdata")
+# Calcular la media y la desviación estándar de los datos originales
+mean_original <- mean(difference_values, na.rm = TRUE)
+sd_original <- sd(difference_values, na.rm = TRUE)
+
+# Normalizar los datos
+normalized_data <- (difference_values - mean_original) / sd_original
+
+# Parámetros de la distribución normal estándar
+mean_standard <- 0
+sd_standard <- 1
+
+# Definir función para calcular los p-valores
+calculate_p_value <- function(x) {
+  p_value <- 2 * pnorm(-abs(x), mean = mean_standard, sd = sd_standard)
+  return(p_value)
+}
+
+# Dimensiones de la matriz difference_values
+n_rows <- nrow(normalized_data)
+n_cols <- ncol(normalized_data)
+
+# Matriz para almacenar los p-valores
+p_values <- matrix(NA, nrow = n_rows, ncol = n_cols)
+
+# Iterar sobre cada dato en normalized_data y calcular el p-valor correspondiente
+for (i in 1:n_rows) {
+  for (j in 1:n_cols) {
+    p_values[i, j] <- calculate_p_value(normalized_data[i, j])
+  }
+}
+
+# Guardar los p-valores
+#save(p_values, file = "p_values_matrix_normalized.Rdata")
+
+
+#load("../Programs/Data/results_data_Flevoland_cv_300_5.Rdata")
+#load("../Programs/Data/results_data_simulated_z_up_le_cv_250_7.Rdata")
+#load("../Programs/Data/results_data_Ottawa_cd_mnad_matrix_512_7.Rdata")
+#save(p_values, file = "../Programs/Data/p_values_matrix_normalized.Rdata")
+#load("../Programs/Data/p_values_matrix_normalized.Rdata")
+# Definir la función de distribución acumulativa inversa de la distribución lognormal
+# plnorm_inv <- function(x, meanlog, sdlog) {
+#   pnorm(log(x), mean = meanlog, sd = sdlog)
+# }
+
+# # Cargar los datos y parámetros de ajuste de la distribución lognormal
+# # Cargar los datos y parámetros de ajuste de la distribución lognormal
+# # Calcular la media y la desviación estándar de los datos originales
+# mean_original <- mean(difference_values, na.rm = TRUE)
+# sd_original <- sd(difference_values, na.rm = TRUE)
+# 
+# # Normalizar los datos
+# normalized_data <- (difference_values - mean_original) / sd_original
+# 
+# # Parámetros de la distribución normal estándar
+# mean_standard <- 0
+# sd_standard <- 1
+# 
+# # Definir función para calcular los p-valores
+# calculate_p_value <- function(x) {
+#   p_value <- 2 * pnorm(-abs(x), mean = mean_standard, sd = sd_standard)
+#   return(p_value)
+# }
+# 
+# # Dimensiones de la matriz difference_values
+# n_rows <- nrow(normalized_data)
+# n_cols <- ncol(normalized_data)
+# 
+# # Matriz para almacenar los p-valores
+# p_values <- matrix(NA, nrow = n_rows, ncol = n_cols)
+# 
+# # Iterar sobre cada dato en normalized_data y calcular el p-valor correspondiente
+# for (i in 1:n_rows) {
+#   for (j in 1:n_cols) {
+#     p_values[i, j] <- calculate_p_value(normalized_data[i, j])
+#   }
+# }
+# 
+# # Guardar los p-valores
+# save(p_values, file = "../Programs/Data/p_values_matrix_normalized_1.Rdata")
+
+# Guardar la matriz de p-valores
+#save(p_values_matrix, file = "./Data/results_pvalue_Flevoland_cv_300_5.Rdata")
+
+
+# Guardar la matriz de p-valores
+#save(p_values_matrix, file = "./Data/results_pvalue_Flevoland_cv_300_5.Rdata")
+
+
+#source("../imagematrix.R")
+source("../imagematrix.R")
+#hist(p_values_matrix)
+#par(mfrow=c(1,2))
+#plot(imagematrix(p_values_matrix ))
+#plot(imagematrix(equalize(z.up.le)))
+#plot(imagematrix(equalize(cd_values_mnad)))#z.up.le
+plot(imagematrix(p_values ))
+plot(imagematrix(p_values <0.1))
+plot(imagematrix(p_values >0.5))
+```
 
 ```{r Plot2, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Density cv, window 7x7, Flevoland" }
 
@@ -212,7 +679,7 @@ x2<-as.vector(cv_values)
 mydata_dist <- univariateML::model_select(x2)
 mydata_dist
 ```
-```{r cv7, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 7x7, Flevoland"}
+```{r cv7, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 7x7, Flevoland", eval=FALSE}
 load("../Programs/Data/results_data_Flevoland_cv_300_7.Rdata")
 alpha <- 5.762
 beta <- 2.611
@@ -243,7 +710,7 @@ source("../imagematrix.R")
 par(mfrow=c(1,2))
 #plot(imagematrix(equalize(x)))
 plot(imagematrix(p_values_matrix))
-plot(imagematrix(p_values_matrix <0.05))
+plot(imagematrix(p_values_matrix >0.05))
 valores_menores_que_0_05 <- sum(p_values_matrix < 0.05)
 cat("Número de valores menores que 0.05:", valores_menores_que_0_05, "\n")
 
@@ -314,7 +781,7 @@ mydata_dist
 ```
 
 
-```{r cvOttawa, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 5x5, Ottawa"}
+```{r cvOttawa, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 5x5, Ottawa", eval=FALSE}
 
 #Los parametros fueron estimados con phitter.io
 load("../Programs/Data/results_data_Ottawa_cv_512_5.Rdata")
@@ -347,7 +814,7 @@ hist(p_values_matrix)
 par(mfrow=c(1,2))
 #plot(imagematrix(equalize(x)))
 plot(imagematrix(p_values_matrix))
-plot(imagematrix(p_values_matrix >0.1))
+plot(imagematrix(p_values_matrix >0.05))
 ```
 
 ```{r Plotcqv, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Density cqv, window 5x5, Ottawa" }
@@ -369,7 +836,7 @@ mydata_dist
 
 
 
-```{r cqvOttawa_5, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 5x5, Ottawa"}
+```{r cqvOttawa_5, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="p values for CV window 5x5, Ottawa", eval=FALSE}
 
 #Los parametros fueron estimados con phitter.io
 load("../Programs/Data/results_data_Ottawa_cv_512_5.Rdata")
@@ -398,18 +865,37 @@ for (i in 1:nrow(cv_values)) {
 
 
 source("../imagematrix.R")
-hist(p_values_matrix)
+#hist(p_values_matrix)
 par(mfrow=c(1,2))
 plot(imagematrix(equalize(x)))
 plot(imagematrix(p_values_matrix))
-plot(imagematrix(p_values_matrix >0.05))
+#plot(imagematrix(p_values_matrix <0.05))
 ```
+
+
+
 ```{r Plotcqvmad, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Density cqv, window 5x5, Ottawa" }
 
 load("../Programs/Data/results_data_Ottawa_cd_mad_matrix_512_5.Rdata")
 
 ggplot() +
-  geom_density(aes(x = as.vector(cv_values)), fill = "pink", color = "black") +
+  geom_density(aes(x = as.vector(cd_values_mad)), fill = "pink", color = "black") +
+  labs(title = " ", x = "cv", y = "Density")
+```
+
+```{r 5ottawa_mad, eval=FALSE}
+load("../Programs/Data/results_data_Ottawa_cd_mad_matrix_512_5.Rdata")
+x2<-as.vector(cd_values_mad)
+mydata_dist <- univariateML::model_select(x2)
+mydata_dist
+```
+
+```{r Plotcqvmad, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Density cqv, window 5x5, Ottawa" }
+
+load("../Programs/Data/results_data_Ottawa_cd_mad_matrix_512_7.Rdata")
+
+ggplot() +
+  geom_density(aes(x = as.vector(cd_values_mad)), fill = "blue", color = "black") +
   labs(title = " ", x = "cv", y = "Density")
 ```
 

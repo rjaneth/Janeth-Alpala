@@ -2,16 +2,21 @@
 %\usepackage[portugues,english]{babel}
 %\usepackage[portuguese,english]{babel}
 \usepackage{multicol}
-\usepackage{xcolor}
-\usepackage{subfigure}
+%\usepackage{xcolor}
+%\usepackage{subfigure}
 %\usepackage[spanish]{babel}
 
 \usepackage{graphicx}
 %\usepackage{color}% para colocar la tabla
-\usepackage{graphicx}
+% color package for formatting URLs 
+\usepackage[dvipsnames]{xcolor}
 %\usepackage{float}
 \usepackage{titlesec}
-\usepackage[bookmarks,breaklinks,colorlinks=true,allcolors=black, citecolor=blue]{hyperref}
+\usepackage[bookmarks,breaklinks,colorlinks=true,  allcolors=black, citecolor=BlueViolet]{hyperref}
+%\hypersetup{colorlinks=true, linkcolor=BrickRed, urlcolor=RoyalBlue, citecolor=BlueViolet}
+%\urlstyle{same}
+
+
 %\usepackage[hidelinks,colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
 \usepackage{listings}
 \usepackage{inconsolata}
@@ -34,19 +39,35 @@
 
 % new fuente
 \usepackage{tgtermes}
-\usepackage{float}
-\usepackage{bm}
+%\usepackage{float}
+%\usepackage{bm}
 \usepackage{graphicx} % Required for including pictures
 \usepackage{mathtools}
 %\usepackage{multicol}
 %\usepackage{caption} % For caption spacing
 %\usepackage{subcaption} % For sub-figures
 
-\usepackage{booktabs} % better tables
+%\usepackage{booktabs} % better tables
 \usepackage{rotating} % landscape stuff, such as tables
 \usepackage{array} % for m columns
 \usepackage{multirow} % multi row tables
+\usepackage{booktabs}
+\usepackage{dcolumn}% for align columns
+%\usepackage{array} % space rows
+\usepackage{tabu}
 %\usepackage{bigdelim} % for big braces in tables (https://tex.stackexchange.com/a/129797/66561)
+%\usepackage{subcaption}
+% Subfigures
+\usepackage{mwe}
+% The old way:
+%\usepackage[labelformat=simple]{subcaption}
+%\makeatletter
+%\renewcommand*{\thesubfigure}{(\alph{subfigure})}
+%\renewcommand*{\p@subfigure}{}
+%\makeatother
+% The new way:
+\usepackage{subcaption}
+\labelformat{subfigure}{(#1)}% see ltnews30.pdf
 
 %\usepackage{afterpage} % for using \afterpage{\clearpage} before sidewaysfigures, to prevent them from going to the end:
 %https://latex.org/forum/viewtopic.php?t=5903
@@ -85,6 +106,31 @@
 % fancy chapter
 \usepackage[Lenny]{fncychap}
 
+ \usepackage{bm,bbm}
+    \usepackage{mathrsfs}
+    \usepackage{siunitx}
+    %\usepackage{graphicx}
+   \usepackage{url}
+    %\usepackage[T1]{fontenc}
+    \usepackage{polski}
+   % \usepackage{booktabs}
+    \usepackage{color}
+   \usepackage{xcolor}
+	\RequirePackage{microtype} % For command \textls[]{}
+   % \usepackage{amsmath}
+   %\usepackage{multirow}
+	
+	% operator names
+	
+\newcommand{\bias}{\operatorname{Bias}}
+\newcommand{\widebar}[1]{\overline{#1}}
+%\newcommand{\widebar}[1]{\overline{#1}}
+\DeclareFontFamily{U}{mathx}{}
+\DeclareFontShape{U}{mathx}{m}{n}{<-> mathx10}{}
+\DeclareSymbolFont{mathx}{U}{mathx}{m}{n}
+%\DeclareMathAccent{\widehat}{0}{mathx}{"70}
+\DeclareMathAccent{\widecheck}{0}{mathx}{"71}
+
 %\usepackage{enumitem}%abreviaciones
 %	HEADERS AND FOOTERS
 %----------------------------------------------------------------------------------------
@@ -101,14 +147,40 @@
  % giveninits : es para colocar solo la inicial del nombre
  % giveninits : es para colocar solo la inicial del nombre
 
-\usepackage[style=numeric-comp, sorting=none, backend=bibtex, doi=false, isbn=false, natbib=true, giveninits]{biblatex} % sorting=none ordena por orden de citas
-%\bibliography{../Common/references}
+%\usepackage[style=numeric-comp, sorting=none, backend=bibtex, doi=false, isbn=false, natbib=true, giveninits]{biblatex} % sorting=none ordena por orden de citas
+%%\bibliography{../Common/references}
+%\addbibresource{../Common/references.bib}
+%%\bibliography{/Volumes/cld/Dropbox/Articles/references}
+
+\usepackage[style=authoryear, sorting=nyt, backend=bibtex, natbib=true, backref=true, doi=false, isbn=false, maxcitenames=1, maxbibnames=99, giveninits]{biblatex}
 \addbibresource{../Common/references.bib}
-%\bibliography{/Volumes/cld/Dropbox/Articles/references}
+\DeclareNameAlias{sortname}{family-given}
+\setlength{\bibitemsep}{\parskip}
 
+
+%% Redefinir el formato de las citas
+%\DeclareCiteCommand{\cite}
+  %{\usebibmacro{prenote}}
+  %{\usebibmacro{citeindex}%
+   %\printnames{labelname}%
+   %\setunit{\addspace}%
+   %\mkbibparens{\printfield{year}}}
+  %{\multicitedelim}
+  %{\usebibmacro{postnote}}
+%
+%% Configurar hipervínculos para nombres de autor y año
+%\DeclareFieldFormat{citehyperref}{%
+  %\DeclareFieldAlias{bibhyperref}{noformat}% Evitar que los nombres de autor estén vinculados
+  %\bibhyperref{#1}}
 %\setlength\bibitemsep{\itemsep}
-\setlength{\bibitemsep}{\parskip}% para colocar espacio entre los items de referencias
-
+%"\setlength{\bibitemsep}{\parskip}% para colocar espacio entre los items de referencias
+% Redefinir el formato de las citas
+%\DeclareCiteCommand{\cite}
+  %{\usebibmacro{prenote}}
+  %{\usebibmacro{citeindex}%
+   %\printtext[bibhyperref]{(\printfield{year})}}
+  %{\multicitedelim}
+  %{\usebibmacro{postnote}}
 % para colocar la tabla de revision bibliografica
 %\usepackage{osameet3}
 \usepackage{booktabs, longtable,array}

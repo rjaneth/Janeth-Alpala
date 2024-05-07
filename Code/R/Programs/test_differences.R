@@ -21,12 +21,12 @@ source("../MainFunctions/gi0_sample.R")
 
 set.seed(1234567890, kind = "Mersenne-Twister")
 
-R <- 10
+R <- 5000
 mu <- 1
 L <- 5
 B <- 1
-alpha1 <- -6
-sample.size <- c( 9, 25, 49, 81, 121)
+alpha1 <- -20
+sample.size <- c(49)
 
 TestStatistics1 <- NULL
 TestStatistics2 <- NULL
@@ -44,12 +44,12 @@ for (s in sample.size) {
   
   
   for (r in 1:R) {
-    #z <- gi0_sample(mu, alpha1, L, s)
-    z <- gamma_sar_sample(L, mu, s)
+    z <- gi0_sample(mu, alpha1, L, s)
+    #z <- gamma_sar_sample(L, mu, s)
 
     #TestStat1[r] <- -bootstrap_correa_estimator_log_mean(z, B) - (-L + log(L) - lgamma(L) - (1 - L) * digamma(L) + L + lgamma(L - alpha1) - (L - alpha1) * (digamma(L - alpha1)) + (1 - alpha1) * digamma(-alpha1) - log(-1 - alpha1) - lgamma(-alpha1))
-    TestStat1[r] <- bootstrap_correa_estimator_log_mean(z, B) + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
-    #TestStat4[r] <- bootstrap_correa_estimator(z, B)+( L+lgamma(L-alpha1) - (L-alpha1)*(digamma(L - alpha1))+(1-alpha1)*digamma(- alpha1)-log(-1 - alpha1)-lgamma(-alpha1) ) 
+    #TestStat1[r] <- bootstrap_correa_estimator_log_mean(z, B) + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
+    TestStat1[r] <- bootstrap_correa_estimator(z, B)#+( L+lgamma(L-alpha1) - (L-alpha1)*(digamma(L - alpha1))+(1-alpha1)*digamma(- alpha1)-log(-1 - alpha1)-lgamma(-alpha1) ) 
     
     }
 
@@ -98,7 +98,7 @@ ggplot(TestStatistics1, aes(x = Test_Statistics, col = factor(Sample_Size), line
   # annotate("text", x = max(TestStatistics2$Test_Statistics2) + 0.1, y = max_density2,
   #          label = TeX("$G_I^0$"), vjust = 5, hjust = 5, color = "blue") +
   geom_vline(xintercept = difference.betweeen.GammaSAR.GI0.n.Look(-6, 5), col="red") +
-  annotate("text", x=difference.betweeen.GammaSAR.GI0.n.Look(-6, 5), y=10, parse=TRUE, label="alpha==-6", hjust=-.1, vjust=-1, col="red") +
+  annotate("text", x=difference.betweeen.GammaSAR.GI0.n.Look(-6, 5), y=5, parse=TRUE, label="alpha==-6", hjust=-.1, vjust=-1, col="red") +
   labs(x = "Test Statistics", y = "Density") +
   theme_minimal() +
   theme(
