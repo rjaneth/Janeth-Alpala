@@ -6,12 +6,11 @@
 %------------------------------------
 
 
-%Remote sensing is devoted to gathering information from the Earth’s surface at a distance~\citep{campbell2011introduction}, by means of electromagnetic energy or other mediums. 
 
 
 This chapter presents some basics of remote sensing that we will use in the rest of the document and focuses on the theory of SAR.
 
-%\section{Electromagnetic radiation}
+
 \section{Remote Sensing} \label{sec:pr_obs}
 
 Remote sensing is the practice of deriving information about the Earth's land using images acquired from elevated platforms like airplanes or satellites in space, using electromagnetic radiation across various regions of the electromagnetic spectrum~\citep{campbell2011introduction}.
@@ -93,13 +92,13 @@ P  & $0.3$--$1$ & $\phantom{-}\,30$--$100$  \\
 \end{tabular}
 \end{table}
 Table~\ref{tab:spacebornes} gives some examples of commonly used spaceborne SAR sensors, currently in operation. 
-These include Radarsat-2 from the Canadian Space Agency (CSA), TerraSAR-X from the German Aerospace Center (DLR), ALOS PALSAR-2 from the Japan Aerospace Exploration Agency (JAXA), and Sentinel-1A/1B from the European Space Agency (ESA) (see Figure~\ref{fig:Sentinel-1}), as well as Gaofen-3 from the China National Space Administration (CNSA).
+These include Radarsat-2 from the Canadian Space Agency (CSA), TerraSAR-X from the German Aerospace Center (DLR), ALOS PALSAR-2 from the Japan Aerospace Exploration Agency (JAXA), and Sentinel-1A/1B from the European Space Agency (ESA) (see Figure~\ref{fig:Sentinel-1n}), as well as Gaofen-3 from the China National Space Administration (CNSA).
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{../../Images/PNG/ESA_radar.png}
     %\decoRule
     \caption[Sentinel-1 radar.]{Sentinel-1 radar, (source \href{https://www.esa.int/Applications/Observing_the_Earth/Copernicus/Sentinel-1/Changing_lands}{ESA}).}
-    \label{fig:Sentinel-1}
+    \label{fig:Sentinel-1n}
 \end{figure}
 
 
@@ -242,22 +241,15 @@ The images distinguishes between fully developed speckle in homogeneous regions 
     \caption{Heterogeneous clutter }
     \label{fig:s2}
   \end{subfigure}
-  %\hfill
-  %\begin{subfigure}[b]{0.3\textwidth}
-    %\centering
-    %\includegraphics[width=\textwidth]{example-image-c}
-    %\caption{}
-    %\label{fig: Third figure}
-  %\end{subfigure}
   \caption{SAR image with speckle noise}
   \label{fig:speckle}
 \end{figure}
 
 \section{Dataset}
 \subsection{Sentinel-1 SAR data processing}
-The Sentinel-1 images were obtained from the Alaska Satellite Facility's (ASF) at \url{https://search.asf.alaska.edu/#/} and by the European Space Agency via Copernicus Data Space Ecosystem at \url{https://dataspace.copernicus.eu/}.
+The Sentinel-1 images were obtained from the Alaska Satellite Facility (ASF) at \url{https://search.asf.alaska.edu/#/} and by the European Space Agency via Copernicus Data Space Ecosystem at \url{https://dataspace.copernicus.eu/} (see Figure~\ref{fig:alaska-area1}).
 
-The downloaded SAR images were pre-processed using the Sentinel Application Platform (SNAP) Toolbox developed by ESA. 
+The SAR images downloaded were pre-processed using the Sentinel Application Platform (SNAP) Toolbox developed by ESA (see Figure~\ref{fig:alaska-areaf}). 
 
 %The following images describe the preprocessing steps applied to the SAR data: 
 The following steps were applied to the SAR data during pre-processing:
@@ -276,74 +268,18 @@ The following steps were applied to the SAR data during pre-processing:
     \includegraphics[width=1\textwidth]{../../Images/PNG/alaska1.png}
     %\decoRule
     \caption[Selection of area of interest]{Selection of area of interest.}
-    \label{fig:alaska-area}
+    \label{fig:alaska-area1}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{../../Images/PNG/snap_1.png}
     %\decoRule
-    \caption[SAR Images pre-processing  in the SNAP]{SAR Images pre-processing  in the SNAP.}
-    \label{fig:alaska-area2}
+    \caption[SAR Images pre-processing  in the SNAP]{SAR Images pre-processing  in SNAP.}
+    \label{fig:alaska-areaf}
 \end{figure}
 
 
-%\subsection*{Example math equations}
-%-----------------------------------------------------------
-%\begin{align*}
-%L(\alpha,  \lambda|  \bm{x})&=\prod_{i=1}^n{f(x_i|\alpha, \lambda )}\\
-                                 %&= \prod_{i=1}^n\left[\frac{\lambda^{\alpha}}{\Gamma(\alpha)}\,x_i^{\alpha-1}\exp\left\{-\lambda x_i\right\}\right]\\
-%&=\left(\frac{\lambda^{\alpha}}{\Gamma(\alpha)}\right)^n\prod_{i=1}^nx_i^{\alpha-1}\times \exp\left\{-\left(\lambda\sum_{i=1}^n x_i \right)\right\}
-%\end{align*}
-%%----------------------------------------------------------
-%In Figure \ref{fig:undercatch}, in Eq, \eqref{eq:em}.
-%\begin{align}
-%\label{eq:em}
-%\ell(\alpha, \lambda| \bm{x}) &=\log\left[\left(\frac{\lambda^{\alpha}}{\Gamma(\alpha)}\right)^n\prod_{i=1}^nx_i^{\alpha-1}\times \exp\left\{-\left(\lambda\sum_{i=1}^n x_i \right)\right\}\right]\nonumber\\
-%&=\log\left(\frac{\lambda^{\alpha}}{\Gamma(\alpha)}\right)^n+\log\left[\prod_{i=1}^nx_i^{\alpha-1}\right]-\lambda\sum_{i=1}^nx_i\nonumber\\
-%&=n\log\left(\frac{\lambda^{\alpha}}{\Gamma(\alpha)}\right)+(\alpha-1)\log\prod_{i=1}^nx_i-\lambda\sum_{i=1}^nx_i\nonumber\\
-%&=n\log(\lambda^{\alpha})-n\log(\Gamma(\alpha))+(\alpha-1)\sum_{i=1}^n\log(x_i)-\lambda\sum_{i=1}^nx_i\nonumber\\
-%&=n\alpha\log \lambda -n\log(\Gamma(\alpha)) +(\alpha-1)\sum_{i=1}^n\log(x_i)-\lambda\sum_{i=1}^nx_i.
-	%\end{align}
-%----------------------------------------------------------
-
-
-%-------------------------------------------------------
-
-%\begin{table}[h]
-%\centering
-%\caption{\label{tab1}Comparação de tempos. }
-%\begin{tabular}{l c c }
-%\toprule[1pt] \textbf{Amostra (N)} \ \ \  \ \ \  & \textbf{Tempo de Execução (C)}\ \ \ \ \ \ \  &\textbf{Tempo de Execução (Ox)} \\\midrule[0.5pt]
-%$20$ & 7.6810 s  &  5.01 s \\
-%$30$ & 9.6260 s     & 5.34 s \\
-%$50$ &  10.0310 s & 5.99 s \\
-%$100$ & 15.5420 s & 8.07 s \\
-%$200$ & 20.5860 s & 9.64 s \\
-%$500$ & 29.0890  s & 15.12 s \\
-%\bottomrule[1pt]
-%\end{tabular}
-%\caption[Precipitation datasets]{List of datasets used in the analysis of daily precipitation uncertainty carried over i}\label{tab:1}
-%\end{table}
-%------------------------------------------------------
-
-
-%\begin{table}[]
-%\centering
-%\begin{tabular}{@{}llll@{}}
-%\toprule
-%Dataset name & Period & Spatial res. & Data source \\ \midrule
-%E-OBS        & 2000--2016 & \ang{0.25}                            & Station data \\
-%EURO4M-APGD  & 2000--2008 & \SI{5}{\kilo\metre}                   & Station data \\
-%HMR          & 2000--2013 & \SI{5.5}{\kilo\metre}                 & Reanalysis \\
-%ARCIS        & 2000--2015 & \textasciitilde{} \SI{5}{\kilo\metre} & Station data \\
-%CHIRPS       & 2000--2016 & \ang{0.05}                            & Station data + satellite \\
-%CPC          & 2000--2016 & \ang{0.5}                             & Station data \\
-%CMORPH       & 2000--2016 & \ang{0.25}                            & Satellite \\
-%PERSIANN-CDR & 2000--2016 & \ang{0.25}                            & Satellite \\ \bottomrule
-%\end{tabular}
-%\caption[ Italy]{List of datasets used in the analysis of daily precipitation uncertainty  references.}\label{tab:2}
-%\end{table}
 
 
 
