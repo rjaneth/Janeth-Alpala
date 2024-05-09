@@ -114,10 +114,8 @@ confirms what is written in the SAR literature.
 Entropy}\label{estimation-of-the-shannon-entropy}
 
 The problem of the non-parametric estimation of \(H(Z)\) has been
-studied by many authors,
-including~\citep{vasicek1976test,correa1995new,Wieczorkowski1999,Yee2015,AlOmari2019}.
-Their proposals use estimators based on differences between order
-statistics: spacings.
+studied by many authors, including~\citet{vasicek1976test},~\citet{correa1995new},~\citet{Wieczorkowski1999},~\citet{Yee2015}, and~\citet{AlOmari2019}.
+Their proposals use estimators based on differences between order statistics, known as spacings.
 
 \citet{vasicek1976test} introduced one of the first
 non-parametric estimators based on spacings. Under the assumption that
@@ -130,12 +128,12 @@ distribution \(F(z)\), the estimator is defined as: \begin{equation}
 and \(Z_{(i+m)}-Z_{(i-m)}\) is the \(m\)-spacing, in which
 \(Z_{(i)}= Z_{(1)}\) if \(i<1\), \(Z_{(i)}= Z_{(n)}\) if \(i>n\).
 
-Several authors have explored adaptations  to Vasicek's estimator. We consider the following entropy estimators variants, as discussed by~\citep{AlOmari2016,Cassetti2022}.
+Several authors have explored adaptations  to Vasicek's estimator. We consider the following entropy estimators variants, as discussed by~\citet{Cassetti2022}.
 
 \citet{Bert1992} proposed a new estimator of entropy given by:
  \begin{equation}
 \label{E:VanEs}
-	\widehat{H}_{\text{VE}}(\bm{Z})=\frac{1}{n-m}\sum_{i=1}^{n-m}\log\left[\frac{n+1}{m}\left(Z_{(i+m)}-Z_{(i)}\right)\right]	+\sum_{k=m}^n\frac{1}{k}+\log\frac{m}{n+1}.
+	\widehat{H}_{\text{VE}}(\bm{Z})=\frac{1}{n-m}\sum_{i=1}^{n-m}\ln\left[\frac{n+1}{m}\left(Z_{(i+m)}-Z_{(i)}\right)\right]	+\sum_{k=m}^n\frac{1}{k}+\ln\frac{m}{n+1}.
 \end{equation}
 Under some conditions, Van Es proved asymptotic normality of this estimator.
 
@@ -143,7 +141,7 @@ Under some conditions, Van Es proved asymptotic normality of this estimator.
  Specifically, $Z_{(i+m)}-Z_{(i-m)}$ is substituted with  $Z_{(i+m)}-Z_{(1)}$ when $i \leq m$ and $Z_{(i+m)}-Z_{(i-m)}$ is replaced by $Z_{(n)}-Z_{(i-m)}$ when $i \geq n-m+1$. Their estimator is given by:
   \begin{equation}
 	\label{E:Ebrahimi}
-  \widehat{H}_{\text{E}}(\bm{Z})=\frac{1}{n} \sum_{i=1}^n \log \left[\frac{n}{c_i m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right],
+  \widehat{H}_{\text{E}}(\bm{Z})=\frac{1}{n} \sum_{i=1}^n \ln \left[\frac{n}{c_i m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right],
   \end{equation} where \[
   c_i=\begin{cases}1+(i-1) / m & \text { if } \quad 1 \leq i \leq m, \\ 2 & \text { if }\quad m+1 \leq i \leq n-m,\\ 1+(n-i) / m & \text { if }\quad n-m+1 \leq i \leq n.\end{cases}
   \]
@@ -152,7 +150,7 @@ Under some conditions, Van Es proved asymptotic normality of this estimator.
 In estimation the density $f$ of $F$ in the interval $\left(Z_{(i-m)}, Z_{(i+m)}\right)$ he used a local linear model based on $2 m+1$ points: $F\left(Z_{(j)}\right)=a+b Z_{(j)}+\varepsilon, j=m-i, \ldots, m+i$. This yields a following estimator:
   \begin{equation}
 	\label{E:Correa}
-  \widehat{H}_{\text{C}}(\bm{Z})=-\frac{1}{n} \sum_{i=1}^n \log \frac{\sum_{j=i-m}^{i+m}(j-i)\left(Z_{(j)}-\overline{Z}_{(i)}\right)}{n\sum_{j=i-m}^{i+m}\left(Z_{(j)}-\overline{Z}_{(i)}\right)^2},
+  \widehat{H}_{\text{C}}(\bm{Z})=-\frac{1}{n} \sum_{i=1}^n \ln \frac{\sum_{j=i-m}^{i+m}(j-i)\left(Z_{(j)}-\overline{Z}_{(i)}\right)}{n\sum_{j=i-m}^{i+m}\left(Z_{(j)}-\overline{Z}_{(i)}\right)^2},
   \end{equation} where
   \(\widebar{Z}_{(i)}=(2 m+1)^{-1} \sum_{j=i-m}^{i+m} Z_{(j)}\),
   \(m< \frac{n}{2}\), \(Z_{(i)}=Z_{(1)}\) for \(i<1\) and
@@ -163,7 +161,7 @@ In estimation the density $f$ of $F$ in the interval $\left(Z_{(i-m)}, Z_{(i+m)}
 \citet{rohtua} modify the coefficients of~\eqref{E:Ebrahimi} as: 
 \begin{equation}
 \label{E:NA}
-\widehat{H}_{\text{NA}}(\bm{Z})=\frac{1}{n} \sum_{i=1}^n \log \left[\frac{n}{a_i m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right],
+\widehat{H}_{\text{NA}}(\bm{Z})=\frac{1}{n} \sum_{i=1}^n \ln \left[\frac{n}{a_i m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right],
 \end{equation}
 where
 $$
@@ -178,7 +176,7 @@ and $Z_{(i-m)}=Z_{(1)}$ for $i \leq m$ and $Z_{(i+m)}=Z_{(n)}$ for $i \geq n-m$.
 \citet{IbrahimAlOmari2014} suggested the following estimator:
 	\begin{equation}
 \label{E:AO}
-  \widehat{H}_{\text{AO}}(\bm{Z})=\frac{1}{n} \sum_{i=1}^n \log \left[\frac{n}{\omega_i m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right],
+  \widehat{H}_{\text{AO}}(\bm{Z})=\frac{1}{n} \sum_{i=1}^n \ln \left[\frac{n}{\omega_i m}\left(Z_{(i+m)}-Z_{(i-m)}\right)\right],
  \end{equation}
 	where \[
   \omega_i= \begin{cases}3/2 & \text { if }\quad 1 \leq i \leq m, \\ 2 & \text { if }\quad m+1 \leq i \leq n-m, \\ 3/2 & \text { if } \quad n-m+1 \leq i \leq n,\end{cases}
@@ -282,7 +280,7 @@ The integration of bootstrap techniques aims to refine the accuracy of non-param
 
 Bootstrap is essentially a resampling algorithm introduced by \citep{Efron1979}. 
 It offers a simulation-based approach for estimating various statistics of interest for a random variable.
-It can be used in both parametric and nonparametric settings. 
+It can be used in both parametric and non-parametric settings. 
 The main idea  consists of creating new datasets from an existing one by resampling with repetition~\citep{Michelucci2021}.
 
 Let us assume that the non-parametric entropy estimator
@@ -292,14 +290,14 @@ distribution \(\mathcal{D}\), i.e,:\begin{equation}
 \operatorname{Bias}\big(\widehat{\theta}(\bm{Z})\big) = \mathbb{E}\big[\widehat{\theta}(\bm{Z})\big] - \theta \neq 0.
 \end{equation} 
 
-Our objective is to devise a unbiased estimator. To achieve this, we introduce an "ideal estimator" \(\widecheck{\theta}(\bm{Z})\) using the bias information from~\eqref{Eq:bias1}:
+Our objective is to devise an unbiased estimator. To achieve this, we introduce an "ideal estimator" \(\widecheck{\theta}(\bm{Z})\) using the bias information from~\eqref{Eq:bias1}:
 \begin{align}
 \label{Eq:bias2}
 \widecheck{\theta}(\bm{Z}) &= \widehat{\theta}(\bm{Z}) - \bias\left(\widehat{\theta}(\bm{Z})\right),\nonumber\\
 &=\widehat{\theta}(\bm{Z})-\left[\mathbb{E}\big[\widehat{\theta}(\bm{Z})\big] - \theta\right],\nonumber\\
 &=\widehat{\theta}(\bm{Z})+\theta-\mathbb{E}\big[\widehat{\theta}(\bm{Z})\big].
 \end{align}
-However, \(\widecheck{\theta}(\bm{Z})\) is not yet an estimator, because it depend on the true parameter, but \(\theta\) can be calculated using a non-parametric approach, and the average of individual estimators can be obtained using the bootstrap technique. This leads to the formulation of a new unbiased estimator, denoted as \(\widetilde{H}\), from ~\eqref{Eq:bias2} we have:
+However, \(\widecheck{\theta}(\bm{Z})\) is not yet an estimator, because it depends on the true parameter, but \(\theta\) can be calculated using a non-parametric approach, and the average of individual estimators can be obtained using the bootstrap technique. This leads to the formulation of a new unbiased estimator, denoted as \(\widetilde{H}\), from ~\eqref{Eq:bias2} we have:
 \begin{align}
 \label{Eq:bias3}
 \widetilde{H}%&= \widehat{\theta}(\bm{Z})+\widehat{\theta}(\bm{Z})- \frac{1}{B}\sum_{b=1}^B \widehat{\theta}_b(\bm{Z}^{(b)}),\nonumber\\

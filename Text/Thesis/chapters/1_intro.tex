@@ -5,8 +5,8 @@
 
 
 The technology of Synthetic Aperture Radar (SAR) imaging operates on the comprehensive aperture principle to produce high-resolution SAR images.
-In contrast to conventional optical remote sensing images, SAR images remain unaffected by external factors, making them suitable for identifying ground targets in diverse weather conditions and expansive areas.  
-Consequently, SAR imagery has become essential for environmental monitoring, disaster management, agriculture, topography mapping, geological exploration, maritime navigation, defense, and climatology~\citep{Moreira2013, iglesias2013atmospheric, Mu2019}.  
+In contrast to conventional optical remote sensing images, SAR images remain unaffected by external factors, making them suitable for identifying ground targets in diverse weather conditions and expansive areas~\citep{Mu2019}.  
+Consequently, SAR imagery has become essential for environmental monitoring~\citep{Amitrano2021}, crop mapping~\citep{DingleRobertson2020}, ship target detection~\citep{Wang2019}, and climatology~\citep{Zhao2023}.  
 However, the effective use of SAR
 data depends on a thorough understanding of its statistical properties
 because it is corrupted by speckle. This noise-like interference effect
@@ -38,55 +38,38 @@ use of the Gamma distribution in the presence of fully-developed
 speckle, where an infinite number of independent backscatterers per
 resolution unit is assumed, commonly referred to as homogeneous regions.
 
-In this context, we present a set of three novel test statistics that
-aim to distinguish between homogeneous and non-homogeneous returns,
-particularly between gamma and \(\mathcal{G}^0\) distributed data,
-assuming the number of looks is known.
- We use properties such as entropy and coefficient of variation.
-
 Entropy is a fundamental concept in information theory with far-reaching
-applications in pattern recognition, statistical physics, image
-processing, edge detection and SAR image
-analysis~\citep{Presse2013,MohammadDjafari2015,Avval2021, Nascimento2014,Nascimento2019}.
-\citet{Shannon1948} this concept for a random variable to measure information and uncertainty. 
+applications in pattern recognition~\citep{Avval2021}, statistical physics~\citep{Presse2013}, image
+processing~\citep{MohammadDjafari2015}, edge detection~\citep{Nascimento2014} and SAR image
+analysis~\citep{Nascimento2019}.
+\citet{Shannon1948} introduced this concept for a random variable to measure information and uncertainty. 
 Shannon entropy is a crucial descriptive parameter in statistics, especially for evaluating data
 dispersion and performing tests for normality, exponentiality and
 uniformity~\citep{Wieczorkowski1999,Zamanzade2012}. 
+
 Entropy estimation is challenging, especially when the model is unknown. In these cases,
 non-parametric methods are used. Spacing methods have been discussed as
 a non-parametric approach in Refs.~\citep{AlizadehNoughabi2010,Subhash2021}. This strategy is flexible
 and robust because it does not enforce a model or parametric
-constraints.
+constraints. In this context, we introduce a novel approach: a bootstrap-improved non-parametric estimator for Shannon entropy.
 
 The coefficient of variation (CV), introduced in 1896 by~\citet{Pearson1896}, is a relative dispersion measure widely used
-in various fields of applied statistics, including sampling,
-biostatistics, medical and biological research, climatology and other
-fields~\citep{hendricks1936sampling,Tian2005,SubrahmanyaNairy2003,Chankham2024}.
-It facilitates the comparison of variability between different
+in various fields of applied statistics, including sampling~\citep{hendricks1936sampling},
+biostatistics~\citep{Tian2005}, medical and biological research~\citep{SubrahmanyaNairy2003}, climatology~\citep{Chankham2024} and other
+fields. It facilitates the comparison of variability between different
 populations and is particularly valuable for relating variables with
-different units. This is because when the primary purpose is to compare
-the variations of several variables, the standard deviation can only
-serve as an adequate measure of variation if all variables are expressed
-in the same unit of measurement and have identical means. If these
-conditions are not met, then the CV is the relative measure that is
-usually used in real applications. The variable with the highest CV
+different units. The variable with the highest CV
 value has the largest relative dispersion around the mean
 value~\citep{Banik2011}. The coefficient of variation is the primary
-measure of heterogeneity in SAR data~\citep{Ulaby1986,Touzi1988}. We
-study two ways of estimating the coefficient of variation.
+measure of heterogeneity in SAR data~\citep{Ulaby1986,Touzi1988}. 
+In our work, we employ both the classical CV and a robust alternative, which is based on the ratio of the mean absolute deviation from the median (MnAD) to the median.  These measures offer a more detailed view of data variability. 
 
-The other parameter we study is the Shannon entropy. Different roughness
-levels materialized as models for SAR data, have different entropy
-values, but this fundamental quantity can also be estimated in a
-model-agnostic way. We exploit this property and design a
-bootstrap-improved non-parametric estimator for the Shannon entropy.
+The expected value, a critical component in both CV and the Shannon entropy, influences their interpretation. 
+In CV calculations, the expected value serves as a reference point for assessing data dispersion relative to its average value, while in the Shannon entropy, the expected value also plays an important role, particularly within parametric distributions such as the Gamma or the \({G}_I^0\)  distribution. 
+In these cases, the mean appears in the analytical entropy formula, indicating that the entropy of the distribution is influenced by the mean value of the data.
 
-We devise test statistics based on these three estimators: the classical
-coefficient of variation, a robust version, and the Shannon entropy
-estimator. We apply these test statistics to generate maps of evidence
-of homogeneity that reveal different types of targets in the SAR data.
-We show that our proposed method is superior to existing approaches with
-simulated data and SAR images.
+
+When applying these statistical concepts to SAR image analysis, we aim to discern between homogeneous and non-homogeneous regions, contributing to the improved interpretation and understanding of SAR data.  In our study, we devise test statistics based on these three estimators: the classical coefficient of variation, a robust version, and the Shannon entropy estimator. We apply these test statistics to generate maps of evidence of homogeneity that reveal different types of targets in the SAR data, assuming the number of looks is known. Likewise, we show that our proposed method is superior to existing approaches with simulated data and SAR images.
 
 
 
@@ -126,23 +109,7 @@ Chapter~\ref{chp:background} provides a background on remote sensing and SAR ima
 Chapter~\ref{chp:methods} discusses methodological aspects, including statistical modeling, entropy estimation for intensity SAR data, and hypothesis testing. 
 Chapter~\ref{chp:results} presents the main results obtained in our study with both simulated and actual data. Finally,
 In Chapter~\ref{chp:conclusions}, the conclusions and future work are presented.
-%Chapter ~\ref{chp:models} explains ...
-%------------------------------------
-%	HAZARD: OVERVIEW
-%------------------------------------
 
-
-%\section{Computing platforms}
-%This  project required a vast amount of computing, preprocessing, analysis and plotting.
-
-%------------------------------------
-%	TODO STUFF
-%------------------------------------
-% \section{Additional sources to integrate in this chapter}
-% \begin{itemize}
-% \item check all TODOs
-% \item read again \url{http://ec.europa.eu/environment/water/flood_risk/flood_atlas/pdf/handbook_goodpractice.pdf}
-% \item include citation EU Floods Directive (2007/60/EC) , \cite{Mysiak2013, EUFD2007}
 % \item section to talk about uncertainties? \citet{alfieri2014} has a good section about it
 % \item Alps are the water tower of the Po plain, and for this reason I might want to give them a closer look. I could cite one of the many kotlarski works, or e.g. \citet[][]{Gobiet2014}. View the 'Alps' category in my Mendeley, it contains about 30 works on the subject
 % \end{itemize}
