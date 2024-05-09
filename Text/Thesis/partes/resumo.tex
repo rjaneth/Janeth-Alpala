@@ -5,18 +5,17 @@
 \phantomsection
 \addcontentsline{toc}{chapter}{Resumo}
 
-Este trabalho apresenta uma abordagem estatística para identificar as características de rugosidade subjacentes nos dados de intensidade do radar de abertura sintética (SAR). 
+Este trabalho apresenta uma abordagem estatística para identificar as características de rugosidade subjacentes em dados de imagens em formation de intensidade de sensores de radar de abertura sintética (SAR -- \textit{Synthetic Aperture Radar}). 
 A modelagem física desse tipo de dados permite o uso da distribuição Gamma na presença de speckle totalmente desenvolvido, ou seja, quando há infinitos retroespalhadores independentes por célula de resolução e nenhum domina o retorno.
 Essas áreas são frequentemente chamadas de regiões ``homogêneas'' ou ``sem textura''. 
 A distribuição $\mathcal{G}_I^0$ também é uma lei amplamente aceita para regiões heterogêneas e extremamente heterogêneas, ou seja, áreas onde as hipóteses de speckle totalmente desenvolvidas não se aplicam.
 Uma problemática envolvendo o espaço paramétrico da $\mathcal{G}_I^0$ é a inviabilidade analítica de se testar homogeneidade contra heterogeneidade a partir de testes clássicos. 
-Como soluções para esta questão, propomos três testes de hipóteses  para distinguir entre regiões homogêneas e inhomogêneas, ou seja, entre dados distribuídos Gamma e $\mathcal{G}_I^0$, ambos com um número conhecido de looks.
-A primeira estatística de teste usa um estimador não paramétrico da entropia de Shannon, incorporando metodologias de bootstrap, fornecendo uma avaliação com base em distribuição quando a mesma é desconhecida.
+Como soluções para esta questão, propomos três testes de hipóteses  para distinguir entre regiões homogêneas e não homogêneas, ou seja, entre dados distribuídos Gamma e $\mathcal{G}_I^0$, ambos com um número conhecido de looks.
+A primeira estatística de teste usa um estimador não paramétrico da entropia de Shannon, incorporando metodologias de bootstrap.
 O segundo teste usa o coeficiente de variação clássico (CV). 
 O terceiro teste usa uma forma alternativa de estimar o CV com base na razão da média do desvio absoluto em relação à mediana.
+Mostramos que nossa proposta, o teste baseado em entropia, supera métodos existentes, tais como o CV clássico e sua variante alternativa, na identificação de heterogeneidade quando aplicado a dados simulados e imagens SAR.
 Aplicamos nossa estatística de teste para criar mapas de $p$-valores para a hipótese de homogeneidade. 
-Finalmente, mostramos que nossa proposta, o teste baseado em entropia, supera métodos existentes, tais como o CV clássico e sua variante alternativa, na identificação de heterogeneidade quando aplicado a dados simulados e imagens SAR.
-
 
 \end{resumo}
 
