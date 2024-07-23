@@ -21,4 +21,4 @@ entropy_gI0 <- function(mu, alpha, L) {
   return(entropy)
 }
 
-entropy_gI0( 20,-2.74,  100)
+#entropy_gI0( 20,-2.74,  100)

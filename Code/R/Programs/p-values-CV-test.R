@@ -8,7 +8,8 @@
 #load("../Programs/Data/CV_results_data_Mexixo_512.Rdata")
 #load("../Programs/Data/CV_results_data_lake_512.Rdata")
 #load("../Programs/Data/MnAD_results_data_lake_512.Rdata")
-load("../Programs/Data/CV_results_data_Phantom_4_z1.Rdata")
+#load("../Programs/Data/CV_results_data_Phantom_4_z1.Rdata")
+load("../Programs/Data/CV_results_data_Rotterdam_1024.Rdata")
 
 # Cargar los datos y parámetros de ajuste de la distribución lognormal
 #Illinois_crops_1024
@@ -26,9 +27,13 @@ load("../Programs/Data/CV_results_data_Phantom_4_z1.Rdata")
  # meanlog <- -1.1116401
  # sdlog <-  0.5720475
 
-#phantom z1
-meanlog <- 0.0164172
-sdlog <-   0.5601495
+# #phantom z1
+# meanlog <- 0.0164172
+# sdlog <-   0.5601495
+
+#Rottember
+meanlog <- -0.1182653
+sdlog <-   0.3187516
 
 # Crear una matriz para almacenar los p-valores
 p_values_matrix <- matrix(NA, nrow = nrow(cv_values), ncol = ncol(cv_values))
@@ -56,11 +61,11 @@ source("../imagematrix.R")
 
 #plot(imagematrix(equalize(cv_values)))#z.up.le
 plot(imagematrix(p_values_matrix ))
-plot(imagematrix(p_values_matrix >0.1))
+#plot(imagematrix(p_values_matrix >0.1))
 plot(imagematrix(p_values_matrix >0.05))
 
-# #imagematrixPNG(imagematrix(equalize(x)), name = "Phantom_AO_7W_L5_100b.png")
- imagematrixPNG(imagematrix(equalize(cv_values)), name = "cv_Phantom_4_z1.png")
-# 
-imagematrixPNG(imagematrix(p_values_matrix), name="cv_pvalues_Phantom_4_z1.png")
- imagematrixPNG(imagematrix(p_values_matrix>0.05), name="cv_005_pvalues_Phantom_4_z1.png")
+# # #imagematrixPNG(imagematrix(equalize(x)), name = "Phantom_AO_7W_L5_100b.png")
+ imagematrixPNG(imagematrix(equalize(cv_values)), name = "cv_Rotterdam.png")
+# # 
+ imagematrixPNG(imagematrix(p_values_matrix), name="cv_pvalues_Rotterdam.png")
+  imagematrixPNG(imagematrix(p_values_matrix>0.05), name="cv_005_pvalues_Rotterdam.png")

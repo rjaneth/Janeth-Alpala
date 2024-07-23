@@ -17,17 +17,26 @@ rm(list = ls())
  
   # x <- myread.ENVI(file='../../../Data/SAR/Lake_512/Intensity_VV.img', 
   #                  headerfile='../../../Data/SAR/Lake_512/Intensity_VV.hdr')
-  load("../Programs/Data/Phantom_4_z.Rdata")#Phantom_4_z
+ # load("../Programs/Data/Phantom_4_z.Rdata")#Phantom_4_z
   # Asignar las dimensiones de la matriz cargada a las variables rows y cols
-  rows <- nrow(Z)
-  cols <- ncol(Z)
+  # rows <- nrow(Z)
+  # cols <- ncol(Z)
+
+# x <- myread.ENVI(file='../../../Data/SAR/Rotterdam_1024/Intensity_HH.img', 
+#                  headerfile='../../../Data/SAR/Rotterdam_1024/Intensity_HH.hdr')
+# x <- myread.ENVI(file='../../../Data/SAR/Agua_envi/Intensity_HH.img', 
+#                  headerfile='../../../Data/SAR/Agua_envi/Intensity_HH.hdr')
+
+x <- myread.ENVI(file='../../../Data/SAR/forest_envi_100/Intensity_HH.img', 
+                 headerfile='../../../Data/SAR/forest_envi_100/Intensity_HH.hdr')
+
   
-  window_size <- 7
+ # window_size <- 7
 #L <- 5
 #B <- 100
 
 
-window_size <- 9
+window_size <- 11
 
 
 rows <- nrow(x)
@@ -60,7 +69,12 @@ for (i in 1:(rows - window_size + 1)) {
   }
 }
 
-save( cv_values, x, file = "./Data/CV_results_data_lake_512.Rdata")
+# Calcular media y desviación estándar de los valores del test
+mean_difference <- mean(cv_values, na.rm = TRUE)
+sd_difference <- sd(cv_values, na.rm = TRUE)
+
+
+#save( cv_values, x, file = "./Data/CV_results_data_Rotterdam_1024.Rdata")
 #save( cv_values, x, file = "./Data/CV_results_data_Mexixo_512.Rdata")
 #save( cv_values, x, file = "./Data/CV_results_data_Illinois_crops_1024.Rdata")
 #save(cv_values, Z,  file = "./Data/results_data_simulated_Phantom_7.Rdata")

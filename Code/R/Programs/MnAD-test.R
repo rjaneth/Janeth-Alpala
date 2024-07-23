@@ -14,15 +14,27 @@ source("../../../Code/R/MainFunctions/correa_estimator.R")
 # x <- myread.ENVI(file='../../../Data/SAR/mexico_512/Intensity_VV.img', 
 #                  headerfile='../../../Data/SAR/mexico_512/Intensity_VV.hdr')
 
-x <- myread.ENVI(file='../../../Data/SAR/Lake_512/Intensity_VV.img', 
-                 headerfile='../../../Data/SAR/Lake_512/Intensity_VV.hdr')
+# x <- myread.ENVI(file='../../../Data/SAR/Lake_512/Intensity_VV.img', 
+#                  headerfile='../../../Data/SAR/Lake_512/Intensity_VV.hdr')
+
+# x <- myread.ENVI(file='../../../Data/SAR/Rotterdam_1024/Intensity_HH.img', 
+#                  headerfile='../../../Data/SAR/Rotterdam_1024/Intensity_HH.hdr')
+
+# x <- myread.ENVI(file='../../../Data/SAR/urban_envi/Intensity_HH.img', 
+#                  headerfile='../../../Data/SAR/urban_envi/Intensity_HH.hdr')
+
+ # x <- myread.ENVI(file='../../../Data/SAR/forest_envi_100/Intensity_HH.img', 
+ #                  headerfile='../../../Data/SAR/forest_envi_100/Intensity_HH.hdr')
+
+ x <- myread.ENVI(file='../../../Data/SAR/Agua_envi/Intensity_HH.img', 
+                 headerfile='../../../Data/SAR/Agua_envi/Intensity_HH.hdr')
 
 
 
 rows <- nrow(x)
 cols <- ncol(x)
 
-window_size <- 9
+window_size <- 11
 
 
 MnADmedian <- function(mat){
@@ -43,8 +55,11 @@ for (i in 1:(rows - window_size + 1)) {
   }
 }
 
+mean_difference <- mean(cd_values_mnad, na.rm = TRUE)
+sd_difference <- sd(cd_values_mnad, na.rm = TRUE)
+
 # Guardar el resultado en un archivo
-save( cd_values_mnad, x, file = "./Data/MnAD_results_data_lake_512.Rdata")
+#save( cd_values_mnad, x, file = "./Data/MnAD_results_data_Rotterdam_1024.Rdata")
 #save( cd_values_mnad, x, file = "./Data/MnAD_results_data_mexico_512.Rdata")
 #save( cd_values_mnad, x, file = "./Data/MnAD_results_data_Illinois_crops_1024.Rdata")
 #save(cd_values_mnad, x, file = "./Data/results_data_Ottawa_512_mnad_7.Rdata")

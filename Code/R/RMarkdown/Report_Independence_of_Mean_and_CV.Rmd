@@ -1,0 +1,395 @@
+---
+title: "Report: Analysis of Independence between Sample Mean and Coefficient of Variation"
+author: ""
+date: ""
+output: pdf_document
+
+# output: 
+#   pdf_document:
+#     toc: true
+#     toc_depth: 2
+#html_document
+header-includes:
+  - \usepackage{graphicx}
+  - \usepackage{float}
+  - \usepackage{bm}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{wrapfig}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+  - \usepackage{threeparttablex}
+  - \usepackage[normalem]{ulem}
+  - \usepackage{makecell}
+  - \usepackage{xcolor}
+  - \usepackage{amsmath}
+  - \usepackage{mathabx}
+
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache=TRUE)
+
+#knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(reshape2)
+#library(plotly)
+library(knitr)
+library(pandoc)
+library(gridExtra)
+library(gtools)
+library(stats4)
+library(rmutil)
+library(scales)
+library(tidyr)
+library(rmutil)
+library(invgamma)
+library(tidyverse)
+library(RColorBrewer)
+library(ggsci)
+library(ggpubr)
+library(patchwork)
+library(dplyr)
+#options(kableExtra.latex.load_packages = FALSE)
+library(devtools)
+#devtools::install_github("haozhu233/kableExtra")
+library(kableExtra)
+library(ggthemes)
+library(latex2exp)
+library(e1071)# kurtosis
+library(viridis)
+library(nortest)# AD
+theme_set(theme_bw()  +
+            theme(text=element_text(family="serif"),
+                  legend.position = "top")# Gridtop , right , bottom , or left#, panel.grid = element_blank()
+)
+# Helpful for latex tables
+# library(xtable)
+# options(xtable.caption.placement='top',
+#         xtable.table.placement='!t',
+#         xtable.include.rownames=F,
+#         xtable.comment=F)
+# #library(rgl)
+
+
+
+source("../MainFunctions/gamma_sar_sample.r")
+source("../MainFunctions/entropy_gamma_sar.r")
+source("../MainFunctions/entropy_gI0.r")
+source("../MainFunctions/gi0_sample.r")
+
+source("../MainFunctions/van_es_estimator.r")
+source("../MainFunctions/correa_estimator.r")
+source("../MainFunctions/ebrahimi_estimator.r")
+source("../MainFunctions/noughabi_arghami_estimator.r")
+source("../MainFunctions/vasicek_estimator.r")
+source("../MainFunctions/al_omari_1_estimator.r")
+source("../MainFunctions/al_omari_2_estimator.r")
+
+source("../MainFunctions/bootstrap_van_es_estimator.r")
+source("../MainFunctions/bootstrap_correa_estimator.r")
+source("../MainFunctions/bootstrap_ebrahimi_estimator.r")
+source("../MainFunctions/bootstrap_noughabi_arghami_estimator.r")
+source("../MainFunctions/bootstrap_vasicek_estimator.r")
+source("../MainFunctions/bootstrap_al_omari_1_estimator.r")
+source("../MainFunctions/bootstrap_al_omari_2_estimator.r")
+#The next function contains the functions: generate_samples, calculate_bias_mse, generate_plot
+source("../Programs/functions_sample_bias_mse.R")# 
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+```
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.pos = 'H')
+```
+
+
+\newcommand{\bias}{\operatorname{Bias}}
+
+# Introduction
+we analyze the independence between the sample mean and the coefficient of variation (CV). If the sample mean and CV are independent, the underlying data distribution must be a Gamma distribution. This independence is unique to the Gamma distribution and does not apply to other common distributions. 
+
+In the context of identifying heterogeneity in SAR imaging data, two main models are used: the Gamma SAR distribution and the $G_I^0$ distribution. The Gamma SAR distribution is easier to handle and allows homogeneous areas to be identified without having to resort to the $G_I^0$ distribution.
+
+
+# Methodology
+
+To evaluate this property, we simulated data from both the Gamma SAR and $G_I^0$ distributions. The goal is to determine if the mean and CV are independent for these distributions.
+
+### Simulations
+
+The following R code was used to generate 10000 samples for each distribution and analyze the independence between the mean and CV.
+
+# Gamma SAR Distribution
+For the Gamma SAR distribution, we simulated the data and plotted the CV versus the mean.
+
+```{r Plot_empirical_gamma_and_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="70%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Scatter plot of CV versus Mean."}
+
+source("../MainFunctions/gamma_sar_sample.R")
+
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+
+sample.size <- 49
+R <- 10000
+mu <- 1
+L <- 5
+
+
+means <- numeric(R)
+cvs <- numeric(R)
+
+
+for (r in 1:R) {
+  z <- gamma_sar_sample(L, mu, sample.size)
+  means[r] <- mean(z)
+  cvs[r] <- sd(z) / mean(z)
+}
+
+
+data <- data.frame(Mean = means, CV = cvs)
+
+
+ggplot(data, aes(x = Mean, y = CV)) +
+  geom_point(alpha = 0.5, color = "blue") +
+  labs(title = "Scatter plot of CV versus Mean",
+       x = "Mean",
+       y = "Coefficient of Variation (CV)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90")
+  )
+
+
+```
+
+# $G_I^0$ Distribution
+
+For the $G_I^0$ distribution, we also simulated the data and plotted the CV versus the mean.
+
+```{r Plot_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="70%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Scatter plot of CV versus Mean, $\\alpha=-1.5$."}
+
+source("../MainFunctions/gamma_sar_sample.R")
+source("../MainFunctions/entropy_gamma_sar.R")
+source("../MainFunctions/entropy_gI0.R")
+source("../MainFunctions/gi0_sample.R")
+
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+
+sample.size <- 49
+R <- 10000
+mu <- 1
+L <- 5
+alpha1 <- -1.5
+
+
+means <- numeric(R)
+cvs <- numeric(R)
+
+
+for (r in 1:R) {
+  z <- gi0_sample(mu, alpha1, L, sample.size)
+  means[r] <- mean(z)
+  cvs[r] <- sd(z) / mean(z)
+}
+
+# 
+data <- data.frame(Mean = means, CV = cvs)
+
+# 
+ggplot(data, aes(x = Mean, y = CV)) +
+  geom_point(alpha = 0.5, color = "red") +
+  labs(title = "Scatter plot of CV versus Mean for gI0 distribution",
+       x = "Mean",
+       y = "Coefficient of Variation (CV)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90")
+  )
+
+```
+The scatter plot for the Gamma SAR distribution shows a random distribution of points, indicating that the mean and CV are independent. This confirms the property of the Gamma distribution where the sample mean and CV do not reveal any correlation.
+
+In contrast, the scatter plot for the $G_I^0$ distribution shows a log-like pattern, indicating dependence between the mean and CV. This dependency is due to the parameter $\alpha$ in the $G_I^0$ distribution, which measures the roughness of the data. When $\alpha$ approaches $-\infty$, the $G_I^0$ distribution approximates the Gamma SAR distribution, and the mean and CV become independent. However, for values such as $\alpha = -1.5$, the mean and CV are dependent.
+
+# Model Fitting
+
+
+
+To model the dependency observed in the $G_I^0$ distribution, we used the following model:
+
+$$
+\text{model}(\bar{x}) = \sqrt{n} \left(1 - \exp \left(- (\beta_0 + \beta_1 \bar{x})\right) \right)
+$$
+
+where \(\beta_0\) and \(\beta_1\) are parameters, the p-value for \(\beta_1\) plays a crucial role in understanding the fit of the model and the nature of the data distribution.
+
+```{r Plot_gi02, echo=FALSE, message=FALSE, warning=FALSE, out.width="70%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Scatter plot of CV versus Mean, $\\alpha=-1.5$."}
+
+source("../MainFunctions/gamma_sar_sample.R")
+source("../MainFunctions/entropy_gamma_sar.R")
+source("../MainFunctions/entropy_gI0.R")
+source("../MainFunctions/gi0_sample.R")
+
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+sample.size <- 49
+R <- 10000
+mu <- 1
+L <- 5
+alpha1 <- -1.5
+means <- numeric(R)
+cvs <- numeric(R)
+
+for (r in 1:R) {
+  z <- gi0_sample(mu, alpha1, L, sample.size)
+  means[r] <- mean(z)
+  cvs[r] <- sd(z) / mean(z)
+}
+
+
+data <- data.frame(Mean = means, CV = cvs)
+
+# 
+start_values <- list(beta0 = 0.5, beta1 = 0.5)
+model <- nls(CV ~ sqrt(sample.size) * (1 - exp(-1.0*(beta0 + beta1 * Mean))), 
+             data = data, start = start_values)
+
+# 
+summary(model)
+
+# 
+ggplot(data, aes(x = Mean, y = CV)) +
+  geom_point(alpha = 0.5, color = "red") +
+  stat_function(fun = function(x) sqrt(sample.size) * (1 - exp(-(coef(model)[1] + coef(model)[2] * x))),
+                color = "blue", size = 1) +
+  labs(title = "Scatter plot of CV versus Mean for gI0 distribution",
+       x = "Mean",
+       y = "Coefficient of Variation (CV)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90")
+  )
+
+```
+
+```{r parameters, echo=FALSE, message=FALSE, warning=FALSE}
+results <- data.frame(
+  Alpha = rep(c(-1.5, -3, -6, -20, -100, -200, -1000), each = 2),
+  Parameter = rep(c("$\\beta_0$", "$\\beta_1$"), 7),
+  Estimate = c(
+    -0.04401, 0.37712,
+    -0.067687, 0.219549,
+    0.017231, 0.084623,
+    0.055379, 0.020427,
+    0.062530, 0.004908,
+    0.063711, 0.002681,
+    0.066356, -0.000558
+  ),
+  StdError = c(
+    0.00266, 0.00300,
+    0.002597, 0.002595,
+    0.001935, 0.001931,
+    0.001373, 0.001370,
+    0.001215, 0.001214,
+    0.001181, 0.001180,
+    0.001185, 0.001184
+  ),
+  tvalue = c(
+    -16.55, 125.71,
+    -26.06, 84.62,
+    8.904, 43.825,
+    40.34, 14.91,
+    51.450, 4.045,
+    53.933, 2.272,
+    56.012, -0.472
+  ),
+  pvalue = c(
+    "<2e-16", "<2e-16",
+    "<2e-16", "<2e-16",
+    "<2e-16", "<2e-16",
+    "<2e-16", "<2e-16",
+    "<2e-16", "5.28e-05",
+    "<2e-16", "0.0231",
+    "<2e-16", "0.637"
+  ),
+  stringsAsFactors = FALSE  # Asegúrate de que los datos de texto no se conviertan en factores
+)
+
+# Define los nombres de las columnas
+colnames(results) <- c("$\\alpha$", "\\textbf{Parameter}", "\\textbf{Estimate}", "\\textbf{Std. Error}", "\\textbf{$t$ Value}", "\\textbf{$p$ Value}")
+
+# # Formatea los números
+# results$Estimate <- sprintf("$%.5f$", results$Estimate)
+# results$StdError <- sprintf("$%.5f$", results$StdError)
+# results$tvalue <- sprintf("$%.2f$", results$tvalue)
+# results$pvalue <- ifelse(results$pvalue == "<2e-16", "< 2e-16", results$pvalue)
+# 
+# # Imprime los resultados para verificar
+# print(results)
+#results$Alpha <- sprintf("$%.1f$", results$Alpha)
+results[] <- lapply(names(results), function(col_name) {
+  x <- results[[col_name]]
+  if (is.numeric(x)) {
+    if (col_name == "Alpha") {
+      formatted_numbers <- sprintf("$\\scriptstyle %d$", x)  # Estilo específico para Alpha
+    } else {
+      if (all(x %% 1 == 0)) {
+        formatted_numbers <- sprintf("$%d$", x)
+      } else {
+        formatted_numbers <- ifelse(x < 0, sprintf("$%.5f$", x), sprintf("$\\phantom{-}%.5f$", x))
+      }
+    }
+    return(formatted_numbers)
+  } else {
+    return(x)  # Mantiene los valores de texto sin cambios
+  }
+})
+
+# Genera la tabla
+kable(results, caption = "Regression Results for Different Alpha Values.",
+      format = "latex",
+      booktabs = TRUE,
+      escape = FALSE,
+      col.names = colnames(results),
+      align = "cccccc") %>%
+#  kable_styling(latex_options = "scale_down", font_size = 9) %>%
+  collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") %>%
+  row_spec(0, align = "c")
+
+```
+
+## Interpretation of p-Values for \(\beta_1\)
+
+
+### High $p$-Value for \(\beta_1\)
+
+- **Implication**: A high p-value (typically greater than 0.05) for \(\beta_1\) suggests that the coefficient \(\beta_1\) is not significantly different from zero. This implies that the relationship between the mean (\(\bar{x}\)) and the coefficient of variation  in the data can be explained by the Gamma SAR distribution.
+
+- **Interpretation**: When \(\beta_1\) is not statistically significant, it supports the hypothesis that the data fits the Gamma SAR distribution. In this case, the sample mean and CV are independent, which is a characteristic feature of the Gamma distribution. 
+
+### Low $p$-Value for \(\beta_1\)
+
+- **Implication**: A low p-value (typically less than 0.05) for \(\beta_1\) indicates that \(\beta_1\) is significantly different from zero. This suggests that the model does not fit the data well if the assumption of independence between the mean and CV is made.
+
+- **Interpretation**: When \(\beta_1\) is statistically significant, it implies that the data is better described by the \(G_I^0\) distribution . In this scenario, the sample mean and CV are dependent, reflecting a more complex relationship between these two metrics. Specifically, this dependency indicates that the data shows a logarithmic behavior in the relationship between the mean and CV, as described by the \(G_I^0\) distribution. The parameter \(\alpha\) of the \(G_{I^0}\) distribution, which approaches $-1$ in extreme cases, captures this dependency.
+
+
+

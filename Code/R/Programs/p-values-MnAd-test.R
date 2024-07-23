@@ -8,7 +8,8 @@ rm(list = ls())
 #load("../Programs/Data/MnAD_results_data_mexico_512.Rdata")
 #load("../Programs/Data/MnAD_results_data_lake_512.Rdata")
 #load("../Programs/Data/results_Phantom_mnad_7_z1.Rdata")
-load("../Programs/Data/results_Phantom_mnad_7_new.Rdata")
+#load("../Programs/Data/results_Phantom_mnad_7_new.Rdata")
+load("../Programs/Data/MnAD_results_data_Rotterdam_1024.Rdata")
 
 #Illinois_crops
 # meanlog <- -1.5865643
@@ -24,8 +25,13 @@ load("../Programs/Data/results_Phantom_mnad_7_new.Rdata")
 # #phantom z1
 #  meanlog <- -0.005317387
 #  sdlog <- 0.783799230
-  meanlog <- 0.004045258
-  sdlog <- 0.848081854
+
+  # meanlog <- 0.004045258
+  # sdlog <- 0.848081854
+
+#Rotterdam
+ meanlog <- -0.1654245
+ sdlog <- 0.4711747
 
 # Crear una matriz para almacenar los p-valores
 p_values_matrix <- matrix(NA, nrow = nrow(cd_values_mnad), ncol = ncol(cd_values_mnad))
@@ -59,7 +65,7 @@ plot(imagematrix(p_values_matrix >0.05))
 
 # imagematrixPNG(imagematrix(equalize(Z)), name = "mnad_Phantom_mnad_7_z1.png")
 # 
-# imagematrixPNG(imagematrix(equalize(cd_values_mnad)), name = "Phantom_mnad_7_z1.png")
+ imagematrixPNG(imagematrix(equalize(cd_values_mnad)), name = "mnad_Rotterdam.png")
 # # # # 
-# imagematrixPNG(imagematrix(p_values_matrix), name="mnad_p_values_Phantom_mnad_7_z1.png")
-# imagematrixPNG(imagematrix(p_values_matrix>0.05), name="mnad_005_Phantom_7_z1.png")
+ imagematrixPNG(imagematrix(p_values_matrix), name="mnad_p_values_Rotterdam.png")
+ imagematrixPNG(imagematrix(p_values_matrix>0.05), name="mnad_005_Rotterdam.png")

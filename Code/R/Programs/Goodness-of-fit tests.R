@@ -40,11 +40,17 @@ library(invgamma)
 
 #save( cv_values, Z, file = "./Data/CV_results_data_Phantom_4_z1.Rdata")
 #save( cv_values, Z, file = "./Data/CV_results_data_Phantom_4_z1.Rdata")
-load("../Programs/Data/CV_results_data_Phantom_4_z1.Rdata")
-cv_values_vector <- as.vector(cv_values)
+#load("../Programs/Data/CV_results_data_Phantom_4_z1.Rdata")
+#save( cv_values, x, file = "./Data/CV_results_data_Rotterdam_1024.Rdata")
+
+#load("../Programs/Data/CV_results_data_Rotterdam_1024.Rdata")
+
+#save( cd_values_mnad, x, file = "./Data/MnAD_results_data_Rotterdam_1024.Rdata")
+load("../Programs/Data/MnAD_results_data_Rotterdam_1024.Rdata")
+#cv_values_vector <- as.vector(cv_values)
 
 
-#cv_values_vector <- as.vector(cd_values_mnad)
+cv_values_vector <- as.vector(cd_values_mnad)
 
 
 
