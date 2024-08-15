@@ -1,0 +1,449 @@
+---
+output: 
+  pdf_document:
+    citation_package: natbib
+    keep_tex: true
+    fig_caption: true
+    latex_engine: pdflatex
+    template: ./svm-latex-ms.tex
+bibliography: ../../Common/references.bib
+header-includes:
+   - \usepackage[english]{babel}
+   - \usepackage{bm,bbm}
+   - \usepackage{mathrsfs}
+   - \usepackage{siunitx}
+   - \usepackage{graphicx}
+   - \usepackage{url}
+   - \usepackage{polski}
+   - \usepackage{booktabs}
+   - \usepackage{color}
+   - \usepackage{amsmath}
+   - \usepackage{multirow}
+   - \usepackage{subcaption}
+   - \captionsetup[sub]{position=bottom,
+        labelfont={bf, small, stretch=1.17},
+        labelsep=space,
+        textfont={small, stretch=1.5},
+        aboveskip=1pt, 
+        belowskip=1pt,
+        singlelinecheck=off,
+        justification=centering}   
+biblio-style: apsr
+title: "Report: Analysis of Independence between Sample Mean and Coefficient of Variation"
+thanks: ""
+author:
+- name: J. Alpala
+  affiliation: 
+abstract: "We analyze the independence between the sample mean and the coefficient of variation (CV). If the sample mean and CV are independent, the underlying data distribution must be a Gamma distribution.
+Two main models are used to identify heterogeneity in SAR imaging data: the Gamma SAR distribution and the $G_I^0$ distribution. The Gamma SAR distribution is easier to handle and identifies homogeneous areas without using the $G_I^0$ distribution."
+keywords: "Gamma distribution, coefficient of variation, mean, heterogeneity, SAR "
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: libertine
+fontsize: 11pt
+# spacing: double
+endnote: no
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE,
+                      message=FALSE, warning=FALSE,
+                      fig.path='figs/',
+                      cache.path = '_cache/',
+                      fig.process = function(x) {
+                      x2 = sub('-\\d+([.][a-z]+)$', '\\1', x)
+                      if (file.rename(x, x2)) x2 else x
+                      })
+
+library(ggplot2)
+library(reshape2)
+#library(plotly)
+library(knitr)
+library(pandoc)
+library(gridExtra)
+library(gtools)
+library(stats4)
+library(rmutil)
+library(scales)
+library(tidyr)
+library(rmutil)
+library(invgamma)
+library(tidyverse)
+library(RColorBrewer)
+library(ggsci)
+library(ggpubr)
+library(patchwork)
+library(dplyr)
+#options(kableExtra.latex.load_packages = FALSE)
+#library(devtools)
+#devtools::install_github("haozhu233/kableExtra")
+library(kableExtra)
+library(ggthemes)
+library(latex2exp)
+library(e1071)# kurtosis
+library(viridis)
+library(nortest)# AD
+
+
+
+
+theme_set(theme_minimal() +
+            theme(text=element_text(family="serif"),
+                  legend.position = "bottom")#  top , right , bottom , or left#, panel.grid = element_blank()
+)
+
+# if(!require("rstudioapi")) install("rstudioapi")
+# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+
+source("../../../Code/R/MainFunctions/gamma_sar_sample.R")
+source("../../../Code/R/MainFunctions/entropy_gamma_sar.R")
+source("../../../Code/R/MainFunctions/entropy_gI0.R")
+source("../../../Code/R/MainFunctions/gi0_sample.R")
+
+source("../../../Code/R/MainFunctions/van_es_estimator.R")
+source("../../../Code/R/MainFunctions/correa_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_correa_estimator_log_mean.R")
+source("../../../Code/R/MainFunctions/ebrahimi_estimator.R")
+source("../../../Code/R/MainFunctions/noughabi_arghami_estimator.R")
+source("../../../Code/R/MainFunctions/vasicek_estimator.R")
+source("../../../Code/R/MainFunctions/al_omari_1_estimator.R")
+source("../../../Code/R/MainFunctions/al_omari_2_estimator.R")
+
+source("../../../Code/R/MainFunctions/bootstrap_van_es_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_correa_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_ebrahimi_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_noughabi_arghami_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_vasicek_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_al_omari_1_estimator.R")
+source("../../../Code/R/MainFunctions/bootstrap_al_omari_2_estimator.R")
+#The next function contains the functions: generate_samples, calculate_bias_mse, generate_plot
+source("../../../Code/R/Programs/functions_sample_bias_mse.R")# read_ENVI_images
+source("../../../Code/R/Programs/read_ENVI_images.R")
+
+
+```
+
+# Introduction
+
+Synthetic Aperture Radar (SAR) technology has become essential for environmental monitoring and disaster management. It provides valuable images under various conditions, including day or night and weather situations&nbsp;\cite{Moreira2013,Mu2019}.
+However, the effective use of SAR data depends on a thorough understanding of its statistical properties because it is corrupted by speckle.
+This noise-like interference effect is inherent in SAR data due to the coherent nature of the imaging process&nbsp;\cite{Argenti2013}.
+
+Speckle in intensity format is non-Gaussian. Thus, SAR data require reliable statistical models for accurate processing. 
+The $\mathcal{G}^0$ distribution, which is suitable for SAR data, includes the
+Gamma law as the limiting case for fully-developed speckle&nbsp;\cite{Ferreira2020} and provides flexibility with fewer parameters for analysis.
+
+Our work aims to improve the identification of potential roughness features in SAR intensity data.
+Physical modeling of SAR data allows the use of the Gamma distribution in the presence of fully-developed speckle, where an infinite number of independent backscatterers per resolution unit is assumed, commonly referred to as homogeneous regions.
+
+In this context, we present a set of three novel test statistics that aim to distinguish between homogeneous and non-homogeneous returns, particularly between gamma and \(\mathcal{G}^0\) distributed data, assuming the number of looks is known.
+
+
+
+# Background {#sec:Background}
+
+## Statistical Modeling of Intensity SAR data
+
+The primary models for intensity SAR data include the Gamma and
+$\mathcal{G}_I^0$ distributions [@Frery1997]. The first is suitable for
+fully-developed speckle and is a limiting case of the second model. This
+is interesting due to its versatility in accurately representing regions
+with different roughness properties [@Cassetti2022]. We denote
+$Z \sim \Gamma_{\text{SAR}}(L, \mu)$ and
+$Z \sim \mathcal{G}_I^0(\alpha, \gamma, L)$ to indicate that $Z$ follows
+the distributions characterized by the respective probability density
+functions (pdfs): \begin{align}
+    f_Z(z;L, \mu\mid \Gamma_{\text{SAR}})&=\frac{L^L}{\Gamma(L)\mu^L}z^{L-1}\exp\left\{-Lz/\mu\right\} \mathbbm 1_{\mathbbm R_+}(z)\label{E:gamma1}\\
+    \intertext{ and }
+    f_Z(z; \alpha, \gamma, L \mid \mathcal{G}_I^0)&=\frac{L^L\Gamma(L-\alpha)}{\gamma^{\alpha}\Gamma(-\alpha)\Gamma(L)}\cdot\frac{z^{L-1}}{(\gamma+Lz)^{L-\alpha}} \mathbbm 1_{\mathbbm R_+}(z),\label{E:gi01}
+\end{align} where $\mu > 0$ is the mean, $\gamma > 0$ is the scale,
+$\alpha < 0$ measures the roughness, $L \geq 1$ is the number of looks
+(either nominal or estimated, thus not restricted to integer values),
+$\Gamma(\cdot)$ is the gamma function, and $\mathbbm 1_{A}(z)$ is the
+indicator function of the set $A$.
+
+The $r$th order moments of the $\mathcal{G}_I^0$ model are
+\begin{equation}
+E\big(Z^r\mid \mathcal{G}_I^0\big)  = \left(\frac{\gamma}{L}\right)^r\frac{\Gamma(-\alpha-r)}{\Gamma(-\alpha)}\cdot\frac{\Gamma(L+r)}{\Gamma(L)}, 
+    \label{E:rmom}
+\end{equation} provided $\alpha <-r$, and infinite otherwise. Therefore,
+assuming $\alpha<-1$, its expected value is \begin{equation}
+    \mu=\left(\frac{\gamma}{L}\right)\frac{\Gamma(-\alpha-1)}{\Gamma(-\alpha)}\cdot\frac{\Gamma(L+1)}{\gamma(L)}=-\frac{\gamma}{\alpha+1}.
+\end{equation}
+
+Although the $\mathcal{G}_I^0$ distribution is defined by the parameters
+$\alpha$ and $\gamma$, in the SAR literature \cite{Nascimento2010} the
+texture $\alpha$ and the mean $\mu$ are usually used.
+Reparametrizing \eqref{E:gi01} with $\mu$, and denoting this model as
+$G_I^0$ we obtain: \begin{equation}
+        f_Z\big(z; \mu, \alpha, L\mid G_I^0\big) = \frac{L^L\Gamma(L-\alpha)}{\big[-\mu(\alpha+1)\big]^{\alpha}\Gamma(-\alpha)\Gamma(L)} \frac{z^{L-1}}{\big[-\mu(\alpha+1)+Lz\big]^{L-\alpha}}.\label{E:gi02}
+\end{equation}
+
+# Methodology
+
+To evaluate this property, we simulated data from both the Gamma SAR and $G_I^0$ distributions. The goal is to determine if the mean and CV are independent for these distributions.
+To evaluate this property, we simulated data from both the Gamma SAR and $G_I^0$ distributions. The goal is to determine if the mean and CV are independent for these distributions.
+
+### Simulations
+
+The following R code was used to generate 10000 samples for each distribution and analyze the independence between the mean and CV.
+
+# Gamma SAR Distribution
+
+For the Gamma SAR distribution, we simulated the data and plotted the CV versus the mean.
+
+```{r Plot_empirical_gamma_and_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="70%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Scatter plot of CV versus Mean."}
+
+source("../../../Code/R/MainFunctions/gamma_sar_sample.R")
+
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+
+sample.size <- 49
+R <- 10000
+mu <- 1
+L <- 5
+
+
+means <- numeric(R)
+cvs <- numeric(R)
+
+
+for (r in 1:R) {
+  z <- gamma_sar_sample(L, mu, sample.size)
+  means[r] <- mean(z)
+  cvs[r] <- sd(z) / mean(z)
+}
+
+
+data <- data.frame(Mean = means, CV = cvs)
+
+
+ggplot(data, aes(x = Mean, y = CV)) +
+  geom_point(alpha = 0.5, color = "blue") +
+  labs(title = "Scatter plot of CV versus Mean",
+       x = "Mean",
+       y = "Coefficient of Variation (CV)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90")
+  )
+
+
+```
+
+# $G_I^0$ Distribution
+
+For the $G_I^0$ distribution, we also simulated the data and plotted the CV versus the mean.
+
+```{r Plot_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="70%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Scatter plot of CV versus Mean, $\\alpha=-1.5$."}
+
+source("../../../Code/R/MainFunctions/gamma_sar_sample.R")
+source("../../../Code/R/MainFunctions/entropy_gamma_sar.R")
+source("../../../Code/R/MainFunctions/entropy_gI0.R")
+source("../../../Code/R/MainFunctions/gi0_sample.R")
+
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+
+sample.size <- 49
+R <- 10000
+mu <- 1
+L <- 5
+alpha1 <- -1.5
+
+
+means <- numeric(R)
+cvs <- numeric(R)
+
+
+for (r in 1:R) {
+  z <- gi0_sample(mu, alpha1, L, sample.size)
+  means[r] <- mean(z)
+  cvs[r] <- sd(z) / mean(z)
+}
+
+# 
+data <- data.frame(Mean = means, CV = cvs)
+
+# 
+ggplot(data, aes(x = Mean, y = CV)) +
+  geom_point(alpha = 0.5, color = "red") +
+  labs(title = "Scatter plot of CV versus Mean for gI0 distribution",
+       x = "Mean",
+       y = "Coefficient of Variation (CV)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90")
+  )
+
+```
+
+The scatter plot for the Gamma SAR distribution shows a random distribution of points, indicating that the mean and CV are independent. This confirms the property of the Gamma distribution where the sample mean and CV do not reveal any correlation.
+
+In contrast, the scatter plot for the $G_I^0$ distribution shows a log-like pattern, indicating dependence between the mean and CV. This dependency is due to the parameter $\alpha$ in the $G_I^0$ distribution, which measures the roughness of the data. When $\alpha$ approaches $-\infty$, the $G_I^0$ distribution approximates the Gamma SAR distribution, and the mean and CV become independent. However, for values such as $\alpha = -1.5$, the mean and CV are dependent.
+
+# Model Fitting
+
+To model the dependency observed in the $G_I^0$ distribution, we used the following model:
+
+$$
+\text{model}(\bar{x}) = \sqrt{n} \left(1 - \exp \left(- (\beta_0 + \beta_1 \bar{x})\right) \right)
+$$
+
+where $\beta_0$ and $\beta_1$ are parameters, the p-value for $\beta_1$ plays a crucial role in understanding the fit of the model and the nature of the data distribution.
+
+```{r Plot_gi02, echo=FALSE, message=FALSE, warning=FALSE, out.width="70%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Scatter plot of CV versus Mean, $\\alpha=-1.5$."}
+
+source("../../../Code/R/MainFunctions/gamma_sar_sample.R")
+source("../../../Code/R/MainFunctions/entropy_gamma_sar.R")
+source("../../../Code/R/MainFunctions/entropy_gI0.R")
+source("../../../Code/R/MainFunctions/gi0_sample.R")
+
+
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+sample.size <- 49
+R <- 10000
+mu <- 1
+L <- 5
+alpha1 <- -1.5
+means <- numeric(R)
+cvs <- numeric(R)
+
+for (r in 1:R) {
+  z <- gi0_sample(mu, alpha1, L, sample.size)
+  means[r] <- mean(z)
+  cvs[r] <- sd(z) / mean(z)
+}
+
+
+data <- data.frame(Mean = means, CV = cvs)
+
+# 
+start_values <- list(beta0 = 0.5, beta1 = 0.5)
+model <- nls(CV ~ sqrt(sample.size) * (1 - exp(-1.0*(beta0 + beta1 * Mean))), 
+             data = data, start = start_values)
+
+# 
+#summary(model)
+
+# 
+ggplot(data, aes(x = Mean, y = CV)) +
+  geom_point(alpha = 0.5, color = "red") +
+  stat_function(fun = function(x) sqrt(sample.size) * (1 - exp(-(coef(model)[1] + coef(model)[2] * x))),
+                color = "blue", size = 1) +
+  labs(title = "Scatter plot of CV versus Mean for gI0 distribution",
+       x = "Mean",
+       y = "Coefficient of Variation (CV)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90")
+  )
+
+```
+
+```{r parameters, echo=FALSE, message=FALSE, warning=FALSE}
+results <- data.frame(
+  Alpha = rep(c(-1.5, -3, -6, -20, -100, -200, -1000), each = 2),
+  Parameter = rep(c("$\\beta_0$", "$\\beta_1$"), 7),
+  Estimate = c(
+    -0.04401, 0.37712,
+    -0.067687, 0.219549,
+    0.017231, 0.084623,
+    0.055379, 0.020427,
+    0.062530, 0.004908,
+    0.063711, 0.002681,
+    0.066356, -0.000558
+  ),
+  StdError = c(
+    0.00266, 0.00300,
+    0.002597, 0.002595,
+    0.001935, 0.001931,
+    0.001373, 0.001370,
+    0.001215, 0.001214,
+    0.001181, 0.001180,
+    0.001185, 0.001184
+  ),
+  tvalue = c(
+    -16.55, 125.71,
+    -26.06, 84.62,
+    8.904, 43.825,
+    40.34, 14.91,
+    51.450, 4.045,
+    53.933, 2.272,
+    56.012, -0.472
+  ),
+  pvalue = c(
+    "<2e-16", "<2e-16",
+    "<2e-16", "<2e-16",
+    "<2e-16", "<2e-16",
+    "<2e-16", "<2e-16",
+    "<2e-16", "5.28e-05",
+    "<2e-16", "0.0231",
+    "<2e-16", "0.637"
+  ),
+  stringsAsFactors = FALSE  # 
+)
+
+# 
+colnames(results) <- c("$\\alpha$", "\\textbf{Parameter}", "\\textbf{Estimate}", "\\textbf{Std. Error}", "\\textbf{$t$ Value}", "\\textbf{$p$ Value}")
+
+
+
+
+#results$Alpha <- sprintf("$%.1f$", results$Alpha)
+results[] <- lapply(names(results), function(col_name) {
+  x <- results[[col_name]]
+  if (is.numeric(x)) {
+    if (col_name == "Alpha") {
+      formatted_numbers <- sprintf("$\\scriptstyle %d$", x)  # Estilo específico para Alpha
+    } else {
+      if (all(x %% 1 == 0)) {
+        formatted_numbers <- sprintf("$%d$", x)
+      } else {
+        formatted_numbers <- ifelse(x < 0, sprintf("$%.5f$", x), sprintf("$\\phantom{-}%.5f$", x))
+      }
+    }
+    return(formatted_numbers)
+  } else {
+    return(x)  # 
+  }
+})
+
+# Genera la tabla
+kable(results, caption = "Regression Results for Different Alpha Values.",
+      format = "latex",
+      booktabs = TRUE,
+      escape = FALSE,
+      col.names = colnames(results),
+      align = "cccccc") %>%
+#  kable_styling(latex_options = "scale_down", font_size = 9) %>%
+  collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") %>%
+  row_spec(0, align = "c")
+
+```
+
+
+```{=html}
+<!--
+# References
+\setlength{\parindent}{-0.2in}
+\setlength{\leftskip}{0.2in}
+\setlength{\parskip}{8pt}
+\vspace*{-0.2in}
+\noindent
+-->
+```

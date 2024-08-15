@@ -28,10 +28,7 @@ header-includes:
   - \usepackage{xcolor}
   - \usepackage{amsmath}
   - \usepackage{mathabx}
-
 ---
-
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, cache=TRUE)
@@ -110,13 +107,13 @@ set.seed(1234567890, kind = "Mersenne-Twister")
 knitr::opts_chunk$set(fig.pos = 'H')
 ```
 
-
 \newcommand{\bias}{\operatorname{Bias}}
 
 # Introduction
-we analyze the independence between the sample mean and the coefficient of variation (CV). If the sample mean and CV are independent, the underlying data distribution must be a Gamma distribution. This independence is unique to the Gamma distribution and does not apply to other common distributions. 
 
-In the context of identifying heterogeneity in SAR imaging data, two main models are used: the Gamma SAR distribution and the $G_I^0$ distribution. The Gamma SAR distribution is easier to handle and allows homogeneous areas to be identified without having to resort to the $G_I^0$ distribution.
+We analyze the independence between the sample mean and the coefficient of variation (CV). If the sample mean and CV are independent, the underlying data distribution must be a Gamma distribution.
+
+Two main models are used to identify heterogeneity in SAR imaging data: the Gamma SAR distribution and the $G_I^0$ distribution. The Gamma SAR distribution is easier to handle and identifies homogeneous areas without using the $G_I^0$ distribution.
 
 
 # Methodology
@@ -128,6 +125,7 @@ To evaluate this property, we simulated data from both the Gamma SAR and $G_I^0$
 The following R code was used to generate 10000 samples for each distribution and analyze the independence between the mean and CV.
 
 # Gamma SAR Distribution
+
 For the Gamma SAR distribution, we simulated the data and plotted the CV versus the mean.
 
 ```{r Plot_empirical_gamma_and_gi0, echo=FALSE, message=FALSE, warning=FALSE, out.width="70%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Scatter plot of CV versus Mean."}
@@ -222,13 +220,12 @@ ggplot(data, aes(x = Mean, y = CV)) +
   )
 
 ```
+
 The scatter plot for the Gamma SAR distribution shows a random distribution of points, indicating that the mean and CV are independent. This confirms the property of the Gamma distribution where the sample mean and CV do not reveal any correlation.
 
 In contrast, the scatter plot for the $G_I^0$ distribution shows a log-like pattern, indicating dependence between the mean and CV. This dependency is due to the parameter $\alpha$ in the $G_I^0$ distribution, which measures the roughness of the data. When $\alpha$ approaches $-\infty$, the $G_I^0$ distribution approximates the Gamma SAR distribution, and the mean and CV become independent. However, for values such as $\alpha = -1.5$, the mean and CV are dependent.
 
 # Model Fitting
-
-
 
 To model the dependency observed in the $G_I^0$ distribution, we used the following model:
 
@@ -236,7 +233,7 @@ $$
 \text{model}(\bar{x}) = \sqrt{n} \left(1 - \exp \left(- (\beta_0 + \beta_1 \bar{x})\right) \right)
 $$
 
-where \(\beta_0\) and \(\beta_1\) are parameters, the p-value for \(\beta_1\) plays a crucial role in understanding the fit of the model and the nature of the data distribution.
+where $\beta_0$ and $\beta_1$ are parameters, the p-value for $\beta_1$ plays a crucial role in understanding the fit of the model and the nature of the data distribution.
 
 ```{r Plot_gi02, echo=FALSE, message=FALSE, warning=FALSE, out.width="70%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Scatter plot of CV versus Mean, $\\alpha=-1.5$."}
 
@@ -330,20 +327,15 @@ results <- data.frame(
     "<2e-16", "0.0231",
     "<2e-16", "0.637"
   ),
-  stringsAsFactors = FALSE  # Asegúrate de que los datos de texto no se conviertan en factores
+  stringsAsFactors = FALSE  # 
 )
 
-# Define los nombres de las columnas
+# 
 colnames(results) <- c("$\\alpha$", "\\textbf{Parameter}", "\\textbf{Estimate}", "\\textbf{Std. Error}", "\\textbf{$t$ Value}", "\\textbf{$p$ Value}")
 
-# # Formatea los números
-# results$Estimate <- sprintf("$%.5f$", results$Estimate)
-# results$StdError <- sprintf("$%.5f$", results$StdError)
-# results$tvalue <- sprintf("$%.2f$", results$tvalue)
-# results$pvalue <- ifelse(results$pvalue == "<2e-16", "< 2e-16", results$pvalue)
-# 
-# # Imprime los resultados para verificar
-# print(results)
+
+
+
 #results$Alpha <- sprintf("$%.1f$", results$Alpha)
 results[] <- lapply(names(results), function(col_name) {
   x <- results[[col_name]]
@@ -359,7 +351,7 @@ results[] <- lapply(names(results), function(col_name) {
     }
     return(formatted_numbers)
   } else {
-    return(x)  # Mantiene los valores de texto sin cambios
+    return(x)  # 
   }
 })
 
@@ -376,20 +368,16 @@ kable(results, caption = "Regression Results for Different Alpha Values.",
 
 ```
 
-## Interpretation of p-Values for \(\beta_1\)
+## Interpretation of p-Values for $\beta_1$
 
+### High $p$-Value for $\beta_1$
 
-### High $p$-Value for \(\beta_1\)
+-   **Implication**: A high $p$-value (typically greater than 0.05) for $\beta_1$ suggests that the coefficient $\beta_1$ is not significantly different from zero. This implies that the relationship between the mean ($\bar{x}$) and the coefficient of variation in the data can be explained by the Gamma SAR distribution.
 
-- **Implication**: A high p-value (typically greater than 0.05) for \(\beta_1\) suggests that the coefficient \(\beta_1\) is not significantly different from zero. This implies that the relationship between the mean (\(\bar{x}\)) and the coefficient of variation  in the data can be explained by the Gamma SAR distribution.
+-   **Interpretation**: When $\beta_1$ is not statistically significant, it supports the hypothesis that the data fits the Gamma SAR distribution. In this case, the sample mean and CV are independent, which is a characteristic feature of the Gamma distribution.
 
-- **Interpretation**: When \(\beta_1\) is not statistically significant, it supports the hypothesis that the data fits the Gamma SAR distribution. In this case, the sample mean and CV are independent, which is a characteristic feature of the Gamma distribution. 
+### Low $p$-Value for $\beta_1$
 
-### Low $p$-Value for \(\beta_1\)
+-   **Implication**: A low $p$-value (typically less than 0.05) for $\beta_1$ indicates that $\beta_1$ is significantly different from zero. This suggests that the model does not fit the data well if the assumption of independence between the mean and CV is made.
 
-- **Implication**: A low p-value (typically less than 0.05) for \(\beta_1\) indicates that \(\beta_1\) is significantly different from zero. This suggests that the model does not fit the data well if the assumption of independence between the mean and CV is made.
-
-- **Interpretation**: When \(\beta_1\) is statistically significant, it implies that the data is better described by the \(G_I^0\) distribution . In this scenario, the sample mean and CV are dependent, reflecting a more complex relationship between these two metrics. Specifically, this dependency indicates that the data shows a logarithmic behavior in the relationship between the mean and CV, as described by the \(G_I^0\) distribution. The parameter \(\alpha\) of the \(G_{I^0}\) distribution, which approaches $-1$ in extreme cases, captures this dependency.
-
-
-
+-   **Interpretation**: When $\beta_1$ is statistically significant, it implies that the data is better described by the $G_I^0$ distribution . In this scenario, the sample mean and CV are dependent, reflecting a more complex relationship between these two metrics. Specifically, this dependency indicates that the data shows a logarithmic behavior in the relationship between the mean and CV, as described by the $G_I^0$ distribution. The parameter $\alpha$ of the $G_{I^0}$ distribution, which approaches $-1$ in extreme cases, captures this dependency.
