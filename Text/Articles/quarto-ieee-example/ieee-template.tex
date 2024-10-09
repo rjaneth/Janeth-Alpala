@@ -92,6 +92,46 @@
   \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
 
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
@@ -151,11 +191,41 @@
 \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 \usepackage{physics}
 \usepackage[version=3]{mhchem}
 \usepackage{orcidlink}
 \usepackage{float}
 \floatplacement{table}{htb}
+\usepackage[english]{babel}
+\usepackage{bm,bbm}
+\usepackage{mathrsfs}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[T1]{fontenc}
+\usepackage{polski}
+\usepackage{booktabs}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{subcaption}
+\captionsetup[subfigure]{labelformat=parens, justification=centering}
+\usepackage{placeins}
 \makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \AtBeginDocument{%
@@ -190,15 +260,6 @@
 \@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
 \floatname{codelisting}{Listing}
 \newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
-\usepackage{amsthm}
-\theoremstyle{plain}
-\newtheorem{theorem}{Theorem}[section]
-\theoremstyle{remark}
-\AtBeginDocument{\renewcommand*{\proofname}{Proof}}
-\newtheorem*{remark}{Remark}
-\newtheorem*{solution}{Solution}
-\newtheorem{refremark}{Remark}[section]
-\newtheorem{refsolution}{Solution}[section]
 \makeatother
 \makeatletter
 \makeatother
@@ -270,7 +331,6 @@ Loire, Bourges, 18800 France%
 \thanks{John Doe is with Anonymous University%
 }
 %by-author.affiliations
-\thanks{Template created June 23, 2023; revised septiembre 11, 2024.}
 }
 \begin{document}
 
@@ -310,245 +370,148 @@ IEEE, IEEEtran, journal, Quarto, Pandoc, template
 % \IEEEpeerreviewmaketitle
 
 
-\section{Introduction}\label{sec-intro}
+\section{How to Use Cache in Quarto}\label{sec-intro}
 
-\IEEEPARstart{T}{his} file is intended to serve as a ``sample article
-file'' for IEEE journal papers produced with (Pandoc/Quarto)-Markdown
-using \texttt{IEEEtran.cls} version 1.8b and later for the PDF output.
-It is based on \texttt{bare\_jrnl\_new\_sample4.tex} provided by IEEE
-Publication Technology, Staff and available from
-\url{https://template-selector.ieee.org/}. The most common elements are
-covered in the simplified and updated instructions in
-\texttt{New\_IEEEtran\_how-to.pdf}. For less common elements you can
-refer back to the original \texttt{IEEEtran\_HOWTO.pdf}. It is assumed
-that the reader has a basic working knowledge of {\LaTeX}
-\citeproc{ref-mittelbach2023latex}{{[}1{]}} and of
-(Pandoc/Quarto)-Markdown \citeproc{ref-MacFarlane_Pandoc}{{[}2{]}},
-\citeproc{ref-Allaire_Quarto_2022}{{[}3{]}} markup.
+\subsection{Global Cache}\label{global-cache}
 
-\section{The Design, Intent, and Limitations of this
-Templates}\label{the-design-intent-and-limitations-of-this-templates}
+First, we need to activate the cache globally for the entire document.
+This means that all chunks that are executed will be cached and will not
+be executed again unless there is a change in the code or dependencies.
 
-The \texttt{quarto-ieee} template is intended to \textbf{approximate the
-final look and page length of the articles/papers} either in PDF output
-or HTML output. \textbf{They are NOT intended to be the final produced
-work that is displayed in print or on IEEEXplore\textsuperscript{®}}.
-They will help to give the authors an approximation of the number of
-pages and layout that will be in the final version.
+\begin{Shaded}
+\begin{Highlighting}[]
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}\{r setup, include=FALSE\}}
+\InformationTok{knitr::opts\_chunk$set(echo = FALSE, }
+\InformationTok{                              cache=TRUE)}
+\InformationTok{\textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
 
-\subsection{Unsuported feature and
-limitations}\label{unsuported-feature-and-limitations}
+\subsection{Simple Plot Example with Global
+Cache}\label{simple-plot-example-with-global-cache}
 
-Although most of the {\LaTeX} and \texttt{IEEEtran.cls} commands and
-environment are supported, there are some limitations when trying to
-export to a format other than PDF (e.g.~HTML output). For PDF output,
-the reader can use the {\LaTeX} command directly. However, this may
-break other output formats.\\
-It can be can reported the following limitations of the
-\texttt{quarto-ieee} template: - Several authors with same affiliation
-produce weird output. In such case, it is recommended to use
-\texttt{note} and \texttt{tex-author-no-affiliation:\ true}. - For
-\texttt{PDF} output - \texttt{quarto-ieee} use a hack to handle the
-\texttt{longtable} issue with 2-column {\LaTeX} documents\footnote{{[}``\emph{\href{https://github.com/jgm/pandoc/issues/1023\%3E}{longtable
-  not compatible with 2-column LaTeX documents}}'',}. But, in some
-cases, a page overflow may occur (see also Section~\ref{sec-tables}). -
-For \texttt{HTML} output - The default Quarto toc is used, so the table
-of contents (toc) display is not the same as on
-\href{https://ieeexplore.ieee.org/}{IEEEXplore®}. - Footnote are put at
-the end of document, while on
-\href{https://ieeexplore.ieee.org/}{IEEEXplore®} there are placed in the
-accordion. - Figures are not placed in the accordion. -
-\href{https://ieeexplore.ieee.org/}{IEEEXplore®} specifics
-(e.g.~citation metrics, etc.) - The \texttt{HTML} output is a Quarto
-citeable article \citeproc{ref-quarto-citation}{{[}4{]}}, so a citation
-appendix is automatically added to the article end.
+This chunk uses the global cache. After the first execution, the cached
+result will be used, so the plot won't be regenerated unless the code or
+data changes.
 
-\subsection{Contributing}\label{contributing}
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{)}
 
-If you want to improve the \texttt{quarto-ieee} template or need some
-specific features do not hesitate to submit Pull Request\footnote{Go to
-  the PR page: \url{https://github.com/dfolio/quarto-ieee/pulls}} (it is
-considered good practice to open an issue for discussion before working
-on a pull request for a new feature).
+\FunctionTok{plot}\NormalTok{(}\FunctionTok{density}\NormalTok{(data), }\AttributeTok{main =} \StringTok{"plot"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
-\section{Some random text}\label{some-random-text}
+\includegraphics{ieee-template_files/figure-pdf/unnamed-chunk-1-1.pdf}
 
-For some of the remainder of this sample we will use dummy text to fill
-out paragraphs rather than use live text that may violate a copyright.
-\IEEEpubidadjcol\\
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis cursus
-nisl eget tempor porta. Proin dapibus dictum quam a commodo. Mauris
-congue scelerisque eros a porta. Proin blandit nulla sapien, et pretium
-justo dictum non. Vivamus ultricies, elit eu posuere placerat, sapien
-est condimentum nisl, at tincidunt tortor dolor ac ligula. Suspendisse
-pulvinar libero quis eros finibus sodales. Vivamus mattis est eget
-imperdiet luctus. Morbi eget posuere metus. Nam egestas elit lectus, eu
-tincidunt odio viverra sed. Sed sit amet metus rutrum, ultricies elit
-in, finibus felis. Integer lobortis dui ante.
+\subsection{Cache in a Specific Chunk}\label{cache-in-a-specific-chunk}
 
-Nullam mi ligula, luctus a orci ut, tincidunt varius augue. Vestibulum
-ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia
-curae; Donec sed sem risus. Nam eleifend ultrices elit, vitae posuere
-tellus interdum et. Nam id nisl at elit malesuada malesuada. Suspendisse
-viverra ipsum libero, vel pharetra sem maximus sed. Nunc vel est
-fringilla, rutrum diam eu, egestas quam. Vivamus lobortis blandit velit,
-commodo finibus mauris. Quisque vel lacus ipsum. Pellentesque quis nulla
-ipsum.
+This chunk caches the summary table calculation. The table will only be
+recalculated if the code or the data changes.
 
-Aenean in hendrerit quam. Orci varius natoque penatibus et magnis dis
-parturient montes, nascetur ridiculus mus. Aliquam tincidunt vehicula
-dignissim. In quis aliquet lectus, ac vestibulum elit. Quisque a magna
-viverra quam viverra faucibus. Nulla ornare tortor at mollis viverra.
-Curabitur vel porta dui. Etiam ipsum elit, egestas eget lacus nec,
-laoreet iaculis lacus. In iaculis risus ac tincidunt viverra. Maecenas
-tempor iaculis odio quis aliquet.\\
-Maecenas ac posuere turpis. Fusce est dui, dapibus sed odio eget,
-eleifend facilisis felis. Nam gravida varius enim, ornare tincidunt urna
-ullamcorper ut. Donec sit amet eros ac lacus placerat rutrum ut non
-dolor. Nulla tincidunt nunc massa, sed euismod dui feugiat vitae.
-Integer tempus risus rutrum tellus interdum, eu aliquet sapien rutrum.
-Nunc feugiat varius lacus sed laoreet. Integer euismod tellus nisi, id
-scelerisque sem sagittis eu. Suspendisse at orci vel neque varius tempor
-nec vitae odio. Integer elementum elementum fermentum. Morbi in turpis
-cursus, lacinia arcu et, semper orci.
+\includegraphics{ieee-template_files/figure-pdf/unnamed-chunk-2-1.pdf}
 
-\section{Front matter}\label{front-matter}
+\subsection{Using if (!file.exists(\ldots)) to Save
+Data}\label{using-if-file.exists-to-save-data}
 
-Most Quarto's authors and affiliations schemes
-\citeproc{ref-quarto-funding}{{[}5{]}} are supported in the YAML front
-matter to render authors as requested by IEEE journals in PDF and HTML
-outputs. When provided to an author, the \texttt{note} entry is rendered
-as a \texttt{\textbackslash{}thanks\{\}} in \texttt{PDF} output (ignored
-in \texttt{HTML} output). Additionally, the reader may add to an author
-a \texttt{photo:\ path/to/photograph.png} with a \texttt{bio} metadata
-entries to generate a \texttt{IEEEbiography}, while a sole \texttt{bio}
-generates a \texttt{IEEEbiographynophoto} (these features is used both
-in \texttt{PDF} and \texttt{HTML} outputs).\\
-The \texttt{funding} entry is also used in both PDF and HTML outputs
-\citeproc{ref-quarto-funding}{{[}5{]}}. At version v1.1.1, only the
-\texttt{funding.statement} is used. Similarly, \texttt{citation} entry
-is supported to make the HTML output a ``\emph{citeable
-article}''~\citeproc{ref-quarto-citation}{{[}4{]}}.
+This chunk uses the if (!file.exists(\ldots)) condition to avoid
+recalculating the data if the file already exists. If the file exists,
+it loads the saved data; otherwise, it runs the computation and saves
+the results to the file. This approach is useful for collaboration,
+where you can share the file and avoid recomputation on other machines.
 
-\section{Some Common Elements}\label{some-common-elements}
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# This code will be displayed in the document}
 
-\subsection{Sections and Subsections}\label{sections-and-subsections}
+\CommentTok{\# Check if the data file exists and save the results}
 
-As stated in the \texttt{IEEEtran} template enumeration of section
-headings is desirable, but not required. When numbered, it should be
-consistent throughout the article, that is, all headings and all levels
-of section headings in the article should be enumerated. Primary
-headings are designated with Roman numerals, secondary with capital
-letters, tertiary with Arabic numbers; and quaternary with lowercase
-letters. References and Acknowledgment headings are unlike all other
-section headings in text. They are never enumerated. They are simply
-primary headings without labels, regardless of whether the other
-headings in the article are enumerated.
+\ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{file.exists}\NormalTok{(}\StringTok{"saved\_data.Rdata"}\NormalTok{)) \{}
 
-The following Section~\ref{sec-Markdown} shows some basic usage and
-capabilities of \texttt{quarto-ieee}.
+\NormalTok{  computed\_data }\OtherTok{\textless{}{-}} \FunctionTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{)}
+  \FunctionTok{save}\NormalTok{(computed\_data, }\AttributeTok{file =} \StringTok{"./Data/example\_data.Rdata"}\NormalTok{)}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+  
+  \CommentTok{\# Load the saved data}
+  \FunctionTok{load}\NormalTok{(}\StringTok{"./Data/example\_data.Rdata"}\NormalTok{)}
+\NormalTok{\}}
 
-\subsection{Markdown basics}\label{sec-Markdown}
+\CommentTok{\# }
+\FunctionTok{head}\NormalTok{(computed\_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1]  2.1988103  1.3124130 -0.2651451  0.5431941 -0.4143399 -0.4762469
+\end{verbatim}
+
+\subsection{eval: false}\label{eval-false}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# This chunk will display the code}
+\CommentTok{\# but will not execute it}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(}\FunctionTok{density}\NormalTok{(data), }\AttributeTok{main =} \StringTok{"plot"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\section{Other examples: Plot and
+table}\label{other-examples-plot-and-table}
+
+In a famous paper, \citeproc{ref-BC64}{{[}1{]}} introduced a family of
+transformations \dots
+
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{ieee-template_files/figure-pdf/fig-density0-1.pdf}
+
+}
+
+\caption{\label{fig-density0}Simulated data from a N(0,1) distribution.}
+
+\end{figure}%
+
+Fig.~\ref{fig-density0} shows a kernel density estimate of simulated
+data from a N(0,1) distribution. The sample variance is given by
+\begin{equation}\phantomsection\label{eq-s2}{
+  s^2 = \frac{1}{n-1} \sum_{i=1}^n (x_i-\bar{x})^2 = 0.98.
+}\end{equation} Note that \ref{eq-s2} is an unbiased estimate of the
+variance, but it is not the maximum likelihood estimate
+\citeproc{ref-Rice2007}{{[}2, p. 269{]}}.
+
+In table \ref{tab:time} we have \ldots{}
+
+\begin{table}[H]
+\centering\centering
+\caption{\label{tab:time}Test accuracy and processing time for each bootstrap-improved estimator. }
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\begin{tabu} to \linewidth {>{\centering}X>{\centering}X>{\centering}X>{\centering}X>{\centering}X}
+\toprule
+\multicolumn{1}{c}{\textbf{Estimator}} & \multicolumn{1}{c}{$\bm{L}$} & \multicolumn{1}{c}{$\bm{n}$} & \multicolumn{1}{c}{$S(\bm{Z}; L)$} & \multicolumn{1}{c}{\textbf{ Time} (s)}\\
+\midrule
+$\widetilde{H}_{\text{AO}}$ & $8$ & $25$ & $-0.06556$ & 0.03\\
+$\widetilde{H}_{\text{AO}}$ & $8$ & $49$ & $-0.00231$ & 0.01\\
+\bottomrule
+\end{tabu}}
+\end{table}
+
+\section{Markdown basics}\label{sec-Markdown}
 
 The reader can easily find many documentations on how to write using the
 (Pandoc/Quarto) Markdown syntax. The \texttt{quarto-ieee} template
 relies mainly on the Markdown markup supported by Quarto
-\citeproc{ref-quarto-markdown}{{[}6{]}}, which is build based on Pandoc
-\citeproc{ref-MacFarlane_Pandoc}{{[}2{]}},
-\citeproc{ref-Allaire_Quarto_2022}{{[}3{]}}. Below are some basic
+\citeproc{ref-quarto-markdown}{{[}3{]}}, which is build based on Pandoc
+\citeproc{ref-MacFarlane_Pandoc}{{[}4{]}},
+\citeproc{ref-Allaire_Quarto_2022}{{[}5{]}}. Below are some basic
 examples of usage of the Markdown markup (to save space, it is better to
 consult the original Quarto document \texttt{template.qmd}).
 
-\subsubsection{Display equations}\label{display-equations}
-
-To write equations use \texttt{\$} delimiters for inline formula or
-\texttt{\$\$} for block one. To number the equations, it is recommended
-to use classic equation environments provided by {\LaTeX} and to use
-\texttt{\textbackslash{}eqref\{\}} (or \texttt{\textbackslash{}ref\{\}})
-for cross-referencing. For example: \begin{equation}\label{eq:1}
-{{\chi}_a}=\text{diag}\left(\frac{{\chi}}{1+n_a{\chi}},\frac{{\chi}}{1+n_b{\chi}},\frac{{\chi}}{1+n_b{\chi}}\right),
-\end{equation} \begin{align}
-a & = b + c \label{eq:2} \\
-c & = d + e \label{eq:3}
-\end{align}
-
-\begin{equation}\label{eq:4}
-\begin{cases}
-    1&=n_a+2n_b \\
-    n_a&=\dfrac{1-{\varepsilon}^2}{2{\varepsilon}^3}\left(\log\left(\dfrac{1+{\varepsilon}}{1-{\varepsilon}}\right)-2{\varepsilon}\right)
-\end{cases}
-\end{equation} The above equation is cross-referenced as \eqref{eq:1},
-\eqref{eq:2}, \eqref{eq:3} and \eqref{eq:4}.
-
-For now, avoid using the Quarto cross-references that use of
-\texttt{\$\$\ \$\$} with \texttt{\#eq-} label. It works properly only
-for PDF output, but there are some issues with HTML\footnote{See the
-  issue here \url{https://github.com/quarto-dev/quarto-cli/issues/2275}}
-output.
-
-\begin{remark}
-\texttt{quarto-ieee} template also supports the
-\href{https://ctan.org/pkg/mhchem}{\texttt{mhchem}} (for chemical
-equation) and \href{https://ctan.org/pkg/physics}{\texttt{physics}} (for
-flexible macros for typesetting equations) {\LaTeX} packages and
-\href{https://docs.mathjax.org/en/latest/input/tex/extensions/index.html}{Mathjax
-extensions}.
-\end{remark}
-
-\subsubsection{Theorems, Proofs and
-Remarks}\label{theorems-proofs-and-remarks}
-
-To include a reference-able theorem, create a div with a \texttt{\#thm-}
-label. A theorem name is specified via the first heading in the block.
-For example:
-
-\begin{theorem}[Line]\protect\hypertarget{thm-line}{}\label{thm-line}
-
-The equation of any straight line, called a linear equation, can be
-written as:
-
-\[
-y = mx + b
-\]
-
-\end{theorem}
-
-The theorem is cross-referenced as Theorem~\ref{thm-line}.
-
-There are a number of theorem variations supported by
-\href{https://quarto.org/docs/authoring/cross-references.html\#theorems-and-proofs}{Quarto},
-each with their own label prefix:
-
-\begin{itemize}
-\tightlist
-\item
-  \texttt{\#thm-} for Theorem;
-\item
-  \texttt{\#lem-} for Lemma;
-\item
-  \texttt{\#cor-} for Corollary
-\item
-  \texttt{\#prp-} for Proposition;
-\item
-  \texttt{\#cnj-} for Conjecture;
-\item
-  \texttt{\#def-} for Definition;
-\item
-  \texttt{\#exm-} for Example;
-\item
-  \texttt{\#exr-} for Exercise.
-\end{itemize}
-
-The \texttt{proof}, \texttt{remark} and \texttt{solution} environments
-generally receive similar typesetting as theorems. However they are not
-numbered (and therefore cannot be cross-referenced). To create these
-environments just use them as the class name of a div such as:
-
-\begin{solution}[The solution]
-An example of solution environment.
-\end{solution}
-
-\subsubsection{Figures}\label{figures}
+\subsection{Figures}\label{figures}
 
 An image with nonempty alt text will be rendered as a figure with a
 caption with Pandoc and Quarto. Quarto includes a different features to
@@ -703,10 +666,6 @@ The conclusion goes here.
 \section*{Acknowledgment}\label{acknowledgment}
 \addcontentsline{toc}{section}{Acknowledgment}
 
-This should be a simple paragraph before the References to thank those
-individuals and institutions who have supported your work on this
-article.
-
 \appendix[An Appendix]{}
 
 Use \texttt{{[}{]}\{.appendix\ options="An\ Appendix"\}} markup if you
@@ -719,41 +678,34 @@ have a single appendix. \texttt{IEEEtran} state that to do not use
 
 \phantomsection\label{refs}
 \begin{CSLReferences}{0}{0}
-\bibitem[\citeproctext]{ref-mittelbach2023latex}
+\bibitem[\citeproctext]{ref-BC64}
 \CSLLeftMargin{{[}1{]} }%
-\CSLRightInline{F. Mittelbach and U. Fischer, \emph{The {LaTeX}
-companion}, 3rd ed. {Addison Wesley Professional}, 2023. }
+\CSLRightInline{G. E. P. Box and D. R. Cox, {``An analysis of
+transformations,''} \emph{Journal of the Royal Statistical Society,
+Series B}, vol. 26, no. 2, pp. 211--252, 1964. }
+
+\bibitem[\citeproctext]{ref-Rice2007}
+\CSLLeftMargin{{[}2{]} }%
+\CSLRightInline{J. A. Rice, \emph{Mathematical statistics and data
+analysis}, 3rd edition. Duxbury, 2007. }
+
+\bibitem[\citeproctext]{ref-quarto-markdown}
+\CSLLeftMargin{{[}3{]} }%
+\CSLRightInline{{``Quarto - {Markdown Basics}.''} {[}Online{]}.
+Available: \url{https://quarto.org/docs/authoring/markdown-basics}.
+{[}Accessed: 25-Oct-2023{]}}
 
 \bibitem[\citeproctext]{ref-MacFarlane_Pandoc}
-\CSLLeftMargin{{[}2{]} }%
+\CSLLeftMargin{{[}4{]} }%
 \CSLRightInline{J. MacFarlane, A. Krewinkel, and J. Rosenthal,
 {``{Pandoc}.''} {[}Online{]}. Available:
 \url{https://github.com/jgm/pandoc}}
 
 \bibitem[\citeproctext]{ref-Allaire_Quarto_2022}
-\CSLLeftMargin{{[}3{]} }%
+\CSLLeftMargin{{[}5{]} }%
 \CSLRightInline{J. J. Allaire, C. Teague, C. Scheidegger, Y. Xie, and C.
 Dervieux, {``{Quarto}.''} Jan-2022 {[}Online{]}. Available:
 \url{https://github.com/quarto-dev/quarto-cli}}
-
-\bibitem[\citeproctext]{ref-quarto-citation}
-\CSLLeftMargin{{[}4{]} }%
-\CSLRightInline{{``Quarto - {Creating Citeable Articles}.''}
-{[}Online{]}. Available:
-\url{https://quarto.org/docs/authoring/create-citeable-articles.html}.
-{[}Accessed: 25-Oct-2023{]}}
-
-\bibitem[\citeproctext]{ref-quarto-funding}
-\CSLLeftMargin{{[}5{]} }%
-\CSLRightInline{{``Quarto - {Front Matter}.''} {[}Online{]}. Available:
-\url{https://quarto.org/docs/authoring/front-matter.html\#funding}.
-{[}Accessed: 25-Oct-2023{]}}
-
-\bibitem[\citeproctext]{ref-quarto-markdown}
-\CSLLeftMargin{{[}6{]} }%
-\CSLRightInline{{``Quarto - {Markdown Basics}.''} {[}Online{]}.
-Available: \url{https://quarto.org/docs/authoring/markdown-basics}.
-{[}Accessed: 25-Oct-2023{]}}
 
 \end{CSLReferences}
 
@@ -776,14 +728,6 @@ Available: \url{https://quarto.org/docs/authoring/markdown-basics}.
 %\renewcommand{\bibfont}{\footnotesize} % for IEEE bibfont size
 
 \pagebreak[3]
-\begin{IEEEbiography}[\includegraphics{david-folio.png}]{David Folio}
-Use \texttt{IEEEbiography} with figure as option and the author name as
-the argument followed by the biography text.
-\end{IEEEbiography}
-\begin{IEEEbiographynophoto}{John Doe}
-Use \texttt{IEEEbiographynophoto} and the author name as the argument
-followed by the biography text.
-\end{IEEEbiographynophoto}
 % that's all folks
 \end{document}
 
