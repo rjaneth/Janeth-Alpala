@@ -1,17 +1,20 @@
 source("../../../Code/R/Programs/read_ENVI_images.R")
 
 # Cargar la imagen SAR
-# x <- myread.ENVI(file='../../../Data/SAR/agua_300/Intensity_VV.img', 
+# x <- myread.ENVI(file='../../../Data/SAR/agua_300/Intensity_VV.img',
 #                  headerfile='../../../Data/SAR/agua_300/Intensity_VV.hdr')
 
 # x <- myread.ENVI(file='../../../Data/SAR/Houston_100/Intensity_HH.img', 
 #                  headerfile='../../../Data/SAR/Houston_100/Intensity_HH.hdr')
 
-x <- myread.ENVI(file='../../../Data/SAR/envi_1/Intensity_VV.img', 
-                 headerfile='../../../Data/SAR/envi_1/Intensity_VV.hdr')
+# x <- myread.ENVI(file='../../../Data/SAR/envi_1/Intensity_VV.img', 
+#                  headerfile='../../../Data/SAR/envi_1/Intensity_VV.hdr')
+
+x <- myread.ENVI(file='../../../Data/SAR/envi_rotte/Intensity_HH.img',
+                 headerfile='../../../Data/SAR/envi_rotte/Intensity_HH.hdr')
 
 
-window_size <- 20
+window_size <- 9
 
 
 rows <- nrow(x)
@@ -44,10 +47,10 @@ for (i in 1:(rows - window_size + 1)) {
 }
 
 
-save(enl_values, x, file = "./Data/ENL_results_lake_7.Rdata")
+#save(enl_values, x, file = "./Data/ENL_results_SF_11.Rdata")
 
 # Cargar los valores de ENL y la imagen original desde el archivo guardado
-load("./Data/ENL_results_lake_7.Rdata")
+#load("./Data/ENL_results_SF_11.Rdata")
 
 # Calcular el promedio de todos los valores de ENL
 mean_enl <- mean(enl_value, na.rm = TRUE)

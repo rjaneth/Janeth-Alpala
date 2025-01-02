@@ -37,5 +37,10 @@ correa_estimator <- function(data) {
 # result <- correa_estimator(data)
 # cat("Correa Estimator:", result, "\n")
 
-
+set.seed(1234567890, kind = "Mersenne-Twister")
+#set.seed(123)
+data <- rnorm(1000)  # Generar una muestra aleatoria de 100 datos
+#alpha <- 0.99       # Parámetro de orden de la entropía de Rényi
+AO <- correa_estimator(data)
+print(AO)
 

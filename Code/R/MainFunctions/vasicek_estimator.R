@@ -20,6 +20,8 @@ vasicek_estimator <- function(data) {
 }
 
 # # Example usage:
+data <- rnorm(100)
 # data <- c(1.2, 1.5,3.6, 2.0, 2.1, 2.5, 2.6, 3.0, 3.1, 3.5)
-# result <- vasicek_estimator(data)
-# cat("Vasicek Estimator:", result, "\n")
+ result <- vasicek_estimator(data)
+ cat("Vasicek Estimator:", result, "\n")
+

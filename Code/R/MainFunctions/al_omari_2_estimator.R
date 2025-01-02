@@ -22,6 +22,13 @@ al_omari_2_estimator <- function(data) {
   return(sum_term / n)
 }
 
+set.seed(1234567890, kind = "Mersenne-Twister")
+#set.seed(123)
+data <- rnorm(1000)  # Generar una muestra aleatoria de 100 datos
+#alpha <- 0.99       # Parámetro de orden de la entropía de Rényi
+AO <- al_omari_2_estimator(data)
+print(AO)
+
 # # Example usage:
 # data <- c(1.2, 1.5,3.6, 2.0, 2.1, 2.5, 2.6, 3.0, 3.1, 3.5)
 # result <- al_omari_2_estimator(data)

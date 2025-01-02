@@ -4,8 +4,8 @@ library(ggplot2)
 library(ggsci)
 library(invgamma)
 library(latex2exp)
-if(!require("rstudioapi")) install("rstudioapi")
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+# if(!require("rstudioapi")) install("rstudioapi")
+# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 source("../MainFunctions/ebrahimi_estimator.R")
 source("../MainFunctions/gamma_sar_sample.R")
@@ -21,11 +21,11 @@ source("../MainFunctions/gi0_sample.R")
 
 set.seed(1234567890, kind = "Mersenne-Twister")
 
-R <- 5000
+R <- 10000
 mu <- 1
 L <- 5
-B <- 1
-alpha1 <- -20
+B <- 50
+alpha1 <- -100
 sample.size <- c(49)
 
 TestStatistics1 <- NULL
@@ -44,12 +44,12 @@ for (s in sample.size) {
   
   
   for (r in 1:R) {
-    z <- gi0_sample(mu, alpha1, L, s)
-    #z <- gamma_sar_sample(L, mu, s)
-
+    #z <- gi0_sample(mu, alpha1, L, s)
+    z <- gamma_sar_sample(L, mu, s)
+    TestStat1[r] <-bootstrap_al_omari_1_estimator(z,B) - (log(mean(z)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
     #TestStat1[r] <- -bootstrap_correa_estimator_log_mean(z, B) - (-L + log(L) - lgamma(L) - (1 - L) * digamma(L) + L + lgamma(L - alpha1) - (L - alpha1) * (digamma(L - alpha1)) + (1 - alpha1) * digamma(-alpha1) - log(-1 - alpha1) - lgamma(-alpha1))
     #TestStat1[r] <- bootstrap_correa_estimator_log_mean(z, B) + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
-    TestStat1[r] <- bootstrap_correa_estimator(z, B)#+( L+lgamma(L-alpha1) - (L-alpha1)*(digamma(L - alpha1))+(1-alpha1)*digamma(- alpha1)-log(-1 - alpha1)-lgamma(-alpha1) ) 
+    #TestStat1[r] <- bootstrap_correa_estimator(z, B)#+( L+lgamma(L-alpha1) - (L-alpha1)*(digamma(L - alpha1))+(1-alpha1)*digamma(- alpha1)-log(-1 - alpha1)-lgamma(-alpha1) ) 
     
     }
 

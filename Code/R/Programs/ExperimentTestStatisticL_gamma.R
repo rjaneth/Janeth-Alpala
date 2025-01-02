@@ -3,16 +3,16 @@ library(ggplot2)
 library(ggsci)
 library(invgamma)
 
-if(!require("rstudioapi")) install("rstudioapi")
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+# if(!require("rstudioapi")) install("rstudioapi")
+# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 
 source("../MainFunctions/ebrahimi_estimator.R")
-source("../MainFunctions/gamma_sar_sample.R")
-
+source("../MainFunctions/gamma_sar_sample.R")#renyi_entropy_estimator
+source("../MainFunctions/renyi_entropy_estimator.R")
 source("../MainFunctions/correa_estimator.R")
-source("../MainFunctions/bootstrap_correa_estimator.R")
-source("../MainFunctions/bootstrap_correa_estimator_log_mean.R")
+source("../MainFunctions/bootstrap_renyi_entropy_estimator.R")
+source("../MainFunctions/bootstrap_ebrahimi_estimator.R")
 
 
 
@@ -23,10 +23,10 @@ set.seed(1234567890, kind="Mersenne-Twister")
 
 R <- 1000 # 
 mu <- 1
-L <- 2
-B <- 5
+L <- 5
+B <- 50
 
-sample.size <- c(9, 25, 49, 81)
+sample.size <- c( 25, 49)
 
 TestStatistics <- NULL
 
@@ -35,7 +35,7 @@ for(s in sample.size){
     
     z <- gamma_sar_sample(L, mu, s) #
     
-    TestStat <- bootstrap_correa_estimator_log_mean(z, B) + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L))
+    TestStat <- bootstrap_ebrahimi_estimator(z, B, 0.999) - (log(mean(z)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
   
    
     TestStatistics <- rbind(TestStatistics,

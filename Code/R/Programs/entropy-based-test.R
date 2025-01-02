@@ -6,8 +6,8 @@ source("../../../Code/R/MainFunctions/al_omari_1_estimator.R")
 source("../../../Code/R/MainFunctions/bootstrap_al_omari_1_estimator.R")
 
 
-source("../../../Code/R/MainFunctions/correa_estimator.R")
-source("../../../Code/R/MainFunctions/bootstrap_correa_estimator.R")
+source("../../../Code/R/MainFunctions/renyi_entropy_estimator_v1.R")
+source("../../../Code/R/MainFunctions/bootstrap_renyi_entropy_estimator_v1.R")
 source("../../../Code/R/MainFunctions/bootstrap_correa_estimator_log_mean.R")
 
 
@@ -43,6 +43,7 @@ cols <- ncol(Z)
 
 L <- 5 # Number of looks
 B <- 200 # Replications bootstrap
+lambda<- 1.3
 window_size <- 7 # sliding window size
 
 
@@ -53,16 +54,30 @@ for (i in 1:(rows - window_size + 1)) {
   for (j in 1:(cols - window_size + 1)) {
     # Select local window
     window_data <- Z[i:(i + window_size - 1), j:(j + window_size - 1)]#change for x if the data comes SAR images
-   #apply the entropy test using one of the bootstrap estimators above
-    difference_values[i, j] <- bootstrap_al_omari_1_estimator(window_data,B) - (log(mean(window_data)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
-    
+    difference_values[i, j] <-renyi_entropy_estimator_v1(window_data, lambda) -((lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1) +
+                                                                                                (lambda * (L - 1) + 1) * log(lambda)) / (lambda - 1) + log(mean(window_data))-log(L))
+   #   difference_values[i, j] <-bootstrap_renyi_entropy_estimator_v1(window_data, B, lambda) -((lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1) +
+   #                                                                                     (lambda * (L - 1) + 1) * log(lambda)) / (lambda - 1) + log(mean(window_data))-log(L))
+   # # #apply the entropy test using one of the bootstrap estimators above
+    #difference_values[i, j] <- bootstrap_al_omari_1_estimator(window_data,B) - (log(mean(window_data)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+    #difference_values[i, j] <-bootstrap_renyi_entropy_estimator(window_data, B, lambda) - (-log(L)+ (1 / (1 - lambda)) * (lgamma(lambda * L - lambda + 1) - 
+                           # bootstrap_renyi_entropy_estimator_v1(z, B, lambda) -((lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1) +
+                                                                        #(lambda * (L - 1) + 1) * log(lambda)) / (lambda - 1) + log(mean(z))-log(L))                                                            ((lambda * L - lambda + 1) * log(lambda)) -   lambda * lgamma(L))+log(mean(window_data)))
   }
 }
 
+
 # Save the results
 #save(difference_values, x, file = "./Data/results_Chicago_1024_9_AO_200b_36L.Rdata")
-save(difference_values, Z, file = "./Data/results_Phantom_4_z1_200b.Rdata")
-
+#save(difference_values, Z, file = "./Data/results_Phantom_4_renyi_B100_w7_075_L5.Rdata")#w9
+##save(difference_values, Z, file = "./Data/results_Phantom_4_renyi_B100.Rdata")
+#save(difference_values, Z, file = "./Data/results_Phantom_4_renyi_B200_w9_08_L5.Rdata")
+#save(difference_values, Z, file = "./Data/results_Phantom_4_renyi_B100_w7_09_L5.Rdata")
+#save(difference_values, Z, file = "./Data/results_Phantom_4_AO_B100_w7_L5.Rdata")#ok
+#save(difference_values, Z, file = "./Data/results_Phantom_4_AO_B100_w9_L5.Rdata")
+#save(difference_values, Z, file = "./Data/results_Phantom_4_renyi_B200_w7_085_L5.Rdata") 
+#save(difference_values, Z, file = "./Data/results_Phantom_4_renyi_w7_09_L5.Rdata")#OK
+save(difference_values, Z, file = "./Data/results_Phantom_4_renyi_w7_1_3_L5.Rdata")#1_6, 2_0
 # Stop the timer
 end_time <- Sys.time()
 

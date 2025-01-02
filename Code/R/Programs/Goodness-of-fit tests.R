@@ -47,10 +47,10 @@ library(invgamma)
 
 #save( cd_values_mnad, x, file = "./Data/MnAD_results_data_Rotterdam_1024.Rdata")
 load("../Programs/Data/MnAD_results_data_Rotterdam_1024.Rdata")
-#cv_values_vector <- as.vector(cv_values)
+cv_values_vector <- as.vector(cv_values)
 
 
-cv_values_vector <- as.vector(cd_values_mnad)
+#cv_values_vector <- as.vector(cd_values_mnad)
 
 
 

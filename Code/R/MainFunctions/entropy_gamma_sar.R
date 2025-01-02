@@ -15,3 +15,4 @@ entropy_gamma_sar <- function(L, mu) {
   
 }
 
+entropy_gamma_sar(5,1)

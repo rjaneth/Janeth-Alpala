@@ -78,7 +78,8 @@ citation:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, cache=TRUE)
+#knitr::opts_chunk$set(echo = FALSE, cache=TRUE)
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE)#, eval = FALSE
 
 library(fitdistrplus)
 library(ggplot2)
@@ -131,6 +132,17 @@ First, we need to activate the cache globally for the entire document. This mean
     knitr::opts_chunk$set(echo = FALSE, 
                                   cache=TRUE)
     ```
+
+
+```{r}
+#| eval: false
+#| echo: false
+# This chunk will neither execute nor display the code
+set.seed(123)
+data <- rnorm(1000)
+plot(density(data), main = "Density plot of 1000 random normal numbers")
+
+```
 
 ##  Simple Plot Example with Global Cache
 This chunk uses the global cache. After the first execution, the cached result will be used, so the plot won't be regenerated unless the code or data changes.
@@ -206,6 +218,7 @@ In a famous paper, @BC64 introduced a family of transformations \dots
 #| label: fig-density0
 #| fig-cap: Simulated data from a N(0,1) distribution.
 #| fig-pos: "H"
+#| eval: true
 set.seed(2022-12-20)
 df <- tibble(x = rnorm(200))
 df |>

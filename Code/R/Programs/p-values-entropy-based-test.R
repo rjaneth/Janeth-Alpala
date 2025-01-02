@@ -9,12 +9,12 @@ rm(list = ls())
 #load("./Data/results_Panama_512_AO_7x7_L5_200b.Rdata")
 #load("./Data/results_Lake_512_9W_AO_100b_36L.Rdata")#OK
 #save(difference_values, Z, file = "./Data/results_Phantom_4_z1_200b.Rdata")
-#load("./Data/results_Phantom_4_z1_200b.Rdata")#OK
+load("./Data/results_Phantom_4_z1_200b.Rdata")#OK
 
 #save(difference_values, x, file = "./Data/results_Michigan_1024_7_AO_L1.Rdata")
 #load("./Data/results_lake_envi_1_9.Rdata")#OK
 #load("./Data/results_Rotterdam_AO_L1_7.Rdata")#OK
-#load("./Data/results_Rotterdam_AO_L1_7_2.Rdata")#OK
+load("./Data/results_Rotterdam_AO_L1_7_2.Rdata")#OK
 
 #save(difference_values, x, file = "./Data/results_Rotterdam_AO_L1_7_withou_B.Rdata")
 #load("./Data/results_Rotterdam_AO_L1_7_withou_B.Rdata")#OK
@@ -26,7 +26,7 @@ rm(list = ls())
 #load("./Data/results_agua_envi_11.Rdata")#OK
 #results_Baja_California_1024_7_AO.Rdata
 #save(difference_values, x, file = "./Data/results_mato_grosso_2048_7_AO.Rdata")
-load("./Data/results_mato_grosso_1258_7_AO.Rdata")#OK
+#load("./Data/results_mato_grosso_1258_7_AO.Rdata")#OK
 calculate_p_values_matrix <- function(data_matrix, mu, sigma) {
   rows <- nrow(data_matrix)
   cols <- ncol(data_matrix)

@@ -23,6 +23,7 @@ ebrahimi_estimator <- function(data) {
 }
 
 # # Example usage:
+data <- rnorm(100)
 # data <- c(1.2, 1.5, 2.0, 2.1, 2.5, 2.6, 3.0, 3.1, 3.5, 3.6)
-# result <- ebrahimi_estimatori(data)
-# cat("Ebrahimi Estimator:", result, "\n")
+ result <- ebrahimi_estimator(data)
+ cat("Ebrahimi Estimator:", result, "\n")

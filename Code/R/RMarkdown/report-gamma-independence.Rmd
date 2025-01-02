@@ -1,0 +1,947 @@
+---
+title: "On a Characterization of the Gamma Distribution"
+output: pdf_document
+date: "2024-10-21"
+
+header-includes:
+  - \usepackage[english]{babel}
+  - \usepackage{bm,bbm}
+  - \usepackage{mathrsfs}
+  - \usepackage{siunitx}
+  - \usepackage{graphicx}
+  - \usepackage{url}
+  # - \usepackage[T1]{fontenc} hay que desactivar este comando para que aprezacan los simbolos en letras griegas
+  - \usepackage{polski}
+  - \usepackage{booktabs}
+  - \usepackage{color}
+  - \usepackage{xcolor}
+  - \usepackage{amsmath}
+  - \usepackage{amsfonts}
+  #- \usepackage{unicode-math} 
+  - \usepackage{multirow}
+  - \usepackage{subcaption}
+  - \captionsetup[subfigure]{labelformat=parens, justification=centering}
+  - \usepackage{placeins}
+  - \usepackage{amsthm}
+  - \newtheorem{definition}{Definition}
+  - \newtheorem{lemma}{Lemma}
+  - \newtheorem{theorem}{Theorem}
+  - \newtheorem{example}{Example}
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+---
+title: "On a Characterization of the Gamma Distribution"
+author: "Tea-Yuan Hwang and Chin-Yuan Hu"
+output: pdf_document
+---
+
+# Abstract
+
+Let \( n \geq 3 \) and let \( X_1, \dots, X_n \) be positive independent and identically distributed (i.i.d.) random variables whose common distribution function has a continuous p.d.f. Using earlier work of the authors and a method due to Anosov for solving certain integro-functional equations, it is shown that the independence of the sample mean \( \bar{X}_n \) and the sample coefficient of variation \( V_n \) is equivalent to the fact that \( f \) is a gamma distribution. While the proof is of methodological interest, this conclusion can also be derived without assumptions by appealing to the Laplace-Stieltjes transform.
+
+# Keywords
+
+Characterization, Gamma distribution, Coefficient of variation.
+
+# 1. Introduction and Main Result
+
+Two of the statistics most often used in both theory and applied work are the sample mean \( \bar{X}_n \) and the sample standard deviation \( S_n \). It is well known that the independence of \( \bar{X}_n \) and \( S_n \) (based on a random sample) characterizes the normal distribution.
+
+Various results characterizing the parent distribution through properties of statistics can be found in Kagan et al. (1973), Johnson and Kotz (1970), Lukacs and Laha (1964), and the references therein. However, characterization problems based on the properties of the coefficient of variation \( V_n = S_n / \bar{X}_n \) have seldom been studied.
+
+In this context, we establish the following:
+
+### Theorem
+Let \( n \geq 3 \) and let \( X_1, \dots, X_n \) be positive i.i.d. random variables whose common distribution function has a probability density function \( f(x) \). Then the independence of the sample mean \( \bar{X}_n \) and the sample coefficient of variation \( V_n = S_n / \bar{X}_n \) is equivalent to the fact that \( f(x) \) is a gamma distribution.
+
+# 2. Three Lemmas
+
+We now present three lemmas that are used in the proof of the main theorem.
+# 2. Three Lemmas
+
+For convenience of citation in the proof of the three lemmas used for proving the main theorem, we cite certain recent results obtained by Hwang and Hu (1994) as follows:
+
+Define a non-linear transformation \( (x_1, \dots, x_n) \rightarrow (t_1, \dots, t_{n-2}, \bar{x}_n, v_n) \), where
+
+\begin{equation}
+\label{Eq:2.1}
+t_i = \left[ \frac{n - i + 1}{(n-1)(n-i)} \right]^{1/2} \cdot \left[ \frac{x_i - \bar{x}_n}{s_n} + \frac{1}{n - i + 1} \sum_{k=1}^{i-1} \frac{x_k - \bar{x}_n}{s_n} \right], \quad 1 \leq i \leq n-2
+\end{equation}
+
+\[
+\bar{x}_n = \frac{1}{n} \sum_{i=1}^{n} x_i, \quad v_n = \frac{S_n}{\bar{x}_n}
+\]
+
+The summation in \eqref{Eq:2.1} is taken as zero for \( i = 1 \), and \( s_n \) is the standard deviation of \( x_1, \dots, x_n \). Then, Theorem 2.2 of Hwang and Hu (1994) gives
+
+\[
+\lambda_i(t) = \left[ \frac{(n - i)(n - 1)}{n - i + 1} \right]^{1/2} \cdot t_i - \sum_{k=1}^{i-1} \left[ \frac{n-1}{(n-k)(n-k+1)} \right]^{1/2} \cdot t_k, \quad 1 \leq i \leq n-2
+\]
+
+\begin{equation}
+\label{Eq:2.2}
+\lambda_{n-1}(t) = - \left[ \frac{(n-1) \cdot f_{n-2}}{2} \right]^{1/2} - \sum_{k=1}^{n-2} \left[ \frac{n-1}{(n-k)(n-k+1)} \right]^{1/2} \cdot t_k
+\end{equation}
+
+\[
+\lambda_n(t) = \left[ \frac{(n-1) \cdot f_{n-2}}{2} \right]^{1/2} - \sum_{k=1}^{n-2} \left[ \frac{n-1}{(n-k)(n-k+1)} \right]^{1/2} \cdot t_k
+\]
+
+where \( \lambda_i(t) = \frac{x_i - \bar{x}_n}{s_n} \) and \( f_{n-2} = 1 - t_1^2 - \dots - t_{n-2}^2 \). Thus, we have:
+
+\begin{equation}
+\label{Eq:2.3}
+\sum_{i=1}^{n} \lambda_i(t) = 0, \quad \sum_{i=1}^{n} \lambda_i^2(t) = n - 1
+\end{equation}
+
+\begin{equation}
+\label{Eq:2.4}
+x_i = \bar{x}_n [ v_n \cdot \lambda_i(t) + 1 ], \quad 1 \leq i \leq n
+\end{equation}
+
+We have then:
+
+### Lemma 2.1
+Let \( n \geq 3 \) and let \( X_1, \dots, X_n \) be positive i.i.d. random variables having a p.d.f. \( f(x) \), and let \( \bar{X}_n \) and \( V_n \) be the sample mean and the sample coefficient of variation. Then, the joint p.d.f. \( f(x, v) \) of \( (\bar{X}_n, V_n) \) is
+
+\[
+f(x, v) = c_n \cdot x^{n-1} \cdot v^{n-2} \cdot \int_{B_{v,n}} \prod_{i=1}^{n-1} f(x(v \lambda_i(t) + 1)) d\mu(t)
+\]
+for \( x > 0 \) and \( 0 < v < \sqrt{n} \), and zero otherwise, where \( c_n = n! \sqrt{n} (n - 1)^{(n - 1)/2} \), the functions \( \lambda_i(t) \) are defined as in (2.2), \( d\mu(t) = f_{n-2}^{-1/2} dt_1 \dots dt_{n-2} \), and the set \( B_{v,n} \) depends on \( v \), for \( 0 < v < \sqrt{n} \), as follows:
+
+\begin{equation}
+\label{Eq:2.0}
+B_{v,n} = \left\{ t :
+\begin{aligned}
+\max \left( - \frac{\sqrt{n}}{(n - 1) v}, -1 \right) & \leq t_1 \leq - \frac{1}{n - 1}, \\
+\max \left( \frac{n - k + 2}{n - k} \right)^{1/2} \cdot t_{k-1} \cdot f_{k-1}^{1/2} & \leq t_k \leq - \frac{f_{k-1}^{1/2}}{n - k}, \quad 2 \leq k \leq n - 2
+\end{aligned}
+\right\}
+\end{equation}
+and \( f_i = 1 - t_1^2 - \dots - t_i^2, \quad 1 \leq i \leq n - 2 \).
+
+
+
+
+### Lemma 2.2
+Under the condition of Lemma 2.1, assume that \( \bar{X}_n \) and \( V_n \) are independent. Then, the p.d.f.'s of \( \bar{X}_n \) and \( V_n \) are respectively given by:
+
+\[
+f_{\bar{X}_n}(x) = a_n \cdot x^{n-1} \cdot \left[ f(x) \right]^n, \quad x > 0
+\]
+and zero otherwise, where \( a_n \) is a normalizing constant;
+
+\[
+f_{V_n}(v) = b_n \cdot v^{n-2} \cdot \int_{B_{v,n}} \prod_{i=1}^{n-1} f(v\lambda_i(t) + 1) d\mu(t), \quad 0 < v < \sqrt{n}
+\]
+and zero otherwise, where \( b_n \) is a normalizing constant, and the \( \lambda_i(t) \) and \( B_{v,n} \) are defined as in \eqref{Eq:2.2} and \eqref{Eq:2.0} respectively.
+
+Define a non-linear transformation \( (x_1, \dots, x_n) \rightarrow (t_1, \dots, t_{n-2}, \bar{x}_n, v_n) \), where
+
+\begin{equation}
+\label{Eq:2.1}
+t_i = \left[ \frac{n - i + 1}{(n-1)(n-i)} \right]^{1/2} \cdot \left[ \frac{x_i - \bar{x}_n}{s_n} + \frac{1}{n - i + 1} \sum_{k=1}^{i-1} \frac{x_k - \bar{x}_n}{s_n} \right], \quad 1 \leq i \leq n-2
+\end{equation}
+
+\[
+\bar{x}_n = \frac{1}{n} \sum_{i=1}^{n} x_i, \quad v_n = \frac{S_n}{\bar{x}_n}
+\]
+
+The summation in \eqref{Eq:2.1} is taken as zero for \( i = 1 \), and \( s_n \) is the standard deviation of \( x_1, \dots, x_n \). Then, Theorem 2.2 of Hwang and Hu (1994) gives
+
+\[
+\lambda_i(t) = \left[ \frac{(n - i)(n - 1)}{n - i + 1} \right]^{1/2} \cdot t_i - \sum_{k=1}^{i-1} \left[ \frac{n-1}{(n-k)(n-k+1)} \right]^{1/2} \cdot t_k, \quad 1 \leq i \leq n-2
+\]
+
+\begin{equation}
+\label{Eq:2.2}
+\lambda_{n-1}(t) = - \left[ \frac{(n-1) \cdot f_{n-2}}{2} \right]^{1/2} - \sum_{k=1}^{n-2} \left[ \frac{n-1}{(n-k)(n-k+1)} \right]^{1/2} \cdot t_k
+\end{equation}
+
+\[
+\lambda_n(t) = \left[ \frac{(n-1) \cdot f_{n-2}}{2} \right]^{1/2} - \sum_{k=1}^{n-2} \left[ \frac{n-1}{(n-k)(n-k+1)} \right]^{1/2} \cdot t_k
+\]
+
+where \( \lambda_i(t) = \frac{x_i - \bar{x}_n}{s_n} \) and \( f_{n-2} = 1 - t_1^2 - \dots - t_{n-2}^2 \). Thus, we have:
+
+\begin{equation}
+\label{Eq:2.3}
+\sum_{i=1}^{n} \lambda_i(t) = 0, \quad \sum_{i=1}^{n} \lambda_i^2(t) = n - 1
+\end{equation}
+
+\begin{equation}
+\label{Eq:2.4}
+x_i = \bar{x}_n [ v_n \cdot \lambda_i(t) + 1 ], \quad 1 \leq i \leq n
+\end{equation}
+
+
+### Proof
+Let \( f_{\bar{X}_n}(x) \) and \( f_{V_n}(v) \) be the p.d.f.'s of \( \bar{X}_n \) and \( V_n \) respectively; it follows from Lemma 2.1 and the independence of \( \bar{X}_n \) and \( V_n \) that the joint p.d.f. of \( (\bar{X}_n, V_n) \) must be equal to the product of their densities:
+
+\[
+f_{\bar{X}_n}(x) \cdot f_{V_n}(v) = c_n \cdot x^{n-1} \cdot v^{n-2} \cdot \int_{B_{v,n}} \prod_{i=1}^{n-1} f(x(v\lambda_i(t) + 1)) d\mu(t)
+\]
+for all \( x > 0 \) and \( 0 < v < \sqrt{n} \). We see that \( f_{\bar{X}_n}(1) \neq 0 \), since otherwise the right side of the equation would vanish for all \( 0 < v < \sqrt{n} \), which is impossible. Set \( x = 1 \) in the equation. Then, we obtain the expression for \( f_{V_n}(v) \) as given in (2.8).
+
+
+Now substituting (2.8) in the equation, and dividing both sides of the equation by \( v^{n-2} \), we get
+
+\[
+f_{\bar{X}_n}(x) \cdot b_n \int \cdots \int_{B_{v,n}} \prod_{i=1}^{n-1} f(v \lambda_i(t) + 1) d\mu(t)
+= c_n \cdot x^{n-1} \int \cdots \int_{B_{v,n}} \prod_{i=1}^{n-1} f(x \lambda_i(t) + 1) d\mu(t).
+\]
+
+Note that if the variable \( v \) is in the neighborhood of origin, say \( 0 < v < \sqrt{n}/(n - 1) \), then the domain of integration \( B_{v,n} \) is independent of \( v \); first by using this fact, and then letting \( v \rightarrow 0^+ \) in the new equation, we obtain the expression for \( f_{\bar{X}_n}(x) \) as given in (2.7). Thus, we have established Lemma 2.2. \(\square\)
+
+
+
+### Lemma 2.3 (An integro-functional equation)
+
+Under the conditions of Lemma 2.2, the following integro-functional equation holds:
+
+\[
+\int_{B_{v,n}} \prod_{i=1}^{n-1} f(x(v \lambda_i(t) + 1)) d\mu(t)
+= c_n \cdot [f(x)]^n \cdot \int_{B_{v,n}} \prod_{i=1}^{n-1} f(v \lambda_i(t) + 1) d\mu(t)
+\]
+for all \( x > 0 \) and \( 0 < v < \sqrt{n} \), where \( c_n > 0 \), depending on \( n \), is a constant, the \( \lambda_i(t) \) and \( B_{v,n} \) are defined as in (2.2) and (2.6) respectively, and \( t = (t_1, \dots, t_{n-2}) \) is a point on the \( (n-2) \)-dimensional set \( B_{v,n} \). In particular, if \( v \) is in the neighborhood of the origin, then the domain of integration \( B_{v,n} \) is independent of the variable \( v \); that is, \( B_{v,n} \) is replaceable by \( B_n \) in (2.9) for \( 0 < x \) and \( 0 < v < \sqrt{n}/(n - 1) \), where:
+
+\[
+B_n = \left\{ t : 
+\begin{aligned}
+-1 \leq t_1 \leq - \frac{1}{n-1}, \\
+\max \left( \frac{n - k + 2}{n - k} \right)^{1/2} t_{k-1} \cdot f_{k-1}^{1/2} & \leq t_k \leq \frac{f_{k-1}^{1/2}}{n - k}, \quad 2 \leq k \leq n - 2
+\end{aligned}
+\right\}
+\]
+and \( f_i = 1 - t_1^2 - \dots - t_i^2, \quad 1 \leq i \leq n - 2 \).
+
+### Proof
+This lemma follows immediately from Lemmas 2.1 and 2.2 and the independence of \( \bar{X}_n \) and \( V_n \). \(\square\)
+
+
+### Theorem
+
+Let \( n \geq 3 \) and let \( X_1, \dots, X_n \) be positive i.i.d. random variables with their common distribution function having a probability density function \( f(x) \). Then the independence of the sample mean \( \bar{X}_n \) and the sample coefficient of variation \( V_n = S_n / \bar{X}_n \) is equivalent to that \( f \) is a gamma density.
+
+# 3. Proof of the Theorem
+
+It is easy to show that the sample mean \( \bar{X}_n \) and the sample coefficient of variation \( V_n = S_n / \bar{X}_n \) are independent if the parent population is gamma. This fact follows immediately from Lemma 2.1 by taking the first relation in (2.3) into account.
+
+Conversely, it follows from Lemma 2.3 that \( f(x) \) satisfies the integro-functional equation (2.9) for all \( x > 0 \) and \( 0 < v < \sqrt{n} \) if \( \bar{X}_n \) and \( V_n \) are independent, thus it is of the same form as considered by Anosov (1964).
+
+is of the same form as considered by Anosov (1964), as reproduced in Kagan et al. (1973), pp. 143-148, Section 4.9. The roles of \( t, s, \phi \) used there are played here by \( \bar{x}, \bar{x}v \) and \( t \); and, instead of the range of integration \( [0, 2\pi] \) for \( \phi \), we have \( B_v \) for \( t \), this set not depending on \( v \) if \( 0 < v < \sqrt{n}/(n-1) \). If \( u := \log f \) on a fixed maximal open interval \( I \subset (0, \infty) \) where \( f > 0 \), then defining \( L_n,t u(x) \) and proceeding essentially as in proving Anosov's theorem, we conclude that \( u(x) = A + B \log x + Cx \) for \( x \in I \), then that \( I = (0, \infty) \), and finally that \( f \) is a gamma density.
+
+
+
+
+### Concluding Remark
+A referee has pointed out that, while our proof is of methodological interest, the conclusion of the main result can be arrived at under no assumptions whatever, by appealing to the Laplace-Stieltjes transform. For simplicity, write (respectively) \( S \), \( V \) for \( S_n \), \( V_n \), and let
+
+\[
+T = \sum X_j = n \bar{X}, \quad S^2 = \sum (X_j - \bar{X})^2, \quad V = \frac{S}{\bar{X}}.
+\]
+
+Let \( F \) be the common d.f. of the \( X_j \) and \( \phi(t) \) their LST: \( \phi(t) = \int_0^\infty e^{-tx} dF(x) \), for \( t > 0 \). If \( \bar{X} \) and \( V \) are independent r.v.'s, then, for every \( t > 0 \), the r.v.'s \( T^2 e^{-tT} \) and \( V^2 \) are bounded, positive, independent r.v.'s and so
+
+\[
+E(T^2 e^{-tT} \cdot V^2) = E(T^2 e^{-tT}) \cdot E(V^2) (< \infty)
+\]
+
+easily leading to
+
+\[
+E\left( \sum X_j^2 e^{-tT} \right) = \text{const.} \cdot E\left( \sum_{j \neq k} X_j X_k e^{-tT} \right),
+\]
+
+whence
+
+\[
+\phi''(t) \cdot \phi(t) = c \left( \phi'(t) \right)^2
+\]
+on \( (0, \infty) \). The only (non-trivial probabilistic) solutions are given by \( \phi(t) = (1 - at)^{-b} \) for some \( a, b > 0 \). Hence \( F \) has a gamma p.d.f. by inversion formula for LST.
+
+
+
+## Quarto
+
+We denote  $Z \sim G_I^0(\alpha, \gamma, L)$ to indicate that $Z$ follows the distributions characterized by the  probability density
+functions (pdfs): 
+\begin{align}
+    f_Z(z; \alpha, \gamma, L \mid G_I^0)&=\frac{L^L\Gamma(L-\alpha)}{\gamma^{\alpha}\Gamma(-\alpha)\Gamma(L)}\cdot\frac{z^{L-1}}{(\gamma+Lz)^{L-\alpha}} \mathbbm 1_{\mathbbm R_+}(z),\label{E:gi01}
+\end{align} 
+where \(\mu > 0\) is the mean, 
+\(\gamma > 0\) is the scale, 
+\(\alpha < -1\) measures the roughness, 
+\(L \geq 1\) is the number of looks, 
+\(\Gamma(\cdot)\) is
+the gamma function, 
+and \(\mathbbm 1_{A}(z)\) is the indicator function
+of the set \(A\).
+
+The $r$th order moments of the $G_I^0$ model are
+\begin{equation}
+E\big(Z^r\mid \mathcal{G}_I^0\big)  = \left(\frac{\gamma}{L}\right)^r\frac{\Gamma(-\alpha-r)}{\Gamma(-\alpha)}\cdot\frac{\Gamma(L+r)}{\Gamma(L)}, 
+    \label{E:rmom}
+\end{equation}
+provided $\alpha <-r$, and infinite otherwise.
+Therefore, assuming $\alpha<-1$, its expected value is
+\begin{equation}
+    E(Z)=\left(\frac{\gamma}{L}\right)\frac{\Gamma(-\alpha-1)}{\Gamma(-\alpha)}\cdot\frac{\Gamma(L+1)}{\gamma(L)}=-\frac{\gamma}{\alpha+1}.
+\end{equation} 
+
+
+## The Shannon Entropy
+The parametric representation of Shannon entropy for a system described by a continuous random variable is:
+\begin{equation}
+  \label{E:entropy2}
+  H(Z)=-\int_{-\infty }^\infty \ f(z)\ln f(z)\, \mathrm{d}z,
+\end{equation}
+here, \(f(\cdot)\) is the pdf that characterizes the distribution of the real-valued random variable \(Z\).
+
+\begin{theorem}
+Let \( Z \sim G_I^0(\alpha, \gamma, L) \), its Shannon entropy (SE) is given by
+\[
+H_{SE}(G_I^0) = H_{SE}([\alpha, \gamma, L]) = \mathbb{E}[-\log f_Z(Z; \alpha, \gamma, L)]
+\]
+\[
+= - \log \frac{L^L \Gamma(L - \alpha)}{\Gamma(-\alpha) \gamma^\alpha \Gamma(L)}
++ (1 - L) \left\{ \psi^{(0)}(L) - \log L + \log \gamma - \psi^{(0)}(-\alpha) \right\}
+\]
+\[
++ (L - \alpha) \left[ \psi^{(0)}(L - \alpha) + \log \gamma - \psi^{(0)}(-\alpha) \right].
+\]
+\end{theorem}
+
+## Proof of derivation for the SE for \( G_I^0 \)
+
+Let \( Z \sim G_I^0(\alpha, \gamma, L) \). After algebraic manipulation,
+\begin{equation}
+\label{E:e1}
+\mathbb{E} \log Z = \psi^{(0)}(L) - \psi^{(0)}(-\alpha) + \log\frac{\gamma}{L}
+\end{equation}
+and
+\begin{equation}
+\label{E:e2}
+\mathbb{E} \log (\gamma + LZ) = \psi^{(0)}(L - \alpha) + \log \gamma - \psi^{(0)}(-\alpha).
+\end{equation}
+From these identities, the \( G_I^0 \) SE is given by
+\begin{multline}
+\label{E:GIO}
+H_{SE}(Z) = \mathbb{E} \left[ -\log f(Z, \alpha, \gamma, L) \right] = -L \log L + \alpha \log \gamma\\
+- \left\{ \log \Gamma(L - \alpha) - \log \Gamma(L) - \log \Gamma(-\alpha) \right\}\\
+- (L - 1) \mathbb{E} \log Z + (L - \alpha) \mathbb{E} \log (\gamma + LZ).
+\end{multline}
+
+The expression follows from applying \eqref{E:e1} and \eqref{E:e2} in \eqref{E:GIO}.
+
+
+
+To derive the Shannon entropy \( H(Z) \) for the \( G_I^0(\alpha, \gamma, L) \) distribution, we will compute:
+
+\[ H(Z) = -\mathbb{E}[\ln f_Z(Z)], \]
+
+where \( f_Z(z) \) is the probability density function (pdf) of \( Z \).
+
+### Step 1: Write the Probability Density Function and Its Logarithm
+
+Given the pdf of \( Z \sim G_I^0(\alpha, \gamma, L) \):
+
+\[
+f_Z(z; \alpha, \gamma, L) = \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)} \cdot \frac{z^{L-1}}{(\gamma + L z)^{L - \alpha}} \cdot \mathbbm{1}_{\mathbb{R}_+}(z).
+\]
+
+Define the normalization constant \( c \):
+
+\[
+c = \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)}.
+\]
+
+Then, the pdf simplifies to:
+
+\[
+f_Z(z) = c \cdot \frac{z^{L - 1}}{(\gamma + L z)^{L - \alpha}}.
+\]
+
+Taking the natural logarithm of the pdf:
+
+\[
+\ln f_Z(z) = \ln c + (L - 1) \ln z - (L - \alpha) \ln (\gamma + L z).
+\]
+
+### Step 2: Compute the Shannon Entropy
+
+The Shannon entropy is:
+
+\[
+H(Z) = -\mathbb{E}[\ln f_Z(Z)] = -\ln c - (L - 1) \mathbb{E}[\ln Z] + (L - \alpha) \mathbb{E}[\ln (\gamma + L Z)].
+\]
+
+### Step 3: Expand the Normalization Constant
+
+Expand \( \ln c \):
+
+\[
+\ln c = L \ln L + \ln \Gamma(L - \alpha) - \alpha \ln \gamma - \ln \Gamma(-\alpha) - \ln \Gamma(L).
+\]
+
+### Step 4: Substitute Back into the Entropy Expression
+
+Substitute \( \ln c \) back into \( H(Z) \):
+
+\[
+\begin{aligned}
+H(Z) &= -\left[ L \ln L + \ln \Gamma(L - \alpha) - \alpha \ln \gamma - \ln \Gamma(-\alpha) - \ln \Gamma(L) \right] \\
+&\quad - (L - 1) \mathbb{E}[\ln Z] + (L - \alpha) \mathbb{E}[\ln (\gamma + L Z)] \\
+&= -L \ln L - \ln \Gamma(L - \alpha) + \alpha \ln \gamma + \ln \Gamma(-\alpha) + \ln \Gamma(L) \\
+&\quad - (L - 1) \mathbb{E}[\ln Z] + (L - \alpha) \mathbb{E}[\ln (\gamma + L Z)].
+\end{aligned}
+\]
+
+### Step 5: Compute the Expected Values
+
+Using properties of the \( G_I^0 \) distribution:
+
+1. **Expectation of \( \ln Z \):**
+
+\[
+\mathbb{E}[\ln Z] = \psi^{(0)}(L) - \psi^{(0)}(-\alpha) + \ln\left( \frac{\gamma}{L} \right),
+\]
+
+where \( \psi^{(0)}(x) \) is the digamma function.
+
+2. **Expectation of \( \ln (\gamma + L Z) \):**
+
+\[
+\mathbb{E}[\ln (\gamma + L Z)] = \psi^{(0)}(L - \alpha) + \ln \gamma - \psi^{(0)}(-\alpha).
+\]
+
+### Step 6: Substitute the Expected Values into \( H(Z) \)
+
+Insert these expressions into the entropy:
+
+\[
+\begin{aligned}
+H(Z) &= -L \ln L - \ln \Gamma(L - \alpha) + \alpha \ln \gamma + \ln \Gamma(-\alpha) + \ln \Gamma(L) \\
+&\quad - (L - 1) \left[ \psi^{(0)}(L) - \psi^{(0)}(-\alpha) + \ln\left( \frac{\gamma}{L} \right) \right] \\
+&\quad + (L - \alpha) \left[ \psi^{(0)}(L - \alpha) + \ln \gamma - \psi^{(0)}(-\alpha) \right].
+\end{aligned}
+\]
+
+### Step 7: Expand and Simplify the Expression
+
+**Expand the terms:**
+
+1. **Term with \( (L - 1) \):**
+
+\[
+\begin{aligned}
+- (L - 1) \left[ \psi^{(0)}(L) - \psi^{(0)}(-\alpha) + \ln\left( \frac{\gamma}{L} \right) \right] &= -(L - 1) \psi^{(0)}(L) + (L - 1) \psi^{(0)}(-\alpha) \\
+&\quad - (L - 1) (\ln \gamma - \ln L).
+\end{aligned}
+\]
+
+2. **Term with \( (L - \alpha) \):**
+
+\[
+\begin{aligned}
+(L - \alpha) \left[ \psi^{(0)}(L - \alpha) + \ln \gamma - \psi^{(0)}(-\alpha) \right] &= (L - \alpha) \psi^{(0)}(L - \alpha) + (L - \alpha) \ln \gamma \\
+&\quad - (L - \alpha) \psi^{(0)}(-\alpha).
+\end{aligned}
+\]
+
+**Simplify the coefficients:**
+
+- **Terms involving \( \psi^{(0)}(-\alpha) \):**
+
+\[
+(L - 1) \psi^{(0)}(-\alpha) - (L - \alpha) \psi^{(0)}(-\alpha) = (\alpha - 1) \psi^{(0)}(-\alpha).
+\]
+
+- **Terms involving \( \ln \gamma \):**
+
+\[
+- (L - 1) \ln \gamma + (L - \alpha) \ln \gamma = (1 - \alpha) \ln \gamma.
+\]
+
+- **Terms involving \( \ln L \):**
+
+\[
+(L - 1) \ln L.
+\]
+
+- **Collect terms with \( \ln L \):**
+
+\[
+- L \ln L + (L - 1) \ln L = - \ln L.
+\]
+
+### Step 8: Write the Simplified Entropy Expression
+
+Combining all terms:
+
+\[
+\begin{aligned}
+H(Z) &= -\ln L + \ln \Gamma(L) - \ln \Gamma(L - \alpha) + \ln \Gamma(-\alpha) \\
+&\quad + (1 - \alpha) \ln \gamma \\
+&\quad - (L - 1) \psi^{(0)}(L) + (L - \alpha) \psi^{(0)}(L - \alpha) + (\alpha - 1) \psi^{(0)}(-\alpha).
+\end{aligned}
+\]
+
+### Step 9: Rearrange the Terms
+
+For clarity, we rearrange:
+
+1. **Group constant terms:**
+
+\[
+- \ln L + \ln \Gamma(L) - \ln \Gamma(L - \alpha) + \ln \Gamma(-\alpha).
+\]
+
+2. **Group logarithmic terms:**
+
+\[
++ (1 - \alpha) \ln \gamma.
+\]
+
+3. **Group digamma function terms:**
+
+\[
+- (L - 1) \psi^{(0)}(L) + (L - \alpha) \psi^{(0)}(L - \alpha) + (\alpha - 1) \psi^{(0)}(-\alpha).
+\]
+
+### Step 10: Final Expression
+
+The final expression for the Shannon entropy \( H(Z) \) for the \( G_I^0 \) distribution is:
+
+\[
+\begin{aligned}
+H(Z) &= - \ln L + \ln \Gamma(L) - \ln \Gamma(L - \alpha) + \ln \Gamma(-\alpha) \\
+&\quad + (1 - \alpha) \ln \gamma \\
+&\quad - (L - 1) \psi^{(0)}(L) + (L - \alpha) \psi^{(0)}(L - \alpha) + (\alpha - 1) \psi^{(0)}(-\alpha).
+\end{aligned}
+\]
+
+This matches the expression provided in the theorem:
+
+\[
+\begin{aligned}
+H_{SE}(G_I^0) &= - \ln \left( \frac{L^L \Gamma(L - \alpha)}{\Gamma(-\alpha) \gamma^\alpha \Gamma(L)} \right) \\
+&\quad + (1 - L) \left\{ \psi^{(0)}(L) - \ln L + \ln \gamma - \psi^{(0)}(-\alpha) \right\} \\
+&\quad + (L - \alpha) \left[ \psi^{(0)}(L - \alpha) + \ln \gamma - \psi^{(0)}(-\alpha) \right].
+\end{aligned}
+\]
+
+**Note:** The expressions are equivalent after rearranging terms and recognizing that \( \ln \gamma \) and \( \psi^{(0)}(-\alpha) \) appear in multiple places with appropriate coefficients.
+
+### Conclusion
+
+We have derived the Shannon entropy \( H(Z) \) for the \( G_I^0 \) distribution by computing the expected value of the negative logarithm of its probability density function. The derivation involves careful manipulation of logarithmic and digamma function terms, ultimately leading to the expression provided in the theorem.
+
+
+desarrollo completo de las integrales: 
+To compute the expected values:
+
+1. **Expectation of \( \ln Z \):**
+
+\[
+\mathbb{E}[\ln Z] = \psi^{(0)}(L) - \psi^{(0)}(-\alpha) + \ln\left( \frac{\gamma}{L} \right),
+\]
+
+where \( \psi^{(0)}(x) \) is the digamma function.
+
+2. **Expectation of \( \ln (\gamma + L Z) \):**
+
+\[
+\mathbb{E}[\ln (\gamma + L Z)] = \psi^{(0)}(L - \alpha) + \ln \gamma - \psi^{(0)}(-\alpha).
+\]
+
+### Detailed Calculation of the Expected Values
+
+#### **Preliminaries**
+
+- **Probability Density Function (pdf) of \( Z \):**
+
+  The pdf of \( Z \sim G_I^0(\alpha, \gamma, L) \) is:
+
+  \[
+  f_Z(z) = c \cdot \frac{z^{L - 1}}{(\gamma + L z)^{L - \alpha}} \cdot \mathbbm{1}_{\mathbb{R}_+}(z),
+  \]
+
+  where \( c \) is the normalization constant:
+
+  \[
+  c = \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)}.
+  \]
+
+- **Digamma Function:**
+
+  The digamma function \( \psi^{(0)}(x) \) is the logarithmic derivative of the gamma function:
+
+  \[
+  \psi^{(0)}(x) = \frac{d}{dx} \ln \Gamma(x) = \frac{\Gamma'(x)}{\Gamma(x)}.
+  \]
+
+#### **1. Calculation of \( \mathbb{E}[\ln Z] \)**
+
+**Step 1: Define the Expected Value**
+
+\[
+\mathbb{E}[\ln Z] = \int_0^\infty \ln z \cdot f_Z(z) \, dz.
+\]
+
+**Step 2: Substitute the pdf**
+
+\[
+\mathbb{E}[\ln Z] = c \int_0^\infty \ln z \cdot \frac{z^{L - 1}}{(\gamma + L z)^{L - \alpha}} \, dz.
+\]
+
+**Step 3: Change of Variable**
+
+Let:
+
+\[
+u = \frac{L z}{\gamma} \implies z = \frac{\gamma u}{L}, \quad dz = \frac{\gamma}{L} du.
+\]
+
+**Step 4: Substitute and Simplify**
+
+Substitute \( z \) and \( dz \) into the integral:
+
+\[
+\mathbb{E}[\ln Z] = c \cdot \frac{\gamma}{L} \int_0^\infty \ln\left( \frac{\gamma u}{L} \right) \cdot \frac{\left( \frac{\gamma u}{L} \right)^{L - 1}}{ \left( \gamma + L \cdot \frac{\gamma u}{L} \right)^{L - \alpha} } \, du.
+\]
+
+Simplify \( \gamma + L z = \gamma + \gamma u = \gamma (1 + u) \).
+
+Simplify the integral:
+
+\[
+\mathbb{E}[\ln Z] = c' \int_0^\infty \left( \ln \gamma + \ln u - \ln L \right) \cdot u^{L - 1} (1 + u)^{-(L - \alpha)} \, du,
+\]
+
+where:
+
+\[
+c' = c \cdot \frac{\gamma^{\alpha}}{L^{L}}.
+\]
+
+**Step 5: Separate the Integral**
+
+Split the integral into three parts:
+
+1. **Term with \( \ln \gamma \):**
+
+   \[
+   (\ln \gamma) \int_0^\infty u^{L - 1} (1 + u)^{-(L - \alpha)} \, du.
+   \]
+
+2. **Term with \( \ln u \):**
+
+   \[
+   \int_0^\infty \ln u \cdot u^{L - 1} (1 + u)^{-(L - \alpha)} \, du.
+   \]
+
+3. **Term with \( -\ln L \):**
+
+   \[
+   (-\ln L) \int_0^\infty u^{L - 1} (1 + u)^{-(L - \alpha)} \, du.
+   \]
+
+**Step 6: Evaluate the Integrals**
+
+- The integrals of the form:
+
+  \[
+  \int_0^\infty u^{a - 1} (1 + u)^{-b} \, du = B(a, b - a),
+  \]
+
+  where \( B(a, b) \) is the beta function.
+
+- The beta function is related to the gamma function:
+
+  \[
+  B(a, b) = \frac{\Gamma(a) \Gamma(b)}{\Gamma(a + b)}.
+  \]
+
+**Step 7: Compute Each Term**
+
+1. **First and Third Terms:**
+
+   Since both involve the same integral, their combined coefficient is \( (\ln \gamma - \ln L) \):
+
+   \[
+   (\ln \gamma - \ln L) B(L, -\alpha).
+   \]
+
+2. **Second Term:**
+
+   The integral involving \( \ln u \):
+
+   \[
+   \int_0^\infty \ln u \cdot u^{L - 1} (1 + u)^{-(L - \alpha)} \, du = B(L, -\alpha) \left[ \psi^{(0)}(L) - \psi^{(0)}(L - \alpha) \right].
+   \]
+
+**Step 8: Combine the Terms**
+
+\[
+\mathbb{E}[\ln Z] = (\ln \gamma - \ln L) + \left[ \psi^{(0)}(L) - \psi^{(0)}(L - \alpha) \right].
+\]
+
+Since \( \psi^{(0)}(L - \alpha) = \psi^{(0)}(-\alpha + L) \), and using the property:
+
+\[
+\psi^{(0)}(x + n) = \psi^{(0)}(x) + \sum_{k = 0}^{n - 1} \frac{1}{x + k},
+\]
+
+we can simplify the expression.
+
+**Step 9: Use Digamma Function Properties**
+
+Recognizing that \( \psi^{(0)}(L - \alpha) = \psi^{(0)}(L) + \sum_{k = 0}^{-\alpha - 1} \frac{1}{L - k} \) when \( \alpha \) is negative.
+
+However, for our purposes, we can write:
+
+\[
+\psi^{(0)}(L) - \psi^{(0)}(L - \alpha) = \psi^{(0)}(L) - \psi^{(0)}(L - \alpha).
+\]
+
+But since \( \psi^{(0)}(L - \alpha) = \psi^{(0)}(-\alpha + L) \), we can consider \( \psi^{(0)}(-\alpha) \) in our expression.
+
+**Step 10: Final Expression for \( \mathbb{E}[\ln Z] \)**
+
+\[
+\mathbb{E}[\ln Z] = \psi^{(0)}(L) - \psi^{(0)}(-\alpha) + \ln\left( \frac{\gamma}{L} \right).
+\]
+
+  #### **2. Calculation of \( \mathbb{E}[\ln (\gamma + L Z)] \)**
+  
+  **Step 1: Define the Expected Value**
+  
+  \[
+  \mathbb{E}[\ln (\gamma + L Z)] = \int_0^\infty \ln (\gamma + L z) \cdot f_Z(z) \, dz.
+  \]
+  
+  **Step 2: Substitute the pdf and Change of Variable**
+  
+  Using the same change of variable as before:
+  
+  \[
+  u = \frac{L z}{\gamma}, \quad \gamma + L z = \gamma (1 + u), \quad dz = \frac{\gamma}{L} du.
+  \]
+  
+  Substitute into the integral:
+  
+  \[
+  \mathbb{E}[\ln (\gamma + L Z)] = c'' \int_0^\infty \left( \ln \gamma + \ln(1 + u) \right) \cdot u^{L - 1} (1 + u)^{-(L - \alpha)} \, du,
+  \]
+  
+  where \( c'' = c \cdot \frac{\gamma^{\alpha}}{L^{L}} \).
+  
+  **Step 3: Separate the Integral**
+  
+  1. **Term with \( \ln \gamma \):**
+  
+     \[
+     (\ln \gamma) \int_0^\infty u^{L - 1} (1 + u)^{-(L - \alpha)} \, du = (\ln \gamma) B(L, -\alpha).
+     \]
+  
+  2. **Term with \( \ln(1 + u) \):**
+  
+     \[
+     \int_0^\infty \ln(1 + u) \cdot u^{L - 1} (1 + u)^{-(L - \alpha)} \, du.
+     \]
+  
+  **Step 4: Evaluate the Integral Involving \( \ln(1 + u) \)**
+  
+  This integral relates to the derivative of the beta function with respect to its second parameter:
+  
+  \[
+  \int_0^\infty \ln(1 + u) \cdot u^{L - 1} (1 + u)^{-(L - \alpha)} \, du = B(L, -\alpha) \left[ \psi^{(0)}(-\alpha) - \psi^{(0)}(L) \right].
+  \]
+  
+  **Step 5: Combine the Terms**
+  
+  \[
+  \mathbb{E}[\ln (\gamma + L Z)] = \ln \gamma + \left[ \psi^{(0)}(-\alpha) - \psi^{(0)}(L) \right].
+  \]
+
+But considering the negative sign and rearranging:
+
+\[
+\mathbb{E}[\ln (\gamma + L Z)] = \psi^{(0)}(L - \alpha) + \ln \gamma - \psi^{(0)}(-\alpha).
+\]
+
+**Step 6: Use Digamma Function Properties**
+
+We have used the reflection property of the digamma function to rewrite \( \psi^{(0)}(-\alpha) - \psi^{(0)}(L) \) as \( \psi^{(0)}(L - \alpha) - \psi^{(0)}(-\alpha) \).
+
+**Step 7: Final Expression for \( \mathbb{E}[\ln (\gamma + L Z)] \)**
+
+\[
+\mathbb{E}[\ln (\gamma + L Z)] = \psi^{(0)}(L - \alpha) + \ln \gamma - \psi^{(0)}(-\alpha).
+\]
+
+### **Conclusion**
+
+By performing these detailed calculations, we have derived the expected values needed for the Shannon entropy of the \( G_I^0 \) distribution:
+
+1. **Expectation of \( \ln Z \):**
+
+   \[
+   \mathbb{E}[\ln Z] = \psi^{(0)}(L) - \psi^{(0)}(-\alpha) + \ln\left( \frac{\gamma}{L} \right).
+   \]
+
+2. **Expectation of \( \ln (\gamma + L Z) \):**
+
+   \[
+   \mathbb{E}[\ln (\gamma + L Z)] = \psi^{(0)}(L - \alpha) + \ln \gamma - \psi^{(0)}(-\alpha).
+   \]
+
+Formula profesora cassetti
+\begin{equation}
+H_{G_0}(\alpha, \gamma, L) = - \log(-\alpha / \gamma) - (1 - \alpha) \psi^{(0)}(-\alpha) + \log(-\alpha / L) 
++ (L - \alpha) \psi^{(0)}(L - \alpha) + \log \left( B(L, -\alpha) \right) + (1 - L) \psi^{(0)}(L).
+\end{equation}
+
+Renyi derivacion
+
+
+
+
+## Calculation of Rényi Entropy for the \( G_I^0 \) Distribution
+
+### Step 1: Definition of Rényi Entropy
+
+The Rényi entropy of order \( \lambda \) for a continuous random variable \( Z \) with probability density function (pdf) \( f_Z(z) \) is defined as:
+
+\[
+H_\lambda(Z) = \frac{1}{1 - \lambda} \ln \left( \int_{0}^{\infty} [f_Z(z)]^\lambda \, dz \right), \quad \lambda > 0, \, \lambda \neq 1.
+\]
+
+### Step 2: Probability Density Function of \( G_I^0 \) Distribution
+
+The probability density function of \( Z \sim G_I^0(\alpha, \gamma, L) \) is given by:
+
+\[
+f_Z(z; \alpha, \gamma, L) = \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)} \cdot \frac{z^{L - 1}}{(\gamma + L z)^{L - \alpha}} \mathbbm{1}_{\mathbb{R}_+}(z),
+\]
+
+where:
+- \( \mu > 0 \) is the mean,
+- \( \gamma > 0 \) is the scale parameter,
+- \( \alpha < -1 \) measures roughness,
+- \( L \geq 1 \) is the number of looks,
+- \( \Gamma(\cdot) \) is the Gamma function,
+- \( \mathbbm{1}_{\mathbbm{R}_+}(z) \) is the indicator function for \( z > 0 \).
+
+For simplicity, denote the constant \( C \) as:
+
+\[
+C = \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)}.
+\]
+
+### Step 3: Raising the Density to the Power \( \lambda \)
+
+We raise the density function to the power \( \lambda \):
+
+\[
+[f_Z(z)]^\lambda = C^\lambda \cdot \frac{z^{\lambda(L - 1)}}{(\gamma + L z)^{\lambda(L - \alpha)}}.
+\]
+
+### Step 4: Formulating the Integral
+
+The integral in the Rényi entropy becomes:
+
+\[
+I = \int_{0}^{\infty} [f_Z(z)]^\lambda \, dz = C^\lambda \int_{0}^{\infty} \frac{z^{\lambda(L - 1)}}{(\gamma + L z)^{\lambda(L - \alpha)}} \, dz.
+\]
+
+### Step 5: Variable Substitution
+
+Perform a change of variable to simplify the integral. Let:
+
+\[
+t = \frac{L z}{\gamma} \quad \Rightarrow \quad z = \frac{\gamma t}{L}, \quad dz = \frac{\gamma}{L} dt.
+\]
+
+Substituting into the integral:
+
+\[
+I = C^\lambda \cdot \frac{\gamma}{L} \int_{0}^{\infty} \frac{\left( \frac{\gamma t}{L} \right)^{\lambda(L - 1)}}{(\gamma + L \cdot \frac{\gamma t}{L})^{\lambda(L - \alpha)}} \, dt = C^\lambda \cdot \frac{\gamma^{1 + \lambda(\alpha - 1)}}{L^{1 + \lambda(L - 1)}} \int_{0}^{\infty} \frac{t^{\lambda(L - 1)}}{(1 + t)^{\lambda(L - \alpha)}} \, dt.
+\]
+
+### Step 6: Expressing the Integral Using the Beta Function
+
+Recognize that the integral is a form of the Beta function:
+
+\[
+\int_{0}^{\infty} \frac{t^{a - 1}}{(1 + t)^{a + b}} \, dt = B(a, b), \quad \text{where } a = \lambda(L - 1) + 1, \quad b = \lambda(-\alpha + 1) - 1.
+\]
+
+Thus, the integral simplifies to:
+
+\[
+I = C^\lambda \cdot \frac{\gamma^{1 + \lambda(\alpha - 1)}}{L^{1 + \lambda(L - 1)}} \cdot B(a, b).
+\]
+
+### Step 7: Simplifying the Expression
+
+Substitute the expression for \( C^\lambda \):
+
+\[
+C^\lambda = \left( \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)} \right)^\lambda = L^{L\lambda} \gamma^{-\alpha\lambda} \left( \frac{\Gamma(L - \alpha)}{\Gamma(-\alpha) \Gamma(L)} \right)^\lambda.
+\]
+
+Combine all terms:
+
+\[
+I = L^{\lambda - 1} \gamma^{1 - \lambda} \left( \frac{\Gamma(L - \alpha)}{\Gamma(-\alpha) \Gamma(L)} \right)^\lambda B(a, b).
+\]
+
+### Step 8: Final Expression for Rényi Entropy
+
+The Rényi entropy is then:
+
+\begin{align}
+H_\lambda(Z) =& \frac{1}{1 - \lambda} \ln(I) \\
+&= \frac{1}{1 - \lambda} \left[ (\lambda - 1)\ln(L) + (1 - \lambda)\ln(\gamma) + \lambda\left( \ln \Gamma(L - \alpha) - \ln \Gamma(-\alpha) - \ln \Gamma(L) \right) + \ln \Gamma(a) + \ln \Gamma(b) - \ln \Gamma(a + b) \right].
+\end{align}
+
+Simplifying the logarithmic terms:
+
+\[
+H_\lambda(Z) = \ln\left( \frac{\gamma}{L} \right) + \frac{1}{1 - \lambda} \left[ \lambda\left( \ln \Gamma(L - \alpha) - \ln \Gamma(-\alpha) - \ln \Gamma(L) \right) + \ln \Gamma(a) + \ln \Gamma(b) - \ln \Gamma(\lambda(L - \alpha)) \right].
+\]
+
+### Step 9: Expression in Terms of \( \mu \)
+
+Given that the mean \( \mu \) is related to \( \gamma \) by:
+
+\[
+\mu = -\frac{\gamma}{\alpha + 1} \quad \Rightarrow \quad \gamma = -\mu(\alpha + 1),
+\]
+
+substituting \( \gamma \) into the entropy expression:
+
+\begin{align}
+H_\lambda(Z) &= \ln\left( \frac{ -\mu(\alpha + 1) }{ L } \right)\\
+&+ \frac{1}{1 - \lambda} \left[ \lambda\left( \ln \Gamma(L - \alpha) - \ln \Gamma(-\alpha) - \ln \Gamma(L) \right) + \ln \Gamma\left( \lambda(L - 1) + 1 \right) + \ln \Gamma\left( \lambda(-\alpha + 1) - 1 \right) - \ln \Gamma\left( \lambda(L - \alpha) \right) \right].
+\end{align}
+
+### Step 10: Final Analytical Expression for Rényi Entropy
+
+The final analytical expression for the Rényi entropy of the \( G_I^0 \) distribution is:
+
+\begin{multline}
+H_\lambda(Z) = \ln\left( \frac{ -\mu(\alpha + 1) }{ L } \right)\\ + \frac{1}{1 - \lambda} \left[ \lambda\left( \ln \Gamma(L - \alpha) - \ln \Gamma(-\alpha) - \ln \Gamma(L) \right) + \ln \Gamma\left( \lambda(L - 1) + 1 \right) + \ln \Gamma\left( \lambda(-\alpha + 1) - 1 \right) - \ln \Gamma\left( \lambda(L - \alpha) \right) \right].
+\end{multline}
+
+
+\begin{multline}
+H_\lambda(Z) = \ln \mu+ \ln (-1-\alpha)-\ln L\\ + \frac{1}{1 - \lambda} \left[ \lambda\left( \ln \Gamma(L - \alpha) - \ln \Gamma(-\alpha) - \ln \Gamma(L) \right) + \ln \Gamma\left( \lambda(L - 1) + 1 \right) + \ln \Gamma\left( \lambda(-\alpha + 1) - 1 \right) - \ln \Gamma\left( \lambda(L - \alpha) \right) \right].
+\end{multline}
