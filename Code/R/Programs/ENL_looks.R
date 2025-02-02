@@ -7,14 +7,15 @@ source("../../../Code/R/Programs/read_ENVI_images.R")
 # x <- myread.ENVI(file='../../../Data/SAR/Houston_100/Intensity_HH.img', 
 #                  headerfile='../../../Data/SAR/Houston_100/Intensity_HH.hdr')
 
-# x <- myread.ENVI(file='../../../Data/SAR/envi_1/Intensity_VV.img', 
-#                  headerfile='../../../Data/SAR/envi_1/Intensity_VV.hdr')
+# x <- myread.ENVI(file='../../../Data/SAR/envi_sf_water_200/Intensity_VV.img', 
+#                  headerfile='../../../Data/SAR/envi_sf_water_200/Intensity_VV.hdr')
 
-x <- myread.ENVI(file='../../../Data/SAR/envi_rotte/Intensity_HH.img',
-                 headerfile='../../../Data/SAR/envi_rotte/Intensity_HH.hdr')
+#x <- myread.ENVI(file='../../../Data/SAR/MUNICH_80/Intensity_HH.img',
+#                 headerfile='../../../Data/SAR/MUNICH_80/Intensity_HH.hdr')
+x <- myread.ENVI(file='../../../Data/SAR/sinaloa_512/Intensity_VV.img', 
+                 headerfile='../../../Data/SAR/sinaloa_512/Intensity_VV.hdr')
 
-
-window_size <- 9
+window_size <-20
 
 
 rows <- nrow(x)

@@ -26,12 +26,12 @@ source("../MainFunctions/entropy_gI0.R")
 source("../MainFunctions/gi0_sample.R")
 
 # Set parameters
-#set.seed(1234567890, kind = "Mersenne-Twister")
+set.seed(1234567890, kind = "Mersenne-Twister")
 sample.size <- 49
-R <- 300
+R <- 10000
 mu <- 1
 L <- 5
-alpha1 <- -100
+alpha1 <- -1.5
 
 # Initialize vectors to store means and CVs
 means <- numeric(R)

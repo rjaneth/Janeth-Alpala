@@ -28,8 +28,8 @@ source("../../../Code/R/Programs/read_ENVI_images.R")
 #                  headerfile='../../../Data/SAR/chicago_1024/Intensity_HH.hdr')
 # 
 
- x <- myread.ENVI(file='../../../Data/SAR/Rotterdam_1024/Intensity_HH.img',
-                  headerfile='../../../Data/SAR/Rotterdam_1024/Intensity_HH.hdr')
+ x <- myread.ENVI(file='../../../Data/SAR/Lake_512/Intensity_VV.img',
+                  headerfile='../../../Data/SAR/Lake_512/Intensity_VV.hdr')
  
  # x <- myread.ENVI(file='../../../Data/SAR/envi_panama_512/Intensity_VV.img', 
  #                  headerfile='../../../Data/SAR/envi_panama_512/Intensity_VV.hdr')

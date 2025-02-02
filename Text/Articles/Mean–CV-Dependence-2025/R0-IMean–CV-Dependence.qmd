@@ -1,0 +1,481 @@
+---
+title: Heterogeneity Detection in SAR Images Using Sample Mean–CV Dependence
+format:
+  ieee-pdf:
+    pdf-engine: pdflatex # change by xelatex
+    keep-tex: true  
+    conference: true # uncomment this line to use journal
+    journaltype: conference # uncomment this line to use journal
+  ieee-html: default
+
+author:
+  - id: dfolio
+    name: Janeth Alpala, Abraão D.\ C.\ Nascimento 
+    affiliations:
+      - name: Universidade Federal de Pernambuco
+        department: Departamento de Estatística
+        city: Recife 
+        country: PE, Brazil
+        postal-code: 18800
+      - name: Unknown affiliation
+    #orcid: 0000-0001-9430-6091
+    email: janeth.alpala@ufpe.br, abraao@de.ufpe.br
+    #url: https://dfolio.fr/
+    #membership: "Member, IEEE"
+    attributes:
+      corresponding: true
+    #photo: david-folio.png
+    #bio: |
+    #  Use `IEEEbiography`  with figure as  option and
+    #  the author name as the argument followed by the biography text.
+  - name: Alejandro C.\ Frery
+    affiliations:
+      - name: Victoria University of Wellington
+        department: School of Mathematics and Statistics
+        city: Wellington 
+        country: New Zealand
+        postal-code: 18800
+      - name: Unknown affiliation
+    #orcid: 0000-0001-9430-6091
+    email: alejandro.frery@vuw.ac.nz
+    # bio: |
+    #   Use `IEEEbiographynophoto` and the author name
+    #   as the argument followed by the biography text.
+    # note: "Template created June 23, 2023; revised `r format(Sys.Date(),format='%B %d, %Y')`."
+abstract: |
+  This study investigates the relationship between the sample mean and the coefficient of variation (CV) to identify heterogeneity in Synthetic Aperture Radar (SAR) images. In homogeneous regions, these statistics are independent, indicating that the underlying data follow a Gamma distribution. However, in heterogeneous regions, this independence breaks down, resulting in a characteristic dependence that can be modeled. By analyzing the dependence between the sample mean and CV within sliding windows across SAR images, we fit a nonlinear exponential model to characterize this relationship. The significance of a key parameter in the model, $\beta_1$, is evaluated through p-values, allowing us to distinguish homogeneous from heterogeneous regions. This approach provides a robust statistical framework for detecting texture and heterogeneity in SAR images, offering a balance between simplicity and accuracy.
+keywords: [Gamma distribution, coefficient of variation, mean, Model Fitting]
+#funding: 
+funding: 
+  statement: "The `quarto-ieee` template is freely available under the MIT license on github: <https://github.com/dfolio/quarto-ieee>."
+pageheader:
+  left: Journal XXX, Month Year
+  right: 'D. Folio:  A Sample Article Using quarto-ieee'
+  
+header-includes:
+   - \usepackage[english]{babel}
+   - \usepackage{bm,bbm}
+   - \usepackage{mathrsfs}
+   - \usepackage{siunitx}
+   - \usepackage{graphicx}
+   - \usepackage{url}
+   - \usepackage[T1]{fontenc}
+   - \usepackage{polski}
+   - \usepackage{booktabs}
+   - \usepackage{color}
+   - \usepackage{mathtools}
+   - \usepackage[utf8]{inputenc}
+   - \usepackage{hyperref}
+   - \hypersetup{draft}
+   - \usepackage{float}
+   - \usepackage{array}
+   - \usepackage{multirow}
+   - \usepackage{wrapfig}
+   - \usepackage{colortbl}
+   - \usepackage{pdflscape}
+   - \usepackage{xcolor}
+   - \usepackage{amsmath}
+   #- \usepackage{mathabx}
+   #- \usepackage{subfig}
+   #- \usepackage{subcaption}
+   #- \usepackage{caption}
+   
+   #- \captionsetup[table]{skip=0pt}
+   #- "\\setcitestyle{square,comma,numbers,sort&compress}" # citation style to numerical, work with \cite{} or [@]
+   
+bibliography: ../../Common/references.bib
+date: 2023-06-23
+pdf: https://github.com/dfolio/quarto-ieee/blob/main/template.pdf
+citation: 
+  container-title: GitHUB
+  page: 1-3
+  type: software
+  issued: 2023-06-23
+  url: https://github.com/dfolio/quarto-ieee
+  pdf-url: https://github.com/dfolio/quarto-ieee/template.pdf
+  
+---
+
+```{r setup, include=FALSE}
+#knitr::opts_chunk$set(echo = FALSE, cache=TRUE)
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE)#, eval = FALSE
+
+library(fitdistrplus)
+library(ggplot2)
+library(reshape2)
+library(knitr)
+library(pandoc)
+library(gridExtra)
+library(gtools)
+library(stats4)
+library(rmutil)
+library(scales)
+library(tidyr)
+library(rmutil)
+library(invgamma)
+library(tidyverse)
+library(RColorBrewer)
+library(ggsci)
+library(ggpubr)
+library(patchwork)
+library(dplyr)
+library(kableExtra)
+library(ggthemes)
+library(latex2exp)
+library(e1071)# kurtosis
+library(viridis)
+library(nortest)# AD
+
+theme_set(theme_minimal() +
+            theme(text=element_text(family="serif"),
+                  legend.position = "bottom")
+)
+
+# External functions
+source("./Code/gamma_sar_sample.R")
+source("./Code/ebrahimi_estimator.R")
+source("./Code/al_omari_1_estimator.R")
+source("./Code/bootstrap_ebrahimi_estimator.R")
+source("./Code/bootstrap_al_omari_1_estimator.R")
+
+```
+
+
+
+## Introduction
+
+Synthetic aperture radar (SAR) is a vital technology for environmental monitoring and disaster management due to its capability to capture imagery under all-weather conditions, regardless of lighting, making it a reliable source of remote sensing data.. Despite its advantages, the effective use of SAR data depends on a comprehensive understanding of their underlying statistical properties. One of the primary challenges is speckle, an inherent artifact of the coherent imaging process. Speckle is both non-additive and non-Gaussian, necessitating the development of specialized statistical models to characterize and process SAR data accurately.
+
+Among the many statistics used in theoretical and applied contexts, the sample mean ($\bar{X}_n$) and the sample standard deviation ($S_n$) are particularly important. It is well established that the independence of $\bar{X}_n$ and $S_n$ uniquely characterizes the normal distribution. This property has been extensively studied, with foundational work appearing in texts such as Kagan et al. (1973), Johnson and Kotz (1970), and Lukacs and Laha (1964). However, characterization problems involving the coefficient of variation (CV), defined as $V_n = S_n / \bar{X}_n$, have received relatively little attention.
+
+This study builds on the relationship between the sample mean and the CV to explore heterogeneity in SAR images. In homogeneous regions, these statistics are independent, reflecting a Gamma distribution for the underlying data. Conversely, in heterogeneous regions, this independence is lost, producing a characteristic dependence that can be exploited for modeling. By leveraging this relationship within sliding windows across SAR images, we fit a nonlinear exponential model to describe the dependence and evaluate the statistical significance of key parameters. This approach enables the detection of texture and heterogeneity in SAR data, providing a robust framework for applications ranging from environmental monitoring to urban mapping.
+
+
+
+# Background {#sec:Background}
+
+## Statistical Modeling  
+
+
+The primary models used for intensity SAR data include the Gamma and $\mathcal{G}_I^0$ distributions. The first is suitable for fully developed speckle and is a limiting case of the second, which is appealing due to its versatility in accurately representing regions with various roughness characteristics&nbsp;[@Yue2021].
+We denote $Z \sim \Gamma_{\text{SAR}}(L, \mu)$ and $Z \sim \mathcal{G}_I^0(\alpha, \gamma, L)$ to indicate that $Z$ follows the distributions characterized by the respective probability density functions:
+\begin{align}
+	f_Z(z;L, \mu)&=\frac{L^L}{\Gamma(L)\mu^L}z^{L-1}\exp\left\{-Lz/\mu\right\} \mathbbm 1_{\mathbbm R_+}(z),\label{E:gamma1}\\
+	f_Z(z; \alpha, \gamma, L)&=\frac{L^L\Gamma(L-\alpha)}{\gamma^{\alpha}\Gamma(-\alpha)\Gamma(L)}\cdot\frac{z^{L-1}}{(\gamma+Lz)^{L-\alpha}} \mathbbm 1_{\mathbbm R_+}(z),\label{E:gi01}
+\end{align}
+where $L \geq 1$ is the number of looks, $\Gamma(\cdot)$ is the gamma function, and $\mathbbm 1_{A}(z)$ is the indicator function of the set $A$.
+In&nbsp;\eqref{E:gamma1}, $\mu > 0$ is the mean; in&nbsp;\eqref{E:gi01}  $\gamma > 0$ is the scale, $\alpha < -1$ measures the roughness. 
+
+## Theoretical Connection Between Mean and Coefficient of Variation 
+
+A crucial property of the Gamma distribution relates to the independence of the sample mean and the sample coefficient of variation (CV). This relationship is formalized in the following theorem:
+
+### Theorem
+Let $n\geq 3$, and let $X_1, \dots, X_n$ be positive independent and identically distributed (i.i.d.) random variables with a common probability density function $f(x)$. Then, the independence of the sample mean, $\bar{X}_n$, and the sample coefficient of variation, $V_n = S_n / \bar{X}_n$, is equivalent to $f(x)$ being a gamma distribution.
+
+This theorem highlights the unique property of the Gamma distribution, where the sample mean and CV are independent. In the context of SAR data, this property becomes a key tool for distinguishing homogeneous regions, modeled by the Gamma distribution, from heterogeneous regions, where the mean and CV exhibit a significant dependence.
+\section{Model Fitting}
+
+We consider the following nonlinear regression model to capture the relationship between the sample coefficient of variation and the sample mean:
+
+\begin{equation}
+E(V_n \mid \bar{X}_n = \bar{x}_n) = \sqrt{n} \left(1 - \exp\left(- (\beta_0 + \beta_1 \bar{x}_n)\right) - \beta_2 \right),
+\label{eq:model}
+\end{equation}
+
+Here, $V_n$ represents the sample coefficient of variation, $\bar{x}_n$ is the sample mean, and $n$ is the sample size. The term $\sqrt{n}$ serves as an asymptotic upper bound, ensuring that the model captures the saturation behavior of the CV. The parameters $\beta_0$, $\beta_1$, and $\beta_2$ are estimated through regression, where $\beta_1$ is of particular interest for assessing the strength of the dependence between the sample mean and the CV.
+<!-- The parameters $\beta_0$, $\beta_1$, and $\beta_2$ determine the shape and scale of the curve, with $\beta_1$ being particularly important for assessing the strength of dependence. -->
+
+\subsection{Hypothesis Testing for $\beta_1$}
+
+To identify heterogeneity, we test the significance of the dependence between the CV and the sample mean $\bar{x}$ by evaluating the parameter $\beta_1$. Specifically, we test the following hypotheses:
+
+\begin{equation}
+H_0: \beta_1 = 0 \quad \text{(no dependence)},
+\end{equation}
+\begin{equation}
+H_1: \beta_1 \neq 0 \quad \text{(dependence exists)}.
+\end{equation}
+
+Under $H_0$, the model assumes that $\text{CV}$ and $\bar{x}$ are independent, indicating homogeneity in the region.
+
+\subsubsection{Test Statistic}
+
+The test statistic for $\beta_1$ is given by:
+
+\begin{equation}
+t = \frac{\hat{\beta}_1}{\text{SE}(\hat{\beta}_1)},
+\end{equation}
+
+where $\hat{\beta}_1$ is the estimated value of $\beta_1$, and $\text{SE}(\hat{\beta}_1)$ is its standard error. This statistic follows a $t$-distribution with $B - p$ degrees of freedom, where $B$ is the number of bootstrap samples or data points used, and $p$ is the number of estimated parameters ($p = 3$ in this case).
+
+\subsubsection{P-value Calculation}
+
+The p-value for the hypothesis test is computed as:
+
+\begin{equation}
+p\text{-value} = 2 \times P(T > |t|),
+\end{equation}
+
+where $T$ follows a $t$-distribution under the null hypothesis. The p-value determines whether the observed value of $\hat{\beta}_1$ provides sufficient evidence to reject $H_0$.
+
+#Simulations
+
+To evaluate the relationship between the sample mean and the coefficient of variation (CV) across different levels of roughness, we simulated data from the $\mathcal{G}_I^0$ distribution for various values of the parameter $\alpha$ ($\alpha = -1.5, -3, -5, -10, -50, -1000$). For each value of $\alpha$, multiple samples were generated, and scatter plots of CV versus the mean were created. These plots, shown in Figure~\ref{fig:scatter_cv_mean_alpha}, illustrate the transition from dependence to independence between the mean and CV as $\alpha$ decreases (becomes more negative).
+
+At higher values of $\alpha$ (e.g., $\alpha = -1.5$), the scatter plots exhibit a logarithmic pattern, indicative of a strong dependence characteristic of heterogeneous regions. Conversely, as $\alpha$ approaches $-\infty$ (e.g., $\alpha = -1000$), the scatter plots display a random distribution of points, reflecting independence between the mean and CV. This behavior is consistent with the Gamma distribution and represents homogeneity.
+
+To further explore the relationship between the sample mean and the coefficient of variation (CV) across varying levels of roughness, we fitted the nonlinear regression model defined in Equation~\eqref{eq:model} to simulated data from the $\mathcal{G}_I^0$ distribution. For each value of $\alpha$ ($\alpha = -1.5, -3, -10, -1000$), we generated multiple samples and plotted the scatter of CV versus the mean. The data were then fitted using the robust nonlinear least squares function nlsLM from the minpack.lm R package, estimating the parameters $\beta_0$, $\beta_1$, and $\beta_2$.
+
+The fitted model effectively captures the exponential dependence observed for higher values of $\alpha$ (e.g., $\alpha = -1.5$), indicative of strong heterogeneity. As $\alpha$ decreases and approaches $-\infty$, the fitted curve becomes flat, reflecting the independence between the mean and CV characteristic of homogeneity.
+
+The parameter $\beta_1$ plays a critical role in detecting heterogeneity. A hypothesis test is conducted to assess the significance of $\beta_1$, where low p-values (e.g., $p < 0.05$) indicate significant dependence between the mean and CV, consistent with heterogeneous regions. Conversely, high p-values suggest no significant dependence, characteristic of homogeneous regions. The results are illustrated in Figure~\ref{fig:scatter_cv_mean_alpha_fit}, which includes the scatter plots of CV versus mean for different values of $\alpha$, along with the fitted curves.
+
+
+
+```{r Plot_empirical_gamma_and_gi01_with_fit, echo=FALSE, message=FALSE, warning=FALSE, out.width="45%", fig.show="hold", fig.align="center", fig.pos="hbt", fig.cap="Scatter plot of CV versus Mean for different $\\alpha$ values with fitted nonlinear models.", fig.width=5, fig.height=4.0}
+
+library(minpack.lm)
+
+source("../../../Code/R/MainFunctions/gi0_sample.R")
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+sample.size <- 49
+R <- 10000
+mu <- 1
+L <- 5
+
+# Specific alpha values
+alphas <- c(-1.5, -3, -10, -1000)
+
+results <- data.frame()
+fitted_curves <- data.frame()
+
+for (alpha in alphas) {
+  means <- numeric(R)
+  cvs <- numeric(R)
+  
+  for (r in 1:R) {
+    z <- gi0_sample(mu, alpha, L, sample.size)
+    means[r] <- mean(z)
+    cvs[r] <- sd(z) / mean(z)
+  }
+  
+  temp_data <- data.frame(Mean = means, CV = cvs, Alpha = factor(paste0("alpha==", alpha), levels = paste0("alpha==", alphas)))
+  results <- rbind(results, temp_data)
+  
+  # Fit the nonlinear model to the data for this alpha
+  tryCatch({
+    nls_model <- nlsLM(CV ~ sqrt(sample.size) * (1 - exp(-(beta0 + beta1 * Mean)) - beta2),
+                       data = temp_data, 
+                       start = list(beta0 = -0.001, beta1 = 0.01, beta2 = -0.1))
+    
+    # Generate fitted values for plotting
+    fitted_data <- data.frame(
+      Mean = sort(temp_data$Mean),
+      FittedCV = predict(nls_model, newdata = data.frame(Mean = sort(temp_data$Mean))),
+      Alpha = factor(paste0("alpha==", alpha), levels = paste0("alpha==", alphas))
+    )
+    fitted_curves <- rbind(fitted_curves, fitted_data)
+  }, error = function(e) {
+    message("Model fitting failed for alpha=", alpha)
+  })
+}
+
+# Create the scatter plot with the fitted curve
+p <- ggplot(results, aes(x = Mean, y = CV)) +
+  geom_point(alpha = 0.2, color = "#56B4E9", size = 0.7) +
+  geom_line(data = fitted_curves, aes(x = Mean, y = FittedCV), color = "red", size = 0.8) +
+  labs(
+    x = "Mean",
+    y = "CV"
+  ) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "serif"),
+    axis.title = element_text(size = 10),
+    strip.text = element_text(size = 10),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90")
+  ) +
+  facet_wrap(~ Alpha, ncol = 2, scales = "free", labeller = label_parsed)
+
+# Display the plot
+print(p)
+
+```
+
+```{r Simulated_table, echo=FALSE, message=FALSE}
+library(minpack.lm)
+source("../../../Code/R/MainFunctions/gi0_sample.R")
+set.seed(1234567890, kind = "Mersenne-Twister")
+sample.size <- 49
+R <- 10000
+mu <- 1
+L <- 5
+alphas <- c(-1.5, -3, -10)
+
+# Initialize an empty dataframe to store results
+results_table <- data.frame()
+
+# Loop over alpha values to calculate parameters
+for (alpha in alphas) {
+  means <- numeric(R)
+  cvs <- numeric(R)
+  
+  # Generate data for simulations
+  for (r in 1:R) {
+    z <- gi0_sample(mu, alpha, L, sample.size)
+    means[r] <- mean(z)
+    cvs[r] <- sd(z) / mean(z)
+  }
+  
+  # Create temporary data frame
+  temp_data <- data.frame(Mean = means, CV = cvs)
+  
+  # Fit nonlinear model using nlsLM
+  tryCatch({
+    nls_model <- nlsLM(CV ~ sqrt(sample.size) * (1 - exp(-(beta0 + beta1 * Mean)) - beta2),
+                       data = temp_data, 
+                       start = list(beta0 = -0.001, beta1 = 0.01, beta2 = -0.1))
+    
+    # Extract fitted parameters
+    beta_estimates <- summary(nls_model)$coefficients
+    results_table <- rbind(
+      results_table,
+      data.frame(
+        Alpha = alpha,
+        Beta0 = paste0(round(beta_estimates[1, 1], 5), " ± ", round(beta_estimates[1, 2], 5)),
+        Beta1 = paste0(round(beta_estimates[2, 1], 5), " ± ", round(beta_estimates[2, 2], 5)),
+        Beta2 = paste0(round(beta_estimates[3, 1], 5), " ± ", round(beta_estimates[3, 2], 5)),
+        PValueBeta1 = format.pval(beta_estimates[2, 4], eps = 1e-3, digits = 4)
+      )
+    )
+  }, error = function(e) {
+    message("Model fitting failed for alpha=", alpha)
+  })
+}
+
+# Save the results to an RData file
+save(results_table, file = "./Data/fitted_results.RData")
+
+
+```
+
+```{r Table_results, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+# Load the saved results
+load("./Data/fitted_results.RData")
+
+# Format column names for LaTeX
+colnames(results_table) <- c("$\\alpha$", 
+                             "$\\beta_0 \\pm \\text{SE}$", 
+                             "$\\beta_1 \\pm \\text{SE}$", 
+                             "$\\beta_2 \\pm \\text{SE}$", 
+                             "$p$-value of $\\beta_1$")
+
+# Create the table using knitr::kable
+knitr::kable(
+  results_table,
+  caption = "Fitted parameters and $p$-values for different $\\alpha$ values.",
+  format = "latex",
+  booktabs = TRUE,
+  align = "c",
+  escape = FALSE,
+  digits = 5,
+  label = "fitted_results",
+  linesep = ""
+) %>%
+  kable_styling(latex_options = "scale_down") %>%
+  row_spec(0, align = "c")
+
+```
+
+```{=latex}
+\begin{figure*}[t]
+    \centering
+    \begin{subfigure}{0.19\textwidth}
+        \includegraphics[width=\linewidth]{./Figures/Phantom1.png}
+        \caption{ SAR image}
+        \label{fig:1a}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{./Figures/Phantom_labels.pdf}
+        \caption{ Simulated image}
+        \label{fig:1b}
+    \end{subfigure}
+    \begin{subfigure}{0.30\textwidth}
+        \includegraphics[width=\linewidth]{./Figures/H_pvalue_munich_c2.png}
+        \caption{$p$-values}
+        \label{fig:1c}
+    \end{subfigure}
+    \begin{subfigure}{0.20\textwidth}
+        \includegraphics[width=\linewidth]{./Figures/H_005_4z_7w_300b.png}
+        \caption{ Binary map $5\%$ }
+        \label{fig:1d}
+    \end{subfigure}
+    \caption{Detection of heterogeneous areas in a simulated image  }
+    \label{fig:london}
+\end{figure*}
+
+```
+```{=latex}
+\begin{figure*}[t]
+    \centering
+    \begin{subfigure}{0.19\textwidth}
+        \includegraphics[width=\linewidth]{./Figures/munich_512_.png}
+        \caption{ SAR image}
+        \label{fig:1a}
+    \end{subfigure}
+    \begin{subfigure}{0.30\textwidth}
+        \includegraphics[width=\linewidth]{./Figures/H_pvalue_munich_c4.png}
+        \caption{$p$-values}
+        \label{fig:1c}
+    \end{subfigure}
+    \begin{subfigure}{0.20\textwidth}
+        \includegraphics[width=\linewidth]{./Figures/H_005_munich.png}
+        \caption{ Binary map $5\%$ }
+        \label{fig:1d}
+    \end{subfigure}
+    \caption{Detection of heterogeneous areas in a SAR image  }
+    \label{fig:londondd}
+\end{figure*}
+
+```
+
+\subsection{Application to SAR Images}
+
+This methodology is applied to each sliding window in the SAR image. For each window, we calculate the p-value corresponding to $\beta_1$. The results are summarized as follows:
+\begin{itemize}
+    \item Regions with low p-values (e.g., $p < 0.05$) indicate significant dependence between $\text{CV}$ and $\bar{x}$, suggesting heterogeneity.
+    \item Regions with high p-values suggest no significant dependence, indicating homogeneity.
+\end{itemize}
+
+By mapping the p-values across the image, we can visualize areas of heterogeneity and homogeneity, providing a comprehensive spatial characterization of texture in the SAR data.
+
+
+
+
+
+# Conclusions
+The conclusion ....
+
+# Acknowledgment {-}
+
+
+
+<!-- []{.appendix options="An Appendix"} -->
+
+
+
+
+::: {.content-visible when-format="pdf"}
+# References {-}
+:::
+
+
+
+[^issues-1023]: ["_[longtable not compatible with 2-column LaTeX documents](https://github.com/jgm/pandoc/issues/1023>)_", 
+
+[^issues-2275]: See the issue here <https://github.com/quarto-dev/quarto-cli/issues/2275>
+
+[IEEEXplore<sup>®</sup>]: <https://ieeexplore.ieee.org/>

@@ -7,10 +7,10 @@ library(minpack.lm)
 # Set parameters
 #set.seed(1234567890, kind = "Mersenne-Twister")
 sample.size <- 121
-R <- 2000
+R <- 200
 mu <- 1
 L <- 5
-alpha1 <- -2.5 # Very negative alpha
+alpha1 <- -2 # Very negative alpha
 
 # Generate one sample from gi0 distribution
 z <- gi0_sample(mu, alpha1, L, sample.size)
@@ -57,7 +57,7 @@ initial_cv <- mean(data$CV)
 nls_model_exp_simplified_lm <- nlsLM(
   CV ~ sqrt(sample.size) * (1 - exp(-(beta0 + beta1 * Mean)) - beta2),
   data = data,
-  start = list(beta0 = -0.1, beta1 = 0.1, beta2 = 0),
+  start = list(beta0 = -0.1, beta1 = 0.1, beta2 = 1),
   lower = c(-Inf, -Inf, -Inf),
   upper = c(Inf, Inf, Inf),
   control = nls.lm.control(maxiter = 1000)

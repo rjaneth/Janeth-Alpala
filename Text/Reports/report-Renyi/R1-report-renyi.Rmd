@@ -230,6 +230,132 @@ Appendix&nbsp;\ref{app1} provides the detailed derivations of the Rényi entropy
 Figure&nbsp;\ref{fig:Plot_GI0_to_gamma1}, shows the entropy of \(G_I^0\) as a function of $\mu$ when \(\alpha \in \left\{-\infty, -20, -8, -3\right\}\).
 Notice that it converges to the entropy of \(\Gamma_{\text{SAR}}\) when \(\alpha\to-\infty\), as expected.
 
+
+## Simplified Analytical Expressions for Rényi Entropy
+
+Below we show how to express the Rényi entropy of the \( G_I^0 \) distribution in terms of the entropy of the \(\Gamma_{\text{SAR}}\) law plus additional terms involving \(\alpha\). We also ensure that the term \(\ln(\mu)\) remains explicitly isolated.
+
+
+
+### 1) Rényi Entropy of \(\Gamma_{\text{SAR}}\)
+
+For a \(\Gamma_{\text{SAR}}(L,\mu)\) random variable, a convenient form of its Rényi entropy of order \(\lambda\) (\(\lambda>0\), \(\lambda\neq 1\)) is:
+
+\[
+H_{\lambda}\bigl(\Gamma_{\text{SAR}}(L,\mu)\bigr)
+\;=\;
+\ln(\mu)\;+\;A_{\lambda}(L),
+\tag{1}
+\]
+
+where
+
+\[
+A_{\lambda}(L)
+\,=\,
+-\,\ln L
+\;+\;
+\frac{\lambda}{\lambda \,-\,1}\,\ln\Gamma(L)
+\;-\;
+\frac{1}{\lambda \,-\,1}\,
+\ln\Gamma\Bigl(\lambda\bigl(L - 1\bigr)+1\Bigr)
+\;+\;
+\frac{\lambda\bigl(L - 1\bigr)+1}{\lambda \,-\,1}
+\,\ln(\lambda).
+\]
+
+Here, \(\Gamma(\cdot)\) is the gamma function. Crucially, notice that \(\ln(\mu)\) appears **as a separate term**.
+
+
+
+### 2) Rényi Entropy of \( G_I^0 \)
+
+For \( G_I^0(\alpha,L,\mu)\) (with \(\alpha<0\)), we can write its Rényi entropy in a comparable form:
+
+\[
+H_{\lambda}\bigl(G_I^0(\alpha,L,\mu)\bigr)
+\;=\;
+\ln(\mu)\;+\;A_{\lambda}(L)\;+\;T_{\lambda}(\alpha,L).
+\tag{2}
+\]
+
+In this expression:
+
+- \(\ln(\mu)\) is **exactly** the same term as in \(\Gamma_{\text{SAR}}\).  
+- \(A_{\lambda}(L)\) is **the same function of \(L\) and \(\lambda\)** from Equation&nbsp;\((1)\).  
+- \(T_{\lambda}(\alpha,L)\) **captures the extra terms** that arise due to the roughness parameter \(\alpha\).  
+
+Hence, by defining:
+
+\[
+T_{\lambda}(\alpha,L)
+\;=\;
+H_{\lambda}\bigl(G_I^0(\alpha,L,\mu)\bigr)
+\;-\;
+\Bigl[\,\ln(\mu)\,+\,A_{\lambda}(L)\Bigr],
+\]
+
+we isolate all the \(\alpha\)-dependent components in one place. In particular, one of the key additional factors is \(\ln(-1-\alpha)\), which does **not** appear in the \(\Gamma_{\text{SAR}}\) case. As \(\alpha\to -\infty\), these extra terms tend to the constants (or zero) that make the \(G_I^0\) law converge to \(\Gamma_{\text{SAR}}\).
+
+
+
+### 3) Interpretation
+
+1. **Homogeneous Case** (\(\Gamma_{\text{SAR}}\)):  
+   \(\alpha\to -\infty\), thus \(T_{\lambda}(\alpha,L)\to 0\). Consequently,
+   \[
+   H_{\lambda}\bigl(G_I^0(\alpha\to -\infty,L,\mu)\bigr)
+   \;=\;
+   \ln(\mu) \;+\; A_{\lambda}(L),
+   \]
+   which exactly matches \(H_{\lambda}(\Gamma_{\text{SAR}})\).
+
+2. **Heterogeneous Case** (\(G_I^0\), finite \(\alpha<0\)):  
+   The additional term \(T_{\lambda}(\alpha,L)\neq 0\) captures the deviation from full speckle development, i.e., roughness. The more negative \(\alpha\) is, the closer \(G_I^0\) is to \(\Gamma_{\text{SAR}}\); the less negative \(\alpha\) is (e.g., \(\alpha=-3\)), the greater the discrepancy.
+
+In this way, **\(H_{\lambda}(\Gamma_{\text{SAR}})\) acts as a baseline** for the fully developed speckle (homogeneous) scenario, and any departure from this baseline—quantified by \(T_{\lambda}(\alpha,L)\)—indicates the presence of heterogeneity. 
+
+
+## Simplified Analytical Expressions for Rényi Entropy
+
+Below are *factorized* forms of the Rényi entropy for the two main models used in SAR image analysis, namely the \(\Gamma_{\text{SAR}}\) distribution (fully developed speckle) and the \(G_I^0\) distribution (able to represent roughness). These versions emphasize that \(\ln(\mu)\) appears **as an isolated term**, and they gather the remaining factors under a common \(\frac{1}{\lambda - 1}\) multiplier.
+
+---
+
+### 1) Rényi Entropy of \(\Gamma_{\text{SAR}}(L,\mu)\)
+
+For a \(\Gamma_{\text{SAR}}(L,\mu)\) random variable, the Rényi entropy of order \(\lambda\) (\(\lambda>0, \lambda\neq1\)) can be written as:
+
+\[
+H_{\lambda}\bigl(\Gamma_{\text{SAR}}(L,\mu)\bigr)
+=\;
+\ln\bigl(\mu\bigr)
+\;+\;
+\frac{1}{\lambda - 1}\Bigl[
+  \lambda\,\ln\Gamma(L)
+  \;-\;
+  \ln\Gamma\bigl(\lambda(L - 1)+1\bigr)
+  \;-\;
+  (\lambda - 1)\,\ln L
+  \;+\;
+  \bigl(\lambda(L - 1)+1\bigr)\,\ln\lambda
+\Bigr].
+\tag{1}
+\]
+
+Here, \(\Gamma(\cdot)\) is the gamma function. Notice how \(\ln(\mu)\) is an independent addend.
+
+
+
+
+The bracketed term vanishes (or becomes a constant offset) as \(\alpha \to -\infty\), showing that \(\Gamma_{\text{SAR}}\) is indeed a limiting case of \(G_I^0\). In other words, when \(\alpha\) is very negative, the extra “roughness” contribution disappears, and the *fully developed speckle* scenario (homogeneous model) is recovered.
+
+
+
+
+
+
+
 ```{r Plot_GI0_to_gamma1, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="85%",  fig.pos="hbt", fig.cap="$H_{ G_I^0}$ converges to the $H_{\\Gamma_{\\text{SAR}}}$ when $\\alpha\\to-\\infty$, with $L=8$."}
 
 
@@ -1228,4 +1354,178 @@ Expanding and simplifying the terms, the Rényi entropy of \( \Gamma_{\text{SAR}
 \[
 H_\lambda(\Gamma_{\text{SAR}}) = \frac{1}{\lambda - 1} \left[ \lambda \ln \Gamma(L) - \ln \Gamma\big( \lambda(L - 1) + 1 \big) - (\lambda - 1) \big( \ln L - \ln \mu \big) + \big( \lambda(L - 1) + 1 \big) \ln \lambda \right].
 \]
+
+
+
+\section*{Appendix: Limit Behavior of $H_\lambda(G_I^0)$ as $\alpha \to -\infty$}
+
+\subsection*{Detailed Version of the Proof}
+
+\begin{proof}
+We want to show that 
+\[
+\lim_{\alpha \to -\infty}
+H_\lambda\bigl(G_I^0\bigr)(\mu, \alpha, L)
+=
+H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu, L).
+\]
+
+First, recall that:
+\begin{align}
+H_\lambda\bigl(G_I^0\bigr)(\mu,\alpha,L)
+&=
+H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu,L)
+\;+\;
+\ln\!\bigl(-1-\alpha\bigr)
+\\
+&\quad
++ \frac{1}{1-\lambda}
+\ln \Biggl[
+  \frac{
+    \Gamma(L-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(-\alpha+1)-1\bigr)\,\lambda^{\lambda(L-1)+1}
+  }{
+    \Gamma(-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(L-\alpha)\bigr)
+  }
+\Biggr].
+\end{align}
+Set
+\begin{align}
+\Delta(\alpha)
+&=
+H_\lambda\bigl(G_I^0\bigr)(\mu,\alpha,L)
+-
+H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu,L).
+\end{align}
+Then 
+\[
+\Delta(\alpha)
+=
+\ln(-1-\alpha)
++
+\frac{1}{1-\lambda}
+\ln \biggl[
+  \frac{
+    \Gamma(L-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(-\alpha+1)-1\bigr)\,\lambda^{\lambda(L-1)+1}
+  }{
+    \Gamma(-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(L-\alpha)\bigr)
+  }
+\biggr].
+\]
+
+As \(\alpha \to -\infty\), we have \(-1-\alpha \approx |\alpha|\), so 
+\[
+\ln(-1-\alpha) 
+\sim 
+\ln|\alpha|.
+\]
+Next, note that for large \(|\alpha|\), one uses the asymptotic relation 
+\(
+\Gamma(x+a)/\Gamma(x+b) 
+\sim 
+x^{\,a-b}
+\).
+Specifically:
+\[
+\Gamma(L-\alpha)/\Gamma(-\alpha) \;\sim\; |\alpha|^L,
+\quad
+\Gamma\bigl(\lambda(-\alpha+1)-1\bigr)/\Gamma\bigl(\lambda(L-\alpha)\bigr)
+\;\sim\; 
+\bigl(\lambda|\alpha|\bigr)^{\,(\lambda-1)-\lambda L}.
+\]
+Thus, inside the big logarithm,
+\[
+\frac{
+  \Gamma(L-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(-\alpha+1)-1\bigr)
+}{
+  \Gamma(-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(L-\alpha)\bigr)
+}
+\;\sim\;
+|\alpha|^{\lambda L}
+\times
+|\alpha|^{(\lambda-1)-\lambda L}
+=
+|\alpha|^{\,\lambda-1}.
+\]
+Multiplying by \(\lambda^{\lambda(L-1)+1}\) (a constant factor in \(\alpha\)) does not affect the \(\alpha\)-dependence. Therefore,
+\[
+\frac{1}{1-\lambda}\,
+\ln\!\Bigl[\dots\Bigr]
+\;\sim\;
+\frac{1}{1-\lambda}\;\ln\!\bigl(|\alpha|^{\,\lambda-1}\bigr)
+=
+\frac{\lambda-1}{1-\lambda}\,\ln|\alpha|
+=
+-\ln|\alpha|.
+\]
+Hence
+\[
+\Delta(\alpha)
+\;\sim\;
+\ln|\alpha|
+-
+\ln|\alpha|
+=
+0
+\quad
+\text{as}
+\;\;
+\alpha\to -\infty.
+\]
+This shows 
+\(\Delta(\alpha)\to 0\), 
+and consequently
+\[
+\lim_{\alpha \to -\infty}
+H_\lambda\bigl(G_I^0\bigr)(\mu,\alpha,L)
+=
+H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu,L).
+\]
+\end{proof}
+
+\subsection*{Concise Version of the Proof}
+
+\begin{proof}
+We need to prove
+\(
+\lim_{\alpha\to -\infty} 
+H_\lambda(G_I^0)(\mu, \alpha, L)
+=
+H_\lambda(\Gamma_{\mathrm{SAR}})(\mu, L).
+\)
+By the known decomposition,
+\begin{align}
+H_\lambda\bigl(G_I^0\bigr)(\mu,\alpha,L)
+&=
+H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu,L)
+\;+\;
+\ln\bigl(-1-\alpha\bigr)
+\\
+&\quad
++ \frac{1}{1-\lambda}
+\ln \Biggl[
+  \frac{
+    \Gamma(L-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(-\alpha+1)-1\bigr)\,\lambda^{\lambda(L-1)+1}
+  }{
+    \Gamma(-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(L-\alpha)\bigr)
+  }
+\Biggr].
+\end{align}
+Denote the extra \(\alpha\)-dependent terms by \(\Delta(\alpha)\).  As \(\alpha \to -\infty\), we have \(\ln(-1-\alpha)\sim\ln|\alpha|\).  Meanwhile, using 
+\(\Gamma(x+a)/\Gamma(x+b)\sim x^{\,a-b}\),
+the ratio of Gamma functions behaves like 
+\(\,|\alpha|^{\lambda-1}\),
+and multiplying by \(\lambda^{\lambda(L-1)+1}\) is a constant factor. Hence the logarithm of that ratio is \(\sim(\lambda-1)\ln|\alpha|\), and dividing by \((1-\lambda)\) gives \(-\ln|\alpha|\). Thus the two terms 
+\(\ln|\alpha|\) 
+and 
+\(-\ln|\alpha|\) 
+cancel each other. Therefore, 
+\(\Delta(\alpha)\to 0\),
+which concludes
+\[
+\lim_{\alpha \to -\infty} 
+H_\lambda\bigl(G_I^0\bigr)(\mu,\alpha,L)
+=
+H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu,L).
+\]
+\end{proof}
 

@@ -106,6 +106,7 @@ p_values_shannon <- calculate_p_values_matrix(difference_values, mean_difference
 #load("./Data/binary_map_shannon.Rdata")
 # save(p_values_nlsLM, x, file = "./Data/p_values_nlsLM_subsample_4z_7w.Rdata")
 load("./Data/p_values_nlsLM_subsample_4z.Rdata")
+load("./Data/p_values_nlsLM_subsample_4z_7w.Rdata")
 
 source("../imagematrix.R")
 #hist(p_values_matrix)
