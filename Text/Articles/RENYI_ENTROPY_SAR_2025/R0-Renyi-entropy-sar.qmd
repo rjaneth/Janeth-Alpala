@@ -360,16 +360,17 @@ Nonparametric estimation of $H(Z)$ has been widely studied using spacing-based e
 
 <!-- Let $\bm{Z} = (Z_1, Z_2, \dots, Z_n)$ be a random sample from $F(z)$ with order statistics $Z_{(1)} \leq Z_{(2)} \leq \dots \leq Z_{(n)}$. The $m$-spacing density estimator is defined as: -->
 Let $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ be a random sample from the distribution $F(z)$ and denote its order statistics by $Z_{(1)} \leq Z_{(2)} \leq \dots \leq Z_{(n)}$.
-The density estimator based on $m$-spacing, is defined as:
+The density estimator based on $m$-spacing is defined as:
 $$
 f_n(Z_{(i)}) = \frac{c_i m / n}{Z_{(i+m)} - Z_{(i-m)}},
 $$
-where $Z_{(i-m)} = Z_{(1)}$ when $i \leq m$ and $Z_{(i+m)} = Z_{(n)}$ if $i \geq n - m$. The coefficient $c_i$ is given by:
+where $Z_{(i-m)} = Z_{(1)}$ when $i \leq m$, and $Z_{(i+m)} = Z_{(n)}$ if $i \geq n - m$. 
+The coefficient $c_i$ is given by:
 $$
 c_i = 
 \begin{cases}
-\frac{m + i - 1}{m}, & \text{if } 1 \leq i \leq m, \\[6pt]
-2, & \text{if } m+1 \leq i \leq n - m, \\[6pt]
+\frac{m + i - 1}{m}, & \text{if } 1 \leq i \leq m, \\%[6pt]
+2, & \text{if } m+1 \leq i \leq n - m, \\%[6pt]
 \frac{n + m - i}{m}, & \text{if } n - m + 1 \leq i \leq n.
 \end{cases}
 $$
@@ -444,7 +445,7 @@ grid.arrange(bias_plot, mse_plot, nrow = 2)
 
 ## Bootstrap Correction for Entropy Estimator
 
-Following previous studies by\ [@Frery2024] and\ [@Alpala2024], we also refine the non-parametric entropy estimator $\widehat{H}_{\lambda}$ using the bootstrap technique and apply the improved version:
+Following Refs.\ [@Frery2024;@Alpala2024], we also refine the non-parametric entropy estimator $\widehat{H}_{\lambda}$ using the bootstrap technique and apply the improved version:
 $$
 \widetilde{H}_{\lambda} = 2\widehat{\theta}(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{\theta}_b(\bm{Z}^{(b)}),
 $$
