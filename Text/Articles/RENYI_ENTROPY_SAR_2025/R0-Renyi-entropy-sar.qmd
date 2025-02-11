@@ -47,14 +47,13 @@ author:
     #   as the argument followed by the biography text.
     # note: "Template created June 23, 2023; revised `r format(Sys.Date(),format='%B %d, %Y')`."
 abstract: |
- We propose a test statistic for identifying roughness characteristics in synthetic aperture radar (SAR) intensity data using Rényi entropy. 
- Homogeneous regions, where speckle is fully developed, are modeled by the Gamma distribution, while heterogeneous areas, associated with surface roughness, follow the $\mathcal{G}^0$ distribution. 
- The test relies on a non-parametric estimator of Rényi entropy to distinguish between these two types of regions. 
- By applying it to real SAR images, we generate $p$-value maps to assess the homogeneity hypothesis. 
- Experimental results show that the Rényi-based approach improves heterogeneity detection compared to previous methods using Shannon entropy.
-
-
-keywords: [Gamma distribution, heterogeneity, SAR, Rényi entropy, hypothesis tests]
+  Synthetic aperture radar (SAR) systems have already been successfully used to solve remote sensing problems. A disadvantage of SAR images is the presence of speckle, which is fully developed in homogeneous areas and gamma-distributed in these scenes. In heterogeneous areas, the intensity values are $\mathcal{G}^0_I$-distributed. 
+  In this way, the identification of roughness SAR areas (as opposed to homogeneous ones) is an important task. 
+  In this work, we propose a family of hypothesis tests driven by an order parameter to identify roughness features in SAR intensity data using Rényi entropy. 
+  In particular, we use a nonparametric estimator for the Rényi entropy and investigate some of its properties. 
+  As a practical evaluation method, we develop $p$-value maps on which one can observe both (i) the heterogeneous evidence change per texture and (ii) the prediction of homogeneous and heterogeneous categories. 
+  The results are in favor of the Rényi-based heterogeneity detector compared to the one based on Shannon entropy.
+keywords: [Rényi entropy, Gamma distribution, heterogeneity, SAR,  hypothesis tests]
 #funding: 
 funding: 
   statement: "The `quarto-ieee` template is freely available under the MIT license on github: <https://github.com/dfolio/quarto-ieee>."
@@ -154,21 +153,16 @@ source("./Code/functions_sample_bias_mse_1.R")
 
 # Introduction
 
-Synthetic Aperture Radar (SAR) technology has become essential for a wide range of applications, including environmental monitoring and disaster management\ [@Yu2023;  @Mondini2021]. 
-By operating independently of sunlight and under various weather conditions, SAR systems provide continuous, high-resolution imagery\ [@Zeng2020]. 
-Despite these advantages, SAR data exhibit speckle, a noise-like interference effect that arises due to the coherent nature of the imaging process\ [@Argenti2013;@Choi2019].
-In intensity format, speckle is typically non-Gaussian, and its presence complicates subsequent image analysis tasks.
+Synthetic Aperture Radar (SAR) technology has become essential for a wide range of applications\ [@Yu2023;@Akbarizadeh2012;@Mondini2021]. It provides high-resolution data that is independent of sunlight and operates in a variety of weather conditions to facilitate global Earth monitoring\ [@Zeng2020].
+Despite its advantages, the effective use of SAR data depends on understanding its statistical properties because this data is affected by speckle, a noise-like interference effect\ [@Argenti2013; @Choi2019]. In intensity format, speckle is typically non-Gaussian, and its presence complicates subsequent image analysis tasks.  
 
-The $\mathcal{G}^0$ distribution has shown to be an effective model for SAR intensity data,  as it captures different levels of roughness.
-A special case is the Gamma distribution,which arises when speckle is fully developed, indicating homogeneous regions.
-Although these models provide flexible frameworks for describing SAR intensities, selecting the appropriate model can be challenging for two main reasons: the small samples used in practical applications  and the inherent difficulties associated with parameter estimation. 
+The $\mathcal{G}^0$ distribution has been shown to be an effective model for SAR intensity data, as it captures different levels of roughness. A special case is the Gamma distribution, which arises when speckle is fully developed, indicating homogeneous regions. 
+Although these models offer flexibility in describing SAR intensities, selecting the appropriate model can be challenging for two main reasons: the small sample sizes used in practical applications and the inherent difficulties associated with parameter estimation. 
 These challenges complicate model selection and highlight the need to explore alternative statistical approaches.
-
 
 Entropy measures have gained attention as valuable statistical tools for analyzing SAR data, with applications in edge detection\ [@Nascimento2014], segmentation\ [@Nobre2016], classification\ [@Cassetti2022], and noise reduction\ [@Chan2022].
 Traditionally, Shannon entropy\ [@Shannon1948] has been widely used to quantify uncertainty and disorder in data. However, this study explores an alternative information measure: Rényi entropy. 
 As a generalization of Shannon entropy, it offers additional insights for identifying heterogeneity, making it a promising tool for enhancing SAR image analysis.
-
 
 
 In this work, we propose a statistical test based on a non-parametric estimator of Rényi entropy to identify heterogeneous regions in SAR data.
@@ -176,59 +170,56 @@ The test assesses whether the observed Rényi entropy in a given region signific
 Compared to our previous approach  using Shannon entropy\ [@Frery2024], the Rényi-based approach improves the detection of heterogeneity in real SAR images.
 
 
-
-The rest of this article is organized as follows.
-Section \ref{sec:pre} presents an overview of statistical models for SAR intensity data and introduces Rényi entropy.
-In Section \ref{sec:met}, we describe the proposed hypothesis test and the formulation of the test statistic. 
-Section \ref{sec:app} evaluates the test's performance using real SAR data.
-Finally, Section \ref{sec:conclusion} presents the conclusions.
+The remainder of this article is organized as follows.
+Section\ \ref{sec:pre} outlines an overview of statistical models for SAR intensity data and introduces Rényi entropy.
+Section\ \ref{sec:met} describes the proposed hypothesis test and the formulation of the test statistic. 
+Section\ \ref{sec:app} evaluates the performance of the test using real SAR data.
+Finally, the concluding remarks are drawn in Section\ \ref{sec:conclusion}.
 
 # PRELIMINARIES {#sec:pre} 
 
 
 ## Statistical Models
 
-The main models considered for SAR intensity data are the $\Gamma_{\text{SAR}}$ distribution, which is suitable for fully developed speckle, and the $G_I^0$ distribution, which is able to describe roughness\ [@Frery1997]. These distributions are characterized by the following probability density functions (pdfs):
-
+The main models considered for SAR intensity data are the $\Gamma_{\text{SAR}}$ distribution, which is suitable for fully developed speckle, and the $\mathcal{G}^0_I$ distribution, which is able to describe roughness\ [@Frery1997]. These distributions are characterized by the following probability density functions (pdfs):
 \begin{align}
-	f_Z(z;L, \mu\mid \Gamma_{\text{SAR}})&=\frac{L^L}{\Gamma(L)\mu^L}z^{L-1}\exp\left\{-Lz/\mu\right\} \mathbbm 1_{\mathbbm R_+}(z),\label{E:gamma1}
+	f_{\Gamma_{\text{SAR}}}\bigl(z;L, \mu \bigr) 
+    &= \frac{L^L}{\Gamma(L)\,\mu^L} z^{L-1} 
+    \exp \biggl(-\frac{Lz}{\mu}\biggr)
+    \mathbbm 1_{\mathbbm R_+}(z) \label{E:gamma1}
+    \intertext{and}
+    f_{\mathcal{G}^0_I}\bigl(z; \mu, \alpha, L \bigr) 
+    &= \frac{L^L\,\Gamma(L-\alpha)}
+    {\bigl[-\mu(\alpha+1)\bigr]^{\alpha} \Gamma(-\alpha)\,\Gamma(L)}
+    \notag \\
+    &\quad \times
+    \frac{z^{L-1}}
+    {\bigl[-\mu(\alpha+1)+Lz\bigr]^{L-\alpha}}
+    \mathbbm 1_{\mathbbm R_+}(z), \label{E:gi01}
 \end{align}
-\begin{multline}
-\label{E:gi01}
-	f_Z\big(z; \mu, \alpha, L\mid G_I^0\big) = \frac{L^L\Gamma(L-\alpha)}{\big[-\mu(\alpha+1)\big]^{\alpha}\Gamma(-\alpha)\Gamma(L)}\\ \frac{z^{L-1}}{\big[-\mu(\alpha+1)+Lz\big]^{L-\alpha}}\mathbbm 1_{\mathbbm R_+}(z),
-\end{multline} 
-
 where $\mu > 0$ is the mean,
 $\alpha < 0$ measures the roughness, $L \geq 1$ is the number of
 looks, $\Gamma(\cdot)$ is the gamma function, and
 $\mathbbm 1_{A}(z)$ is the indicator function of the set $A$. 
-
-As demonstrated by\ [@Frery1997], the $\Gamma_{\text{SAR}}$  model is a particular case of the $G_I^0$ distribution. Specifically, for a given $\mu$ fixed,
+As demonstrated by\ [@Frery1997], the $\Gamma_{\text{SAR}}$  model is a particular case of the $\mathcal{G}^0_I$ distribution. Specifically, for a given $\mu$ fixed,
 $$
-f_Z\big(z; \mu, \alpha, L\mid G_I^0\big)
+f_{\mathcal{G}^0_I}\big(z; \mu, \alpha, L\big)
 \longrightarrow 
-f_Z(z;L, \mu\mid \Gamma_{\text{SAR}}) 
+f_{\Gamma_{\text{SAR}}}(z;L, \mu) 
 $$
 when $\alpha\to-\infty$.
 
-
-
-
-
 ## Rényi Entropy
 
-Introduced by Alfréd Rényi in 1961\ [@renyi1961measures], the Rényi entropy generalizes several entropy measures, including the Shannon entropy. For a continuous random variable $Z$ with pdf $f(z)$, the Rényi entropy of order $\lambda$ (where $\lambda > 0$ and $\lambda \neq 1$) is defined as:
-
+Introduced by Alfréd Rényi in 1961\ [@renyi1961measures], this measure generalizes several well-known entropies, including the Shannon entropy\ [@Ribeiro2021]. For a continuous random variable $Z$ with pdf $f(z)$, the Rényi entropy of order $\lambda$, with $\lambda > 0$ and $\lambda \neq 1$, is defined as:
 \begin{align}
 \label{E:entropy2}
 H_\lambda(Z) = \frac{1}{1 - \lambda} \ln \int_{-\infty}^{\infty} [f(z)]^\lambda \, dz.
 \end{align}
-
-Using this definition, we obtain the Rényi entropy expressions for the $\Gamma_{\text{SAR}}$ and $G_I^0$ distributions, respectively:
-
+Using \eqref{E:entropy2}, we derive closed-form expressions for the Rényi entropy of the $\Gamma_{\mathrm{SAR}}$ and $\mathcal{G}^0_I$ distributions:
 \begin{multline}
 \label{eq-HGammaSAR}
-H_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L, \mu)\bigr)
+H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr)
 = 
 \ln \mu - \ln L + \frac{1}{1-\lambda}
 \Bigl[
@@ -237,7 +228,7 @@ H_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L, \mu)\bigr)
 \end{multline}
 and
 \begin{multline}\label{eq-HGI0}
-H_\lambda\bigl(G_I^0(\mu, \alpha, L)\bigr)=\ln\mu-\ln L +\ln(-1 - \alpha)\\
+H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr)=\ln\mu-\ln L +\ln(-1 - \alpha)\\
 + \frac{1}{\,1 - \lambda\,}
 \Bigl[
    \lambda\bigl(
@@ -250,12 +241,9 @@ H_\lambda\bigl(G_I^0(\mu, \alpha, L)\bigr)=\ln\mu-\ln L +\ln(-1 - \alpha)\\
    -\ln\Gamma\bigl(\lambda(L - \alpha)\bigr)
 \Bigr].
 \end{multline}
+@fig-plot presents the Rényi entropy of $\mathcal{G}^0_I$ as a function of $\mu$ for different $\alpha$ values. As $\alpha \to -\infty$, it approaches the Rényi entropy of $\Gamma_{\text{SAR}}$, which is aligned with the fact that $\Gamma_{\text{SAR}}$ is a limiting case of the $\mathcal{G}^0_I$ model.
 
-
-@fig-plot presents the Rényi entropy of $G_I^0$ as a function of $\mu$ for different $\alpha$ values. As $\alpha \to -\infty$, it approaches the Rényi entropy of $\Gamma_{\text{SAR}}$, which is consistent with the fact that $\Gamma_{\text{SAR}}$ is a limiting case of the $G_I^0$ model.
-
-
-```{r fig-plot, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="45%",  fig.pos="hbt", fig.cap="$H_{\\lambda}(G_I^0)$ converges to the $H_{\\lambda}(\\Gamma_{\\text{SAR}})$ when $\\alpha\\to-\\infty$, with $L=8$ and $\\lambda=0.8$.", fig.width=5, fig.height=4.0}
+```{r fig-plot, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="45%",  fig.pos="hbt", fig.cap="$H_{\\lambda}(\\mathcal{G}^0_I)$ converges to the $H_{\\lambda}(\\Gamma_{\\text{SAR}})$ when $\\alpha\\to-\\infty$, with $L=8$ and $\\lambda=0.8$.", fig.width=5, fig.height=4.0}
 
 
 
@@ -364,23 +352,18 @@ ggplot() +
 
 ```
 
-
 For $\lambda \to 1$, this expression converges to the Shannon entropy. As we will see later, this property can lead to improved performance for heterogeneity detection compared to Shannon entropy.
-
-
-
 
 ## Estimation of Rényi Entropy
 
-Several authors have studied the nonparametric estimation of $H(Z)$, utilizing estimators that rely on spacings, which are the differences between order statistics\ [@vasicek1976test; @Ebrahimi1994; @Wieczorkowski1999;@AlOmari2019].
-In 2024, Al-Labadi et al.\ [@AlLabadi2024] introduced a nonparametric estimator for Rényi entropy using this approach.
+Nonparametric estimation of $H(Z)$ has been widely studied using spacing-based estimators, which rely on differences between order statistics [@vasicek1976test; @Ebrahimi1994;@Wieczorkowski1999; @AlOmari2019]. Recently, Al-Labadi et al.\ [@AlLabadi2024] proposed a nonparametric estimator for Rényi entropy following this approach.  
 
-Let $\{Z_1, Z_2, \dots, Z_n\}$ be a sample from a distribution $F$, and denote its order statistics by $Z_{(1)} \leq Z_{(2)} \leq \dots \leq Z_{(n)}$. 
+<!-- Let $\bm{Z} = (Z_1, Z_2, \dots, Z_n)$ be a random sample from $F(z)$ with order statistics $Z_{(1)} \leq Z_{(2)} \leq \dots \leq Z_{(n)}$. The $m$-spacing density estimator is defined as: -->
+Let $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ be a random sample from the distribution $F(z)$ and denote its order statistics by $Z_{(1)} \leq Z_{(2)} \leq \dots \leq Z_{(n)}$.
 The density estimator based on $m$-spacing, is defined as:
 $$
 f_n(Z_{(i)}) = \frac{c_i m / n}{Z_{(i+m)} - Z_{(i-m)}},
 $$
-
 where $Z_{(i-m)} = Z_{(1)}$ when $i \leq m$ and $Z_{(i+m)} = Z_{(n)}$ if $i \geq n - m$. The coefficient $c_i$ is given by:
 $$
 c_i = 
@@ -390,7 +373,8 @@ c_i =
 \frac{n + m - i}{m}, & \text{if } n - m + 1 \leq i \leq n.
 \end{cases}
 $$
-Following Vasicek [@vasicek1976test] and Ebrahimi et al. [@Ebrahimi1994] for Shannon entropy estimation, and using the $m$-spacing density estimator, Rényi entropy can be estimated as:
+
+Following Vasicek [@vasicek1976test] and Ebrahimi et al. [@Ebrahimi1994] for Shannon entropy estimation, and using the $m$-spacing density estimator, the Rényi entropy can be estimated as:
 \begin{align}
 \label{eq:est_R}
 \widehat{H}_\lambda(\bm{Z}) = \frac{1}{1 - \lambda} \ln \left[\frac{1}{n} \sum_{i=1}^{n} \left( \frac{c_i m / n}{Z_{(i+m)} - Z_{(i-m)}} \right)^{\lambda - 1} \right].
@@ -402,16 +386,15 @@ We choose to use the heuristic formula for spacing, $m=\left[\sqrt{n}+0.5\right]
 
 # PROPOSED METHODOLOGY {#sec:met}
 
-
 ## Optimal $\lambda$ for small sample size
 
 We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator, specifically for a sample size of $n=49$.
-To identify this optimal value, we analyze both the Mean Squared Error (MSE) and Bias of the estimator across different values of $\lambda$. Lower MSE and Bias indicate better performance of the estimator in approximating the true entropy.  
+To identify this optimal value, we analyze both the mean squared error (MSE) and bias of the estimator across different values of $\lambda$. Lower MSE and bias indicate better performance of the estimator in approximating the true entropy.  
 
-Based on the results, we find that the optimal value is $\lambda = 0.9$, as it minimizes the MSE while maintaining a low Bias. This choice is consistent with other values of $L > 1$. However, for $L = 1$, the optimal $\lambda$ tends to be higher (e.g., $\lambda = 3$) to achieve good results. @fig-plotf illustrates the case for $L = 5$.
+Based on the results, we find that the optimal value is $\lambda = 0.9$, as it minimizes the MSE while maintaining a low bias. This choice is consistent with other values of $L > 1$. However, for $L = 1$, the optimal $\lambda$ tends to be higher (e.g., $\lambda = 3$) to achieve good results. @fig-plotf illustrates the case for $L = 5$.
 
 
-```{r fig-plotf, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="45%",  fig.pos="H", fig.cap="Bias and MSE as a function of $\\lambda$, with $n=49$, $L=5$.", fig.width=8, fig.height=6}
+```{r fig-plotf, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="45%",  fig.pos="hbt", fig.cap="Bias and MSE as a function of $\\lambda$, with $n=49$, $L=5$.", fig.width=8, fig.height=6}
 
 
 
@@ -461,10 +444,12 @@ grid.arrange(bias_plot, mse_plot, nrow = 2)
 
 ## Bootstrap Correction for Entropy Estimator
 
-Following previous studies by\ [@Frery2024] and\ [@Alpala2024], we also refine the non-parametric entropy estimator $\widehat{H}_{\lambda}$ using the bootstrap technique and apply an improved version:
+Following previous studies by\ [@Frery2024] and\ [@Alpala2024], we also refine the non-parametric entropy estimator $\widehat{H}_{\lambda}$ using the bootstrap technique and apply the improved version:
 $$
-\widetilde{H}_{\lambda} = 2\widehat{\theta}(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{\theta}_b(\bm{Z}^{(b)}).
+\widetilde{H}_{\lambda} = 2\widehat{\theta}(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{\theta}_b(\bm{Z}^{(b)}),
 $$
+where $B$ is the number of new samples generated through resampling with replacement.
+
 A Monte Carlo study with $1000$ samples from $\Gamma_{\text{SAR}}$ ($\mu = 1$, $L=5$, $\lambda = 0.9$) confirms that this approach, using $B = 200$ replications, reduces bias and MSE for small sample sizes, as shown in @fig-Plot_bias_msef3.
 
 ```{r Simulated_data_bias_B1, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
@@ -501,7 +486,7 @@ if (file.exists(file_name)) {
 }
 ```
 
-```{r fig-Plot_bias_msef3, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="45%", fig.pos="H",  fig.cap="Bias and MSE of the Rényi entropy estimator for the $\\Gamma_{\\text{SAR}}$, with $\\lambda=0.9$, $\\mu=1$ and $L=5$.", fig.width=8, fig.height=7}
+```{r fig-Plot_bias_msef3, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="45%", fig.pos="hbt",  fig.cap="Bias and MSE of the Rényi entropy estimator for the $\\Gamma_{\\text{SAR}}$, with $\\lambda=0.9$, $\\mu=1$ and $L=5$.", fig.width=8, fig.height=7}
 
 
 
@@ -531,7 +516,7 @@ Our approach relies on constructing a test statistic that compares a non-paramet
 We aim to test the following hypotheses: 
 $$
 \begin{cases}\mathcal{H}_0: \widehat{H}^*= H_{\lambda}(\Gamma_{\text{SAR}})\\ 
-  \mathcal{H}_1:\widehat{H}^*= H_{\lambda}(G_I^0).\end{cases}
+  \mathcal{H}_1:\widehat{H}^*= H_{\lambda}(\mathcal{G}^0_I).\end{cases}
 $$
 
 If the difference between the estimated and theoretical entropy values is statistically significant, we reject the null hypothesis and conclude that the data do not follow the Gamma model, indicating the presence of heterogeneity.
@@ -539,8 +524,8 @@ If the difference between the estimated and theoretical entropy values is statis
 
 ## The Proposed Test
 
-Assume we have an estimator $\widehat{H_{\lambda}}$ for the Rényi entropy of an arbitrary model. In the case of the $\Gamma_{\text{SAR}}$ model, this estimator is expected to be close to the theoretical expression given in Equation \eqref{eq-HGammaSAR}. 
-Considering that $L\geq1$ is known, we define the following test statistic:
+Assume we have an estimator $\widehat{H}_{\lambda}$ for the Rényi entropy of an arbitrary model. In the case of the $\Gamma_{\text{SAR}}$ model, this estimator is expected to be close to the theoretical expression given in Equation \eqref{eq-HGammaSAR}. 
+Since $L\geq1$ is known, we define the test statistic as follows:
 \begin{multline}
 \label{eq-test}
 S(\bm{Z}; L) = \widehat{H} - \bigl\{\ln \widehat{\mu} - \ln L + \frac{1}{1-\lambda}
@@ -549,13 +534,10 @@ S(\bm{Z}; L) = \widehat{H} - \bigl\{\ln \widehat{\mu} - \ln L + \frac{1}{1-\lamb
 - \bigl(\lambda(L-1)+1\bigr)\,\ln\lambda
 \bigr]\bigr\}.
 \end{multline}
-
 When the null hypothesis holds, this test statistic is expected to be close to zero.
 
-
-
 For illustrative purposes, @fig-density_entropyR provide the empirical density of $S(\bm{Z}; L)$  for the $\Gamma_{\text{SAR}}$ model, with $\lambda=0.9$ and $L \in \{5,18\}$.
-For subsequent simulations we use the $\widetilde{H_{\lambda}}$ estimator. 
+For subsequent simulations we use the $\widetilde{H}_{\lambda}$ estimator. 
 
 
 ```{r Simulated_densityR, echo=FALSE, message=FALSE}
@@ -706,90 +688,40 @@ Under $\mathcal{H}_0$, the distribution of the test statistic $S$ is asymptotica
 Therefore, the $p$-value is computed as $2\Phi(-\mid \varepsilon \mid)$,
 where $\Phi$ is the standard Gaussian cumulative distribution function, and $\varepsilon$ is given by:  
 $$
-\varepsilon = \frac{\widetilde{H_i} - \widehat{H_i}(\Gamma_{\text{SAR}})}{\widehat{\sigma}_{i}}.
+\varepsilon = \frac{\widetilde{H}_i - \widehat{H}_i(\Gamma_{\text{SAR}})}{\widehat{\sigma}_{i}}.
 $$
-An important aspect in hypothesis testing is ensuring that the test maintains the expected Type I error rate (size) while achieving high power (sensitivity to departures from $\mathcal{H}_0$).
-To assess these properties, we performed $1000$ simulations at significance levels of $1\%$, $5\%$, and $10\%$, evaluating the test under the null hypothesis ($\Gamma_{\text{SAR}}$ distribution) with varying sample sizes, values of $L$, and $\mu=1$. 
-The observed Type I error rates aligned with the nominal values, confirming the test’s validity.
+An important aspect of hypothesis testing is ensuring that the test maintains the expected type I error rate (size) while achieving high power (sensitivity to departures from $\mathcal{H}_0$).
+To assess these properties, we performed a Monte Carlo simulation with $1000$ replications at significance levels  $1\%$, $5\%$, and $10\%$, evaluating the test under the null hypothesis ($\Gamma_{\text{SAR}}$ distribution) and varying sample sizes, values of $L$, and $\mu=1$. 
+The observed type I error rates aligned with the nominal values, confirming the test validity.
 
-Additionally, we examined the power under the alternative hypothesis ($G_I^0$ distribution) with $\mu=1$, $\lambda=0.9$ and $\alpha=-2$.
+Additionally, we examined the power under the alternative hypothesis ($\mathcal{G}^0_I$ distribution) with $\mu=1$, $\lambda=0.9$ and $\alpha=-2$.
 As expected, power improves as the sample size and number of looks increase the effectiveness demonstrating of the test. The results are shown in Table \ref{tab:table_size_power}.
 
-
 ```{r Simulated_error_type_I, echo=FALSE, message=FALSE}
-set.seed(1234567890, kind = "Mersenne-Twister")
-# 
-calculate_p_value <- function(test_statistic, mu_W, sigma_W, alpha_nominal) {
-  epsilon <- test_statistic / sigma_W
-  p_value <- 2 * (1 - pnorm(abs(epsilon)))
+if (!file.exists("./Data/type_I_results.Rdata")) {
   
-  return(p_value < alpha_nominal)  
-}
-R <- 1000
-mu <- 1
-B <- 100
-lambda <- 0.9
-L_values <- c(  5, 8, 18)
-sample_sizes <- c( 25, 49, 81, 121)
-alpha_nominals <- c(0.01, 0.05, 0.1)
-results <- data.frame()
-for (L in L_values) {
-  for (alpha_nominal in alpha_nominals) {
-    TestStatistics <- NULL
-    mean_entropy <- numeric(length(sample_sizes))
-    sd_entropy <- numeric(length(sample_sizes))
-    
-    for (s in sample_sizes) {
-      TestStat <- numeric(R)
-      
-      for (r in 1:R) {
-        z <- gamma_sar_sample(L, mu, s)
-        TestStat[r] <-bootstrap_renyi_entropy_estimator_v1(z, B, lambda) -((lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1)+(lambda * (L - 1) + 1) * log(lambda)) / (lambda - 1) +log(mean(z))-log(L))
-        
-        #TestStat[r] <-bootstrap_al_omari_1_estimator(z,B) - (log(mean(z)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
-        #TestStat[r] <- bootstrap_correa_estimator(z, B) - (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
-      }
-      mean_entropy[sample_sizes == s] <- mean(TestStat)
-      sd_entropy[sample_sizes == s] <- sd(TestStat)
-      
-      TestStatistics <- rbind(TestStatistics, data.frame("L" = rep(L, R), "Sample_Size" = rep(s, R), "Test_Statistics" = TestStat))
-    }
-    
-    mu_W <- mean_entropy
-    sigma_W <- sqrt(sd_entropy^2)
-    
-    p_values <- apply(TestStatistics, 1, function(row) {
-      calculate_p_value(row["Test_Statistics"], mu_W[sample_sizes == row["Sample_Size"]], sigma_W[sample_sizes == row["Sample_Size"]], alpha_nominal)
-    })
-    
-    result <- data.frame("L" = TestStatistics$L, "Sample_Size" = TestStatistics$Sample_Size, "Alpha_Nominal" = alpha_nominal, "P_Value" = p_values)
-    results <- rbind(results, result)
+  message("AFile type_I_results.Rdata not found. Generating results...")
+
+  set.seed(1234567890, kind = "Mersenne-Twister")
+
+  calculate_p_value <- function(test_statistic, mu_W, sigma_W, alpha_nominal) {
+    epsilon <- test_statistic / sigma_W
+    p_value <- 2 * (1 - pnorm(abs(epsilon)))
+    return(p_value < alpha_nominal)  
   }
-}
-save(results, file = "./Data/type_I_results.Rdata")
 
-```
-
-
-```{r Simulated_power, echo=FALSE, message=FALSE}
-set.seed(1234567890, kind = "Mersenne-Twister")
-calculate_p_value <- function(test_statistic, mu_W, sigma_W) {
-  epsilon <- test_statistic  / sigma_W
-  p_value <- 2 * (1 - pnorm(abs(epsilon)))
-  
-  return(p_value)
-}
-calculate_type_II_error_rate <- function(p_values, alpha_nominal) {
-  type_II_error_rate <- sum(p_values >= alpha_nominal) / length(p_values)
-  return(type_II_error_rate)
-}
-
-calculate_power <- function(R, mu, L_values, B, lambda, sample_sizes, alpha_nominals) {
+  R <- 1000
+  mu <- 1
+  B <- 100
+  lambda <- 0.9
+  L_values <- c(5, 8, 18)
+  sample_sizes <- c(25, 49, 81, 121)
+  alpha_nominals <- c(0.01, 0.05, 0.1)
   results <- data.frame()
-  
+
   for (L in L_values) {
     for (alpha_nominal in alpha_nominals) {
-      TestStatistics <- list()
+      TestStatistics <- NULL
       mean_entropy <- numeric(length(sample_sizes))
       sd_entropy <- numeric(length(sample_sizes))
       
@@ -797,68 +729,180 @@ calculate_power <- function(R, mu, L_values, B, lambda, sample_sizes, alpha_nomi
         TestStat <- numeric(R)
         
         for (r in 1:R) {
-          z <- gi0_sample(mu, -2, L, s)
-          TestStat[r] <-bootstrap_renyi_entropy_estimator_v1(z, B, lambda) -((lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1)+(lambda * (L - 1) + 1) * log(lambda)) / (lambda - 1) +log(mean(z))-log(L))
-          
+          z <- gamma_sar_sample(L, mu, s)
+          TestStat[r] <- bootstrap_renyi_entropy_estimator_v1(z, B, lambda) - (
+            (lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1) + 
+             (lambda * (L - 1) + 1) * log(lambda)) / (lambda - 1) +
+            log(mean(z)) - log(L)
+          )
         }
         
         mean_entropy[sample_sizes == s] <- mean(TestStat)
         sd_entropy[sample_sizes == s] <- sd(TestStat)
         
-        TestStatistics[[as.character(s)]] <- TestStat
+        TestStatistics <- rbind(
+          TestStatistics,
+          data.frame(
+            "L" = rep(L, R),
+            "Sample_Size" = rep(s, R),
+            "Test_Statistics" = TestStat
+          )
+        )
       }
       
-      mu_W <-  mean_entropy  
-      sigma_W <- sqrt(sd_entropy^2)  
+      mu_W <- mean_entropy
+      sigma_W <- sqrt(sd_entropy^2)
       
-      p_values <- lapply(TestStatistics, function(TestStat) {
-        apply(data.frame("Test_Statistics" = TestStat), 1, function(row) {
-          calculate_p_value(row["Test_Statistics"], mu_W, sigma_W[as.numeric(names(TestStatistics)) == as.numeric(s)])
-        })
+      p_values <- apply(TestStatistics, 1, function(row) {
+        calculate_p_value(
+          row["Test_Statistics"],
+          mu_W[sample_sizes == row["Sample_Size"]],
+          sigma_W[sample_sizes == row["Sample_Size"]],
+          alpha_nominal
+        )
       })
       
-      type_II_error_rates <- sapply(p_values, function(p_values_for_size) {
-        calculate_type_II_error_rate(p_values_for_size, alpha_nominal)
-      })
-      
-      power <- 1 - type_II_error_rates
-      
-      result_row <- data.frame(
-        L = L,
-        alpha_nominal = alpha_nominal,
-        Sample_Size = sample_sizes,
-        power = power
+      result <- data.frame(
+        "L" = TestStatistics$L,
+        "Sample_Size" = TestStatistics$Sample_Size,
+        "Alpha_Nominal" = alpha_nominal,
+        "P_Value" = p_values
       )
-      
-      results <- rbind(results, result_row)
+      results <- rbind(results, result)
     }
   }
   
-  return(results)
+  
+  save(results, file = "./Data/type_I_results.Rdata")
+  
+} else {
+  
+  
+  message("File type_I_results.Rdata found. Generating results...")
+  load("./Data/type_I_results.Rdata")
+  
 }
-R <- 1000
-mu <- 1
-L_values <- c( 5,  8, 18)
-B <- 100
-lambda<- 0.9
-sample_sizes <- c(25, 49, 81, 121)
-alpha_nominals <- c(0.01, 0.05, 0.1)
-results_power <- calculate_power(R, mu, L_values, B,lambda, sample_sizes, alpha_nominals)
-save(results_power, file = "./Data/results_power.Rdata")
-
 ```
 
 
+```{r Simulated_power, echo=FALSE, message=FALSE}
+
+if (!file.exists("./Data/results_power.Rdata")) {
+  
+  message("File type_I_results.Rdata not found. Generating results...")
+
+  set.seed(1234567890, kind = "Mersenne-Twister")
+
+  calculate_p_value <- function(test_statistic, mu_W, sigma_W) {
+    epsilon <- test_statistic  / sigma_W
+    p_value <- 2 * (1 - pnorm(abs(epsilon)))
+    return(p_value)
+  }
+
+  calculate_type_II_error_rate <- function(p_values, alpha_nominal) {
+    type_II_error_rate <- sum(p_values >= alpha_nominal) / length(p_values)
+    return(type_II_error_rate)
+  }
+
+  calculate_power <- function(R, mu, L_values, B, lambda, sample_sizes, alpha_nominals) {
+    results <- data.frame()
+    
+    for (L in L_values) {
+      for (alpha_nominal in alpha_nominals) {
+        TestStatistics <- list()
+        mean_entropy <- numeric(length(sample_sizes))
+        sd_entropy <- numeric(length(sample_sizes))
+        
+        for (s in sample_sizes) {
+          TestStat <- numeric(R)
+          
+          for (r in 1:R) {
+            z <- gi0_sample(mu, -2, L, s)
+            TestStat[r] <- bootstrap_renyi_entropy_estimator_v1(z, B, lambda) - (
+              (lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1) + 
+               (lambda * (L - 1) + 1) * log(lambda)) / (lambda - 1) + 
+              log(mean(z)) - log(L)
+            )
+          }
+          
+          mean_entropy[sample_sizes == s] <- mean(TestStat)
+          sd_entropy[sample_sizes == s] <- sd(TestStat)
+          TestStatistics[[as.character(s)]] <- TestStat
+        }
+        
+        mu_W <- mean_entropy  
+        sigma_W <- sqrt(sd_entropy^2)
+        
+        p_values <- lapply(TestStatistics, function(TestStat) {
+          apply(
+            data.frame("Test_Statistics" = TestStat),
+            1,
+            function(row) {
+              calculate_p_value(row["Test_Statistics"], mu_W, sigma_W[as.numeric(names(TestStatistics)) == as.numeric(s)])
+            }
+          )
+        })
+        
+        type_II_error_rates <- sapply(p_values, function(p_values_for_size) {
+          calculate_type_II_error_rate(p_values_for_size, alpha_nominal)
+        })
+        
+        power <- 1 - type_II_error_rates
+        
+        result_row <- data.frame(
+          L = L,
+          alpha_nominal = alpha_nominal,
+          Sample_Size = sample_sizes,
+          power = power
+        )
+        
+        results <- rbind(results, result_row)
+      }
+    }
+    
+    return(results)
+  }
+
+  
+  R <- 1000
+  mu <- 1
+  L_values <- c(5, 8, 18)
+  B <- 100
+  lambda <- 0.9
+  sample_sizes <- c(25, 49, 81, 121)
+  alpha_nominals <- c(0.01, 0.05, 0.1)
+
+  
+  results_power <- calculate_power(R, mu, L_values, B, lambda, sample_sizes, alpha_nominals)
+
+  
+  save(results_power, file = "./Data/results_power.Rdata")
+  
+} else {
+  
+  
+  message("File type_I_results.Rdata found. Generating results...")
+  load("./Data/results_power.Rdata")
+  
+}
+```
+
+
+
+
+
+
 ```{r Table_size_and_power, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
-
-
 suppressMessages({
   suppressWarnings({
 
+   
     load("./Data/type_I_results.Rdata")
-    type_I_error_rates <- tapply(results$P_Value, INDEX = list(results$L, results$Sample_Size, results$Alpha_Nominal), FUN = function(p_values) {
-      sum(p_values) / length(p_values)  
-    })
+    type_I_error_rates <- tapply(
+      results$P_Value, 
+      INDEX = list(results$L, results$Sample_Size, results$Alpha_Nominal),
+      FUN = function(p_values) sum(p_values) / length(p_values)
+    )
 
     type_I_error_results <- as.data.frame(as.table(type_I_error_rates))
     colnames(type_I_error_results) <- c("L", "Sample_Size", "Alpha_Nominal", "Type_I_Error_Rate")
@@ -883,28 +927,28 @@ suppressMessages({
                                       "$\\bm{1\\%}$", "$\\bm{5\\%}$", "$\\bm{10\\%}$")
     }
 
-combined_results[] <- lapply(combined_results, function(x) {
-  if (is.numeric(x)) {
-    if (all(x %% 1 == 0)) {
-      formatted_numbers <- sprintf("$%d$", x)  # Enteros en formato LaTeX
-    } else {
-      formatted_numbers <- ifelse(x < 0, 
-                                  sprintf("$%.3f$", x), 
-                                  sprintf("$\\phantom{-}%.3f$", x))  # Decimales en LaTeX
-    }
-    return(formatted_numbers)
-  } else {
-    return(x)
-  }
-})
-
+    combined_results[] <- lapply(combined_results, function(x) {
+      if (is.numeric(x)) {
+        if (all(x %% 1 == 0)) {
+          sprintf("$%d$", x)  # Para enteros en formato LaTeX
+        } else {
+          ifelse(
+            x < 0, 
+            sprintf("$%.3f$", x),
+            sprintf("$\\phantom{-}%.3f$", x)
+          )
+        }
+      } else {
+        x
+      }
+    })
 
   })
 })
 
 table_combined_result <- knitr::kable(
   combined_results,
-  caption = "Size and Power of the $S_{\\widetilde{H}_{\\text{R}}}(\\bm{Z})$ test statistic.",
+  caption = "Size and Power of the $S_{\\widetilde{H}_{\\lambda}}(\\bm{Z})$ test statistic.",
   format = "latex",
   booktabs = TRUE,
   align = "ccccccccc",
@@ -912,26 +956,24 @@ table_combined_result <- knitr::kable(
   digits = 3,
   label = "table_size_power",
   centering = FALSE,
-  table.envir = "table", position="htb", linesep = "") %>%
+  table.envir = "table", 
+  position="htb", 
+  linesep = ""
+) %>%
   add_header_above(c(" ", " ", "Size" = 3,  "Power" = 3)) %>%
   collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") %>%
   row_spec(0, align = "c") %>%
-  kable_styling(latex_options = "scale_down",font_size = 7) %>%
+  kable_styling(latex_options = "scale_down", font_size = 7) %>%
   kable_styling(full_width = T)
 
 print(table_combined_result)
-
-
-
 ```
-
-
 
 # Applications to SAR Data {#sec:app}
 
 
 In this section, we evaluate the proposed test statistic on real SAR data to assess its effectiveness in detecting heterogeneity.
-The test was applied to SAR intensity images from diverse environments, including urban, agricultural, and water regions. Specifically, we analyzed three images: the first one from London, United Kingdom; the second from the surroundings of Munich, Germany; and the third from the Dublin Port, Ireland, as shown in Figs.\ \ref{fig:london}(a), \ref{fig:munich}(a), and \ref{fig:dublin}(a).
+The test was applied to SAR intensity images from several regions: urban, agricultural, and water. In particular, we analyzed three images: the first from London, United Kingdom; the second from the surroundings of Munich, Germany; and the third from  Dublin Port, Ireland, as shown in Figs.\ \ref{fig:london}(a), \ref{fig:munich}(a), and \ref{fig:dublin}(a).
 Table\ \ref{tab:table_param} provides detailed acquisition parameters for these images.
 \renewcommand{\arraystretch}{3}   
 ```{r parameters_sar, echo=FALSE, message=FALSE, warning=FALSE}
@@ -947,7 +989,7 @@ SAR_data <- data.frame(
   Date = c("12-11-2021", "16-04-2015", "03-09-2017")
 )
 
-colnames(SAR_data) <- c("\\textbf{Site}", "\\textbf{Mission}", "\\textbf{Band}", "\\textbf{Polarization}", "\\textbf{Size}",  "$\\bm{L}$", "\\textbf{Resolution [m]} ", "\\textbf{Acquisition Date}")
+colnames(SAR_data) <- c("\\textbf{Site}", "\\textbf{Mission}", "\\textbf{Band}", "\\textbf{Polarization}", "\\textbf{Size (pixels)}",  "$\\bm{L}$", "\\textbf{Resolution [m]} ", "\\textbf{Acquisition Date}")
 
 SAR_data[] <- lapply(SAR_data, function(x) {
   if (is.numeric(x)) {
@@ -972,15 +1014,15 @@ kable(SAR_data, caption = "Parameters of selected SAR images.",
       centering = FALSE,
       table.envir = "table", position = "H") %>%
   row_spec(0, align = "c") %>%
-  kable_styling(latex_options = "scale_down", font_size = 20) %>% 
+  kable_styling(latex_options = "scale_down", font_size = 21) %>% 
   kable_styling(full_width = TRUE) %>%
-  column_spec(1, width = "3.5cm") %>%
-  column_spec(2, width = "3.5cm") %>%
-  column_spec(3, width = "1cm") %>%
-  column_spec(4, width = "1.5cm") %>%
+  column_spec(1, width = "3.0cm") %>%
+  column_spec(2, width = "3.7cm") %>%
+  column_spec(3, width = "1.5cm") %>%
+  column_spec(4, width = "2.5cm") %>%
   column_spec(5, width = "4cm") %>%
   column_spec(6, width = "1.5cm") %>%
-  column_spec(7, width = "2cm") %>%
+  column_spec(7, width = "3.0cm") %>%
   column_spec(8, width = "3.5cm")
 
 ```
@@ -1112,19 +1154,19 @@ Our analysis shows that the optimal $\lambda$ value depends on the number of loo
 
 
 
-# Conclusions {#sec:conclusion}
+# Conclusion {#sec:conclusion}
 
-This study introduced a new statistical approach based on Rényi entropy to detect heterogeneity in SAR images, distinguishing between fully developed speckle and heterogeneous clutter. 
-The proposed test statistic is computed non-parametrically and was assessed through a Monte Carlo study. 
-The results indicate that the method effectively controls the probability of a Type I error while maintaining a high detection power, which improves as the sample size increases.
+This study presented a new statistical approach based on Rényi entropy for detecting heterogeneity in SAR images, distinguishing between fully developed speckle and heterogeneous clutter. 
+The statistics of the proposed test was computed nonparametrically and its performance was evaluated by a Monte Carlo study. 
+The results showed that the method effectively controls the probability of type I error while maintaining a high detection performance that improves as the sample size increases.
 
-The performance of the Rényi-based test was evaluated by comparing its results with those of a test based on Shannon entropy 
- $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$. 
-This comparison was conducted through $p$-values and binary maps.
-The findings reveal that while both tests successfully detect heterogeneous regions, the Rényi-based test demonstrates superior results due to its flexibility in adjusting the parameter $\lambda$, allowing for a more refined differentiation of textural variations.
+The performance of the Rényi-based test was evaluated by comparing its results with those of a test based on Shannon entropy.
+This comparison was performed using $p$-values and binary maps. 
+The results showed that while both tests successfully detected heterogeneous regions, the Rényi-based test performed better due to its flexibility in adjusting the $\lambda$ parameter, which allowed for finer differentiation of texture variations.
 
-These results suggest that Rényi entropy provides a robust alternative to Shannon entropy for heterogeneity detection in SAR images, particularly due to its adaptability.  
-Future research will focus on a more quantitative assessment of both approaches using statistical measures such as Mean Squared Error and other validation metrics to evaluate their accuracy in detecting heterogeneity.
+These results suggested that the Rényi entropy was a more accurate alternative to the Shannon entropy for detecting heterogeneity in SAR images, especially due to its adaptability.
+ 
+Future research will focus on a more quantitative evaluation of both approaches, using statistical measures such as mean square error and other validation metrics to assess their accuracy in detecting heterogeneity.
 
 
 
@@ -1132,10 +1174,15 @@ Future research will focus on a more quantitative assessment of both approaches 
 
 This study was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES) – Finance Code 001  and the Fundação de Amparo à Ciência e Tecnologia de Pernambuco (FACEPE), Brazil.
 
-# Computational Information {-}
-This article was written using Quarto v.6.4, RStudio v2024.12.0.467, and R v.4.4.2, and is fully reproducible.
+# Computational Information {-}  
+This article was written using Quarto v6.4, RStudio v2024.12.0.467, and R v4.4.2 and is fully reproducible. 
 
-The Code and data used in this study are available at: <https://github.com/rjaneth/renyi-entropy-sar>
+Simulations were run on an AMD Ryzen 9 5900X 12-Core Processor (3.70 GHz) with 32 GB RAM.  
+
+The Code and data used in this study are available at: <https://github.com/rjaneth/renyi-entropy-sar>  
+
+
+
 
 
 
