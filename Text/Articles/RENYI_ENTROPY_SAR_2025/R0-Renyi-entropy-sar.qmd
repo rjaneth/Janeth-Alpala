@@ -226,7 +226,7 @@ H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr)
 \ln \mu - \ln L + \frac{1}{1-\lambda}
 \Bigl[
   -\lambda\,\ln\Gamma(L) \\  + \ln\Gamma\bigl(\lambda(L-1)+1\bigr)  - \bigl(\lambda(L-1)+1\bigr)\,\ln\lambda
-\Bigr]
+\Bigr],
 \end{multline}
 and
 \begin{multline}\label{eq-HGI0}
@@ -243,9 +243,10 @@ H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr)=\ln\mu-\ln L +\ln(-1 - \alp
    -\ln\Gamma\bigl(\lambda(L - \alpha)\bigr)
 \Bigr].
 \end{multline}
-The derivation of this result is given in the Appendix.
+These results are proven in the Appendix.
 
-@fig-plot presents the Rényi entropy of $\mathcal{G}^0_I$ as a function of $\mu$ for different $\alpha$ values. As $\alpha \to -\infty$, it approaches the Rényi entropy of $\Gamma_{\text{SAR}}$, which is aligned with the fact that $\Gamma_{\text{SAR}}$ is a limiting case of the $\mathcal{G}^0_I$ model.
+@fig-plot presents the Rényi entropy of the $\mathcal{G}^0_I$ model as a function of $\mu$ for different values of $\alpha$. 
+As $\alpha \to -\infty$, it approaches the Rényi entropy of the $\Gamma_{\text{SAR}}$ law, in line with the fact that the latter is a limiting case of the former.
 
 ```{r fig-plot, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="45%",  fig.pos="hbt", fig.cap="$H_{\\lambda}(\\mathcal{G}^0_I)$ converges to the $H_{\\lambda}(\\Gamma_{\\text{SAR}})$ when $\\alpha\\to-\\infty$, with $L=8$ and $\\lambda=0.8$.", fig.width=4.5, fig.height=3.5}
 
@@ -359,7 +360,8 @@ ggplot() +
 
 ## Nonparametric Estimation of Rényi Entropy
 
-Nonparametric estimation of $H(Z)$ has been widely studied using spacing-based estimators, which rely on differences between order statistics [@vasicek1976test; @Ebrahimi1994; @Wieczorkowski1999; @AlOmari2019]. Recently, Al-Labadi et al.\ [@AlLabadi2024] proposed a nonparametric estimator for Rényi entropy following this approach.  
+Nonparametric estimation of $H(Z)$ has been widely studied using spacing-based estimators, which rely on differences between order statistics [@vasicek1976test; @Ebrahimi1994; @Wieczorkowski1999; @AlOmari2019]. 
+Recently, Al-Labadi et al.\ [@AlLabadi2024] proposed a nonparametric estimator for Rényi entropy following this approach.  
 
 Let $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ be an independent and identically distributed random sample of size $n$ from a distribution $F$, and let $Z_{(1)} \leq Z_{(2)} \leq \dots \leq Z_{(n)}$ denote its order statistics.
 The $m$-spacing density estimator is defined as:
@@ -385,7 +387,7 @@ Following Vasicek [@vasicek1976test] and Ebrahimi et al. [@Ebrahimi1994] for Sha
 This estimator is asymptotically consistent, i.e., it converges in
 probability to the true value when $m,n\rightarrow\infty$ and
 $m/n\rightarrow0$. 
-We choose to use the heuristic formula for spacing, $m=\left[\sqrt{n}+0.5\right]$.
+We choose to use the heuristic spacing $m=\left[\sqrt{n}+0.5\right]$.
 
 # PROPOSED METHODOLOGY {#sec:met}
 
