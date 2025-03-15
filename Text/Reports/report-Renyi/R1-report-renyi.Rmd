@@ -609,61 +609,61 @@ print(combined_plot_renyi)
 ```
 
 
-<!-- ```{r Table_optimal, echo=FALSE, message=FALSE, warning=FALSE, results='asis'} -->
+```{r Table_optimal, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
-<!-- set.seed(1234567890, kind = "Mersenne-Twister") -->
-<!-- # Parameters -->
-<!-- sample_sizes <- c(49) -->
-<!-- R <- 2000 # Number of replications -->
-<!-- B <- 100         # Number of bootstrap replications -->
-<!-- mu <- 1        # Fixed mu -->
-<!-- L <- 36         # Fixed L -->
-
-
-<!-- # Estimators -->
-<!-- estimators <- list( -->
-<!--  # "Renyi Estimator" = renyi_entropy_estimator_v1 -->
-<!--   "Renyi Estimator Bootstrap" = bootstrap_renyi_entropy_estimator_v1 -->
-<!-- ) -->
-
-<!-- # Valores de lambda a evaluar -->
-<!-- #lambda_values <- c( 1.1, 1.5, 2.0, 2.5, 3.0, 3.5, 5, 6, 7, 8, 10, 20, 100 ) -->
-<!-- #lambda_values <- c(  0.90,   0.95, 0.96,  0.98, 0.99, 1.1, 1.2,  1.4 ) -->
-
-<!-- #lambda_values <- c(0.8, 0.84, 0.85, 0.86, 0.88, 0.90, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96,0.97,  0.98, 0.99, 1.1, 1.2, 1.3,  1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 3, 3.5 ) -->
-<!-- #lambda_values <- c(0.65, 0.66, 0.67, 0.68, 0.69, 0.70, 0.71, 0.72, 0.75, 0.9, 0.95, 0.96,0.97,  0.98, 0.99, 1.1, 1.2, 1.3,  1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0 ) -->
-<!-- lambda_values <- c( 0.85, 0.9, 0.95, 0.96,0.97,  0.98, 0.99, 1.1, 1.2, 1.3,  1.4, 1.5, 1.6, 1.7, 1.8, 1.9,  2.0, 2.5, 3.0) -->
-
-<!-- # Guardar resultados para cada lambda y n = 49 -->
-<!-- results_optimal_lambda <- data.frame(Lambda = numeric(0), Bias = numeric(0), MSE = numeric(0)) -->
-
-<!-- # Calcular sesgo y MSE para cada valor de lambda y el tamaño de muestra de interés (49) -->
-<!-- for (lambda in lambda_values) { -->
-<!--   # Actualizar los valores de alpha en el código original para usar cada lambda -->
-<!--   alpha_values <- c(lambda) -->
-
-<!--   # Calcular sesgo y MSE -->
-<!--   results <- calculate_bias_mse_r(sample_sizes = c(49), R = R, B = B, mu = mu, L = L, alpha_values = alpha_values, estimators = estimators) -->
-
-<!--   # Filtrar resultados para el tamaño de muestra de interés -->
-<!--   result_lambda <- results[results$n == 49, ] -->
-
-<!--   # Agregar los resultados a la tabla de resultados óptimos -->
-<!--   results_optimal_lambda <- rbind(results_optimal_lambda, data.frame( -->
-<!--     Lambda = lambda, -->
-<!--     Bias = mean(result_lambda$Bias), -->
-<!--     MSE = mean(result_lambda$MSE) -->
-<!--   )) -->
-<!-- } -->
-
-<!-- # Ordenar la tabla por MSE y luego por Bias para encontrar el valor óptimo de lambda -->
-<!-- results_optimal_lambda <- results_optimal_lambda[order(results_optimal_lambda$MSE, results_optimal_lambda$Bias), ] -->
-
-<!-- # Mostrar la tabla de resultados -->
-<!-- print(results_optimal_lambda) -->
+set.seed(1234567890, kind = "Mersenne-Twister")
+# Parameters
+sample_sizes <- c(49)
+R <- 500# Number of replications con 200 y 
+B <- 100      # Number of bootstrap replications 10 tambien funciona 0.9 el valor optimo
+mu <- 1        # Fixed mu
+L <- 1        # Fixed L
 
 
-<!-- ``` -->
+# Estimators
+estimators <- list(
+ # "Renyi Estimator" = renyi_entropy_estimator_v1
+  "Renyi Estimator Bootstrap" = bootstrap_renyi_entropy_estimator_v1
+)
+
+# Valores de lambda a evaluar
+#lambda_values <- c( 1.1, 1.5, 2.0, 2.5, 3.0, 3.5, 5, 6, 7, 8, 10, 20, 100 )
+#lambda_values <- c(  0.90,   0.95, 0.96,  0.98, 0.99, 1.1, 1.2,  1.4 )
+
+#lambda_values <- c(0.8, 0.84, 0.85, 0.86, 0.88, 0.90, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96,0.97,  0.98, 0.99, 1.1, 1.2, 1.3,  1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 3, 3.5 )
+#lambda_values <- c(0.65, 0.66, 0.67, 0.68, 0.69, 0.70, 0.71, 0.72, 0.75, 0.9, 0.95, 0.96,0.97,  0.98, 0.99, 1.1, 1.2, 1.3,  1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0 )
+lambda_values <- c(  0.9, 0.95,  0.99, 1.1, 1.2,  1.5,  2, 3, 3.5, 4)
+
+# Guardar resultados para cada lambda y n = 49
+results_optimal_lambda <- data.frame(Lambda = numeric(0), Bias = numeric(0), MSE = numeric(0))
+
+# Calcular sesgo y MSE para cada valor de lambda y el tamaño de muestra de interés (49)
+for (lambda in lambda_values) {
+  # Actualizar los valores de alpha en el código original para usar cada lambda
+  alpha_values <- c(lambda)
+
+  # Calcular sesgo y MSE
+  results <- calculate_bias_mse_r(sample_sizes = c(49), R = R, B = B, mu = mu, L = L, alpha_values = alpha_values, estimators = estimators)
+
+  # Filtrar resultados para el tamaño de muestra de interés
+  result_lambda <- results[results$n == 49, ]
+
+  # Agregar los resultados a la tabla de resultados óptimos
+  results_optimal_lambda <- rbind(results_optimal_lambda, data.frame(
+    Lambda = lambda,
+    Bias = mean(result_lambda$Bias),
+    MSE = mean(result_lambda$MSE)
+  ))
+}
+
+# Ordenar la tabla por MSE y luego por Bias para encontrar el valor óptimo de lambda
+results_optimal_lambda <- results_optimal_lambda[order(results_optimal_lambda$MSE, results_optimal_lambda$Bias), ]
+
+# Mostrar la tabla de resultados
+print(results_optimal_lambda)
+
+
+```
 
 # Hypothesis Testing  {#sec:test}
 
