@@ -184,21 +184,21 @@ Finally, the concluding remarks are drawn in Section\ \ref{sec:conclusion}.
 ## Statistical Models
 
 The main distributions considered for SAR intensity data are the $\Gamma_{\text{SAR}}$ distribution, which is suitable for fully developed speckle, and the $\mathcal{G}^0_I$ distribution, which is able to describe roughness\ [@Frery1997]. These distributions are characterized by the following probability density functions (pdfs):
-\begin{align}
+\begin{equation}
 	f_{\Gamma_{\text{SAR}}}\bigl(z;L, \mu \bigr) 
-    &= \frac{L^L}{\Gamma(L)\,\mu^L} z^{L-1} 
+    = \frac{L^L}{\Gamma(L)\,\mu^L} z^{L-1} 
     \exp \biggl(-\frac{Lz}{\mu}\biggr)
-    \mathbbm 1_{\mathbbm R_+}(z) \label{E:gamma1}
-    \intertext{and}
+    \mathbbm 1_{\mathbbm R_+}(z), \label{E:gamma1}
+\end{equation}
+and
+\begin{multline}
     f_{\mathcal{G}^0_I}\bigl(z; \mu, \alpha, L \bigr) 
-    &= \frac{L^L\,\Gamma(L-\alpha)}
-    {\bigl[-\mu(\alpha+1)\bigr]^{\alpha} \Gamma(-\alpha)\,\Gamma(L)}
-    \notag \\
-    &\quad \times
+    = \frac{L^L\,\Gamma(L-\alpha)}
+    {\bigl[-\mu(\alpha+1)\bigr]^{\alpha} \Gamma(-\alpha)\,\Gamma(L)}\\
     \frac{z^{L-1}}
     {\bigl[-\mu(\alpha+1)+Lz\bigr]^{L-\alpha}}
     \mathbbm 1_{\mathbbm R_+}(z), \label{E:gi01}
-\end{align}
+\end{multline}
 where $\mu > 0$ is the mean,
 $\alpha < 0$ measures the roughness, $L \geq 1$ is the number of
 looks, $\Gamma(\cdot)$ is the gamma function, and
@@ -535,12 +535,12 @@ S(\bm{Z}; L) = \widetilde{H}_{\lambda} - \bigl\{\ln \widehat{\mu} - \ln L + \fra
 \bigl[-\lambda\,\ln\Gamma(L) \\  
 + \ln\Gamma\bigl(\lambda(L-1)+1\bigr)  
 - \bigl(\lambda(L-1)+1\bigr)\,\ln\lambda
-\bigr]\bigr\}.
+\bigr]\bigr\},
 \end{multline}
-where $\ln \widehat{\mu}={\textstyle\frac{1}{n}\sum_{i=1}^n Z_{i}}$ is the natural logarithm of the sample mean.
+where $\widehat{\mu}={n}^{-1}\sum_{i=1}^n Z_{i}$ is the sample mean.
 
 When the null hypothesis holds, this test statistic is expected to be close to zero.
-For illustrative purposes, @fig-density_entropyR shows the empirical density of $S(\bm{Z}; L)$, based on $10,000$ simulations of the $\Gamma_{\text{SAR}}$ model, with $\lambda=0.9$ and $L \in \{5,18\}$.
+@fig-density_entropyR shows the empirical density of $S(\bm{Z}; L)$, based on $10,000$ simulations of the $\Gamma_{\text{SAR}}$ model, with $\lambda=0.9$ and $L \in \{5,18\}$.
 ```{r Simulated_densityR, echo=FALSE, message=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
@@ -697,7 +697,7 @@ By the central limit theorem, under the null hypothesis, $\varepsilon$ asymptoti
 \varepsilon \overset{d}{\longrightarrow} \mathcal{N}(0,1)\,,
 \end{equation*}
 where $d$ represents convergence in distribution.
-@fig-density_entropyR presents the behavior of the empirical distribution of the standardized test statistic.
+@fig-density_entropyR shows smoothed histograms of standardized test statistic.
 Thus, the $p$-values are calculated as $2\Phi(-|\varepsilon|)$,
 where $\Phi(\cdot)$ is the cumulative distribution function of the standard normal distribution.
 ```{r Simulated_densityR_standardized0, echo=FALSE, message=FALSE}
@@ -1302,12 +1302,13 @@ Future research will focus on a more quantitative evaluation of both approaches,
 
 []{.appendix options="Derivation of the Rényi Entropy of $\mathcal{G}^0_I$"}
 
-Let $Z \sim \mathcal{G}^0_I(\alpha, \gamma, L)$, defined in\ [@Frery2024],  we compute $I = \int_0^\infty [f_{\mathcal{G}^0_I}(z)]^\lambda dz$. Using the pdf  
+Let $Z \sim \mathcal{G}^0_I(\alpha, \gamma, L)$ as defined in Ref.\ [@Frery2024].
+We compute $I = \int_0^\infty [f_{\mathcal{G}^0_I}(z)]^\lambda dz$ using the pdf  
 \begin{equation*}
 f_{\mathcal{G}^0_I}(z) = C \frac{z^{L-1}}{(\gamma + Lz)^{L-\alpha}},  
-\quad C = \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)}, \label{eq:pdf_G0I}
+\quad C = \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)}. \label{eq:pdf_G0I}
 \end{equation*}
-and setting $t = Lz/\gamma$, we obtain  
+Setting $t = Lz/\gamma$, we obtain  
 \begin{equation*}
 I = C^\lambda \frac{\gamma^{1-\lambda+\lambda\alpha}}{L^{\lambda L + 1 - \lambda}}  
 \int_0^\infty \frac{t^{\lambda(L-1)}}{(1+t)^{\lambda(L-\alpha)}} dt.
@@ -1319,13 +1320,10 @@ I= \gamma^{\,1 - \lambda}\,
    \Bigl(\tfrac{\Gamma(L - \alpha)}{\Gamma(-\alpha)\,\Gamma(L)}\Bigr)^\lambda
    \,B(a,b).
 \end{equation*}
-Using the Rényi entropy definition in \eqref{E:entropy2}: $H_\lambda(Z) = \frac{1}{1-\lambda} \ln I$,
+Using the Rényi entropy definition in \eqref{E:entropy2}: $H_\lambda(Z) = (1-\lambda)^{-1} \ln I$,
 and substituting $\gamma = -\mu(\alpha + 1)$, we obtain the final expression for $\mathcal{G}^0_I(\mu, \alpha, L)$ in \eqref{eq-HGI0}.
 
-
-
-
-Code is available at: <https://github.com/rjaneth/renyi-entropy> 
+The code is available at: <https://github.com/rjaneth/renyi-entropy> 
 
 ::: {.content-visible when-format="pdf"}
 # References {-}
