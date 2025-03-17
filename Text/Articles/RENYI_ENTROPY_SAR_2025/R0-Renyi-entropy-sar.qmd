@@ -446,7 +446,7 @@ grid.arrange(bias_plot, mse_plot, nrow = 2)
 
 ## Bootstrap Correction for Entropy Estimator
 
-Following Refs.\ [@Frery2024;@Alpala2024], we also refine the non-parametric entropy estimator $\widehat{H}_{\lambda}$ in \eqref{eq:est_R} using the bootstrap technique to reduce its bias and apply the improved version, denoted as $\widetilde{H}_{\lambda}$:
+Following Refs.\ [@Frery2024;@Alpala2024], we refined the non-parametric entropy estimator $\widehat{H}_{\lambda}$ in \eqref{eq:est_R} reducing its bias with bootstrap, obtaining $\widetilde{H}_{\lambda}$:
 $$
 \widetilde{H}_{\lambda} = 2\widehat{H}_{\lambda}(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{H}_{\lambda}(\bm{Z}^{(b)}),
 $$
