@@ -158,7 +158,7 @@ source("./Code/functions_sample_bias_mse_1.R")
  Aperture Radar (SAR) technology has become essential for a wide range of applications\ [@Yu2023;@Akbarizadeh2012;@Mondini2021]. It provides high-resolution data that is independent of sunlight and operates in a variety of weather conditions to facilitate global Earth monitoring\ [@Zeng2020].
 Despite its advantages, the effective use of SAR data depends on understanding its statistical properties because this data is affected by speckle, a noise-like interference effect\ [@Argenti2013; @Choi2019]. In intensity format, speckle is typically non-Gaussian, and its presence complicates subsequent image analysis tasks.  
 
-The $\mathcal{G}^0_I$ distribution has been shown to be an effective law for SAR intensity data, as it captures different levels of roughness. A special case is the Gamma distribution, which arises when speckle is fully developed, indicating homogeneous regions. 
+The $\mathcal{G}^0_I$ distribution has been shown to be an effective law for SAR intensity data, as it captures different levels of roughness. A limiting case is the Gamma distribution, which arises when speckle is fully developed, indicating homogeneous regions. 
 Although these assumptions offer flexibility in describing SAR intensities, selecting the appropriate distribution can be challenging for two main reasons: the small sample sizes used in practical applications and the inherent difficulties associated with parameter estimation. 
 These challenges complicate model selection and highlight the need to explore alternative statistical approaches.
 
@@ -517,8 +517,8 @@ For subsequent simulations we use the $\widetilde{H}_{\lambda}$ estimator.
 We test whether the observed data come from a homogeneous ($\Gamma_{\text{SAR}}$) or a heterogeneous ($\mathcal{G}^0_I$) region, as follows:
 \begin{equation}\label{eq:hypothesis_test}
 \begin{cases}
-\mathcal{H}_0: \mathbb{E}[\widetilde{H}_{\lambda}] = H_{\lambda}(\Gamma_{\text{SAR}}), & \text{(Homogeneous region)} \\[6pt]
-\mathcal{H}_1: \mathbb{E}[\widetilde{H}_{\lambda}] = H_{\lambda}(\mathcal{G}^0_I), & \text{(Heterogeneous region)}
+\mathcal{H}_0: \mathbb{E}[\widetilde{H}_{\lambda}] = H_{\lambda}(\Gamma_{\text{SAR}}) & \text{(Homogeneous region)}, \\[6pt]
+\mathcal{H}_1: \mathbb{E}[\widetilde{H}_{\lambda}] = H_{\lambda}(\mathcal{G}^0_I) & \text{(Heterogeneous region)}.
 \end{cases}
 \end{equation}
   
@@ -687,19 +687,20 @@ print(combined_plot)
 ```
 Under the asymptotic properties of the entropy estimator\ [@vasicek1976test], for sufficiently large samples, $S(\bm{Z}; L)$ follows an asymptotic normal distribution:
 \begin{equation*}
-S(\bm{Z}; L) \overset{d}{\longrightarrow} \mathcal{N}(\mu_S,\,\sigma^{2})\,.
+S(\bm{Z}; L) \overset{d}{\longrightarrow} \mathcal{N}(\mu_S,\,\sigma^{2}_S)\,,
 \end{equation*}
+where $d$ represents convergence in distribution. Here, $\mu_S  = \mathbb{E}[S(\bm{Z}; L)]$ and $\sigma^{2}_S = \text{Var}[S(\bm{Z}; L)]$ are the theoretical mean and variance of $S(\bm{Z}; L)$.
+
 We define the standardized test statistic:
 \begin{equation*}
 \varepsilon = \frac{S(\bm{Z}; L) - \hat{\mu}_S}{\hat{\sigma}_S},
 \end{equation*}
-where $\hat{\mu}_S = \mathbb{E}[S(\bm{Z}; L)]$ and $\hat{\sigma}_S = \sqrt{\text{Var}[S(\bm{Z}; L)]}$.
-By the central limit theorem, under the null hypothesis, $\varepsilon$ asymptotically follows a standard normal distribution:
+where $\hat{\mu}_S$ and $\hat{\sigma}_S$ are the empirical mean and standard deviation of $S(\bm{Z}; L)$, obtained from Monte Carlo simulations under the null hypothesis. 
+By the central limit theorem, $\varepsilon$ asymptotically follows a standard normal distribution:
 \begin{equation*}
-\varepsilon \overset{d}{\longrightarrow} \mathcal{N}(0,1)\,,
+\varepsilon \overset{d}{\longrightarrow} \mathcal{N}(0,1)\,.
 \end{equation*}
-where $d$ represents convergence in distribution.
-@fig-density_entropyR shows smoothed histograms of standardized test statistic.
+@fig-density_entropyR_standardized0 shows smoothed histograms of standardized test statistic.
 Thus, the $p$-values are calculated as $2\Phi(-|\varepsilon|)$,
 where $\Phi(\cdot)$ is the cumulative distribution function of the standard normal distribution.
 ```{r Simulated_densityR_standardized0, echo=FALSE, message=FALSE}
