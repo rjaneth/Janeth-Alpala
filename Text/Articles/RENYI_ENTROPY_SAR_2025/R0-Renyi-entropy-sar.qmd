@@ -1,5 +1,5 @@
 ---
-title: Rényi Entropy-Based Heterogeneity Detection in SAR Data
+title: Quantifying Roughness in SAR Imagery with the Rényi Entropy
 format:
   ieee-pdf:
     pdf-engine: pdflatex # xelatex
@@ -16,7 +16,7 @@ format:
 
 author:
   #- id: 
-  - name: Janeth Alpala, Abraão D.\ C.\ Nascimento 
+  - name: Janeth Alpala, Abraão D.&nbsp;C.&nbsp;Nascimento 
     affiliations:
       - name: Universidade Federal de Pernambuco
         department: Departamento de Estatística
@@ -34,13 +34,15 @@ author:
     #bio: |
     #  Use `IEEEbiography`  with figure as  option and
     #  the author name as the argument followed by the biography text.
-  - name: Alejandro C.\ Frery
+  - name: Alejandro C.&nbsp;Frery
     affiliations:
       - name: Victoria University of Wellington
         department: School of Mathematics and Statistics
         city: Wellington 
         country: New Zealand
         postal-code: 6140
+        orcid: "0000-0002-8002-5341"
+        membership: "Fellow, IEEE"
       #- name: Unknown affiliation
     #orcid: 
     email: alejandro.frery@vuw.ac.nz
@@ -49,13 +51,20 @@ author:
     #   as the argument followed by the biography text.
     # note: "Template created June 23, 2023; revised `r format(Sys.Date(),format='%B %d, %Y')`."
 abstract: |
-  Synthetic aperture radar (SAR) systems have already been successfully used to solve remote sensing problems. A disadvantage of SAR images is the presence of speckle, which is fully developed in homogeneous areas and gamma-distributed in these scenes. In heterogeneous areas, the intensity values are $\mathcal{G}^0_I$-distributed. 
-  In this way, the identification of roughness SAR areas (as opposed to homogeneous ones) is an important task. 
-  In this work, we propose a family of hypothesis tests driven by an order parameter to identify roughness features in SAR intensity data using Rényi entropy. 
-  In particular, we use a nonparametric estimator for the Rényi entropy and investigate some of its properties. 
-  As a practical evaluation method, we develop $p$-value maps on which one can observe both (i) the heterogeneous evidence change per texture and (ii) the prediction of homogeneous and heterogeneous categories. 
-  The results are in favor of the Rényi-based heterogeneity detector compared to the one based on Shannon entropy.
-keywords: [Rényi entropy, Gamma distribution, heterogeneity, SAR,  hypothesis tests]
+  Quantifying surface roughness in synthetic aperture radar (SAR) data is critical for accurate geophysical interpretation and remote sensing applications. 
+  We propose a test statistic based on a non-parametric estimation of Rényi entropy to characterize surface roughness from SAR intensity data. 
+  The statistic is refined using bootstrap to improve its stability, size and power. 
+  This approach enhances roughness quantification by capturing scale-dependent variations and addressing data-driven uncertainty.
+  Experimental results demonstrate the robustness of the proposed method in distinguishing roughness patterns, offering a statistically rigorous tool for SAR-based terrain analysis.
+  <!-- Synthetic aperture radar (SAR) systems have already been successfully used to solve remote sensing problems.  -->
+  <!-- A disadvantage of SAR images is the presence of speckle, which is fully developed in homogeneous areas and gamma-distributed in these scenes.  -->
+  <!-- In heterogeneous areas, the intensity values are $\mathcal{G}^0_I$-distributed.  -->
+  <!-- In this way, the identification of roughness SAR areas (as opposed to homogeneous ones) is an important task.  -->
+  <!-- In this work, we propose a family of hypothesis tests driven by an order parameter to identify roughness features in SAR intensity data using Rényi entropy.  -->
+  <!-- In particular, we use a non-parametric estimator for the Rényi entropy and investigate some of its properties.  -->
+  <!-- As a practical evaluation method, we develop $p$-value maps on which one can observe both (i) the heterogeneous evidence change per texture and (ii) the prediction of homogeneous and heterogeneous categories.  -->
+  <!-- The results are in favor of the Rényi-based heterogeneity detector compared to the one based on Shannon entropy. -->
+keywords: [Rényi entropy, Gamma distribution, heterogeneity, SAR, hypothesis tests, bootstrap]
  
 #funding: 
  # statement: "The `quarto-ieee` "
@@ -155,35 +164,39 @@ source("./Code/functions_sample_bias_mse_1.R")
 
 # Introduction
 [S]{.IEEEPARstart}[ynthetic]{}
- Aperture Radar (SAR) technology has become essential for a wide range of applications\ [@Yu2023;@Akbarizadeh2012;@Mondini2021]. It provides high-resolution data that is independent of sunlight and operates in a variety of weather conditions to facilitate global Earth monitoring\ [@Zeng2020].
-Despite its advantages, the effective use of SAR data depends on understanding its statistical properties because this data is affected by speckle, a noise-like interference effect\ [@Argenti2013; @Choi2019]. In intensity format, speckle is typically non-Gaussian, and its presence complicates subsequent image analysis tasks.  
+ Aperture Radar (SAR) technology has become essential for a wide range of applications&nbsp;[@Yu2023;@Akbarizadeh2012;@Mondini2021]. 
+ It provides high-resolution data that is independent of sunlight and operates in a variety of weather conditions that facilitate global Earth monitoring&nbsp;[@Zeng2020].
+Despite its advantages, the effective use of SAR data depends on understanding its statistical properties because this data is affected by speckle, a noise-like interference effect&nbsp;[@Argenti2013; @Choi2019]. In intensity format, speckle is typically non-Gaussian, and its presence complicates subsequent image analysis tasks.
 
-The $\mathcal{G}^0_I$ distribution has been shown to be an effective law for SAR intensity data, as it captures different levels of roughness. A limiting case is the Gamma distribution, which arises when speckle is fully developed, indicating homogeneous regions. 
+The $\mathcal{G}^0_I$ distribution effectively characterizes SAR intensity data because it captures different levels of roughness. 
+A limiting case is the Gamma distribution, which arises when speckle is fully developed, indicating textureless regions. 
 Although these assumptions offer flexibility in describing SAR intensities, selecting the appropriate distribution can be challenging for two main reasons: the small sample sizes used in practical applications and the inherent difficulties associated with parameter estimation. 
 These challenges complicate model selection and highlight the need to explore alternative statistical approaches.
 
-Entropy measures have gained attention as valuable statistical tools for analyzing SAR data, with applications in edge detection\ [@Nascimento2014], segmentation\ [@Nobre2016], classification\ [@Cassetti2022], and noise reduction\ [@Chan2022].
-Traditionally, Shannon entropy\ [@Shannon1948] has been widely used to quantify uncertainty and disorder in data. However, this study explores an alternative information measure: Rényi entropy—a generalization of Shannon’s formulation. 
+Entropy measures have gained attention as valuable statistical tools for analyzing SAR data, with applications in edge detection&nbsp;[@Nascimento2014], 
+segmentation&nbsp;[@Nobre2016], 
+classification&nbsp;[@Cassetti2022], 
+and noise reduction&nbsp;[@Chan2022].
+Traditionally, Shannon entropy&nbsp;[@Shannon1948] has been widely used to quantify data uncertainty and disorder. 
+We explore a more general information measure: Rényi entropy—a generalization of Shannon’s formulation. 
 This more flexible approach provides additional insights for identifying heterogeneity, making it a promising tool for enhancing SAR image analysis.
 
-
-In this work, we propose a statistical test based on a non-parametric estimator of Rényi entropy to identify heterogeneous regions in SAR data.
-The test assesses whether the observed Rényi entropy in a given region significantly differs from its expected theoretical value under the assumption of homogeneity.
-Compared to our previous approach  using Shannon entropy\ [@Frery2024], the Rényi-based approach improves the detection of heterogeneity in real SAR images.
-
+We propose a statistical test based on a non-parametric estimator of Rényi entropy to identify heterogeneous regions in SAR data.
+The test assesses whether the observed Rényi entropy significantly differs from its expected theoretical value under the assumption of homogeneity.
+Compared to our previous approach using Shannon entropy&nbsp;[@Frery2024], the Rényi-based approach improves the detection of heterogeneity.
 
 The remainder of this article is organized as follows.
-Section\ \ref{sec:pre} outlines an overview of statistical models for SAR intensity data and introduces Rényi entropy.
-Section\ \ref{sec:met} describes the proposed hypothesis test and the formulation of the test statistic. 
-Section\ \ref{sec:app} evaluates the performance of the test using real SAR data.
-Finally, the concluding remarks are drawn in Section\ \ref{sec:conclusion}.
+Section&nbsp;\ref{sec:pre} overviews the statistical models for SAR intensity data and introduces Rényi entropy.
+Section&nbsp;\ref{sec:met} describes the proposed hypothesis test and the test statistic.
+Section&nbsp;\ref{sec:app} evaluates the performance of the test using SAR data.
+Finally, the concluding remarks are drawn in Section&nbsp;\ref{sec:conclusion}.
 
 # PRELIMINARIES {#sec:pre} 
 
 
 ## Statistical Models
 
-The main distributions considered for SAR intensity data are the $\Gamma_{\text{SAR}}$ distribution, which is suitable for fully developed speckle, and the $\mathcal{G}^0_I$ distribution, which is able to describe roughness\ [@Frery1997]. These distributions are characterized by the following probability density functions (pdfs):
+The main distributions considered for SAR intensity data are the $\Gamma_{\text{SAR}}$ distribution, which is suitable for fully developed speckle, and the $\mathcal{G}^0_I$ distribution, which is able to describe roughness&nbsp;[@Frery1997]. These distributions are characterized by the following probability density functions (pdfs):
 \begin{equation}
 	f_{\Gamma_{\text{SAR}}}\bigl(z;L, \mu \bigr) 
     = \frac{L^L}{\Gamma(L)\,\mu^L} z^{L-1} 
@@ -203,7 +216,7 @@ where $\mu > 0$ is the mean,
 $\alpha < 0$ measures the roughness, $L \geq 1$ is the number of
 looks, $\Gamma(\cdot)$ is the gamma function, and
 $\mathbbm 1_{A}(z)$ is the indicator function of the set $A$. 
-As demonstrated by\ [@Frery1997], the $\Gamma_{\text{SAR}}$  model is a particular case of the $\mathcal{G}^0_I$ distribution. Specifically, for a given $\mu$ fixed,
+As demonstrated by&nbsp;[@Frery1997], the $\Gamma_{\text{SAR}}$  model is a particular case of the $\mathcal{G}^0_I$ distribution. Specifically, for a given $\mu$ fixed,
 $$
 f_{\mathcal{G}^0_I}\big(z; \mu, \alpha, L\big)
 \longrightarrow 
@@ -213,7 +226,8 @@ when $\alpha\to-\infty$.
 
 ## Rényi Entropy
 
-Introduced by Alfréd Rényi in 1961\ [@renyi1961measures], this measure generalizes several well-known entropies, including the Shannon entropy\ [@Ribeiro2021]. For a continuous random variable $Z$ with pdf $f(z)$, the Rényi entropy of order $\lambda$, with $\lambda > 0$ and $\lambda \neq 1$, is defined as:
+Introduced by Alfréd Rényi in 1961&nbsp;[@renyi1961measures], this measure generalizes several well-known entropies, including Shannon's&nbsp;[@Ribeiro2021]. 
+For a continuous random variable $Z$ with pdf $f(z)$, the Rényi entropy of order $\lambda \in \mathbbm R_+ \setminus \{1\}$, is defined as:
 \begin{equation}
 \label{E:entropy2}
 H_\lambda(Z) = \frac{1}{1 - \lambda} \ln \int_{-\infty}^{\infty} [f(z)]^\lambda \, dz.
@@ -225,13 +239,13 @@ H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr)
 = 
 \ln \mu - \ln L + \frac{1}{1-\lambda}
 \Bigl[
-  -\lambda\,\ln\Gamma(L) \\  + \ln\Gamma\bigl(\lambda(L-1)+1\bigr)  - \bigl(\lambda(L-1)+1\bigr)\,\ln\lambda
+  -\lambda\,\ln\Gamma(L)  \\ + \ln\Gamma\bigl(\lambda(L-1)+1\bigr)  - \bigl(\lambda(L-1)+1\bigr)\,\ln\lambda
 \Bigr],
 \end{multline}
 and
 \begin{multline}\label{eq-HGI0}
 H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr)=\ln\mu-\ln L +\ln(-1 - \alpha)\\
-+ \frac{1}{\,1 - \lambda\,}
++ \frac{1}{1 - \lambda}
 \Bigl[
    \lambda\bigl(
       \ln\Gamma(L - \alpha)
@@ -244,6 +258,7 @@ H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr)=\ln\mu-\ln L +\ln(-1 - \alp
 \Bigr].
 \end{multline}
 These results are proven in the Appendix.
+<!-- ACF Have you checked if it is possible to state the difference between \label{eq-HGI0} and \label{eq-HGammaSAR}? At the end of the day, that is what we want to assess. -->
 
 @fig-plot presents the Rényi entropy of the $\mathcal{G}^0_I$ model as a function of $\mu$ for different values of $\alpha$. 
 As $\alpha \to -\infty$, it approaches the Rényi entropy of the $\Gamma_{\text{SAR}}$ law, in line with the fact that the latter is a limiting case of the former.
@@ -358,10 +373,13 @@ ggplot() +
 ```
 
 
-## Nonparametric Estimation of Rényi Entropy
+## Non-parametric Estimation of Rényi Entropy
 
-Nonparametric estimation of $H(Z)$ has been widely studied using spacing-based estimators, which rely on differences between order statistics [@vasicek1976test; @Ebrahimi1994; @Wieczorkowski1999; @AlOmari2019]. 
-Recently, Al-Labadi et al.\ [@AlLabadi2024] proposed a nonparametric estimator for Rényi entropy following this approach.  
+In order to estimate&nbsp;\eqref{E:entropy2} from a random sample, one may estimate the parameters that index the probability density function $f$, and integrate.
+This approach heavily relies on the model assumptions and on the absence of outliers.
+Alternatively, one may estimate directly $f$.
+Such non-parametric estimation of $H(Z)$ has been widely studied using spacing-based estimators, which rely on differences between order statistics [@vasicek1976test; @Ebrahimi1994; @Wieczorkowski1999; @AlOmari2019]. 
+Recently, Al-Labadi et al.&nbsp;[@AlLabadi2024] proposed a non-parametric estimator for Rényi entropy following this approach.  
 
 Let $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ be an independent and identically distributed random sample of size $n$ from a distribution $F$, and let $Z_{(1)} \leq Z_{(2)} \leq \dots \leq Z_{(n)}$ denote its order statistics.
 The $m$-spacing density estimator is defined as:
@@ -379,7 +397,7 @@ c_i =
 \end{cases}
 $$
 
-Following Vasicek [@vasicek1976test] and Ebrahimi et al. [@Ebrahimi1994] for Shannon entropy estimation, and using the $m$-spacing density estimator, the Rényi entropy can be estimated as:
+Following Vasicek&nbsp;[@vasicek1976test] and Ebrahimi et al.&nbsp;[@Ebrahimi1994] for Shannon entropy estimation, and using the $m$-spacing density estimator, the Rényi entropy can be estimated as:
 \begin{align}
 \label{eq:est_R}
 \widehat{H}_\lambda(\bm{Z}) = \frac{1}{1 - \lambda} \ln \left[\frac{1}{n} \sum_{i=1}^{n} \left( \frac{c_i m / n}{Z_{(i+m)} - Z_{(i-m)}} \right)^{\lambda - 1} \right].
@@ -387,7 +405,7 @@ Following Vasicek [@vasicek1976test] and Ebrahimi et al. [@Ebrahimi1994] for Sha
 This estimator is asymptotically consistent, i.e., it converges in
 probability to the true value when $m,n\rightarrow\infty$ and
 $m/n\rightarrow0$. 
-We choose to use the heuristic spacing $m=\left[\sqrt{n}+0.5\right]$.
+We used the heuristic spacing $m=\left[\sqrt{n}+0.5\right]$.
 
 # PROPOSED METHODOLOGY {#sec:met}
 
@@ -396,7 +414,10 @@ We choose to use the heuristic spacing $m=\left[\sqrt{n}+0.5\right]$.
 We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator for a sample size $n=49$.
 To identify this optimal value, we analyze both the mean squared error (MSE) and bias of the estimator across different values of $\lambda$. Lower MSE and bias indicate better performance of the estimator in approximating the true entropy.  
 
-Based on the results, we find that the optimal value is $\lambda = 0.9$, as it minimizes the MSE while maintaining a low bias. This choice is the same for $L > 1$. However, for $L = 1$, the optimal $\lambda$ tends to be higher (e.g., $\lambda = 3$) to achieve good results. @fig-plotf illustrates the case for $L = 5$.
+We found that for $L > 1$ the optimal value is $\lambda = 0.9$, as it minimizes the MSE while maintaining a low bias.
+However, for $L = 1$, the optimal $\lambda$ tends to be higher and we chose $\lambda = 3$ to achieve good results. 
+@fig-plotf illustrates the case for $L = 5$.
+
 ```{r fig-plotf, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="42%",  fig.pos="hbt", fig.cap="Bias and MSE as a function of $\\lambda$, with $n=49$, $L=5$.", fig.width=7, fig.height=4.5}
 
 
@@ -446,13 +467,14 @@ grid.arrange(bias_plot, mse_plot, nrow = 2)
 
 ## Bootstrap Correction for Entropy Estimator
 
-Following Refs.\ [@Frery2024;@Alpala2024], we refined the non-parametric entropy estimator $\widehat{H}_{\lambda}$ in \eqref{eq:est_R} reducing its bias with bootstrap, obtaining $\widetilde{H}_{\lambda}$:
+Following Refs.&nbsp;[@Frery2024;@Alpala2024], we refined the non-parametric entropy estimator $\widehat{H}_{\lambda}$ in&nbsp;\eqref{eq:est_R} reducing its bias with bootstrap, obtaining $\widetilde{H}_{\lambda}$:
 $$
 \widetilde{H}_{\lambda} = 2\widehat{H}_{\lambda}(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{H}_{\lambda}(\bm{Z}^{(b)}),
 $$
 where $B$ is the number of bootstrap replications, and $\bm{Z}^{(b)}$ is the $b$-th resampled dataset obtained by drawing $n$ observations with replacement from $\bm{Z}$.
 
-A Monte Carlo study with $1,000$ samples from $\Gamma_{\text{SAR}}$ ($\mu = 1$, $L=5$, $\lambda = 0.9$), using $B = 200$ replications, confirms that the bootstrap-corrected estimator $\widetilde{H}_{\lambda}$  outperforms the original $\widehat{H}_{\lambda}$ by reducing both bias and MSE for small sample sizes, as shown in @fig-Plot_bias_msef3.
+A Monte Carlo study with $1000$ samples from $\Gamma_{\text{SAR}}$, $\mu = 1$ and $L=5$, using $B = 200$ replications, confirms that the bootstrap-corrected estimator $\widetilde{H}_{\lambda}$, with $\lambda = 0.9$, outperforms the original $\widehat{H}_{\lambda}$ by reducing both bias and MSE for small sample sizes, as shown in @fig-Plot_bias_msef3.
+<!-- ACF Remove the minor vertical grid (there is nothing between 49 and 81) -->
 
 ```{r Simulated_data_bias_B1, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
 set.seed(1234567890, kind = "Mersenne-Twister")
@@ -534,7 +556,7 @@ Since $L\geq1$ is known, we define the test statistic as follows:
 \begin{multline}
 \label{eq-test}
 S(\bm{Z}; L) = \widetilde{H}_{\lambda} - \bigl\{\ln \widehat{\mu} - \ln L + \frac{1}{1-\lambda}
-\bigl[-\lambda\,\ln\Gamma(L) \\  
+\bigl[-\lambda\,\ln\Gamma(L) \\ 
 + \ln\Gamma\bigl(\lambda(L-1)+1\bigr)  
 - \bigl(\lambda(L-1)+1\bigr)\,\ln\lambda
 \bigr]\bigr\},
@@ -542,7 +564,9 @@ S(\bm{Z}; L) = \widetilde{H}_{\lambda} - \bigl\{\ln \widehat{\mu} - \ln L + \fra
 where $\widehat{\mu}={n}^{-1}\sum_{i=1}^n Z_{i}$ is the sample mean.
 
 When the null hypothesis holds, this test statistic is expected to be close to zero.
-@fig-density_entropyR shows the empirical density of $S(\bm{Z}; L)$, based on $10,000$ simulations of the $\Gamma_{\text{SAR}}$ model, with $\lambda=0.9$ and $L \in \{5,18\}$.
+@fig-density_entropyR shows the empirical density of $S(\bm{Z}; L)$, based on $10^4$ replications of the $\Gamma_{\text{SAR}}$ model, with $\lambda=0.9$ and $L \in \{5,18\}$.
+<!-- ACF 10^4 replications of samples of size?   -->
+
 ```{r Simulated_densityR, echo=FALSE, message=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
@@ -685,7 +709,8 @@ print(combined_plot)
 
 
 ```
-Under the asymptotic properties of the entropy estimator\ [@vasicek1976test], for sufficiently large samples, $S(\bm{Z}; L)$ follows an asymptotic normal distribution:
+
+Vasicek&nbsp;[@vasicek1976test] proved that, for sufficiently large samples, $S(\bm{Z}; L)$ asymptotically follows a normal distribution:
 \begin{equation*}
 S(\bm{Z}; L) \overset{d}{\longrightarrow} \mathcal{N}(\mu_S,\,\sigma^{2}_S)\,,
 \end{equation*}
@@ -695,14 +720,15 @@ We define the standardized test statistic:
 \begin{equation*}
 \varepsilon = \frac{S(\bm{Z}; L) - \hat{\mu}_S}{\hat{\sigma}_S},
 \end{equation*}
-where $\hat{\mu}_S$ and $\hat{\sigma}_S$ are the empirical mean and standard deviation of $S(\bm{Z}; L)$, obtained from Monte Carlo simulations under the null hypothesis. 
+where $\hat{\mu}_S$ and $\hat{\sigma}_S$ are the empirical mean and standard deviation of $S(\bm{Z}; L)$, obtained by Monte Carlo simulations under the null hypothesis. 
 By the central limit theorem, $\varepsilon$ asymptotically follows a standard normal distribution:
 \begin{equation*}
 \varepsilon \overset{d}{\longrightarrow} \mathcal{N}(0,1)\,.
 \end{equation*}
-@fig-density_entropyR_standardized0 shows smoothed histograms of standardized test statistic.
 Thus, the $p$-values are calculated as $2\Phi(-|\varepsilon|)$,
 where $\Phi(\cdot)$ is the cumulative distribution function of the standard normal distribution.
+@fig-density_entropyR_standardized0 shows smoothed histograms of standardized test statistics.
+
 ```{r Simulated_densityR_standardized0, echo=FALSE, message=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
@@ -826,9 +852,10 @@ combined_plot <- wrap_plots(all_plots, ncol = 1, nrow = 1) +
 print(combined_plot)
 
 ```
-In general, hypothesis tests aim to achieve a controlled type I error rate (size) and high test power (sensitivity to departures from $\mathcal{H}_0$).
+In general, hypotheses tests aim to control the Type&nbsp;I error rate (size) with high test power (sensitivity to departures from $\mathcal{H}_0$, low Type&nbsp;II error rate).
 To assess these properties, we performed a Monte Carlo simulation with $1000$ replications at significance levels  $1\%$, $5\%$, and $10\%$, evaluating the test under the null hypothesis ($\Gamma_{\text{SAR}}$ distribution), varying sample size and values of $L$ for $\mu=1$. 
-The observed type I error rates aligned with the nominal values, confirming the test validity.
+<!-- ACF I wish you had used the siunitx package for typing percentages, but not if this is incompatible with the tables -->
+The observed Type&nbsp;I error rates align with the nominal values, confirming the test validity.
 
 Further, we examined the power under the alternative hypothesis ($\mathcal{G}^0_I$ distribution) with $\mu=1$, $\lambda=0.9$ and $\alpha=-2$.
 As expected, power improves as the sample size and number of looks increase, demonstrating the test effectiveness. The results are shown in Table \ref{tab:table_size_power}.
@@ -1103,9 +1130,12 @@ print(table_combined_result)
 
 # Applications to SAR Data {#sec:app}
 
-In this section, we evaluate the proposed test statistic on real SAR data to assess its effectiveness in detecting heterogeneity.
-The test was applied to SAR intensity images from several regions: urban, agricultural, and water. In particular, we analyzed three images: the first from London, United Kingdom; the second from the surroundings of Munich, Germany; and the third from  Dublin Port, Ireland, as shown in Figs.\ \ref{fig:london}(a), \ref{fig:munich}(a), and \ref{fig:dublin}(a).
-Table\ \ref{tab:table_param} provides detailed acquisition parameters for these images.
+In this section, we evaluate the proposed test statistic on SAR data to assess its effectiveness in detecting heterogeneity.
+We applied the test to images covering urban, agricultural, and water regions. 
+We analyzed images from London, United Kingdom; from the surroundings of Munich, Germany; and from  Dublin Port, Ireland, as shown in Figs.&nbsp;\ref{fig:london}(a), \ref{fig:munich}(a), and \ref{fig:dublin}(a).
+Table&nbsp;\ref{tab:table_param} provides detailed acquisition parameters for these images.
+
+<!-- ACF They all have HH polarization; the column is not informative, and can be deleted to gain space -->
 \renewcommand{\arraystretch}{3}   
 ```{r parameters_sar, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -1158,19 +1188,20 @@ kable(SAR_data, caption = "Parameters of selected SAR images.",
 
 ```
 
-To evaluate the performance of our proposal, we applied the test statistics $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$ and  $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$, based on Shannon entropy as described in\ [@Frery2024], using a local sliding window of size $7\times7$. 
-The resulting $p$-value maps are presented in Figs.\ \ref{fig:london}(b), \ref{fig:london}(d), \ref{fig:munich}(b), \ref{fig:munich}(d), \ref{fig:dublin}(b), and \ref{fig:dublin}(d). 
+We applied the test statistics $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$ and  $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$, based on Shannon entropy as described in&nbsp;[@Frery2024], using a local sliding window of size $7\times7$. 
+<!-- ACF What is $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$? -->
+The resulting $p$-value maps are presented in Figs.&nbsp;\ref{fig:london}(b), \ref{fig:london}(d), \ref{fig:munich}(b), \ref{fig:munich}(d), \ref{fig:dublin}(b), and \ref{fig:dublin}(d). 
 These maps employ a color gradient, where darker regions indicate areas with higher roughness, while lighter regions correspond to smoother, less textured surfaces. 
 
-In order to better illustrate the decision-making process of both tests, binary maps at a significance level of $0.05$ are shown in Figs.\ \ref{fig:london}(c), \ref{fig:london}(e), \ref{fig:munich}(c), \ref{fig:munich}(e), \ref{fig:dublin}(c), and \ref{fig:dublin}(e).
-
+Figs.&nbsp;\ref{fig:london}(c), \ref{fig:london}(e), \ref{fig:munich}(c), \ref{fig:munich}(e), \ref{fig:dublin}(c), and \ref{fig:dublin}(e) 
+are binary maps at significance level of $0.05$ that 
+illustrate the decision-making process.
 In these binary representations, white areas correspond to $p$-values greater than $0.05$, indicating that there is no statistical evidence to reject the null hypothesis (homogeneous regions). 
 In contrast, black areas represent regions where the $p$-values are less than $0.05$, indicating statistically significant heterogeneity.
 
 The Rényi entropy-based test demonstrated greater sensitivity in detecting textural variations compared to the Shannon-based approach, due to the flexibility provided by the parameter $\lambda$. 
-When $\lambda \to 1$, Rényi entropy converges to Shannon entropy, resulting in similar heterogeneity detection. 
-Our analysis shows that the optimal $\lambda$ value depends on the number of looks: for single-look images like London, $\lambda = 3$ provided the best contrast, while for multi-look images like Munich and Dublin, $\lambda = 0.9$ was more effective. 
-
+<!-- ACF Where is the Shannon-based approach shown? -->
+<!-- When $\lambda \to 1$, Rényi entropy converges to Shannon entropy, resulting in similar heterogeneity detection.  -->
 
 ```{=latex}
 \begin{figure*}[hbt]
@@ -1279,13 +1310,14 @@ Our analysis shows that the optimal $\lambda$ value depends on the number of loo
 
 
 
-# Conclusion {#sec:conclusion}
+# Conclusions {#sec:conclusion}
 
 This study presented a new statistical approach based on Rényi entropy for detecting heterogeneity in SAR images, distinguishing between fully developed speckle and heterogeneous clutter. 
-The statistics of the proposed test was computed nonparametrically and its performance was evaluated by a Monte Carlo study. 
-The results showed that the method effectively controls the probability of type I error while maintaining a high detection performance that improves as the sample size increases.
+The statistics of the proposed test was computed non-parametrically and its performance was evaluated by a Monte Carlo study. 
+The results showed that the method effectively controls the probability of Type&nbsp;I error while maintaining a high detection performance that improves as the sample size increases.
 
 The performance of the Rényi-based test was evaluated by comparing its results with those of a test based on Shannon entropy.
+<!-- ACF Again, where are the Shannon results? -->
 This comparison was performed using $p$-values and binary maps. 
 The results showed that while both tests successfully detected heterogeneous regions, the Rényi-based test performed better due to its flexibility in adjusting the $\lambda$ parameter, which allowed for finer differentiation of texture variations.
 
@@ -1305,7 +1337,7 @@ Future research will focus on a more quantitative evaluation of both approaches,
 
 []{.appendix options="Derivation of the Rényi Entropy of $\mathcal{G}^0_I$"}
 
-Let $Z \sim \mathcal{G}^0_I(\alpha, \gamma, L)$ as defined in Ref.\ [@Frery2024].
+Let $Z \sim \mathcal{G}^0_I(\alpha, \gamma, L)$ as defined in Ref.&nbsp;[@Frery2024].
 We compute $I = \int_0^\infty [f_{\mathcal{G}^0_I}(z)]^\lambda dz$ using the pdf  
 \begin{equation*}
 f_{\mathcal{G}^0_I}(z) = C \frac{z^{L-1}}{(\gamma + Lz)^{L-\alpha}},  
