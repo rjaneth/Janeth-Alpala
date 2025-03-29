@@ -22,8 +22,8 @@ source("../MainFunctions/gi0_sample.R")
 
 set.seed(1234567890, kind="Mersenne-Twister")
 
-R <- 1000
-mu <- 1
+R <- 10000
+mu <- 10
 L <- 5
 B <- 5
 
@@ -36,7 +36,7 @@ for(s in sample.size){
     
     z <- gamma_sar_sample(L, mu, s)
     
-    TestStat <- bootstrap_correa_estimator(z, B) - log(mean(z))  + (-L + log(L) - lgamma(L) - (1 - L) * digamma(L)) 
+    TestStat <- (log(mean(z))-L + log(L) - lgamma(L) - (1 - L) * digamma(L)) 
     
     TestStatistics <- rbind(TestStatistics,
                             c(s, TestStat))

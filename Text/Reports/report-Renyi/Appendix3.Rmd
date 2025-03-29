@@ -578,3 +578,120 @@ The expectation of \(\widetilde{H}_\lambda\) is given by:
 &= H_\lambda.
 \end{align}
 Thus, \(\widetilde{H}_\lambda\) is an **approximately unbiased** estimator of \(H_\lambda\). The effectiveness of this correction depends on the choice of \(B\) and the underlying sample distribution, but it systematically reduces bias in entropy estimation, particularly for small sample sizes.
+
+
+For a continuous random variable \( Z \) with probability density function (pdf) \( f(z) \), the Rényi entropy of order \( \lambda \in \mathbb{R}_+ \setminus \{1\} \) is defined as:
+\begin{equation}
+\label{E:entropy2}
+H_\lambda(Z) = \frac{1}{1 - \lambda} \ln \int_{-\infty}^{\infty} [f(z)]^\lambda \, dz.
+\end{equation}
+Using \eqref{E:entropy2}, we derive closed-form expressions for the Rényi entropy of the \( \Gamma_{\mathrm{SAR}} \) and \( \mathcal{G}^0_I \) distributions:
+
+\begin{multline}
+\label{eq-HGammaSAR}
+H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr)
+= 
+\ln \mu - \ln L + \frac{1}{1-\lambda}
+\Bigl[
+  -\lambda\,\ln\Gamma(L)  \\ + \ln\Gamma\bigl(\lambda(L-1)+1\bigr)  - \bigl(\lambda(L-1)+1\bigr)\,\ln\lambda
+\Bigr].
+\end{multline}
+
+Similarly, for the \( \mathcal{G}^0_I \) distribution, we obtain:
+
+\begin{multline}
+\label{eq-HGI0}
+H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L, \mu)\bigr) \\
++ \ln(-1 - \alpha) \\
++ \frac{1}{1 - \lambda} \Bigl[ 
+    \lambda\bigl(\ln\Gamma(L - \alpha) - \ln\Gamma(-\alpha)\bigr) \\
+    + \ln\Gamma\bigl(\lambda(L - 1) + 1\bigr) 
+\Bigr].
+\end{multline}
+
+The detailed derivation of the Rényi entropy for the \( \mathcal{G}^0_I \) distribution is provided in the Appendix.
+
+Figure~\ref{fig:entropy_plot} illustrates the behavior of the Rényi entropy as a function of \( \lambda \) for different values of the distribution parameters.
+
+For a continuous random variable $Z$ with pdf $f(z)$, the Rényi entropy of order $\lambda \in \mathbbm R_+ \setminus \{1\}$ is defined as:
+\begin{equation}
+\label{E:entropy2}
+H_\lambda(Z) = \frac{1}{1 - \lambda} \ln \int_{-\infty}^{\infty} [f(z)]^\lambda \, dz.
+\end{equation}
+
+Using \eqref{E:entropy2}, we derive closed-form expressions for the Rényi entropy of the $\Gamma_{\mathrm{SAR}}$ and $\mathcal{G}^0_I$ distributions. Importantly, the $\mathcal{G}^0_I$ entropy can be expressed in terms of the $\Gamma_{\mathrm{SAR}}$ entropy plus additional terms that account for the roughness parameter $\alpha$:
+
+\begin{multline}
+\label{eq-HGammaSAR}
+H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr)
+= 
+\ln \mu - \ln L + \frac{1}{1-\lambda}
+\Bigl[
+  -\lambda\,\ln\Gamma(L)  \\ + \ln\Gamma\bigl(\lambda(L-1)+1\bigr)  - \bigl(\lambda(L-1)+1\bigr)\,\ln\lambda
+\Bigr],
+\end{multline}
+
+\begin{multline}
+\label{eq-HGI0}
+H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr) + \Delta H_\lambda(\alpha) \\
+\text{where } \Delta H_\lambda(\alpha) = \ln(-1 - \alpha) + \frac{1}{1 - \lambda}
+\Bigl[
+   \lambda\bigl(
+      \ln\Gamma(L - \alpha)
+      -\ln\Gamma(-\alpha)
+   \bigr) \\
+   +\ln\Gamma\bigl(\lambda(-\alpha + 1) - 1\bigr)
+   -\ln\Gamma\bigl(\lambda(L - \alpha)\bigr)
+   +\bigl(\lambda(L-1)+1\bigr)\ln\lambda
+\Bigr].
+\end{multline}
+
+The term $\Delta H_\lambda(\alpha)$ quantifies the additional entropy contribution due to texture variations in the $\mathcal{G}^0_I$ model. As $\alpha \to -\infty$, we can show that $\Delta H_\lambda(\alpha) \to 0$, recovering the $\Gamma_{\mathrm{SAR}}$ case. This limiting behavior confirms that the $\Gamma_{\mathrm{SAR}}$ distribution is indeed a special case of the $\mathcal{G}^0_I$ distribution for homogeneous areas.
+
+@fig-plot presents the Rényi entropy of the $\mathcal{G}^0_I$ model as a function of $\mu$ for different values of $\alpha$, demonstrating this convergence.
+
+
+
+
+For a continuous random variable \(Z\) with pdf \(f(z)\), the Rényi entropy of order \(\lambda \in \mathbbm{R}_+ \setminus \{1\}\) is defined as:  
+\begin{equation}  
+\label{E:entropy2}  
+H_\lambda(Z) = \frac{1}{1 - \lambda} \ln \int_{-\infty}^{\infty} [f(z)]^\lambda \, dz.  
+\end{equation}  
+
+Using \eqref{E:entropy2}, we derive the Rényi entropy for the \(\Gamma_{\text{SAR}}\) distribution:  
+\begin{multline}  
+\label{eq-HGammaSAR}  
+H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr) = \ln\mu - \ln L \\  
++ \frac{1}{1-\lambda} \Bigl[ -\lambda\ln\Gamma(L) + \ln\Gamma\bigl(\lambda(L-1)+1\bigr) - \bigl(\lambda(L-1)+1\bigr)\ln\lambda \Bigr].  
+\end{multline}  
+
+For the \(\mathcal{G}^0_I\) distribution, the entropy **explicitly extends** \(H_\lambda(\Gamma_{\text{SAR}})\) with terms depending on the roughness parameter \(\alpha\):  
+\begin{multline}  
+\label{eq-HGI0}  
+H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr) + \ln(-1 - \alpha) \\  
++ \frac{1}{1 - \lambda} \Bigl[ \lambda\bigl(\ln\Gamma(L - \alpha) - \ln\Gamma(-\alpha)\bigr) + \ln\Gamma\bigl(\lambda(-\alpha + 1) - 1\bigr) \\  
+- \ln\Gamma\bigl(\lambda(L - \alpha)\bigr) + \bigl(\lambda(L-1)+1\bigr)\ln\lambda \Bigr].  
+\end{multline}  
+
+As \(\alpha \to -\infty\), the additional terms vanish, reducing \eqref{eq-HGI0} to \eqref{eq-HGammaSAR}. This confirms that \(\Gamma_{\text{SAR}}\) is the limiting case of \(\mathcal{G}^0_I\) for homogeneous areas (fully developed speckle).  
+
+
+
+These results are proven in the Appendix. Notably, the \(\mathcal{G}^0_I\) entropy converges to the \(\Gamma_{\text{SAR}}\) case as \(\alpha \to -\infty\), i.e.,
+\[
+\lim_{\alpha \to -\infty} H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr).
+\]
+This limit is analytically derived in the Appendix and corroborates that \(\Gamma_{\text{SAR}}\) describes homogeneous areas (fully developed speckle), while \(\mathcal{G}^0_I\) generalizes it for textured regions.
+
+
+\section*{Appendix: Proof of the Limit Behavior}  
+The limit \(\lim_{\alpha \to -\infty} H_\lambda(\mathcal{G}^0_I) = H_\lambda(\Gamma_{\text{SAR}})\) follows from analyzing the additional terms in \eqref{eq-HGI0}. Let:  
+\[
+\Delta(\alpha) = H_\lambda(\mathcal{G}^0_I) - H_\lambda(\Gamma_{\text{SAR}}) = \ln(-1-\alpha) + \frac{1}{1-\lambda} \ln\!\left[ \frac{\Gamma(L-\alpha)^\lambda \Gamma(\lambda(-\alpha+1)-1) \lambda^{\lambda(L-1)+1}}{\Gamma(-\alpha)^\lambda \Gamma(\lambda(L-\alpha))} \right].
+\]  
+Using asymptotic properties of the Gamma function for large \(|\alpha|\):  
+\[
+\frac{\Gamma(L-\alpha)}{\Gamma(-\alpha)} \sim |\alpha|^L, \quad \frac{\Gamma(\lambda(-\alpha+1)-1)}{\Gamma(\lambda(L-\alpha))} \sim (\lambda|\alpha|)^{\lambda-1 - \lambda L},
+\]  
+we obtain \(\Delta(\alpha) \sim \ln|\alpha| - \ln|\alpha| = 0\). Thus, \(\Delta(\alpha) \to 0\) as \(\alpha \to -\infty\).  
