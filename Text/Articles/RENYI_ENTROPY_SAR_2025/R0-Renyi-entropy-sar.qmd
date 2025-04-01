@@ -239,7 +239,7 @@ H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H_\lambda\bigl(\Gamma_{\t
 \end{multline}
 The derivation of the latter result is proven in the Appendix.
 Note that the Rényi entropy of $\mathcal{G}^0_I$ can be expressed in terms of that of $\Gamma_{\mathrm{SAR}}$, with additional terms that depend on the roughness parameter $\alpha$. As $\alpha \to -\infty$, these terms tend to zero, reducing&nbsp;\eqref{eq-HGI0} to&nbsp;\eqref{eq-HGammaSAR}.
-This work's core idea is to estimate this difference and check if it is significantly different from zero.
+This work's core idea is to check if this excess entropy is significantly different from zero.
 
 @fig-plot illustrates this convergence by showing $H_\lambda(\mathcal{G}^0_I)$  as a function of $\mu$ for different values of $\alpha$. As $\alpha$ decreases, the curves approach $H_\lambda(\Gamma_{\text{SAR}})$ (solid black line). This confirms that $\Gamma_{\text{SAR}}$ is a limiting case of $\mathcal{G}^0_I$.
 <!-- ACF Have you checked if it is possible to state the difference between \label{eq-HGI0} and \label{eq-HGammaSAR}? At the end of the day, that is what we want to assess. -->
