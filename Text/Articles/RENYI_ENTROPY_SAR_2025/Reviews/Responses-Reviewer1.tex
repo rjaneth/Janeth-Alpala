@@ -1,0 +1,157 @@
+\documentclass[11pt]{report}
+
+\usepackage[pdftex]{geometry}
+\geometry{a4paper,left=2.8cm,right=2.8cm,top=1.5cm,bottom=1.5cm,twoside}
+
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{graphicx}
+	\graphicspath{./Comments/}
+\usepackage[many]{tcolorbox}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{subfigure}
+\usepackage{bm,bbm}
+\usepackage{float}
+\usepackage{siunitx}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\newtcolorbox{reviewbox}[1]{
+colback = white!5!white,
+colframe = purple!75!black,
+fonttitle=\bfseries,
+title=#1
+}
+
+\newtcolorbox{responsebox}[1]{
+	colback = white!5!white,
+	colframe = white!75!black,
+	fonttitle=\bfseries,
+	title=#1
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+
+\begin{center}
+\large{\textbf{Response Letter to Reviewer \# 1}}
+
+\vglue 0.3cm
+
+\huge{ Quantifying Roughness in SAR Imagery with the Rényi Entropy\\ (GRSL-00722-2025)}
+\end{center}
+
+%\authors
+\begin{center}
+\textbf{Janeth Alpala,   Abraao D.\ C.\ Nascimento, Alejandro C.\ Frery  }
+\end{center}
+
+\date{\today}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{2cm}
+\noindent Dear Editors
+\bigskip
+
+\noindent We are grateful to the reviewers for the valuable comments and the time spent on checking our manuscript. 
+We have addressed their comments towards improving the paper contents and presentation. 
+Below we detail the changes and updates incorporated into the manuscript in this round of review.
+
+\medskip
+
+
+%-------------------------------------
+\begin{reviewbox}{Comment 1}
+1. The manuscript uses Rényi Entropy to estimate the surface roughness using SAR intensity data. However, the novelty aspect is not clear to this reviewer. Is this the sampling technique for the non-parametric estimation? The non-parametric estimation is already existing in the literature.
+
+\end{reviewbox}
+
+\begin{responsebox}{Response}
+We have 
+\begin{quote}
+	\textcolor{blue}{ text}
+\end{quote}
+\end{responsebox}
+
+\vspace{2em}
+\begin{reviewbox}{Comment 2}
+2. The methodology is mostly indicates the heterogeneity in a SAR image. The terminology "Roughness" generally refers to the surface roughness irrespective of the landcover classes. However, the proposed technique includes everything which are existing within a resolution. Therefore, in the title of the manuscript, the "Roughness" can be changed to "Heterogeneity".
+\end{reviewbox}
+
+\begin{responsebox}{Response}
+
+We change to the new title..
+\begin{quote}
+	\textcolor{blue}{
+	Quantifying Heterogeneity in SAR Imagery with the Rényi Entropy
+}
+\end{quote}
+\end{responsebox}
+
+\vspace{2em}
+\begin{reviewbox}{Comment 3}
+3. Why the p-values are very high over the areas which have the dominant surface scattering? Should it not be low if the proposed technique is estimating the entropy precisely? It looks like the proposed method better estimates over the heterogeneous areas as compared to homogeneous areas.
+\end{reviewbox}
+\begin{responsebox}{Response}
+	text
+\end{responsebox}
+
+\vspace{2em}
+\begin{reviewbox}{Comment 4}
+4. How is the dependence of the proposed technique on the additive and multiplicative noises which remains in the SAR data?
+\end{reviewbox}
+\begin{responsebox}{Response}
+
+
+\end{responsebox}
+
+\vspace{2em}
+\begin{reviewbox}{Comment 5}
+5. Fig 6, 7 and 8 show the detection of heterogeneous areas. However, a statistical measure indicating the detection performance is absent.
+\end{reviewbox}
+\begin{responsebox}{Response}
+
+
+We have clarified  that
+\begin{quote}
+	\textcolor{blue}{text}
+\end{quote}
+\end{responsebox}
+
+\vspace{2em}
+\begin{reviewbox}{Comment 6}
+6. The color bars and the font size of the texts needs to be improved so that it can be clearly visible.
+\end{reviewbox}
+\begin{responsebox}{Response}
+
+We added 
+
+	
+
+\end{responsebox}
+
+\vspace{2em}
+\begin{reviewbox}{Comment 7}
+7. Why the authors are focusing on the low MSE, not the low bias while selecting the value of lambda?
+\end{reviewbox}
+
+\begin{responsebox}{Response}
+text
+\end{responsebox}
+
+
+\vspace{2em}
+\begin{reviewbox}{Comment 7}
+8. "We aim to determine the optimal order λ for the Rényi entropy estimator for a sample size n=49" From where these 49 samples are taken?
+\end{reviewbox}
+
+\begin{responsebox}{Response}
+text
+\end{responsebox}
+\end{document}
+

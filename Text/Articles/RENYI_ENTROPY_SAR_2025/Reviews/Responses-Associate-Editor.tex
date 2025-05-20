@@ -1,0 +1,137 @@
+\documentclass[11pt]{report}
+
+\usepackage[pdftex]{geometry}
+\geometry{a4paper,left=2.8cm,right=2.8cm,top=1.5cm,bottom=1.5cm,twoside}
+
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{graphicx}
+	\graphicspath{./Comments/}
+\usepackage[many]{tcolorbox}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{subfigure}
+\usepackage{bm,bbm}
+\usepackage{float}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\newtcolorbox{reviewbox}[1]{
+colback = white!5!white,
+colframe = purple!75!black,
+fonttitle=\bfseries,
+title=#1
+}
+
+\newtcolorbox{responsebox}[1]{
+	colback = white!5!white,
+	colframe = white!75!black,
+	fonttitle=\bfseries,
+	title=#1
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+
+\begin{center}
+\large{\textbf{Response Letter to Associate Editor}}
+
+\vglue 0.3cm
+
+\huge{ Quantifying Roughness in SAR Imagery with the Rényi Entropy\\ (GRSL-00722-2025)}
+\end{center}
+
+%\authors
+\begin{center}
+\textbf{Janeth Alpala,   Abraao D.\ C.\ Nascimento, Alejandro C.\ Frery }
+\end{center}
+
+\date{\today}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{2cm}
+\noindent Dear Editors
+\bigskip
+
+\noindent We are grateful to the reviewers for the valuable comments and the time spent on checking our manuscript. 
+We have addressed their comments towards improving the paper contents and presentation. 
+Below we detail the changes and updates incorporated into the manuscript in this round of review.
+
+\medskip
+
+
+%-------------------------------------
+\begin{reviewbox}{Comment 1}
+This manuscript proposes a statistically grounded method for quantifying roughness in SAR imagery using a non-parametric estimator of Rényi entropy, refined via bootstrap correction, and developed into a hypothesis test that distinguishes fully developed speckle and heterogeneous clutter. The paper is technically sound and well-presented. However, the following comments should be carefully addressed in the revised version to enhance clarity, applicability, and completeness:
+
+
+1. While the paper is generally well-written and structured, several mathematical expressions—particularly Equations (5) and (8)—may be difficult to interpret for practitioners or applied researchers. The authors are encouraged to provide more intuitive explanations or illustrative interpretations alongside the formulas.
+\end{reviewbox}
+
+\begin{responsebox}{Response}
+
+We have 
+
+\begin{quote}
+	\textcolor{blue}{text  }
+\end{quote}
+
+\end{responsebox}
+
+\begin{reviewbox}{Comment 2}
+2. The current methodology assumes that the number of looks, L, is known a priori. In practice, this parameter may be unknown or inaccurately estimated from SAR metadata. The authors should discuss the sensitivity of the proposed test to variations or inaccuracies in L, and optionally suggest techniques for estimating L directly from the data or include robustness analysis. 
+\end{reviewbox}
+
+\begin{responsebox}{Response}
+
+
+We have clarified that
+\begin{quote}
+	\textcolor{blue}{
+		In order to clarify the }
+
+\end{quote}
+
+\end{responsebox}
+
+\begin{reviewbox}{Comment 3}
+3. Figures (Figs. 6–8) are informative but could benefit from quantitative evaluation. Add comparative metrics beyond visual comparison.
+\end{reviewbox}
+
+\begin{responsebox}{Response}
+
+
+We include 
+
+
+\begin{quote}
+	\textcolor{blue}{
+	text
+}
+\end{quote}
+	
+\end{responsebox}
+
+
+\begin{reviewbox}{Comment 4}
+The manuscript convincingly shows that Rényi-based entropy measures offer advantages over classical Shannon entropy for heterogeneity detection. However, no comparisons are made to machine learning-based SAR classifiers or segmentation models, which are now widely adopted. Justification is required.
+\end{reviewbox}
+\begin{responsebox}{Response}
+We have clarified that
+\begin{quote}
+	\textcolor{blue}{
+		text
+}
+\end{quote}
+
+\end{responsebox}
+
+
+
+
+\end{document}
+
