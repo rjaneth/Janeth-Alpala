@@ -72,24 +72,38 @@ Below we detail the changes and updates incorporated into the manuscript in this
 \end{reviewbox}
 
 \begin{responsebox}{Response}
-We have 
+
+
+We thank the reviewer for raising this important point. While non-parametric entropy estimation is indeed present in the literature, we have not found prior works that apply a non-parametric estimator of the Rényi entropy specifically for heterogeneity detection in SAR imagery.
+
+Our contribution lies in formulating a hypothesis test that uses the entropy estimator as a test statistic to distinguish between homogeneous and heterogeneous regions. Classical parametric inference alternatives, such as likelihood ratio or Wald tests, are not applicable here due to the limiting behavior of the roughness parameter (\(\alpha \to -\infty\)) under the null hypothesis.
+
+In addition, we enhance the non-parametric Rényi entropy estimator by incorporating a bootstrap based bias correction technique. This resampling strategy not only reduces the estimator’s bias but also improves the accuracy of entropy estimation, particularly when working with small sample sizes. This improvement is especially relevant in practical SAR image analysis, where estimations are commonly performed over small windows, such as \(7 \times 7\) pixels.
+
+
+We have clarified these contributions in the revised manuscript, in the final paragraph of the Introduction.
+
+
+
 \begin{quote}
-	\textcolor{blue}{ text}
+	\textcolor{blue}{ In addition, we enhance the non-parametric estimator through a bootstrap-based bias correction technique, which increases accuracy, particularly for small sample sizes often used in practical SAR applications.}
 \end{quote}
+
 \end{responsebox}
 
 \vspace{2em}
 \begin{reviewbox}{Comment 2}
-2. The methodology is mostly indicates the heterogeneity in a SAR image. The terminology "Roughness" generally refers to the surface roughness irrespective of the landcover classes. However, the proposed technique includes everything which are existing within a resolution. Therefore, in the title of the manuscript, the "Roughness" can be changed to "Heterogeneity".
+2. The methodology is mostly indicates the heterogeneity in a SAR image. The terminology ``Roughness'' generally refers to the surface roughness irrespective of the landcover classes. However, the proposed technique includes everything which are existing within a resolution. Therefore, in the title of the manuscript, the ``Roughness'' can be changed to ``Heterogeneity''.
 \end{reviewbox}
 
 \begin{responsebox}{Response}
 
-We change to the new title..
+We appreciate the reviewer’s observation. In our work, \emph{roughness} is used in a statistical sense, following the interpretation of the parameter $\alpha$ in the $\mathcal{G}^0_I$ distribution. This parameter reflects the degree of texture or variability within the resolution cell, which may result from both surface irregularities and land cover heterogeneity. While we believe the term is appropriate in this context, we are open to revising the manuscript title from ``Roughness'' to ``Heterogeneity'' to improve clarity and better align with remote sensing terminology.
+
+Accordingly, we have revised the manuscript title to:
 \begin{quote}
 	\textcolor{blue}{
-	Quantifying Heterogeneity in SAR Imagery with the Rényi Entropy
-}
+	``Quantifying Heterogeneity in SAR Imagery with the Rényi Entropy.''}
 \end{quote}
 \end{responsebox}
 
@@ -97,15 +111,39 @@ We change to the new title..
 \begin{reviewbox}{Comment 3}
 3. Why the p-values are very high over the areas which have the dominant surface scattering? Should it not be low if the proposed technique is estimating the entropy precisely? It looks like the proposed method better estimates over the heterogeneous areas as compared to homogeneous areas.
 \end{reviewbox}
+
 \begin{responsebox}{Response}
-	text
+
+We thank the reviewer for this observation. However, we believe there may be a misunderstanding regarding the interpretation of $p$-values. In our formulation, the null hypothesis $H_0$ assumes that a region is homogeneous. Therefore, high $p$-values (e.g., $p > 0.05$) indicate that the data are consistent with homogeneity, while low $p$-values (e.g., $p < 0.05$) suggest statistical evidence of heterogeneity.
+
+The test statistic is based on the difference between the estimated Rényi entropy and the theoretical value under $H_0$. If the region is homogeneous, this difference tends to be close to zero, and the resulting $p$-value will be high, as expected. In contrast, heterogeneous regions typically produce larger differences and thus low $p$-values, leading to rejection of $H_0$.
+
+This is the intended behavior of the test, and the observed $p$-value patterns in the detection maps confirm its correct functioning. 
 \end{responsebox}
+\begin{responsebox}{}
+We have clarified this point in the revised manuscript by adding a paragraph at the end of Section~III-D,  which explains how the $p$-value maps are constructed from sliding windows and how they should be interpreted.
+
+\begin{quote}
+\textcolor{blue}{
+In practice, we apply the proposed test to the SAR image using a sliding window approach ($7 \times 7$ pixels). For each window, we compute the test statistic under the null hypothesis of homogeneity and, assuming asymptotic normality, calculate a $p$-value that quantifies the statistical evidence against homogeneity in each local region. High $p$-values ($p > 0.05$) indicate consistency with $H_0$, while low values ($p < 0.05$) suggest heterogeneity. 
+Note that the visual outputs in Figs. 6--8 show the $p$-values from this test, not the test statistic or entropy values.
+}
+\end{quote}
+\end{responsebox}
+
 
 \vspace{2em}
 \begin{reviewbox}{Comment 4}
 4. How is the dependence of the proposed technique on the additive and multiplicative noises which remains in the SAR data?
 \end{reviewbox}
 \begin{responsebox}{Response}
+
+
+The proposed technique explicitly models the multiplicative noise (speckle) inherent in SAR intensity data. It assumes fully developed speckle in homogeneous areas, which is commonly modeled by a Gamma distribution. 
+
+Additive noise is not considered in the model because it is usually very small in SAR images that have been properly calibrated. In our experiments, we use SAR images in intensity format (e.g., HH) that are radiometrically and geometrically corrected. 
+Because the method analyzes small windows and uses non-parametric entropy estimation, it is relatively robust to small residual noise that may remain after standard preprocessing, such as calibration and terrain correction. 
+We do not apply any additional filtering in order to keep the texture information that is important for detecting heterogeneity.
 
 
 \end{responsebox}
@@ -129,29 +167,50 @@ We have clarified  that
 \end{reviewbox}
 \begin{responsebox}{Response}
 
-We added 
+We improved Figures 6–8 by increasing the font size of labels, standardizing the color bar sizes, and updating the colormap in Figure 7 to enhance visual contrast.
 
 	
 
 \end{responsebox}
 
-\vspace{2em}
+\vspace{2em} 
 \begin{reviewbox}{Comment 7}
 7. Why the authors are focusing on the low MSE, not the low bias while selecting the value of lambda?
 \end{reviewbox}
 
 \begin{responsebox}{Response}
-text
+
+While both bias and MSE are important criteria, we prioritized the MSE because it incorporates both the bias and the variance of the estimator. 
+Specifically, the MSE is defined as the sum of the squared bias and the variance, providing a more comprehensive measure of estimator accuracy.
+
+In our simulations, we found that for $L > 1$, the choice $\lambda = 0.9$ consistently yielded the lowest MSE while maintaining a low bias, thus offering a favorable trade-off between bias and variance. Although some values of $\lambda$ (e.g., $0.85$) showed slightly lower bias, they resulted in higher overall MSE due to increased variance.
+
+We illustrate the case for $L = 5$ in Fig. 2, but similar trends were observed for other values of $L > 1$, confirming the robustness of $\lambda = 0.9$ and motivating its selection in the Rényi entropy estimator.
+
+\textcolor{blue}{We have clarified this point in Section~III-A, where we explicitly justify the choice of $\lambda = 0.9$ based on the trade-off between bias and MSE.}
+
 \end{responsebox}
 
-
 \vspace{2em}
-\begin{reviewbox}{Comment 7}
-8. "We aim to determine the optimal order λ for the Rényi entropy estimator for a sample size n=49" From where these 49 samples are taken?
+
+
+\begin{reviewbox}{Comment 8}
+8. "We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator for a sample size $n=49$." From where these 49 samples are taken?
 \end{reviewbox}
 
 \begin{responsebox}{Response}
-text
+
+
+
+The 49 samples refer to synthetic data generated from the Gamma distribution, which models fully developed speckle in homogeneous regions.
+
+To determine the optimal value of $\lambda$, we conducted a Monte Carlo simulation with $R = 1000$ replications. In each replication, a sample of size $n = 49$ was drawn from the $\Gamma_{\text{SAR}}(L = 5, \mu = 1)$ distribution. Bias and MSE were computed across several $\lambda$ values to select the most robust option.
+
+The choice of $n = 49$ corresponds to a $7 \times 7$ window, which is commonly used in SAR image processing as it strikes a balance between capturing local detail and providing enough data for reliable statistical analysis.
+
+\textcolor{blue}{We have clarified the origin of the samples $n = 49$ in Section~III-A.}
 \end{responsebox}
+
+
 \end{document}
 

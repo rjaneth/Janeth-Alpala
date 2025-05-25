@@ -158,9 +158,9 @@ source("./Code/functions_sample_bias_mse_1.R")
 \renewcommand{\tablename}{TABLE}
 # Introduction
 [S]{.IEEEPARstart}[ynthetic]{}
- Aperture Radar (SAR) technology has become essential for many applications&nbsp;[@Yu2023;@Akbarizadeh2012;@Mondini2021]. 
+ Aperture Radar (SAR) technology has become essential for many applications&nbsp;[@Yu2023;@Mondini2021]. 
  It provides high-resolution data independent of sunlight and operates in various weather conditions that facilitate global Earth monitoring&nbsp;[@Zeng2020].
-Despite its advantages, the effective use of SAR data depends on understanding its statistical properties because it is affected by speckle, a noise-like interference effect&nbsp;[@Argenti2013; @Choi2019; @Baraha2023]. In intensity format, speckle is typically non-Gaussian, and its presence complicates subsequent image analysis tasks.
+Despite its advantages, the effective use of SAR data depends on understanding its statistical properties because it is affected by speckle, a noise-like interference effect&nbsp;[@Argenti2013; @Baraha2023]. In intensity format, speckle is typically non-Gaussian, and its presence complicates subsequent image analysis tasks.
 
 The $\mathcal{G}^0_I$ distribution effectively characterizes SAR intensity data because it captures different roughness levels. 
 A limiting case is the Gamma distribution, which arises when speckle is fully developed, indicating textureless regions. 
@@ -178,6 +178,7 @@ This more flexible approach provides additional insights for identifying heterog
 We propose a statistical test based on a non-parametric estimator of Rényi entropy to identify heterogeneous regions in SAR data.
 The test assesses whether the observed Rényi entropy significantly differs from its expected theoretical value under the homogeneity assumption.
 Compared to our previous approach using Shannon entropy&nbsp;[@Frery2024], the Rényi-based approach improves the detection of heterogeneity.
+\textcolor{blue}{In addition, we enhance the non-parametric estimator through a bootstrap-based bias correction technique, which increases accuracy, particularly for small sample sizes often used in practical SAR applications.}
 
 The remainder of this article is organized as follows.
 Section&nbsp;\ref{sec:pre} overviews the statistical models for SAR intensity data and introduces Rényi entropy.
@@ -365,7 +366,7 @@ ggplot() +
 In order to estimate&nbsp;\eqref{E:entropy2} from a random sample, one may estimate the parameters that index the probability density function $f$ and integrate.
 This approach relies heavily on the model assumptions and the absence of outliers.
 Alternatively, one may estimate directly $f$.
-Such non-parametric estimation of $H(Z)$ has been widely studied using spacing-based estimators, which rely on differences between order statistics&nbsp;[@vasicek1976test;@Bert1992; @Ebrahimi1994; @Wieczorkowski1999; @IbrahimAlOmari2014]. 
+Such non-parametric estimation of $H(Z)$ has been widely studied using spacing-based estimators, which rely on differences between order statistics&nbsp;[@vasicek1976test;@Ebrahimi1994; @IbrahimAlOmari2014]. 
 Recently, Al-Labadi et al.&nbsp;[@AlLabadi2024] proposed a non-parametric estimator for Rényi entropy following this approach.  
 
 Let $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ be an independent and identically distributed random sample of size $n$ from a distribution $F$, and let $Z_{(1)} \leq Z_{(2)} \leq \dots \leq Z_{(n)}$ denote its order statistics.
@@ -398,12 +399,16 @@ We used the heuristic spacing $m=\left[\sqrt{n}+0.5\right]$.
 
 ## On $\lambda$ optimality for a sample size
 
-We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator for a sample size $n=49$.
-To identify this optimal value, we analyze both the mean squared error (MSE) and bias of the estimator across different values of $\lambda$. Lower MSE and bias indicate better estimator performance in approximating the true entropy.  
 
-We found that the optimal value for $L > 1$ is $\lambda = 0.9$, as it minimizes the MSE while maintaining a low bias.
-However, for $L = 1$, the optimal $\lambda$ tends to be higher, and we chose $\lambda = 3$ to achieve good results. 
-@fig-optimal_order illustrates the case for $L = 5$.
+\textcolor{blue}{
+We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator based on numerical experiments using synthetic samples of size $n = 49$, drawn from the $\Gamma_{\text{SAR}}$ distribution $(L = 5,\ \mu = 1)$. A Monte Carlo simulation is used to evaluate the bias and the mean squared erro (MSE) across different values of $\lambda$.}
+
+\textcolor{blue}{
+In our simulations, we find that for $L > 1$, the choice $\lambda = 0.9$ consistently yields the lowest MSE while maintaining a low bias, thus offering a favorable trade-off between bias and variance. As shown in Fig.~\ref{fig-optimal_order}, the value $\lambda = 0.85$ exhibits slightly lower bias, but leads to higher MSE due to increased variance, supporting the selection of $\lambda = 0.9$.}
+
+
+
+
 ```{r fig-optimal_order, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="42%",  fig.pos="hbt", fig.cap="Bias and MSE as a function of $\\lambda$, with $n=49$, $L=5$.", fig.width=7, fig.height=4.5}
 
 
@@ -455,6 +460,8 @@ grid.arrange(bias_plot, mse_plot, nrow = 2)
 
 ```
 
+Particularly, for $L = 1$, the optimal $\lambda$ tends to be higher, and we chose $\lambda = 3$ to achieve good results.
+
 ## Bootstrap Correction for Entropy Estimator
 
 Following Refs.&nbsp;[@Frery2024;@Alpala2024], we refined the non-parametric entropy estimator $\widehat{H}_{\lambda}$ in&nbsp;\eqref{eq:est_R} reducing its bias with bootstrap, obtaining $\widetilde{H}_{\lambda}$:
@@ -462,8 +469,8 @@ $$
 \widetilde{H}_{\lambda} = 2\widehat{H}_{\lambda}(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{H}_{\lambda}(\bm{Z}^{(b)}),
 $$
 where $B$ is the number of bootstrap replications, and $\bm{Z}^{(b)}$ is the $b$-th resampled dataset obtained by drawing $n$ observations with replacement from $\bm{Z}$.
-  
-A Monte Carlo study with $1000$ replications for each sample size $n \in \{9, 25, 49, 81, 121\}$ from the $\Gamma_{\text{SAR}}$ ($\mu=1, L=5$) confirms that for $\lambda=0.9$, the bootstrap-corrected estimator $\widetilde{H}_{\lambda}$ ($B=200$) reduces both bias and MSE compared to the original $\widehat{H}_{\lambda}$, with significant improvements for small sample sizes, as shown in&nbsp;@fig-bias_mse.
+
+A Monte Carlo study with $1000$ replications for each sample size $n \in \{9, 25, 49, 81, 121\}$ from the $\Gamma_{\text{SAR}}$ ($L=5,\ \mu=1$) confirms that for $\lambda=0.9$, the bootstrap-corrected estimator $\widetilde{H}_{\lambda}$ ($B=200$) reduces both bias and MSE compared to the original $\widehat{H}_{\lambda}$, with significant improvements for small sample sizes, as shown in&nbsp;@fig-bias_mse.
 
 <!-- ACF Remove the minor vertical grid (there is nothing between 49 and 81) -->
 <!-- Corrected -->
@@ -522,8 +529,6 @@ print(combined_plot_renyi)
 
 ```
 We use the $\widetilde{H}_{\lambda}$ estimator for subsequent simulations.
-
-
 
 ## Hypothesis Testing 
 
@@ -1122,6 +1127,11 @@ table_combined_result <- knitr::kable(
 
 print(table_combined_result)
 ```
+
+\textcolor{blue}{
+In practice, we apply the proposed test to the SAR image using a sliding window approach ($7 \times 7$ pixels). For each window, we compute the test statistic under the null hypothesis of homogeneity and, assuming asymptotic normality, calculate a $p$-value that quantifies the statistical evidence against homogeneity in each local region. High $p$-values ($p > 0.05$) indicate consistency with $H_0$, while low values ($p < 0.05$) suggest heterogeneity. 
+Note that the visual outputs in Figs.~\ref{fig:london}--\ref{fig:dublin} show the $p$-values obtained from the hypothesis testing procedure, not the test statistic or entropy values.
+}
 
 # Applications to SAR Data {#sec:app}
 In this section, we compare two test statistics for detecting heterogeneity in SAR data: (i) the Rényi entropy-based test, $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, described in&nbsp;\eqref{eq-test}; and (ii) the Shannon entropy-based test, $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$, which is based on the Al-Omari estimator proposed in&nbsp;[@IbrahimAlOmari2014] and was improved via bootstrap in our previous work. The details of this test can be found in Frery et al.&nbsp;[@Frery2024].
