@@ -1477,7 +1477,7 @@ kable(all_metrics,
 
 ```
 
-Using the same ROIs as ground truth, we evaluated the continuous $p$-value maps by computing receiver operating characteristic (ROC) curves over all decision thresholds&nbsp;(Figs.&nbsp;\ref{ROC1-1}). Each curve plots the probability of detection (Pd) versus the probability of false alarm (PFA). Pd reflects the proportion of heterogeneous pixels correctly detected, while PFA represents the proportion of homogeneous pixels misclassified as heterogeneous.
+Using the same ROIs as ground truth, we evaluated the continuous $p$-value maps by computing receiver operating characteristic (ROC) curves over all decision thresholds&nbsp;(Fig.&nbsp;\ref{fig:roc}). Each curve plots the probability of detection (Pd) versus the probability of false alarm (PFA). Pd reflects the proportion of heterogeneous pixels correctly detected, while PFA represents the proportion of homogeneous pixels misclassified as heterogeneous.
 
 ```{r fig-ROC2, eval=FALSE, echo=FALSE, message=FALSE, warning=FALSE, fig.show="hide", fig.fullwidth = TRUE, out.width="49%",  fig.pos="hbt", fig.cap="ROC curves.", fig.width=35, fig.height=10}
 
