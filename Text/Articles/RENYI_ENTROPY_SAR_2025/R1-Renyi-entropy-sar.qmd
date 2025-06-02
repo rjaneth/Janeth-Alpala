@@ -56,7 +56,8 @@ abstract: |
   We propose a test statistic based on a non-parametric estimation of Rényi entropy to characterize surface roughness from SAR intensity data. 
   The statistic is refined using bootstrap to improve its stability, size, and power. 
   This approach enhances roughness quantification by capturing scale-dependent variations and addressing data-driven uncertainty.
-  Experimental results demonstrate the robustness of the proposed method in distinguishing roughness patterns, offering a statistically rigorous tool for SAR-based terrain analysis.
+  Experimental results demonstrate the robustness of the proposed method in distinguishing roughness patterns.
+  <!-- , offering a statistically rigorous tool for SAR-based terrain analysis. -->
   <!-- Synthetic aperture radar (SAR) systems have already been successfully used to solve remote sensing problems.  -->
   <!-- A disadvantage of SAR images is the presence of speckle, which is fully developed in homogeneous areas and gamma-distributed in these scenes.  -->
   <!-- In heterogeneous areas, the intensity values are $\mathcal{G}^0_I$-distributed.  -->
@@ -220,7 +221,7 @@ $$
 
 ## Rényi Entropy
 
-Introduced by Alfréd Rényi in 1961&nbsp;[@renyi1961measures], this measure generalizes several well-known entropies, including Shannon's&nbsp;[@Ribeiro2021]. 
+<!-- Introduced by Alfréd Rényi in 1961&nbsp;[@renyi1961measures], this measure generalizes several well-known entropies, including Shannon's&nbsp;[@Ribeiro2021].  -->
 For a continuous random variable $Z$ with pdf $f(z)$, the Rényi entropy of order $\lambda \in \mathbbm R_+ \setminus \{1\}$, is defined as:
 \begin{equation}
 \label{E:entropy2}
@@ -244,7 +245,7 @@ H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H_\lambda\bigl(\Gamma_{\t
 + \ln\Gamma\bigl(\lambda(-\alpha + 1) - 1\bigr) - \ln\Gamma\bigl(\lambda(L - \alpha)\bigr) \\
 + \bigl(\lambda(L-1)+1\bigr)\ln\lambda \Bigr].  
 \end{multline}
-The derivation of the latter result is proven in the Appendix.
+<!-- The derivation of the latter result is proven in the Appendix. -->
 Equation&nbsp;\eqref{eq-HGI0} can be read as:
 $$
 H_{\lambda}(\mathcal{G}^0_I)
@@ -254,11 +255,13 @@ H_{\lambda}(\mathcal{G}^0_I)
 \underbrace{\Delta_\alpha}_{\text{extra entropy caused by texture}},
 $$
 \textcolor{blue}{where the excess term $\Delta_\alpha$ depends on the roughness parameter.
-When $\alpha\!\to\!-\infty$ (fully developed speckle) this excess tends to zero, so the heterogeneous model collapses to the homogeneous one in Equation \eqref{eq-HGammaSAR}. 
-In practice, detecting heterogeneity is equivalent to deciding whether $\Delta_\alpha$ is significantly different from zero.}
+When $\alpha\!\to\!-\infty$ (fully developed speckle) this excess tends to zero,
+%<!-- , so the heterogeneous model collapses to the homogeneous one in Equation \eqref{eq-HGammaSAR}.  -->
+and detecting heterogeneity is equivalent to deciding whether $\Delta_\alpha$ is significantly different from zero.}
 <!-- Note that the Rényi entropy of $\mathcal{G}^0_I$ can be expressed in terms of that of $\Gamma_{\mathrm{SAR}}$, with additional terms that depend on the roughness parameter $\alpha$. As $\alpha \to -\infty$, these terms tend to zero, reducing&nbsp;\eqref{eq-HGI0} to&nbsp;\eqref{eq-HGammaSAR}. -->
 <!-- This work's core idea is to check if this excess entropy is significantly different from zero. -->
-Fig.&nbsp;\ref{fig-convergence} illustrates this behaviour: as $\alpha$ decreases the coloured curves of $H_\lambda(\mathcal{G}^0_I)$ converge towards the solid black curve of $H_\lambda(\Gamma_{\mathrm{SAR}})$, confirming the limiting behavior.
+Fig.&nbsp;\ref{fig-convergence} illustrates this behaviour: as $\alpha$ decreases the coloured curves of $H_\lambda(\mathcal{G}^0_I)$ converge towards the solid black curve of $H_\lambda(\Gamma_{\mathrm{SAR}})$.
+<!-- , confirming the limiting behavior. -->
 
 ```{r fig-convergence,eval=FALSE, echo=FALSE, message=FALSE, warning=FALSE, fig.show="hide", fig.pos="hbt", , fig.cap="Convergence of $H_{\\lambda}(\\mathcal{G}^0_I)$ to $H_{\\lambda}(\\Gamma_{\\text{SAR}})$ as $\\alpha$ decreases.", fig.width=4, fig.height=3}
 
@@ -381,11 +384,12 @@ ggplot() +
 ```
 ## Non-parametric Estimation of Rényi Entropy
 
-In order to estimate&nbsp;\eqref{E:entropy2} from a random sample, one may estimate the parameters that index the probability density function $f$ and integrate.
-This approach relies heavily on the model assumptions and the absence of outliers.
-Alternatively, one may estimate directly $f$.
-Such non-parametric estimation of $H(Z)$ has been widely studied using spacing-based estimators, which rely on differences between order statistics&nbsp;[@vasicek1976test;@Ebrahimi1994; @IbrahimAlOmari2014]. 
-Recently, Al-Labadi et al.&nbsp;[@AlLabadi2024] proposed a non-parametric estimator for Rényi entropy following this approach.  
+In order to estimate&nbsp;\eqref{E:entropy2} from a random sample, one may estimate the parameters that index the probability density function $f$ and integrate, an approach that relies on the model assumptions.
+<!-- Alternatively, one may estimate directly $f$. -->
+Recently, Al-Labadi et al.&nbsp;[@AlLabadi2024] proposed a non-parametric estimator for Rényi entropy based on non-parametric estimation using 
+<!-- spacing-based estimators, i.e.,  -->
+differences between order statistics (spacings).
+<!-- &nbsp;[@vasicek1976test;@Ebrahimi1994; @IbrahimAlOmari2014].  -->
 
 Let $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ be an independent and identically distributed random sample of size $n$ from a distribution $F$, and let $Z_{(1)} \leq Z_{(2)} \leq \dots \leq Z_{(n)}$ denote its order statistics.
 The $m$-spacing density estimator is defined as:
@@ -402,8 +406,8 @@ c_i =
 \frac{n + m - i}{m}, & \text{if } n - m + 1 \leq i \leq n.
 \end{cases}
 $$
-
-Following Vasicek&nbsp;[@vasicek1976test] and Ebrahimi et al.&nbsp;[@Ebrahimi1994] for Shannon entropy estimation, and using the $m$-spacing density estimator, the Rényi entropy can be estimated as:
+<!-- Following Vasicek&nbsp;[@vasicek1976test] and Ebrahimi et al.&nbsp;[@Ebrahimi1994] for Shannon entropy estimation, and using the $m$-spacing density estimator,  -->
+The Rényi entropy can be estimated with this density estimator as
 \begin{align}
 \label{eq:est_R}
 \widehat{H}_\lambda(\bm{Z}) = \frac{1}{1 - \lambda} \ln \left[\frac{1}{n} \sum_{i=1}^{n} \left( \frac{c_i m / n}{Z_{(i+m)} - Z_{(i-m)}} \right)^{\lambda - 1} \right].
@@ -415,13 +419,13 @@ We used the heuristic spacing $m=\left[\sqrt{n}+0.5\right]$.
 
 # PROPOSED METHODOLOGY {#sec:met}
 
-## On $\lambda$ optimality for a sample size
+## Finding an optimal value of $\lambda$
 
 \textcolor{blue}{
-We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator based on numerical experiments using synthetic samples of size $n = 49$, drawn from the $\Gamma_{\text{SAR}}$ distribution $(L = 5,\ \mu = 1)$. A Monte Carlo simulation is used to evaluate the bias and the mean squared erro (MSE) across different values of $\lambda$.}
-
-\textcolor{blue}{
-In our simulations, we find that for $L > 1$, the choice $\lambda = 0.9$ consistently yields the lowest MSE while maintaining a low bias, thus offering a favorable trade-off between bias and variance. As shown in Fig. \ref{fig-optimal_order}, the value $\lambda = 0.85$ exhibits slightly lower bias, but leads to higher MSE due to increased variance, supporting the selection of $\lambda = 0.9$.}
+We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator using simulated samples of size $n = 49$, drawn from the $\Gamma_{\text{SAR}}$ distribution.
+We computed the bias and the mean squared error (MSE) for vaying $\lambda$ with a Monte Carlo experiment.
+We found that for $L > 1$, $\lambda = 0.9$ consistently yields the lowest MSE while maintaining a low bias, thus offering a favorable trade-off between bias and variance. 
+As shown in Fig. \ref{fig-optimal_order}, $\lambda = 0.85$ produces slightly lower bias, but leads to higher MSE, supporting the choice of $\lambda = 0.9$.}
 
 
 ```{r fig-optimal_order, eval=FALSE, echo=FALSE, message=FALSE, warning=FALSE, fig.show="hide",  out.width="42%",  fig.pos="hbt", fig.cap="Bias and MSE as a function of $\\lambda$, with $n=49$, $L=5$.", fig.width=7, fig.height=4.5}
@@ -486,7 +490,7 @@ Particularly, for $L = 1$, the optimal $\lambda$ tends to be higher, and we chos
 
 ## Bootstrap Correction for Entropy Estimator
 
-Following Refs.&nbsp;[@Frery2024;@Alpala2024], we refined the non-parametric entropy estimator $\widehat{H}_{\lambda}$ in&nbsp;\eqref{eq:est_R} reducing its bias with bootstrap, obtaining $\widetilde{H}_{\lambda}$:
+Following Refs.&nbsp;[@Frery2024;@Alpala2024], we refined the non-parametric entropy estimator $\widehat{H}_{\lambda}$ in&nbsp;\eqref{eq:est_R} with bootstrap, obtaining $\widetilde{H}_{\lambda}$:
 \begin{equation*}
 \widetilde{H}_{\lambda} = 2\widehat{H}_{\lambda}(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{H}_{\lambda}(\bm{Z}^{(b)}),
 \end{equation*}
@@ -558,7 +562,7 @@ print(combined_plot_renyi)
   \label{fig-bias_mse}
 \end{figure}
 ```
-We use the $\widetilde{H}_{\lambda}$ estimator for subsequent simulations.
+<!-- We use the $\widetilde{H}_{\lambda}$ estimator for subsequent simulations. -->
 
 ## Hypothesis Testing 
 
@@ -592,10 +596,10 @@ S_{\widetilde H_\lambda}
 \;-\;
 \underbrace{H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)}_{\text{theoretical under } H_0},
 $$
-\textcolor{blue}{the difference between the estimated entropy and the expected value under homogeneity. Values close to zero indicate that the region behaves like fully developed speckle, while large positive values signal excess entropy and thus heterogeneity.
+\textcolor{blue}{the difference between the estimated entropy and the expected value under homogeneity. Values close to zero indicate that the region behaves like fully developed speckle, while large positive values signal excess entropy and, thus, heterogeneity.
 This formulation avoids estimating parameters of the $\mathcal{G}^0_I$ model such as $\alpha$, offering a simple, interpretable, and statistically grounded test. Moreover, the method remains effective for small samples, aided by the bootstrap bias correction.}
 
-Fig. \ref{fig-densities} shows the empirical distribution of $S_{\widetilde{H}_{\lambda}}$ under $\mathcal{H}_0$, obtained from $10^4$ Monte Carlo simulations with varying sample sizes ($n \in {49,81,121}$), $\lambda=0.9$, and $L \in {5,18}$. The concentration around zero confirms the test's expected behavior, while the heavy tails indicate sensitivity to deviations, enabling the detection of subtle texture changes.
+Fig.&nbsp;\ref{fig-densities} shows the empirical distribution of $S_{\widetilde{H}_{\lambda}}$ under $\mathcal{H}_0$, obtained from $10^4$ Monte Carlo simulations with varying sample sizes ($n \in {49,81,121}$), $\lambda=0.9$, and $L \in {5,18}$. The concentration around zero confirms the test's expected behavior, while the heavy tails indicate sensitivity to deviations, enabling the detection of subtle texture changes.
 
 
 ```{r Simulated_densityR, echo=FALSE, message=FALSE}
@@ -761,13 +765,13 @@ S_{\widetilde{H}_{\lambda}}(\bm{Z}; L) \overset{d}{\longrightarrow} \mathcal{N}(
 where $d$ represents convergence in distribution. Here, $\mu_S  = \mathbb{E}[S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)]$ and $\sigma^{2}_S = \text{Var}[S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)]$ are the theoretical mean and variance of $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$.
 
 The standardized test statistic 
-$\varepsilon = ({S_{\widetilde{H}_{\lambda}}(\bm{Z}; L) - \hat{\mu}_S})/{\hat{\sigma}_S}$ is asymptotically standard normal distributed,
-where $\hat{\mu}_S$ and $\hat{\sigma}_S$ are the empirical mean and standard deviation of $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, obtained by Monte Carlo simulations under the null hypothesis. 
-Thus, the $p$-values are calculated as $2\Phi(-|\varepsilon|)$,
+$\varepsilon = ({S_{\widetilde{H}_{\lambda}}(\bm{Z}; L) - \widehat{\mu}_S})/{\widehat{\sigma}_S}$ is asymptotically standard normal distributed,
+where $\widehat{\mu}_S$ and $\widehat{\sigma}_S$ are the empirical mean and standard deviation of $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, obtained by Monte Carlo simulations under the null hypothesis. 
+Thus, we compute the $p$-values as $2\Phi(-|\varepsilon|)$,
 where $\Phi(\cdot)$ is the cumulative distribution function of the standard normal distribution.
-Fig. \ref{fig-density_standardized} shows smoothed histograms of standardized test statistics.
+<!-- Fig.&nbsp;\ref{fig-density_standardized} shows smoothed histograms of standardized test statistics. -->
 
-```{r Simulated_densityR_standardized0, echo=FALSE, message=FALSE}
+```{r Simulated_densityR_standardized0, echo=FALSE, message=FALSE, eval=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
 R <- 20000
@@ -839,7 +843,7 @@ for (L in L_values) {
 }
 ```
 
-```{r fig-density_standardized,eval=FALSE,  echo=FALSE, message=FALSE, warning=FALSE, fig.show="hide", out.width="35%", fig.pos="hbt", fig.cap="Standardized empirical densities of $S_{\\widetilde{H}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$.", fig.width=4, fig.height=2.5}
+```{r fig-density_standardized,eval=FALSE,  echo=FALSE, message=FALSE, warning=FALSE, fig.show="hide", out.width="35%", fig.pos="hbt", fig.cap="Standardized empirical densities of $S_{\\widetilde{H}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$.", fig.width=4, fig.height=2.5, eval=FALSE}
 
 #fig.show="hide", 
 # eval=FALSE,  #
@@ -896,15 +900,15 @@ print(combined_plot)
 
 ```
 
-```{=latex}
-\begin{figure}[hbt]
-  \centering
-  \includegraphics[width=0.35\textwidth]{Figures-R1/fig-density_standardized-1.pdf}
-  %\vspace{0.1em}
-  \caption{Standardized empirical densities of $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$ under $\mathcal{H}_0$.}
-  \label{fig-density_standardized}
-\end{figure}
-```
+<!-- ```{=latex} -->
+<!-- \begin{figure}[hbt] -->
+<!--   \centering -->
+<!--   \includegraphics[width=0.35\textwidth]{Figures-R1/fig-density_standardized-1.pdf} -->
+<!--   %\vspace{0.1em} -->
+<!--   \caption{Standardized empirical densities of $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$ under $\mathcal{H}_0$.} -->
+<!--   \label{fig-density_standardized} -->
+<!-- \end{figure} -->
+<!-- ``` -->
 In general, hypotheses tests aim to control the Type&nbsp;I error rate (size) with high test power (sensitivity to departures from $\mathcal{H}_0$, low Type&nbsp;II error rate).
 To assess these properties, we performed a Monte Carlo simulation with $1000$ replications at significance levels \SI{1}{\percent}, \SI{5}{\percent}, and \SI{10}{\percent}, evaluating the test under the null hypothesis ($\Gamma_{\text{SAR}}$ distribution), varying sample size and values of $L$ for $\mu=1$. 
 The observed Type&nbsp;I error rates align with the nominal values, confirming the test validity.
@@ -1184,7 +1188,9 @@ table_combined_result <- knitr::kable(
 print(table_combined_result)
 ```
 \textcolor{blue}{
-In practice, we apply the proposed test to the SAR image using a sliding window approach ($7 \times 7$ pixels). For each window, we compute the test statistic under the null hypothesis of homogeneity and, assuming asymptotic normality, calculate a $p$-value that quantifies the statistical evidence against homogeneity in each local region. High $p$-values ($p > 0.05$) indicate no evidence to reject homogeneity, while low values ($p < 0.05$) suggest statistically significant deviations and are interpreted as heterogeneity.
+We applied the proposed test to SAR images using sliding windows of $7 \times 7$ pixels. 
+For each window, we computed the test statistic and calculated the $p$-value that quantifies the statistical evidence against local homogeneity. 
+High $p$-values, e.g., $p > 0.05$, indicate no evidence to reject homogeneity, while low values ($p < 0.05$) suggest statistically significant deviations and are interpreted as heterogeneity.
 }
 <!-- Note that the visual outputs in Figs.~\ref{fig:london}--\ref{fig:dublin} show the $p$-values obtained from the hypothesis testing procedure, not the test statistic or entropy values. -->
 
@@ -1194,7 +1200,8 @@ In practice, we apply the proposed test to the SAR image using a sliding window 
 We compare two test statistics for detecting heterogeneity in SAR data: (i) the Rényi entropy-based test, $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, described in&nbsp;\eqref{eq-test}; and (ii) the Shannon entropy-based test, $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$, which is based on the Al-Omari estimator proposed in&nbsp;[@IbrahimAlOmari2014] and was improved via bootstrap in our previous work. The details of this test can be found in Frery et al.&nbsp;[@Frery2024].
 
 The selected scenes, acquired in HH polarization, correspond to the surroundings of London (United Kingdom), the outskirts of Munich (Germany), and the Dublin Port area (Ireland), as shown in Figs.&nbsp;\ref{fig:london-sar}-\ref{fig:dublin-sar}. 
-Corresponding optical images (Figs.&nbsp;\ref{fig:london-optical}–\ref{fig:dublin-optical}) illustrate land cover context. Table&nbsp;\ref{tab:table_param} details the SAR acquisition parameters.
+Corresponding optical images (Figs.&nbsp;\ref{fig:london-optical}–\ref{fig:dublin-optical}) illustrate land cover context.
+Table&nbsp;\ref{tab:table_param} details the SAR acquisition parameters.
 
 \renewcommand{\arraystretch}{2.5}   
 ```{r parameters_sar, echo=FALSE, message=FALSE, warning=FALSE}
@@ -1251,7 +1258,8 @@ kable(SAR_data,
 
 ```
 \textcolor{blue}{
-For each SAR image, the number of looks $L$ was obtained from the product of azimuth and range looks provided in the metadata (SNAP). To validate this value, we estimated the equivalent number of looks (ENL) from manually selected homogeneous areas using the classical formula $\text{ENL} = 1/\widehat{\text{CV}}^2$, based on the coefficient of variation. The results were consistent with the metadata. We also verified that moderate deviations in $L$ did not significantly impact the outcome of the test, confirming the robustness of the proposed method.}
+For each SAR image, the number of looks $L$ was obtained from the product of azimuth and range looks provided in the metadata (SNAP). To validate this value, we estimated the equivalent number of looks (ENL) from manually selected homogeneous areas using the classical formula $\text{ENL} = 1/\widehat{\text{CV}}^2$, based on the coefficient of variation. 
+The results were consistent with the metadata. We also verified that moderate deviations in $L$ did not significantly impact the outcome of the test, confirming the robustness of the proposed method.}
 
 
 ## Qualitative Inspection
@@ -1625,7 +1633,7 @@ The Rényi-based test  achieved higher AUCs across all scenes—London: 0.963 vs
 This study presented a statistical approach based on Rényi entropy for detecting heterogeneity in SAR images, distinguishing between fully developed speckle and heterogeneous clutter.
 The proposed test was validated with synthetic experiments via a Monte Carlo study, demonstrating that it effectively controls the probability of Type&nbsp;I error while maintaining high detection performance that improves with sample size.
 
-\textcolor{blue}{Using real SAR data, we compared the Rényi-based test with a Shannon-based counterpart through $p$-value maps and binary decisions. Visual analysis showed greater sensitivity of the Rényi-based test to textural variations.
+\textcolor{blue}{Using SAR data, we compared the Rényi-based test with a Shannon-based counterpart through $p$-value maps and binary decisions. Visual analysis showed greater sensitivity of the Rényi-based test to textural variations.
 Quantitative evaluation with ground-truth ROIs and standard classification metrics confirmed the superior performance of the Rényi-based test across all scenes.}
 
 \textcolor{blue}{Although machine learning-based SAR classifiers are widely used, our focus is on interpretable, statistically grounded methods that yield analytical significance measures. This makes them suitable for rapid detection, screening, and environments with limited data availability.}
@@ -1633,28 +1641,28 @@ Quantitative evaluation with ground-truth ROIs and standard classification metri
 \textcolor{blue}{Future work will explore the integration of the improved Rényi estimator into SAR classification pipelines, both supervised and unsupervised, extending its utility beyond heterogeneity testing.}
 
 
-[]{.appendix options="Derivation of the Rényi Entropy of $\mathcal{G}^0_I$"}
+<!-- []{.appendix options="Derivation of the Rényi Entropy of $\mathcal{G}^0_I$"} -->
 
-Let $Z \sim \mathcal{G}^0_I(\alpha, \gamma, L)$ as defined in Ref.&nbsp;[@Frery2024].
-We compute $I = \int_0^\infty [f_{\mathcal{G}^0_I}(z)]^\lambda dz$ using the pdf  
-\begin{equation*}
-f_{\mathcal{G}^0_I}(z) = C \frac{z^{L-1}}{(\gamma + Lz)^{L-\alpha}},  
-\quad C = \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)}. \label{eq:pdf_G0I}
-\end{equation*}
-Setting $t = Lz/\gamma$, we obtain  
-\begin{equation*}
-I = C^\lambda \frac{\gamma^{1-\lambda+\lambda\alpha}}{L^{\lambda L + 1 - \lambda}}  
-\int_0^\infty \frac{t^{\lambda(L-1)}}{(1+t)^{\lambda(L-\alpha)}} dt.
-\end{equation*}
-Applying the Beta function identity, $B(a,b) = \int_0^\infty \frac{t^{a-1}}{(1+t)^{a+b}} dt$ with $a = \lambda(L-1) + 1$, $b = \lambda(-\alpha+1) - 1$, we get  
-\begin{equation*}
-I= \gamma^{\,1 - \lambda}\,
-   L^{\,\lambda - 1}
-   \Bigl(\tfrac{\Gamma(L - \alpha)}{\Gamma(-\alpha)\,\Gamma(L)}\Bigr)^\lambda
-   \,B(a,b).
-\end{equation*}
-Using the Rényi entropy definition in \eqref{E:entropy2}: $H_\lambda(Z) = (1-\lambda)^{-1} \ln I$,
-and substituting $\gamma = -\mu(\alpha + 1)$, we obtain the final expression for $\mathcal{G}^0_I(\mu, \alpha, L)$ in \eqref{eq-HGI0}.
+<!-- Let $Z \sim \mathcal{G}^0_I(\alpha, \gamma, L)$ as defined in Ref.&nbsp;[@Frery2024]. -->
+<!-- We compute $I = \int_0^\infty [f_{\mathcal{G}^0_I}(z)]^\lambda dz$ using the pdf   -->
+<!-- \begin{equation*} -->
+<!-- f_{\mathcal{G}^0_I}(z) = C \frac{z^{L-1}}{(\gamma + Lz)^{L-\alpha}},   -->
+<!-- \quad C = \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)}. \label{eq:pdf_G0I} -->
+<!-- \end{equation*} -->
+<!-- Setting $t = Lz/\gamma$, we obtain   -->
+<!-- \begin{equation*} -->
+<!-- I = C^\lambda \frac{\gamma^{1-\lambda+\lambda\alpha}}{L^{\lambda L + 1 - \lambda}}   -->
+<!-- \int_0^\infty \frac{t^{\lambda(L-1)}}{(1+t)^{\lambda(L-\alpha)}} dt. -->
+<!-- \end{equation*} -->
+<!-- Applying the Beta function identity, $B(a,b) = \int_0^\infty \frac{t^{a-1}}{(1+t)^{a+b}} dt$ with $a = \lambda(L-1) + 1$, $b = \lambda(-\alpha+1) - 1$, we get   -->
+<!-- \begin{equation*} -->
+<!-- I= \gamma^{\,1 - \lambda}\, -->
+<!--    L^{\,\lambda - 1} -->
+<!--    \Bigl(\tfrac{\Gamma(L - \alpha)}{\Gamma(-\alpha)\,\Gamma(L)}\Bigr)^\lambda -->
+<!--    \,B(a,b). -->
+<!-- \end{equation*} -->
+<!-- Using the Rényi entropy definition in \eqref{E:entropy2}: $H_\lambda(Z) = (1-\lambda)^{-1} \ln I$, -->
+<!-- and substituting $\gamma = -\mu(\alpha + 1)$, we obtain the final expression for $\mathcal{G}^0_I(\mu, \alpha, L)$ in \eqref{eq-HGI0}. -->
 
 <!-- # Computational Information {-} -->
 <!-- This article was written in Quarto and is fully reproducible. We used RStudio version 2024.12.1+563, and R version 4.4.2. -->
