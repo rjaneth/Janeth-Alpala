@@ -1,0 +1,32 @@
+<PAMDataset>
+  <Metadata>
+    <MDI key="Band_1">Intensity_HH_db</MDI>
+  </Metadata>
+  <Metadata domain="ENVI">
+    <MDI key="samples">1024</MDI>
+    <MDI key="lines">1024</MDI>
+    <MDI key="bands">1</MDI>
+    <MDI key="header_offset">0</MDI>
+    <MDI key="file_type">ENVI Standard</MDI>
+    <MDI key="data_type">4</MDI>
+    <MDI key="interleave">bsq</MDI>
+    <MDI key="byte_order">1</MDI>
+    <MDI key="band_names">{ Intensity_HH_db }</MDI>
+    <MDI key="data_gain_values">{1.0}</MDI>
+    <MDI key="data_offset_values">{0.0}</MDI>
+  </Metadata>
+  <Metadata domain="IMAGE_STRUCTURE">
+    <MDI key="INTERLEAVE">BAND</MDI>
+  </Metadata>
+  <PAMRasterBand band="1">
+    <Description>Intensity_HH_db</Description>
+    <Metadata>
+      <MDI key="STATISTICS_APPROXIMATE">YES</MDI>
+      <MDI key="STATISTICS_MINIMUM">-26.527593612671</MDI>
+      <MDI key="STATISTICS_MAXIMUM">23.118003845215</MDI>
+      <MDI key="STATISTICS_MEAN">-13.660647690337</MDI>
+      <MDI key="STATISTICS_STDDEV">4.6701452072387</MDI>
+      <MDI key="STATISTICS_VALID_PERCENT">100</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>

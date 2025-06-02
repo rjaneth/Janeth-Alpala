@@ -1,0 +1,25 @@
+\usepackage{etoolbox}
+\usepackage{setspace}
+
+\makeatletter
+
+% --- A) TÍTULO DE LAS REFERENCIAS ---
+% Si tu clase se basa en "book", el encabezado de bibliografía se llama \bibname.
+% Si fuera "article", sería \refname.
+% En MastersDoctoralThesis normalmente es \bibname.
+\renewcommand{\refname}{%
+  \centering
+  \MakeUppercase{References}
+}
+
+% --- B) REDUCIR ESPACIADO ENTRE ITEMS ---
+% Para la mayoría de entornos de bibliografía, basta con acortar itemsep/parskip:
+\AtBeginEnvironment{thebibliography}{%
+  \setlength{\itemsep}{0pt}%
+  \setlength{\parskip}{0pt}%
+  % Si el resto del documento está a doble espacio y quieres la bibliografía 
+  % a simple espacio, puedes también:
+  % \singlespacing
+}
+
+\makeatother

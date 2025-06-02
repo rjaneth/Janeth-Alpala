@@ -1,0 +1,746 @@
+\documentclass[11pt,]{article}
+\usepackage[left=1in,top=1in,right=1in,bottom=1in]{geometry}
+\newcommand*{\authorfont}{\fontfamily{phv}\selectfont}
+\usepackage[]{libertine}
+
+
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+
+
+
+
+\usepackage{abstract}
+\renewcommand{\abstractname}{}    % clear the title
+\renewcommand{\absnamepos}{empty} % originally center
+
+\renewenvironment{abstract}
+ {{%
+    \setlength{\leftmargin}{0mm}
+    \setlength{\rightmargin}{\leftmargin}%
+  }%
+  \relax}
+ {\endlist}
+
+\makeatletter
+\def\@maketitle{%
+  \newpage
+%  \null
+%  \vskip 2em%
+%  \begin{center}%
+  \let \footnote \thanks
+    {\fontsize{18}{20}\selectfont\raggedright  \setlength{\parindent}{0pt} \@title \par}%
+}
+%\fi
+\makeatother
+
+
+
+
+\setcounter{secnumdepth}{0}
+
+
+
+
+\title{Rényi Entropy-Based Heterogeneity Detection in SAR Data  }
+ 
+
+
+
+\author{\Large \vspace{0.05in} \newline\normalsize\emph{}  }
+
+
+\date{}
+
+\usepackage{titlesec}
+
+\titleformat*{\section}{\normalsize\bfseries}
+\titleformat*{\subsection}{\normalsize\itshape}
+\titleformat*{\subsubsection}{\normalsize\itshape}
+\titleformat*{\paragraph}{\normalsize\itshape}
+\titleformat*{\subparagraph}{\normalsize\itshape}
+
+
+\usepackage{natbib}
+\bibliographystyle{apsr}
+\usepackage[strings]{underscore} % protect underscores in most circumstances
+
+
+
+\newtheorem{hypothesis}{Hypothesis}
+\usepackage{setspace}
+
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage[english]{babel}
+\usepackage{bm,bbm}
+\usepackage{mathrsfs}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{polski}
+\usepackage{booktabs}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{multirow}
+\usepackage{subcaption}
+\captionsetup[sub]{position=bottom, labelfont={bf, small, stretch=1.17}, labelsep=space, textfont={small, stretch=1.5}, aboveskip=1pt, belowskip=1pt, singlelinecheck=off, justification=centering}
+\usepackage{amsthm}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{example}{Example}
+\usepackage{appendix}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+% move the hyperref stuff down here, after header-includes, to allow for - \usepackage{hyperref}
+
+\makeatletter
+\@ifpackageloaded{hyperref}{}{%
+\ifxetex
+  \PassOptionsToPackage{hyphens}{url}\usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \PassOptionsToPackage{hyphens}{url}\usepackage[draft,unicode=true]{hyperref}
+\fi
+}
+
+\@ifpackageloaded{color}{
+    \PassOptionsToPackage{usenames,dvipsnames}{color}
+}{%
+    \usepackage[usenames,dvipsnames]{color}
+}
+\makeatother
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={ ()},
+             pdfkeywords = {},  
+            pdftitle={Rényi Entropy-Based Heterogeneity Detection in SAR
+Data},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+
+% Add an option for endnotes. -----
+
+
+% add tightlist ----------
+\providecommand{\tightlist}{%
+\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% add some other packages ----------
+
+% \usepackage{multicol}
+% This should regulate where figures float
+% See: https://tex.stackexchange.com/questions/2275/keeping-tables-figures-close-to-where-they-are-mentioned
+\usepackage[section]{placeins}
+
+
+\begin{document}
+	
+% \pagenumbering{arabic}% resets `page` counter to 1 
+%    
+
+% \maketitle
+
+{% \usefont{T1}{pnc}{m}{n}
+\setlength{\parindent}{0pt}
+\thispagestyle{plain}
+{\fontsize{18}{20}\selectfont\raggedright 
+\maketitle  % title \par  
+
+}
+
+{
+   \vskip 13.5pt\relax \normalsize\fontsize{11}{12} 
+\textbf{\authorfont } \hskip 15pt \emph{\small }   
+
+}
+
+}
+
+
+
+
+
+
+\vskip -8.5pt
+
+
+ % removetitleabstract
+
+\noindent  
+
+\newcommand{\bias}{\operatorname{Bias}}
+\newcommand{\widebar}[1]{\overline{#1}}
+
+\appendix
+
+\section{APPENDIX}\label{appendix}
+
+\section{\texorpdfstring{Derivation of the Rényi Entropy for the
+\(\Gamma_{\text{SAR}}(L, \mu)\)
+Distribution.}{Derivation of the Rényi Entropy for the \textbackslash Gamma\_\{\textbackslash text\{SAR\}\}(L, \textbackslash mu) Distribution.}}\label{derivation-of-the-ruxe9nyi-entropy-for-the-gamma_textsarl-mu-distribution.}
+
+The Rényi entropy of order \(\lambda\) for a continuous random variable
+\(Z\) with density \(f_Z(z)\) is given by \begin{align}
+H_\lambda(Z) 
+&= \frac{1}{\,1 - \lambda\,} \,\ln \Bigl( \int_{0}^{\infty} [f_Z(z)]^\lambda \, dz \Bigr),
+\quad \lambda > 0, \;\lambda \neq 1.
+\label{eq:RenyiDefinition}
+\end{align}
+
+Let \(Z \sim \Gamma_{\text{SAR}}(L, \mu)\) with pdf \begin{align*}
+f_{\Gamma_{\text{SAR}}}(z; L, \mu)
+&= \frac{L^L}{\Gamma(L)\,\mu^L}\,z^{\,L - 1} 
+  \exp\Bigl(-\tfrac{L z}{\mu}\Bigr)\mathbbm 1_{\mathbbm R_+}(z).
+\end{align*} Define \begin{align*}
+I 
+&= \int_{0}^{\infty}\!\bigl[f_{\Gamma_{\text{SAR}}}(z; L,\mu)\bigr]^\lambda \,dz 
+ = \biggl(\frac{L^L}{\Gamma(L)\,\mu^L}\biggr)^{\!\lambda}
+   \int_{0}^{\infty} 
+   z^{\,\lambda\,(L-1)} \exp\Bigl(-\tfrac{\lambda\,L}{\mu}\,z\Bigr)\,dz.
+\end{align*} Using the Gamma integral \(\displaystyle
+  \int_{0}^{\infty} x^{p-1} e^{-qx}\,dx
+   = \frac{\Gamma(p)}{q^p},\) with \(p = \lambda L - \lambda + 1\) and
+\(q = \tfrac{\lambda L}{\mu}\), it follows that \begin{align*}
+I 
+&= \biggl(\frac{L^L}{\Gamma(L)\,\mu^L}\biggr)^{\!\lambda}
+   \frac{\Gamma(\lambda L - \lambda + 1)}
+        {\Bigl(\tfrac{\lambda\,L}{\mu}\Bigr)^{\lambda L - \lambda + 1}}.
+\end{align*} Taking the natural logarithm, \begin{align}
+\ln I 
+&= \lambda\Bigl(L \ln L - L \ln \mu - \ln \Gamma(L)\Bigr)
+   \;+\; \ln\Gamma\!\bigl(\lambda L - \lambda + 1\bigr)
+   \;-\; \bigl(\lambda L - \lambda + 1\bigr)\,\Bigl(\ln(\lambda L) - \ln\mu\Bigr).
+\label{eq:lnI}
+\end{align} By expanding \eqref{eq:lnI} and collecting terms in
+\(\ln L\) and \(\ln \mu\), \begin{align}
+\ln I 
+&= (1 - \lambda)\bigl(\ln \mu - \ln L\bigr)
+   \;-\;\lambda\,\ln \Gamma(L)
+   \;+\;\ln\Gamma\!\bigl(\lambda(L-1)+1\bigr)
+   \;-\;\bigl(\lambda(L-1)+1\bigr)\,\ln \lambda.
+\label{eq:lnIsimplified}
+\end{align} Substituting \eqref{eq:lnIsimplified} into
+\eqref{eq:RenyiDefinition} and simplifying, \begin{multline}
+H_\lambda\bigl(\Gamma_{\text{SAR}}(L,\mu)\bigr) 
+= \ln \mu - \ln L 
+  + \frac{1}{\,1-\lambda\,}
+  \Bigl[
+    -\lambda\,\ln\Gamma(L)
+    + \ln\Gamma\!\bigl(\lambda\,(L-1)+1\bigr)
+    - \bigl(\lambda\,(L-1)+1\bigr)\,\ln\lambda
+  \Bigr].
+\label{eq:RenyiFinal}
+\end{multline} This completes the derivation.
+
+\section{\texorpdfstring{Derivation of the Rényi Entropy for the
+\texorpdfstring{$\mathcal{G}^0_I$}{G0I}
+Distribution}{Derivation of the Rényi Entropy for the  Distribution}}\label{derivation-of-the-ruxe9nyi-entropy-for-the-distribution}
+
+\medskip
+
+\noindent Let \(Z \sim \mathcal{G}^0_I(\alpha, \gamma, L)\) with pdf
+\begin{align*}
+f_{\mathcal{G}^0_I}(z; \alpha, \gamma, L) 
+&= \frac{L^L\,\Gamma(L-\alpha)}{\gamma^{\alpha}\,\Gamma(-\alpha)\,\Gamma(L)}
+   \,\frac{z^{\,L-1}}{\bigl(\gamma + L\,z\bigr)^{\,L-\alpha}}\mathbbm 1_{\mathbbm R_+}(z). \label{E:gamma1}
+\end{align*} In particular, this parameterization is consistent with
+\(\gamma = -\mu(\alpha + 1)\), so the final expression can be rewritten
+in terms of \(\mu\).
+
+\medskip
+
+\noindent Define \begin{align*}
+I 
+&= \int_{0}^{\infty} \bigl[f_{\mathcal{G}^0_I}(z; \alpha, \gamma, L)\bigr]^\lambda \,dz
+= C^\lambda 
+  \int_{0}^{\infty} 
+    \frac{z^{\,\lambda(L - 1)}}
+         {\bigl(\gamma + L\,z\bigr)^{\,\lambda(L - \alpha)}} 
+  \,dz,
+\end{align*} where \[
+C 
+= \frac{L^L\,\Gamma(L - \alpha)}{\gamma^\alpha\,\Gamma(-\alpha)\,\Gamma(L)}.
+\] Using the change of variables \(t = \tfrac{Lz}{\gamma}\),
+\(z = \tfrac{\gamma\,t}{L}\), and \(dz = \tfrac{\gamma}{L}\,dt\), we
+obtain \begin{align*}
+I 
+&= C^\lambda
+   \int_{0}^{\infty}
+     \Bigl(\tfrac{\gamma\,t}{L}\Bigr)^{\,\lambda(L - 1)}
+     \Bigl(\gamma + L\,\tfrac{\gamma\,t}{L}\Bigr)^{-\lambda(L - \alpha)}
+     \,\tfrac{\gamma}{L}\,dt
+\\
+&= C^\lambda 
+   \,\frac{\gamma^{\,1+\lambda(\alpha - 1)}}{L^{\,1+\lambda(L - 1)}}
+   \int_{0}^{\infty}
+     \frac{t^{\,\lambda(L - 1)}}
+          {(1 + t)^{\,\lambda(L - \alpha)}}
+   \,dt.
+\end{align*} By the Beta-function identity \[
+\int_{0}^{\infty} \frac{t^{\,a - 1}}{(1 + t)^{\,a + b}} \, dt 
+= B(a,b),
+\] where \[
+a = \lambda(L - 1) + 1,
+\quad
+b = \lambda(-\alpha + 1) - 1,
+\] it follows that \begin{align*}
+I 
+&= C^\lambda \,\frac{\gamma^{\,1+\lambda(\alpha - 1)}}{L^{\,1+\lambda(L - 1)}}
+   \,B(a,b).
+\end{align*} Next, we note that
+\(\gamma^{\,1 + \lambda(\alpha - 1)} = \gamma^{\,1 - \lambda + \lambda\alpha}\)
+and \(L^{\,1 + \lambda(L - 1)} = L^{\,\lambda L + 1 - \lambda}.\) Since
+\[
+C^\lambda 
+= \biggl(\tfrac{L^L}{\gamma^\alpha\,\Gamma(-\alpha)\,\Gamma(L)}\,\Gamma(L - \alpha)\biggr)^{\!\lambda}
+= L^{\lambda L}\,\gamma^{-\alpha \lambda}
+  \Bigl(\tfrac{\Gamma(L - \alpha)}{\Gamma(-\alpha)\,\Gamma(L)}\Bigr)^\lambda,
+\] we obtain \begin{align*}
+I
+&= \gamma^{\,1 - \lambda}\,
+   L^{\,\lambda - 1}
+   \Bigl(\tfrac{\Gamma(L - \alpha)}{\Gamma(-\alpha)\,\Gamma(L)}\Bigr)^\lambda
+   \,B(a,b).
+\end{align*}
+
+\medskip
+
+\noindent By \eqref{eq:RenyiDefinition}, the Rényi entropy, is given by:
+\begin{align*}
+H_\lambda(Z)
+&= \frac{1}{\,1 - \lambda\,} \,\ln I.
+\end{align*} Hence, \begin{align*}
+H_\lambda(Z) 
+&= \frac{1}{\,1 - \lambda\,}
+  \,\ln\!\Bigl[
+    \gamma^{\,1 - \lambda}\,
+    L^{\,\lambda - 1}\,
+    \Bigl(\tfrac{\Gamma(L - \alpha)}{\Gamma(-\alpha)\,\Gamma(L)}\Bigr)^\lambda
+    \,B(a,b)
+  \Bigr].
+\end{align*} Thus, for \(Z \sim \mathcal{G}^0_I(\alpha, \gamma, L)\),
+\begin{align*}
+H_\lambda\bigl(\mathcal{G}^0_I(\alpha, \gamma, L)\bigr)
+&= \ln\Bigl(\tfrac{\gamma}{\,L}\Bigr)
+  + \frac{1}{\,1 - \lambda\,}
+    \Bigl[
+      \lambda\bigl(\ln \Gamma(L - \alpha) 
+            - \ln \Gamma(-\alpha) 
+            - \ln \Gamma(L)\bigr)
+      + \ln B(a,b)
+    \Bigr].
+\end{align*} Using the property \[
+\ln B(a,b) 
+= \ln \Gamma(a) + \ln \Gamma(b) - \ln \Gamma(a + b),
+\] where \(a + b = \lambda(L - \alpha)\), we have \begin{align}
+H_\lambda\bigl(\mathcal{G}^0_I( \alpha,\gamma, L)\bigr)
+&= \ln\Bigl(\tfrac{\gamma}{L}\Bigr)
+ + \frac{1}{\,1 - \lambda\,}
+   \Bigl[
+     \lambda\bigl(\ln \Gamma(L - \alpha) 
+            - \ln \Gamma(-\alpha) 
+            - \ln \Gamma(L)\bigr)
+     + \ln \Gamma(a)
+     + \ln \Gamma(b)
+     - \ln \Gamma\bigl(\lambda(L - \alpha)\bigr)
+   \Bigr].
+\label{eq:GI0RenyiInGamma}
+\end{align} Finally, noting that \[
+\mu = -\tfrac{\gamma}{\alpha + 1}
+\quad\Longrightarrow\quad
+\gamma = -\mu(\alpha + 1),
+\] and substituting \(\gamma\) into \eqref{eq:GI0RenyiInGamma}, we
+obtain \begin{multline}
+H_\lambda\bigl(\mathcal{G}^0_I( \alpha,\mu, L)\bigr)
+= \ln \mu  -  \ln L + \ln(- 1-\alpha)
++ \frac{1}{\,1 - \lambda\,}
+  \Bigl[
+    \lambda\Bigl(\ln \Gamma(L - \alpha) 
+        - \ln \Gamma(-\alpha) 
+        - \ln \Gamma(L)\Bigr)\\
+    + \ln \Gamma\bigl(\lambda(L - 1) + 1\bigr)
+    + \ln \Gamma\bigl(\lambda(-\alpha + 1) - 1\bigr)
+    - \ln \Gamma\bigl(\lambda(L - \alpha)\bigr)
+  \Bigr],
+\label{eq:RenyiGI0Final}
+\end{multline} which completes the derivation.
+
+\section{\texorpdfstring{Relation to the
+\texorpdfstring{$\Gamma_{\mathrm{SAR}}$}{Gamma SAR}
+Distribution}{Relation to the  Distribution}}\label{relation-to-the-distribution}
+
+The Rényi entropy of the \(\mathcal{G}^0_I(\alpha,\mu,L)\) distribution
+can be expressed in terms of the Rényi entropy of the
+\(\Gamma_{\mathrm{SAR}}(L,\mu)\) distribution, plus additional terms
+involving \(\alpha\) and the Gamma function. Specifically, we can write:
+\begin{multline}
+H_\lambda\bigl(\mathcal{G}^0_I(\alpha,\mu,L)\bigr)
+= 
+\underbrace{\Bigl[
+  \ln\mu \;-\;\ln L 
+  \;+\; \frac{1}{\,1-\lambda\,}\Bigl(
+    -\lambda \,\ln\Gamma(L) 
+    \;+\;\ln\Gamma\bigl(\lambda(L-1)+1\bigr)
+    \;-\;\bigl(\lambda(L-1)+1\bigr)\,\ln\lambda
+  \Bigr)
+\Bigr]}_{\displaystyle H_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L,\mu)\bigr)}
+\\[6pt]
++~\ln\bigl(-1-\alpha\bigr)
++~\frac{1}{\,1-\lambda\,} 
+ \Bigl[
+   \lambda\bigl(\ln\Gamma(L-\alpha) - \ln\Gamma(-\alpha)\bigr)
+   \;+\;\ln\Gamma\bigl(\lambda(-\alpha+1)-1\bigr)
+   \;-\;\ln\Gamma\bigl(\lambda(L-\alpha)\bigr)
+   \;+\;\bigl(\lambda(L-1)+1\bigr)\,\ln(\lambda)
+ \Bigr].
+\label{eq:GI0_in_terms_of_GammaSAR}
+\end{multline} From \eqref{eq:GI0_in_terms_of_GammaSAR}, the bracketed
+expression on the first line matches
+\(H_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L,\mu)\bigr)\), while the
+remaining terms account for the parameter \(\alpha\) through additional
+Gamma functions and logarithmic corrections. This decomposition
+highlights the close relationship between the Rényi entropies of the
+\(\mathcal{G}^0_I\) and \(\Gamma_{\mathrm{SAR}}\) distributions.
+
+\section{\texorpdfstring{Limit Behavior of
+\texorpdfstring{$H_\lambda(\mathcal{G}^0_I)$}{Hl(GI0)} as
+\texorpdfstring{$\alpha \to -\infty$}{alpha->-∞}}{Limit Behavior of  as }}\label{limit-behavior-of-as}
+
+\begin{proof}
+We want to show that 
+\[
+\lim_{\alpha \to -\infty}
+H_\lambda\bigl(\mathcal{G}^0_I\bigr)(\mu, \alpha, L)
+=
+H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu, L).
+\]
+
+We can express \eqref{eq:GI0_in_terms_of_GammaSAR} as follows:
+\begin{align*}
+H_\lambda\bigl(\mathcal{G}^0_I\bigr)(\mu,\alpha,L)
+&=
+H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu,L)
+\;+\;
+\ln\!\bigl(-1-\alpha\bigr)
+\\
+&\quad
++ \frac{1}{1-\lambda}
+\ln \Biggl[
+  \frac{
+    \Gamma(L-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(-\alpha+1)-1\bigr)\,\lambda^{\lambda(L-1)+1}
+  }{
+    \Gamma(-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(L-\alpha)\bigr)
+  }
+\Biggr].
+\end{align*}
+Set
+\begin{align*}
+\Delta(\alpha)
+&=
+H_\lambda\bigl(\mathcal{G}^0_I\bigr)(\mu,\alpha,L)
+-
+H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu,L).
+\end{align*}
+Then 
+\begin{align}
+\Delta(\alpha)
+=
+\ln(-1-\alpha)
++
+\frac{1}{1-\lambda}
+\ln \biggl[
+  \frac{
+    \Gamma(L-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(-\alpha+1)-1\bigr)\,\lambda^{\lambda(L-1)+1}
+  }{
+    \Gamma(-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(L-\alpha)\bigr)
+  }
+\biggr].
+\label{eq:remain}
+\end{align}
+
+As \(\alpha \to -\infty\), we have \(-1-\alpha \approx |\alpha|\), so 
+\[
+\ln(-1-\alpha) 
+\sim 
+\ln|\alpha|.
+\]
+Note that for large \(|\alpha|\), we can the asymptotic relation 
+\(
+\Gamma(x+a)/\Gamma(x+b) 
+\sim 
+x^{\,a-b}
+\).
+Specifically:
+\[
+\Gamma(L-\alpha)/\Gamma(-\alpha) \;\sim\; |\alpha|^L,
+\quad
+\Gamma\bigl(\lambda(-\alpha+1)-1\bigr)/\Gamma\bigl(\lambda(L-\alpha)\bigr)
+\;\sim\; 
+\bigl(\lambda|\alpha|\bigr)^{\,(\lambda-1)-\lambda L}.
+\]
+Thus, inside the logarithm in \eqref{eq:remain},
+\[
+\frac{
+  \Gamma(L-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(-\alpha+1)-1\bigr)
+}{
+  \Gamma(-\alpha)^{\lambda}\,\Gamma\bigl(\lambda(L-\alpha)\bigr)
+}
+\;\sim\;
+|\alpha|^{\lambda L}
+\times
+|\alpha|^{(\lambda-1)-\lambda L}
+=
+|\alpha|^{\,\lambda-1}.
+\]
+Since \(\lambda^{\lambda(L-1)+1}\)  does not depend on \(\alpha\), multiplying by this constant factor does not alter the asymptotic behavior in \(\alpha\). Therefore,
+\[
+\frac{1}{1-\lambda}\,
+\ln\!\Bigl[\dots\Bigr]
+\;\sim\;
+\frac{1}{1-\lambda}\;\ln\!\bigl(|\alpha|^{\,\lambda-1}\bigr)
+=
+\frac{\lambda-1}{1-\lambda}\,\ln|\alpha|
+=
+-\ln|\alpha|.
+\]
+Hence
+\[
+\Delta(\alpha)
+\;\sim\;
+\ln|\alpha|
+-
+\ln|\alpha|
+=
+0
+\quad
+\text{as}\, \alpha\to -\infty.
+\]
+This shows 
+\(\Delta(\alpha)\to 0\), 
+and consequently
+\[
+\lim_{\alpha \to -\infty}
+H_\lambda\bigl(\mathcal{G}^0_I\bigr)(\mu,\alpha,L)
+=
+H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu,L).
+\]
+\end{proof}
+
+\section{Bias Reduction via Bootstrap for Entropy Estimation}
+
+The non-parametric Rényi entropy estimator
+\(\widehat{H}_\lambda(\bm{Z})\), as defined in \eqref{eq:est_R},
+exhibits bias, meaning its expectation does not coincide with the true
+entropy \(H_\lambda\): \begin{equation}
+\operatorname{Bias}(\widehat{H}_\lambda) = {E}[\widehat{H}_\lambda] - H_\lambda \neq 0.
+\end{equation}
+
+To reduce this bias, we employ a bootstrap correction approach. Let
+\(\bm{Z} = (Z_1, Z_2, \dots, Z_n)\) be a sample of size \(n\), and let
+\(\bm{Z}^{(b)} = (Z_1^{(b)}, Z_2^{(b)}, \dots, Z_n^{(b)})\) for
+\(b = 1, 2, \dots, B\) be a bootstrap sample obtained by resampling with
+replacement from \(\bm{Z}\). For each bootstrap sample, we compute the
+entropy estimator \(\widehat{H}_\lambda(\bm{Z}^{(b)})\). Since bootstrap
+resampling mimics the sampling variability, we estimate the bias as:
+\begin{equation}
+\widehat{\operatorname{Bias}} = \frac{1}{B} \sum_{b=1}^{B} \widehat{H}_\lambda(\bm{Z}^{(b)}) - \widehat{H}_\lambda(\bm{Z}).
+\end{equation}
+
+A bias-corrected estimator can then be defined as: \begin{align}
+\widetilde{H}_\lambda &= \widehat{H}_\lambda - \widehat{\operatorname{Bias}},\\
+&= 2\widehat{H}_\lambda(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{H}_\lambda(\bm{Z}^{(b)}).
+\end{align} This estimator is motivated by the well-known bias
+correction principle: \begin{equation}
+\text{Bias-corrected estimate} = \text{Original estimate} - \text{Bias estimate}.
+\end{equation} The expectation of \(\widetilde{H}_\lambda\) is given by:
+\begin{align}
+\mathbb{E}[\widetilde{H}_\lambda] &= \mathbb{E}[2\widehat{H}_\lambda(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{H}_\lambda(\bm{Z}^{(b)})]\\
+&= 2\mathbb{E}[\widehat{H}_\lambda(\bm{Z})] - \mathbb{E}[\widehat{H}_\lambda(\bm{Z})]\\
+&= \mathbb{E}[\widehat{H}_\lambda(\bm{Z})] + \big( H_\lambda - \mathbb{E}[\widehat{H}_\lambda(\bm{Z})] \big)\\
+&= H_\lambda.
+\end{align} Thus, \(\widetilde{H}_\lambda\) is an \textbf{approximately
+unbiased} estimator of \(H_\lambda\). The effectiveness of this
+correction depends on the choice of \(B\) and the underlying sample
+distribution, but it systematically reduces bias in entropy estimation,
+particularly for small sample sizes.
+
+For a continuous random variable \(Z\) with probability density function
+(pdf) \(f(z)\), the Rényi entropy of order
+\(\lambda \in \mathbb{R}_+ \setminus \{1\}\) is defined as:
+\begin{equation}
+\label{E:entropy2}
+H_\lambda(Z) = \frac{1}{1 - \lambda} \ln \int_{-\infty}^{\infty} [f(z)]^\lambda \, dz.
+\end{equation} Using \eqref{E:entropy2}, we derive closed-form
+expressions for the Rényi entropy of the \(\Gamma_{\mathrm{SAR}}\) and
+\(\mathcal{G}^0_I\) distributions:
+
+\begin{multline}
+\label{eq-HGammaSAR}
+H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr)
+= 
+\ln \mu - \ln L + \frac{1}{1-\lambda}
+\Bigl[
+  -\lambda\,\ln\Gamma(L)  \\ + \ln\Gamma\bigl(\lambda(L-1)+1\bigr)  - \bigl(\lambda(L-1)+1\bigr)\,\ln\lambda
+\Bigr].
+\end{multline}
+
+Similarly, for the \(\mathcal{G}^0_I\) distribution, we obtain:
+
+\begin{multline}
+\label{eq-HGI0}
+H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L, \mu)\bigr) \\
++ \ln(-1 - \alpha) \\
++ \frac{1}{1 - \lambda} \Bigl[ 
+    \lambda\bigl(\ln\Gamma(L - \alpha) - \ln\Gamma(-\alpha)\bigr) \\
+    + \ln\Gamma\bigl(\lambda(L - 1) + 1\bigr) 
+\Bigr].
+\end{multline}
+
+The detailed derivation of the Rényi entropy for the \(\mathcal{G}^0_I\)
+distribution is provided in the Appendix.
+
+Figure\textasciitilde{}\ref{fig:entropy_plot} illustrates the behavior
+of the Rényi entropy as a function of \(\lambda\) for different values
+of the distribution parameters.
+
+For a continuous random variable \(Z\) with pdf \(f(z)\), the Rényi
+entropy of order \(\lambda \in \mathbbm R_+ \setminus \{1\}\) is defined
+as: \begin{equation}
+\label{E:entropy2}
+H_\lambda(Z) = \frac{1}{1 - \lambda} \ln \int_{-\infty}^{\infty} [f(z)]^\lambda \, dz.
+\end{equation}
+
+Using \eqref{E:entropy2}, we derive closed-form expressions for the
+Rényi entropy of the \(\Gamma_{\mathrm{SAR}}\) and \(\mathcal{G}^0_I\)
+distributions. Importantly, the \(\mathcal{G}^0_I\) entropy can be
+expressed in terms of the \(\Gamma_{\mathrm{SAR}}\) entropy plus
+additional terms that account for the roughness parameter \(\alpha\):
+
+\begin{multline}
+\label{eq-HGammaSAR}
+H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr)
+= 
+\ln \mu - \ln L + \frac{1}{1-\lambda}
+\Bigl[
+  -\lambda\,\ln\Gamma(L)  \\ + \ln\Gamma\bigl(\lambda(L-1)+1\bigr)  - \bigl(\lambda(L-1)+1\bigr)\,\ln\lambda
+\Bigr],
+\end{multline}
+
+\begin{multline}
+\label{eq-HGI0}
+H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr) + \Delta H_\lambda(\alpha) \\
+\text{where } \Delta H_\lambda(\alpha) = \ln(-1 - \alpha) + \frac{1}{1 - \lambda}
+\Bigl[
+   \lambda\bigl(
+      \ln\Gamma(L - \alpha)
+      -\ln\Gamma(-\alpha)
+   \bigr) \\
+   +\ln\Gamma\bigl(\lambda(-\alpha + 1) - 1\bigr)
+   -\ln\Gamma\bigl(\lambda(L - \alpha)\bigr)
+   +\bigl(\lambda(L-1)+1\bigr)\ln\lambda
+\Bigr].
+\end{multline}
+
+The term \(\Delta H_\lambda(\alpha)\) quantifies the additional entropy
+contribution due to texture variations in the \(\mathcal{G}^0_I\) model.
+As \(\alpha \to -\infty\), we can show that
+\(\Delta H_\lambda(\alpha) \to 0\), recovering the
+\(\Gamma_{\mathrm{SAR}}\) case. This limiting behavior confirms that the
+\(\Gamma_{\mathrm{SAR}}\) distribution is indeed a special case of the
+\(\mathcal{G}^0_I\) distribution for homogeneous areas.
+
+\citet{fig-plot} presents the Rényi entropy of the \(\mathcal{G}^0_I\)
+model as a function of \(\mu\) for different values of \(\alpha\),
+demonstrating this convergence.
+
+For a continuous random variable \(Z\) with pdf \(f(z)\), the Rényi
+entropy of order \(\lambda \in \mathbbm{R}_+ \setminus \{1\}\) is
+defined as:\\
+\begin{equation}  
+\label{E:entropy2}  
+H_\lambda(Z) = \frac{1}{1 - \lambda} \ln \int_{-\infty}^{\infty} [f(z)]^\lambda \, dz.  
+\end{equation}
+
+Using \eqref{E:entropy2}, we derive the Rényi entropy for the
+\(\Gamma_{\text{SAR}}\) distribution:\\
+\begin{multline}  
+\label{eq-HGammaSAR}  
+H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr) = \ln\mu - \ln L \\  
++ \frac{1}{1-\lambda} \Bigl[ -\lambda\ln\Gamma(L) + \ln\Gamma\bigl(\lambda(L-1)+1\bigr) - \bigl(\lambda(L-1)+1\bigr)\ln\lambda \Bigr].  
+\end{multline}
+
+For the \(\mathcal{G}^0_I\) distribution, the entropy \textbf{explicitly
+extends} \(H_\lambda(\Gamma_{\text{SAR}})\) with terms depending on the
+roughness parameter \(\alpha\):\\
+\begin{multline}  
+\label{eq-HGI0}  
+H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr) + \ln(-1 - \alpha) \\  
++ \frac{1}{1 - \lambda} \Bigl[ \lambda\bigl(\ln\Gamma(L - \alpha) - \ln\Gamma(-\alpha)\bigr) + \ln\Gamma\bigl(\lambda(-\alpha + 1) - 1\bigr) \\  
+- \ln\Gamma\bigl(\lambda(L - \alpha)\bigr) + \bigl(\lambda(L-1)+1\bigr)\ln\lambda \Bigr].  
+\end{multline}
+
+As \(\alpha \to -\infty\), the additional terms vanish, reducing
+\eqref{eq-HGI0} to \eqref{eq-HGammaSAR}. This confirms that
+\(\Gamma_{\text{SAR}}\) is the limiting case of \(\mathcal{G}^0_I\) for
+homogeneous areas (fully developed speckle).
+
+These results are proven in the Appendix. Notably, the
+\(\mathcal{G}^0_I\) entropy converges to the \(\Gamma_{\text{SAR}}\)
+case as \(\alpha \to -\infty\), i.e., \[
+\lim_{\alpha \to -\infty} H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr).
+\] This limit is analytically derived in the Appendix and corroborates
+that \(\Gamma_{\text{SAR}}\) describes homogeneous areas (fully
+developed speckle), while \(\mathcal{G}^0_I\) generalizes it for
+textured regions.
+
+\section*{Appendix: Proof of the Limit Behavior}
+
+The limit
+\(\lim_{\alpha \to -\infty} H_\lambda(\mathcal{G}^0_I) = H_\lambda(\Gamma_{\text{SAR}})\)
+follows from analyzing the additional terms in \eqref{eq-HGI0}. Let:\\
+\[
+\Delta(\alpha) = H_\lambda(\mathcal{G}^0_I) - H_\lambda(\Gamma_{\text{SAR}}) = \ln(-1-\alpha) + \frac{1}{1-\lambda} \ln\!\left[ \frac{\Gamma(L-\alpha)^\lambda \Gamma(\lambda(-\alpha+1)-1) \lambda^{\lambda(L-1)+1}}{\Gamma(-\alpha)^\lambda \Gamma(\lambda(L-\alpha))} \right].
+\]\\
+Using asymptotic properties of the Gamma function for large
+\(|\alpha|\):\\
+\[
+\frac{\Gamma(L-\alpha)}{\Gamma(-\alpha)} \sim |\alpha|^L, \quad \frac{\Gamma(\lambda(-\alpha+1)-1)}{\Gamma(\lambda(L-\alpha))} \sim (\lambda|\alpha|)^{\lambda-1 - \lambda L},
+\]\\
+we obtain \(\Delta(\alpha) \sim \ln|\alpha| - \ln|\alpha| = 0\). Thus,
+\(\Delta(\alpha) \to 0\) as \(\alpha \to -\infty\).
+
+
+
+
+
+\newpage
+\singlespacing 
+\bibliography{../../Common/references.bib}
+
+\end{document}

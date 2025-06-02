@@ -1,0 +1,33 @@
+\usepackage{titlesec}
+\usepackage{etoolbox}
+
+\makeatletter
+
+% (A) Desactiva "Chapter" en capítulos normales
+\renewcommand{\chaptername}{}  
+
+% (B) titlesec para formatear el heading de capítulo
+\titleformat{\chapter}[display]
+  {\Huge\bfseries}               % <formato del título>
+  {%
+    % 3er argumento: la "etiqueta"
+    % NO debe llevar #1. Solo texto y macros, p. ej.:
+    \if@appendix
+       Appendix\ \thechapter     % "Appendix A"
+    \else
+       \thechapter               % "1", "2", etc.
+    \fi
+  }
+  {1em}                          % <separación>
+  {%
+    % 5to argumento: lo que va "antes del título real"
+    % Aquí SÍ podemos usar #1 si queremos
+    \if@appendix
+       --\enspace #1            % "Appendix A -- Título"
+    \else
+       \enspace #1              % "1 Título"
+    \fi
+  }
+  []                             % 6to argumento opcional: (después del título)
+
+\makeatother

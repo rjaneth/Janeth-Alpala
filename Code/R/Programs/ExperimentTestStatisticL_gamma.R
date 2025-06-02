@@ -24,9 +24,9 @@ set.seed(1234567890, kind="Mersenne-Twister")
 R <- 1000 # 
 mu <- 1
 L <- 5
-B <- 50
+B <- 100
 
-sample.size <- c( 25, 49)
+sample.size <- c( 49)
 
 TestStatistics <- NULL
 
@@ -35,14 +35,14 @@ for(s in sample.size){
     
     z <- gamma_sar_sample(L, mu, s) #
     
-    TestStat <- bootstrap_ebrahimi_estimator(z, B, 0.999) - (log(mean(z)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+    entropy_result <- bootstrap_ebrahimi_estimator(z, B) 
   
    
     TestStatistics <- rbind(TestStatistics,
-                            c(s, TestStat))
+                            c(s, entropy_result))
   }
   
-  mean_entropy <- mean(TestStat)
+  mean_entropy <- mean(entropy_result)
   cat(" mean", mean_entropy, "\n" )
 }
 

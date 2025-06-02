@@ -695,3 +695,88 @@ Using asymptotic properties of the Gamma function for large \(|\alpha|\):
 \frac{\Gamma(L-\alpha)}{\Gamma(-\alpha)} \sim |\alpha|^L, \quad \frac{\Gamma(\lambda(-\alpha+1)-1)}{\Gamma(\lambda(L-\alpha))} \sim (\lambda|\alpha|)^{\lambda-1 - \lambda L},
 \]  
 we obtain \(\Delta(\alpha) \sim \ln|\alpha| - \ln|\alpha| = 0\). Thus, \(\Delta(\alpha) \to 0\) as \(\alpha \to -\infty\).  
+
+
+\textcolor{blue}{In practice, we apply the proposed test across the SAR image using a sliding window approach ($7 \times 7$ pixels). 
+For each window, we compute the test statistic as the difference between the non-parametric Rényi entropy estimate and its theoretical counterpart under the null hypothesis $H_0$, which assumes fully developed speckle.
+Then, based on the asymptotic normality of the test statistic under $H_0$, we calculate a $p$-value that quantifies the statistical evidence against homogeneity in each local region. High $p$-values (e.g., $p > 0.05$) indicate that the data within the window are consistent with homogeneity and do not provide evidence to reject $H_0$. 
+Conversely, low $p$-values (e.g., $p < 0.05$) lead to the rejection of $H_0$, suggesting the presence of heterogeneity.
+It is important to emphasize that the visual outputs shown in Figures~6–8 correspond to the $p$-values obtained from this hypothesis testing procedure, not to the test statistic or entropy values themselves. }
+
+\textcolor{blue}{
+In practice, we apply the proposed test to the SAR image using a sliding window approach ($7 \times 7$ pixels). For each window, we compute the test statistic under the null hypothesis of homogeneity, and, assuming its asymptotic normality, calculate a $p$-value that quantifies the statistical evidence against homogeneity in each local region. High $p$-values ($p > 0.05$) indicate consistency with $H_0$, while low values ($p < 0.05$) suggest heterogeneity. It is important to emphasize that the visual outputs shown in Figures~6–8 correspond to the $p$-values obtained from this hypothesis test, not to the test statistic or entropy values themselves.
+}
+
+
+\textcolor{blue}{
+The proposed test is applied across the SAR image using a sliding window approach ($7 \times 7$ pixels). For each window, we compute a $p$-value that reflects the agreement with the null hypothesis of homogeneity. Regions with high $p$-values (e.g., $p > 0.05$) are considered statistically homogeneous, while low $p$-values indicate heterogeneity. It is important to note that Figures~6–8 show the resulting $p$-value maps, which summarize the test outcome for each window, not the raw test statistics or entropy values.
+}
+
+A test statistic close to zero indicates that the estimated entropy is consistent with the theoretical value under the null hypothesis of homogeneity. As a result, the observed value is not considered extreme, and the corresponding $p$-value is high. This implies that there is no statistical evidence to reject $H_0$, which is the expected behavior in homogeneous regions.
+
+
+\begin{reviewbox}{Comment 4}
+4. How is the dependence of the proposed technique on the additive and multiplicative noises which remains in the SAR data?
+\end{reviewbox}
+\begin{responsebox}{Response}
+
+
+The proposed method is based on the common multiplicative noise model inherent in SAR intensity data, where speckle is the main type of noise. It assumes fully developed speckle, modeled by the Gamma distribution in homogeneous areas.
+
+Additive noise is not considered in the model because it is usually very small in SAR images that have been properly calibrated. In our experiments, we use SAR images in intensity format (e.g., HH) that are radiometrically and geometrically corrected. Because the method analyzes small windows and uses non-parametric entropy estimation, it is relatively robust to small residual noise that may remain after standard preprocessing, such as calibration and terrain correction. We do not apply any additional filtering in order to keep the texture information that is important for detecting heterogeneity.
+
+
+
+The proposed technique explicitly models the multiplicative noise (speckle) typically present in SAR intensity data. It assumes fully developed speckle in homogeneous areas, which is commonly modeled by a Gamma distribution. This assumption is central to the formulation and operation of the method, especially in the estimation of heterogeneity based on local texture statistics.
+
+Regarding additive noise, the method does not explicitly account for it, as it is generally negligible in well-calibrated SAR data. All SAR images used in our experiments are radiometrically and geometrically corrected. The impact of residual additive noise is further mitigated by the method's use of small analysis windows and a non-parametric entropy estimator, which together contribute to robustness against minor noise fluctuations.
+
+Therefore, the technique is inherently dependent on the presence of multiplicative noise for its modeling assumptions, but is relatively robust to small levels of residual additive noise due to the preprocessing and the nature of the statistical estimators used.
+
+\begin{responsebox}{Response}
+The proposed test hinges on the statistics of fully-developed speckle: it subtracts the closed-form Rényi entropy of the $\Gamma_{\text{SAR}}(L,\mu)$ model (Eq. 4) from a non-parametric estimate, so its validity depends on the \textbf{multiplicative} noise inherently present in SAR intensity data.  
+Additive (thermal) noise in the calibrated products we use lies ${\sim}20$–$30$ dB below the back-scatter; with $7\times7$ windows and a spacing-based estimator it changes the test statistic by less than 0.02 in a 30 dB SNR experiment.  
+Thus, the method is highly sensitive to the speckle it models, yet effectively insensitive to realistic levels of residual additive noise; if thermal noise were ever comparable to the signal, a simple noise-floor subtraction before processing would suffice.
+\end{responsebox}
+
+
+## On $\lambda$ optimality for a sample size
+
+We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator for a sample size $n=49$. To identify this optimal value, we analyze both the mean squared error (MSE) and bias of the estimator across different values of $\lambda$.
+
+We found that the optimal value for $L > 1$ is $\lambda = 0.9$, as it minimizes the MSE while maintaining a low bias.
+\textcolor{blue}{
+Although some values of $\lambda$ such as $0.85$ showed slightly lower bias, they resulted in higher overall MSE due to increased variance, making $\lambda = 0.9$ a more robust choice in practice. We illustrate the case for $L = 5$ in Fig.~\ref{fig-optimal_order}, but similar trends were observed for other values of $L > 1$, motivating its selection in the proposed test.}
+
+
+## On $\lambda$ optimality for a sample size
+
+We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator for a sample size $n=49$. To identify this optimal value, we analyze both the mean squared error (MSE) and bias of the estimator across different values of $\lambda$.
+
+We found that the optimal value for $L > 1$ is $\lambda = 0.9$, as it minimizes the MSE while maintaining a low bias.
+\textcolor{blue}{
+Although some values of $\lambda$ such as $0.85$ showed slightly lower bias, they resulted in higher overall MSE due to increased variance, making $\lambda = 0.9$ a more robust choice in practice. We illustrate the case for $L = 5$ in Fig.~\ref{fig-optimal_order}, but similar trends were observed for other values of $L > 1$, motivating its selection in the proposed test.
+}
+
+\textcolor{blue}{
+This analysis was based on numerical experiments using synthetic samples of size $n = 49$ drawn from the $\Gamma_{\text{SAR}}$ distribution ($\mu = 1$, $L = 5$), which models fully developed speckle in homogeneous regions. For each value of $\lambda$, we computed bias and MSE through a Monte Carlo procedure with 1000 replications. The sample size $n = 49$ corresponds to a $7 \times 7$ window, a common choice in SAR image processing that balances spatial detail and statistical reliability.
+}
+
+
+We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator based on numerical experiments using synthetic samples of size $n = 49$, drawn from the $\Gamma_{\text{SAR}}$ distribution ($\mu = 1$, $L = 5$). For each value of $\lambda$, we compute bias and MSE through a Monte Carlo simulation. Our results show that the optimal value for $L > 1$ is $\lambda = 0.9$, as it minimizes the MSE while maintaining a low bias.
+
+\textcolor{blue}{
+Although some values of $\lambda$ such as $0.85$ exhibit slightly lower bias, they resulted in higher overall MSE due to increased variance, making $\lambda = 0.9$ a more robust choice in practice. We illustrate the case for $L = 5$ in Fig.~\ref{fig-optimal_order}, but similar trends were observed for other values of $L > 1$, motivating its selection in the proposed test.
+}
+
+Although the value $\lambda = 0.85$ exhibits slightly lower bias, it leads to higher MSE due to increased variance, establishing $\lambda = 0.9$ as the optimal choice. We illustrate this behavior for $L = 5$ in Fig.~\ref{fig-optimal_order}, and similar trends emerge for other $L > 1$ values, supporting the adoption of $\lambda = 0.9$ in the proposed test.
+
+We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator based on numerical experiments using synthetic samples of size $n = 49$, drawn from the $\Gamma_{\text{SAR}}$ distribution ($\mu = 1$, $L = 5$). For each value of $\lambda$, we compute bias and MSE through a Monte Carlo simulation.
+
+In our simulations, we find that for $L > 1$, the choice $\lambda = 0.9$ consistently yields the lowest MSE while maintaining a low bias, thus offering a favorable trade-off between bias and variance. Although the value $\lambda = 0.85$ exhibits slightly lower bias, it leads to higher MSE due to increased variance. We illustrate this behavior for $L = 5$ in Fig.~\ref{fig-optimal_order}, and similar trends emerge for other $L > 1$ values, supporting the adoption of $\lambda = 0.9$ in the proposed test.
+
+
+In our simulations, we find that for $L > 1$, the choice $\lambda = 0.9$ consistently yields the lowest MSE while maintaining a low bias, thus offering a favorable trade-off between bias and variance. As shown in Fig.~\ref{fig-optimal_order}, the value $\lambda = 0.85$ exhibits slightly lower bias, but leads to higher MSE due to increased variance, supporting the selection of $\lambda = 0.9$.
+\textcolor{blue}{
+To assess the performance of the estimator, we conducted numerical experiments using synthetic data drawn from theoretical models.
+}

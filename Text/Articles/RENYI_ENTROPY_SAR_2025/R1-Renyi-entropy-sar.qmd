@@ -1,5 +1,5 @@
 ---
-title: Quantifying Roughness in SAR Imagery with the Rényi Entropy
+title: Quantifying Heterogeneity in SAR Imagery with the Rényi Entropy
 format:
   ieee-pdf:
     pdf-engine: pdflatex # xelatex
@@ -88,7 +88,7 @@ header-includes:
    - \usepackage{color}
    - \usepackage{hyperref}
    #- \hypersetup{draft} #Desactiva enlaces y referencias cruzadas
-   - \usepackage{float}
+   - \usepackage{float} # position figures
    - \usepackage{array}
    - \usepackage{multirow}
    - \usepackage{wrapfig}
@@ -123,13 +123,13 @@ install_and_load <- function(packages) {
   }
   invisible(lapply(packages, library, character.only = TRUE))
 }
-#
+
 #  packages
 required_packages <- c(
  "ggplot2", "reshape2", "knitr", "pandoc", "gridExtra", 
   "gtools", "stats4", "rmutil", "scales", "tidyr", "invgamma", 
   "tidyverse", "RColorBrewer", "ggsci", "carData", "ggpubr",  "patchwork", "dplyr", 
-  "kableExtra", "ggthemes", "latex2exp", "e1071", "viridis", "nortest", "bookdown"
+  "kableExtra", "ggthemes", "latex2exp", "e1071", "viridis", "nortest", "bookdown","terra", "sf", "pROC", "purrr"
 )
 
 # Install and load only missing packages
@@ -158,36 +158,36 @@ source("./Code/functions_sample_bias_mse_1.R")
 \renewcommand{\tablename}{TABLE}
 # Introduction
 [S]{.IEEEPARstart}[ynthetic]{}
- Aperture Radar (SAR) technology has become essential for many applications&nbsp;[@Yu2023;@Mondini2021]. 
+ Aperture Radar (SAR) technology has become essential for many applications&nbsp;[@Mondini2021]. 
  It provides high-resolution data independent of sunlight and operates in various weather conditions that facilitate global Earth monitoring&nbsp;[@Zeng2020].
-Despite its advantages, the effective use of SAR data depends on understanding its statistical properties because it is affected by speckle, a noise-like interference effect&nbsp;[@Argenti2013; @Baraha2023]. In intensity format, speckle is typically non-Gaussian, and its presence complicates subsequent image analysis tasks.
+However, the effective use of SAR data depends on understanding its statistical properties because it is affected by speckle, a noise-like interference effect&nbsp;[@Baraha2023]. In intensity format, speckle is non-Gaussian, which  complicates image analysis.
 
 The $\mathcal{G}^0_I$ distribution effectively characterizes SAR intensity data because it captures different roughness levels. 
-A limiting case is the Gamma distribution, which arises when speckle is fully developed, indicating textureless regions. 
-Although these assumptions offer flexibility in describing SAR intensities, selecting the appropriate distribution can be challenging for two reasons: the small sample sizes used in practical applications and the inherent difficulties associated with parameter estimation. 
-These challenges complicate model selection and highlight the need to explore alternative statistical approaches.
+A limiting case is the Gamma distribution, associated with fully developed speckle in textureless regions.
+However, selecting suitable models is challenging due to small window sizes in practical applications and difficulties in parameter estimation, motivating alternative statistical approaches.
 
-Entropy measures have gained attention as valuable statistical tools for analyzing SAR data, with applications in edge detection&nbsp;[@Nascimento2014], 
-segmentation&nbsp;[@Nobre2016], 
-classification&nbsp;[@Cassetti2022], 
-and noise reduction&nbsp;[@Chan2022].
-Traditionally, Shannon entropy&nbsp;[@Shannon1948] has been widely used to quantify data uncertainty and disorder. 
-We explore a more general information measure: Rényi entropy—a generalization of Shannon’s formulation. 
-This more flexible approach provides additional insights for identifying heterogeneity, making it a promising tool for enhancing SAR image analysis.
+Entropy measures have gained attention for SAR analysis, with applications in edge detection&nbsp;[@Nascimento2014], segmentation&nbsp;[@Nobre2016], and noise reduction&nbsp;[@Chan2022]. Traditionally, Shannon entropy&nbsp;[@Shannon1948] has been widely used to quantify data uncertainty and disorder. 
+We explore a more general information measure: Rényi entropy—a generalization of Shannon’s formulation.
+
+\textcolor{blue}{
+Recent studies highlight the role of entropy in SAR classification. 
+Cassetti et al. [@Cassetti2022] evaluated entropy estimators in both supervised and unsupervised models. 
+Gallet et al. [@Gallet2024] proposed a Rényi divergence-based framework for explainable classification. 
+Parikh et al. [@Parikh2019] discussed challenges in deep learning for SAR, including limited availability of labeled data and the complexity of tuning hyperparameters. These works motivate lightweight, interpretable alternatives.
+}
 
 We propose a statistical test based on a non-parametric estimator of Rényi entropy to identify heterogeneous regions in SAR data.
-The test assesses whether the observed Rényi entropy significantly differs from its expected theoretical value under the homogeneity assumption.
-Compared to our previous approach using Shannon entropy&nbsp;[@Frery2024], the Rényi-based approach improves the detection of heterogeneity.
-\textcolor{blue}{In addition, we enhance the non-parametric estimator through a bootstrap-based bias correction technique, which increases accuracy, particularly for small sample sizes often used in practical SAR applications.}
+The test assesses whether the observed Rényi entropy significantly differs from its expected theoretical value under the homogeneity assumption, improving upon our previous Shannon-based approach&nbsp;[@Frery2024].
+\textcolor{blue}{We further enhance the non-parametric estimator through a bootstrap-based bias correction, improving accuracy for small windows.}
+\textcolor{blue}{The proposed approach is unsupervised, requires no training data, and yields interpretable $p$-values, making it especially suitable for scenarios where ground-truth information is limited or unavailable.}
 
-The remainder of this article is organized as follows.
-Section&nbsp;\ref{sec:pre} overviews the statistical models for SAR intensity data and introduces Rényi entropy.
-Section&nbsp;\ref{sec:met} describes the proposed hypothesis test and the test statistic.
+The rest of the article is organized as follows.
+Section&nbsp;\ref{sec:pre} overviews the statistical models for SAR intensity data and Rényi entropy.
+Section&nbsp;\ref{sec:met} describes the proposed hypothesis test.
 Section&nbsp;\ref{sec:app} evaluates the performance of the test using SAR data.
-Finally, the concluding remarks are drawn in Section&nbsp;\ref{sec:conclusion}.
+Finally, the conclusions are presented in Section&nbsp;\ref{sec:conclusion}.
 
 # PRELIMINARIES {#sec:pre} 
-
 
 ## Statistical Models
 
@@ -239,21 +239,31 @@ H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr)
 and
 \begin{multline}  
 \label{eq-HGI0}  
-H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr) + \\ \ln(-1 - \alpha)  
+H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr) \;\;+ \\ \ln(-1 - \alpha)  
 + \frac{1}{1 - \lambda} \Bigl[ \lambda\bigl(\ln\Gamma(L - \alpha) - \ln\Gamma(-\alpha)\bigr) \\ 
 + \ln\Gamma\bigl(\lambda(-\alpha + 1) - 1\bigr) - \ln\Gamma\bigl(\lambda(L - \alpha)\bigr) \\
 + \bigl(\lambda(L-1)+1\bigr)\ln\lambda \Bigr].  
 \end{multline}
 The derivation of the latter result is proven in the Appendix.
-Note that the Rényi entropy of $\mathcal{G}^0_I$ can be expressed in terms of that of $\Gamma_{\mathrm{SAR}}$, with additional terms that depend on the roughness parameter $\alpha$. As $\alpha \to -\infty$, these terms tend to zero, reducing&nbsp;\eqref{eq-HGI0} to&nbsp;\eqref{eq-HGammaSAR}.
-This work's core idea is to check if this excess entropy is significantly different from zero.
+Equation&nbsp;\eqref{eq-HGI0} can be read as:
+$$
+H_{\lambda}(\mathcal{G}^0_I)
+=
+\underbrace{H_\lambda\!\bigl(\Gamma_{\mathrm{SAR}}\bigr)}_{\text{baseline entropy}}
+\;\;\;\;\; +
+\underbrace{\Delta_\alpha}_{\text{extra entropy caused by texture}},
+$$
+\textcolor{blue}{where the excess term $\Delta_\alpha$ depends on the roughness parameter.
+When $\alpha\!\to\!-\infty$ (fully developed speckle) this excess tends to zero, so the heterogeneous model collapses to the homogeneous one in Equation \eqref{eq-HGammaSAR}. 
+In practice, detecting heterogeneity is equivalent to deciding whether $\Delta_\alpha$ is significantly different from zero.}
+<!-- Note that the Rényi entropy of $\mathcal{G}^0_I$ can be expressed in terms of that of $\Gamma_{\mathrm{SAR}}$, with additional terms that depend on the roughness parameter $\alpha$. As $\alpha \to -\infty$, these terms tend to zero, reducing&nbsp;\eqref{eq-HGI0} to&nbsp;\eqref{eq-HGammaSAR}. -->
+<!-- This work's core idea is to check if this excess entropy is significantly different from zero. -->
+Fig.&nbsp;\ref{fig-convergence} illustrates this behaviour: as $\alpha$ decreases the coloured curves of $H_\lambda(\mathcal{G}^0_I)$ converge towards the solid black curve of $H_\lambda(\Gamma_{\mathrm{SAR}})$, confirming the limiting behavior.
 
-@fig-convergence illustrates this convergence by showing $H_\lambda(\mathcal{G}^0_I)$  as a function of $\mu$ for different values of $\alpha$. As $\alpha$ decreases, the curves approach $H_\lambda(\Gamma_{\text{SAR}})$ (solid black line). This confirms that $\Gamma_{\text{SAR}}$ is a limiting case of $\mathcal{G}^0_I$.
-<!-- ACF Have you checked if it is possible to state the difference between \label{eq-HGI0} and \label{eq-HGammaSAR}? At the end of the day, that is what we want to assess. -->
-<!-- Corrected -->
-```{r fig-convergence, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="45%",  fig.pos="hbt", fig.cap="$H_{\\lambda}(\\mathcal{G}^0_I)$ converges to the $H_{\\lambda}(\\Gamma_{\\text{SAR}})$ when $\\alpha\\to-\\infty$, with $L=8$ and $\\lambda=0.8$.", fig.width=4.5, fig.height=3.5}
+```{r fig-convergence,eval=FALSE, echo=FALSE, message=FALSE, warning=FALSE, fig.show="hide", fig.pos="hbt", , fig.cap="Convergence of $H_{\\lambda}(\\mathcal{G}^0_I)$ to $H_{\\lambda}(\\Gamma_{\\text{SAR}})$ as $\\alpha$ decreases.", fig.width=4, fig.height=3}
 
-
+#fig.show="hide", 
+# eval=FALSE,  # 
 
 entropy_renyi_gamma_sar <- function(L, mu, lambda) {
   entropy <- (lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1) +
@@ -360,7 +370,15 @@ ggplot() +
 
 ```
 
-
+```{=latex}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=0.42\textwidth]{Figures-R1/fig-convergence-1.pdf}
+  \vspace{0.5em}
+  \caption{Convergence of $H_{\lambda}(\mathcal{G}^0_I)$ to $H_{\lambda}(\Gamma_{\text{SAR}})$ as $\alpha$ decreases.}
+  \label{fig-convergence}
+\end{figure}
+```
 ## Non-parametric Estimation of Rényi Entropy
 
 In order to estimate&nbsp;\eqref{E:entropy2} from a random sample, one may estimate the parameters that index the probability density function $f$ and integrate.
@@ -399,21 +417,16 @@ We used the heuristic spacing $m=\left[\sqrt{n}+0.5\right]$.
 
 ## On $\lambda$ optimality for a sample size
 
-
 \textcolor{blue}{
 We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator based on numerical experiments using synthetic samples of size $n = 49$, drawn from the $\Gamma_{\text{SAR}}$ distribution $(L = 5,\ \mu = 1)$. A Monte Carlo simulation is used to evaluate the bias and the mean squared erro (MSE) across different values of $\lambda$.}
 
 \textcolor{blue}{
-In our simulations, we find that for $L > 1$, the choice $\lambda = 0.9$ consistently yields the lowest MSE while maintaining a low bias, thus offering a favorable trade-off between bias and variance. As shown in Fig.~\ref{fig-optimal_order}, the value $\lambda = 0.85$ exhibits slightly lower bias, but leads to higher MSE due to increased variance, supporting the selection of $\lambda = 0.9$.}
+In our simulations, we find that for $L > 1$, the choice $\lambda = 0.9$ consistently yields the lowest MSE while maintaining a low bias, thus offering a favorable trade-off between bias and variance. As shown in Fig. \ref{fig-optimal_order}, the value $\lambda = 0.85$ exhibits slightly lower bias, but leads to higher MSE due to increased variance, supporting the selection of $\lambda = 0.9$.}
 
 
-
-
-```{r fig-optimal_order, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="42%",  fig.pos="hbt", fig.cap="Bias and MSE as a function of $\\lambda$, with $n=49$, $L=5$.", fig.width=7, fig.height=4.5}
-
-
-
-
+```{r fig-optimal_order, eval=FALSE, echo=FALSE, message=FALSE, warning=FALSE, fig.show="hide",  out.width="42%",  fig.pos="hbt", fig.cap="Bias and MSE as a function of $\\lambda$, with $n=49$, $L=5$.", fig.width=7, fig.height=4.5}
+#fig.show="hide", 
+# eval=FALSE,  # 
 
 data <- data.frame(
   Lambda = c(0.9,  0.85, 0.99, 1.1, 1.5),
@@ -460,20 +473,26 @@ grid.arrange(bias_plot, mse_plot, nrow = 2)
 
 ```
 
+```{=latex}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=0.42\textwidth]{Figures-R1/fig-optimal_order-1.pdf}
+  \vspace{0.5em}
+  \caption{Bias and MSE as a function of $\lambda$, with $n=49$, $L=5$.}
+  \label{fig-optimal_order}
+\end{figure}
+```
 Particularly, for $L = 1$, the optimal $\lambda$ tends to be higher, and we chose $\lambda = 3$ to achieve good results.
 
 ## Bootstrap Correction for Entropy Estimator
 
 Following Refs.&nbsp;[@Frery2024;@Alpala2024], we refined the non-parametric entropy estimator $\widehat{H}_{\lambda}$ in&nbsp;\eqref{eq:est_R} reducing its bias with bootstrap, obtaining $\widetilde{H}_{\lambda}$:
-$$
+\begin{equation*}
 \widetilde{H}_{\lambda} = 2\widehat{H}_{\lambda}(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{H}_{\lambda}(\bm{Z}^{(b)}),
-$$
+\end{equation*}
 where $B$ is the number of bootstrap replications, and $\bm{Z}^{(b)}$ is the $b$-th resampled dataset obtained by drawing $n$ observations with replacement from $\bm{Z}$.
 
-A Monte Carlo study with $1000$ replications for each sample size $n \in \{9, 25, 49, 81, 121\}$ from the $\Gamma_{\text{SAR}}$ ($L=5,\ \mu=1$) confirms that for $\lambda=0.9$, the bootstrap-corrected estimator $\widetilde{H}_{\lambda}$ ($B=200$) reduces both bias and MSE compared to the original $\widehat{H}_{\lambda}$, with significant improvements for small sample sizes, as shown in&nbsp;@fig-bias_mse.
-
-<!-- ACF Remove the minor vertical grid (there is nothing between 49 and 81) -->
-<!-- Corrected -->
+A Monte Carlo study with $1000$ replications for each sample size $n \in \{9, 25, 49, 81, 121\}$ from the $\Gamma_{\text{SAR}}$ ($L=5,\ \mu=1$) confirms that for $\lambda=0.9$, the bootstrap-corrected estimator $\widetilde{H}_{\lambda}$ ($B=200$) reduces both bias and MSE compared to the original $\widehat{H}_{\lambda}$, with significant improvements for small sample sizes, as shown in Fig. \ref{fig-bias_mse}.
 ```{r Simulated_data_bias_B1, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
@@ -508,9 +527,10 @@ if (file.exists(file_name)) {
 }
 ```
 
-```{r fig-bias_mse, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="42%", fig.pos="hbt",  fig.cap="Bias and MSE of the Rényi entropy estimators for $\\Gamma_{\\text{SAR}}$.", fig.width=7, fig.height=5}
+```{r fig-bias_mse, eval=FALSE, echo=FALSE, message=FALSE, warning=FALSE, fig.show="hide",  out.width="42%", fig.pos="hbt",  fig.cap="Bias and MSE of the Rényi entropy estimators for $\\Gamma_{\\text{SAR}}$.", fig.width=7, fig.height=5}
 
-
+#fig.show="hide", 
+# eval=FALSE,  #
 
 load("./Data/results_renyi_B1.Rdata")
 
@@ -528,6 +548,16 @@ print(combined_plot_renyi)
 
 
 ```
+
+```{=latex}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=0.40\textwidth]{Figures-R1/fig-bias_mse-1.pdf}
+  \vspace{0.1em}
+  \caption{Bias and MSE of the Rényi entropy estimators for $\Gamma_{\text{SAR}}$.}
+  \label{fig-bias_mse}
+\end{figure}
+```
 We use the $\widetilde{H}_{\lambda}$ estimator for subsequent simulations.
 
 ## Hypothesis Testing 
@@ -541,16 +571,10 @@ We test whether the observed data come from a homogeneous ($\Gamma_{\text{SAR}}$
 \end{equation}
   
 Under $\mathcal{H}_0$, the expected value of the entropy estimator should match the theoretical $H_{\lambda}(\Gamma_{\text{SAR}})$. 
-If the estimated entropy significantly deviates from its expected value, we reject $\mathcal{H}_0$, indicating the presence of heterogeneity.
-
-Classical inference methods are inapplicable since homogeneity corresponds to $\alpha \to -\infty$ in the $\mathcal{G}^0_I$ model. 
-Instead, we propose a test statistic based on the Rényi entropy estimator, comparing it with its theoretical expectation under $\mathcal{H}_0$ to distinguish between homogeneous and heterogeneous areas.
-
+Significant deviations indicate heterogeneity.
 
 ## The Proposed Test
-
-Assume we have an estimator $\widetilde{H}_{\lambda}$ for the Rényi entropy of an arbitrary model. For testing&nbsp;\eqref{eq:hypothesis_test}, this estimator is expected to be close to the theoretical expression given in Equation&nbsp;\eqref{eq-HGammaSAR}. 
-Since $L\geq1$ is known, we define the test statistic as follows:
+The test statistic quantifies the discrepancy between estimated and theoretical entropy under homogeneity. Since $L\geq1$ is known, we define the test statistic as follows:
 \begin{multline}
 \label{eq-test}
 S_{\widetilde{H}_{\lambda}}(\bm{Z}; L) = \widetilde{H}_{\lambda} - \bigl\{\ln \widehat{\mu} - \ln L + \frac{1}{1-\lambda}
@@ -560,10 +584,20 @@ S_{\widetilde{H}_{\lambda}}(\bm{Z}; L) = \widetilde{H}_{\lambda} - \bigl\{\ln \w
 \bigr]\bigr\},
 \end{multline}
 where $\widehat{\mu}={n}^{-1}\sum_{i=1}^n Z_{i}$ is the sample mean.
-This test statistic should be close to zero when the null hypothesis holds.
-@fig-densities shows the empirical density of $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, based on $10^4$ replications of the $\Gamma_{\text{SAR}}$ model for each sample size $n \in \{49,81, 121\}$ with $\lambda=0.9$ and $L \in \{5,18\}$.
-<!-- ACF 10^4 replications of samples of size?   -->
-<!-- Corrected -->
+The test statistic can be interpreted as:
+$$
+S_{\widetilde H_\lambda} 
+= 
+\underbrace{\widetilde H_\lambda}_{\text{estimated}} 
+\;-\;
+\underbrace{H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)}_{\text{theoretical under } H_0},
+$$
+\textcolor{blue}{the difference between the estimated entropy and the expected value under homogeneity. Values close to zero indicate that the region behaves like fully developed speckle, while large positive values signal excess entropy and thus heterogeneity.
+This formulation avoids estimating parameters of the $\mathcal{G}^0_I$ model such as $\alpha$, offering a simple, interpretable, and statistically grounded test. Moreover, the method remains effective for small samples, aided by the bootstrap bias correction.}
+
+Fig. \ref{fig-densities} shows the empirical distribution of $S_{\widetilde{H}_{\lambda}}$ under $\mathcal{H}_0$, obtained from $10^4$ Monte Carlo simulations with varying sample sizes ($n \in {49,81,121}$), $\lambda=0.9$, and $L \in {5,18}$. The concentration around zero confirms the test's expected behavior, while the heavy tails indicate sensitivity to deviations, enabling the detection of subtle texture changes.
+
+
 ```{r Simulated_densityR, echo=FALSE, message=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
@@ -648,8 +682,9 @@ for (L in L_values) {
 
 ```
 
-```{r fig-densities, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="47%", fig.pos="hbt",  fig.cap="Empirical densities of $S_{\\widetilde{H}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$.", fig.width=9, fig.height=4.0}
-
+```{r fig-densities,  eval=FALSE, echo=FALSE, message=FALSE, warning=FALSE, fig.show="hide", out.width="47%", fig.pos="hbt",  fig.cap="Empirical densities of $S_{\\widetilde{H}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$.", fig.width=9, fig.height=4.0}
+#fig.show="hide", 
+# eval=FALSE,  #
 
 theme_set(theme_minimal() +
             theme(text = element_text(family = "serif"),
@@ -709,6 +744,16 @@ print(combined_plot)
 
 ```
 
+```{=latex}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=0.42\textwidth]{Figures-R1/fig-densities-1.pdf}
+  \vspace{0.2em}
+  \caption{Empirical densities of $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$ under $\mathcal{H}_0$.}
+  \label{fig-densities}
+\end{figure}
+```
+
 Vasicek&nbsp;[@vasicek1976test] proved that, for sufficiently large samples, $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$ asymptotically follows a normal distribution:
 \begin{equation*}
 S_{\widetilde{H}_{\lambda}}(\bm{Z}; L) \overset{d}{\longrightarrow} \mathcal{N}(\mu_S,\,\sigma^{2}_S)\,,
@@ -720,7 +765,7 @@ $\varepsilon = ({S_{\widetilde{H}_{\lambda}}(\bm{Z}; L) - \hat{\mu}_S})/{\hat{\s
 where $\hat{\mu}_S$ and $\hat{\sigma}_S$ are the empirical mean and standard deviation of $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, obtained by Monte Carlo simulations under the null hypothesis. 
 Thus, the $p$-values are calculated as $2\Phi(-|\varepsilon|)$,
 where $\Phi(\cdot)$ is the cumulative distribution function of the standard normal distribution.
-@fig-density_standardized shows smoothed histograms of standardized test statistics.
+Fig. \ref{fig-density_standardized} shows smoothed histograms of standardized test statistics.
 
 ```{r Simulated_densityR_standardized0, echo=FALSE, message=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
@@ -794,7 +839,10 @@ for (L in L_values) {
 }
 ```
 
-```{r fig-density_standardized, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="35%", fig.pos="hbt", fig.cap="Standardized empirical densities of $S_{\\widetilde{H}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$.", fig.width=4, fig.height=2.5}
+```{r fig-density_standardized,eval=FALSE,  echo=FALSE, message=FALSE, warning=FALSE, fig.show="hide", out.width="35%", fig.pos="hbt", fig.cap="Standardized empirical densities of $S_{\\widetilde{H}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$.", fig.width=4, fig.height=2.5}
+
+#fig.show="hide", 
+# eval=FALSE,  #
 
 theme_set(theme_minimal() +
             theme(text = element_text(family = "serif"),
@@ -847,10 +895,18 @@ combined_plot <- wrap_plots(all_plots, ncol = 1, nrow = 1) +
 print(combined_plot)
 
 ```
+
+```{=latex}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=0.35\textwidth]{Figures-R1/fig-density_standardized-1.pdf}
+  %\vspace{0.1em}
+  \caption{Standardized empirical densities of $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$ under $\mathcal{H}_0$.}
+  \label{fig-density_standardized}
+\end{figure}
+```
 In general, hypotheses tests aim to control the Type&nbsp;I error rate (size) with high test power (sensitivity to departures from $\mathcal{H}_0$, low Type&nbsp;II error rate).
 To assess these properties, we performed a Monte Carlo simulation with $1000$ replications at significance levels \SI{1}{\percent}, \SI{5}{\percent}, and \SI{10}{\percent}, evaluating the test under the null hypothesis ($\Gamma_{\text{SAR}}$ distribution), varying sample size and values of $L$ for $\mu=1$. 
-<!-- ACF I wish you had used the siunitx package for typing percentages, but not if this is incompatible with the tables -->
-<!-- Corrected -->
 The observed Type&nbsp;I error rates align with the nominal values, confirming the test validity.
 
 Further, we examined the power under the alternative hypothesis ($\mathcal{G}^0_I$ distribution) with $\mu=1$, $\lambda=0.9$ and $\alpha=-2$.
@@ -1127,23 +1183,20 @@ table_combined_result <- knitr::kable(
 
 print(table_combined_result)
 ```
-
 \textcolor{blue}{
-In practice, we apply the proposed test to the SAR image using a sliding window approach ($7 \times 7$ pixels). For each window, we compute the test statistic under the null hypothesis of homogeneity and, assuming asymptotic normality, calculate a $p$-value that quantifies the statistical evidence against homogeneity in each local region. High $p$-values ($p > 0.05$) indicate consistency with $H_0$, while low values ($p < 0.05$) suggest heterogeneity. 
-Note that the visual outputs in Figs.~\ref{fig:london}--\ref{fig:dublin} show the $p$-values obtained from the hypothesis testing procedure, not the test statistic or entropy values.
+In practice, we apply the proposed test to the SAR image using a sliding window approach ($7 \times 7$ pixels). For each window, we compute the test statistic under the null hypothesis of homogeneity and, assuming asymptotic normality, calculate a $p$-value that quantifies the statistical evidence against homogeneity in each local region. High $p$-values ($p > 0.05$) indicate no evidence to reject homogeneity, while low values ($p < 0.05$) suggest statistically significant deviations and are interpreted as heterogeneity.
 }
+<!-- Note that the visual outputs in Figs.~\ref{fig:london}--\ref{fig:dublin} show the $p$-values obtained from the hypothesis testing procedure, not the test statistic or entropy values. -->
 
 # Applications to SAR Data {#sec:app}
-In this section, we compare two test statistics for detecting heterogeneity in SAR data: (i) the Rényi entropy-based test, $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, described in&nbsp;\eqref{eq-test}; and (ii) the Shannon entropy-based test, $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$, which is based on the Al-Omari estimator proposed in&nbsp;[@IbrahimAlOmari2014] and was improved via bootstrap in our previous work. The details of this test can be found in Frery et al.&nbsp;[@Frery2024].
-<!-- ACF What is $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$? -->
-<!-- JA: I added a brief explanation, indicating that it is based on the Al-Omari estimator and was improved with bootstrap. -->
 
-We applied these tests to images covering urban, agricultural, and water regions. 
-We analyzed images from London, United Kingdom;  the surroundings of Munich, Germany; and  Dublin Port, Ireland, as shown in Figs.&nbsp;\ref{fig:london-a},&nbsp;\ref{fig:munich-a}, and&nbsp;\ref{fig:dublin-a}. All images were acquired in HH polarization.
-Table&nbsp;\ref{tab:table_param} provides the detailed acquisition parameters of these images.
-<!-- ACF They all have HH polarization; the column is not informative, and can be deleted to gain space -->
-<!-- Corrected -->
-\renewcommand{\arraystretch}{3}   
+## Datasets
+We compare two test statistics for detecting heterogeneity in SAR data: (i) the Rényi entropy-based test, $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, described in&nbsp;\eqref{eq-test}; and (ii) the Shannon entropy-based test, $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$, which is based on the Al-Omari estimator proposed in&nbsp;[@IbrahimAlOmari2014] and was improved via bootstrap in our previous work. The details of this test can be found in Frery et al.&nbsp;[@Frery2024].
+
+The selected scenes, acquired in HH polarization, correspond to the surroundings of London (United Kingdom), the outskirts of Munich (Germany), and the Dublin Port area (Ireland), as shown in Figs.&nbsp;\ref{fig:london-sar}-\ref{fig:dublin-sar}. 
+Corresponding optical images (Figs.&nbsp;\ref{fig:london-optical}–\ref{fig:dublin-optical}) illustrate land cover context. Table&nbsp;\ref{tab:table_param} details the SAR acquisition parameters.
+
+\renewcommand{\arraystretch}{2.5}   
 ```{r parameters_sar, echo=FALSE, message=FALSE, warning=FALSE}
 
 SAR_data <- data.frame(
@@ -1157,7 +1210,7 @@ SAR_data <- data.frame(
 )
 
 colnames(SAR_data) <- c(
-  "\\textbf{Site}", "\\textbf{Mission}", "\\textbf{Band}", 
+  "\\textbf{Scene}", "\\textbf{Mission}", "\\textbf{Band}", 
   "\\textbf{Size (pixels)}", "$\\bm{L}$", 
   "\\textbf{Resolution [m]}", "\\textbf{Acquisition Date}"
 )
@@ -1184,12 +1237,12 @@ kable(SAR_data,
       label = "table_param",
       centering = TRUE,
       caption = "Parameters of selected SAR images.",
-      table.envir = "table", position = "hbt") %>%
+      table.envir = "table", position = "H") %>%
   row_spec(0, align = "c") %>%
-  kable_styling(latex_options = "scale_down", font_size = 21) %>% 
+  kable_styling(latex_options = "scale_down", font_size = 22) %>% 
   kable_styling(full_width = TRUE) %>%
   column_spec(1, width = "3.0cm") %>%
-  column_spec(2, width = "3.7cm") %>%
+  column_spec(2, width = "4.5cm") %>%
   column_spec(3, width = "1.5cm") %>%
   column_spec(4, width = "4cm") %>%
   column_spec(5, width = "1.5cm") %>%
@@ -1197,90 +1250,97 @@ kable(SAR_data,
   column_spec(7, width = "4.5cm")
 
 ```
-We used sliding windows of size $7\times 7$.
-The results are presented as $p$-value maps and binary maps at a $0.05$ significance level. 
-Figs.&nbsp;\ref{fig:london-b}--\ref{fig:london-c},&nbsp;\ref{fig:munich-b}--\ref{fig:munich-c}, and&nbsp;\ref{fig:dublin-b}--\ref{fig:dublin-c} correspond to $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, while Figs.&nbsp;\ref{fig:london-d}--\ref{fig:london-e},&nbsp;\ref{fig:munich-d}--\ref{fig:munich-e}, and&nbsp;\ref{fig:dublin-d}--\ref{fig:dublin-e} correspond to $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$.
-
-The $p$-value maps use a color gradient, where darker regions indicate areas with higher roughness, and lighter regions denote smoother, less textured surfaces.
-The binary maps classify these results: white areas represent $p$-values greater than $0.05$, indicating no statistical evidence to reject the null hypothesis (homogeneous regions). 
-In contrast, black areas represent regions with $p$-values below $0.05$, providing statistical evidence to reject the null hypothesis and indicating heterogeneity.
-
-The Rényi entropy-based test demonstrated greater sensitivity in detecting textural variations than the Shannon-based test due to the flexibility provided by the parameter $\lambda$, as observed in the binary maps in Figs.&nbsp;\ref{fig:london-c},&nbsp;\ref{fig:munich-c}, and&nbsp;\ref{fig:dublin-c}.
-<!-- ACF Where is the Shannon-based approach shown? -->
-<!-- JA: The results of the Shannon-based approach can be observed in the corresponding binary maps. -->
+\textcolor{blue}{
+For each SAR image, the number of looks $L$ was obtained from the product of azimuth and range looks provided in the metadata (SNAP). To validate this value, we estimated the equivalent number of looks (ENL) from manually selected homogeneous areas using the classical formula $\text{ENL} = 1/\widehat{\text{CV}}^2$, based on the coefficient of variation. The results were consistent with the metadata. We also verified that moderate deviations in $L$ did not significantly impact the outcome of the test, confirming the robustness of the proposed method.}
 
 
+## Qualitative Inspection
+
+The output consists of $p$-value maps and binary maps at a $0.05$ significance level. 
+The $p$-value maps use a color gradient (Figs.&nbsp;\ref{fig:london-renyi},&nbsp;\ref{fig:london-shann},&nbsp;\ref{fig:munich-renyi},&nbsp;\ref{fig:munich-shann},&nbsp;\ref{fig:dublin-renyi},&nbsp;\ref{fig:dublin-shann}), where darker regions indicate areas with higher roughness, and lighter regions denote smoother, less textured surfaces. 
+The binary maps (Figs.&nbsp;\ref{fig:london-005-renyi},&nbsp;\ref{fig:london-005-shann},&nbsp;\ref{fig:munich-005-renyi},&nbsp;\ref{fig:munich-005-shann},&nbsp;\ref{fig:dublin-005-renyi},&nbsp;\ref{fig:dublin-005-shann}) display heterogeneous detections in black ($p<0.05$) and homogeneous areas in white ($p \geq 0.05$).
+Visually, the Rényi test exhibits greater sensitivity in detecting textural variations due to the flexibility provided by the parameter $\lambda$.
 
 ```{=latex}
 \begin{figure*}[hbt]
     \centering
-    \begin{subfigure}{0.17\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/london_2000.png}
+    \begin{subfigure}{0.145\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/london_roi.png}
         \caption{SAR image}
-        \label{fig:london-a}
+        \label{fig:london-sar}
     \end{subfigure}
-    \hspace{0.01\textwidth}
-    \begin{subfigure}{0.20\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi-london-E.png}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.142\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/london_optical.png}
+        \caption{Optical image}
+        \label{fig:london-optical}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.179\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi-london_E.png}
         \caption{$p$-value map for $\small{S_{\widetilde{H}_{\lambda}}}$}
-        \label{fig:london-b}
+        \label{fig:london-renyi}
     \end{subfigure}
-    \hspace{0.01\textwidth}
-    \begin{subfigure}{0.17\textwidth}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.145\textwidth}
         \includegraphics[width=\linewidth]{./Figures-R1/H_005_london_renyi_L1_.png}
         \caption{Binary map for $\small{S_{\widetilde{H}_{\lambda}}}$}
-        \label{fig:london-c}
+        \label{fig:london-005-renyi}
     \end{subfigure}
-    \hspace{0.01\textwidth}
-    \begin{subfigure}{0.20\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon-london-E.png}
+   \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.18\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon-london_E.png}
         \caption{$p$-value map for $\tiny{S_{\widetilde{H}_{\text{AO}}}}$ }
-        \label{fig:london-d}
+        \label{fig:london-shann}
     \end{subfigure}
-    \hspace{0.01\textwidth}
-    \begin{subfigure}{0.17\textwidth}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.145\textwidth}
         \includegraphics[width=\linewidth]{./Figures-R1/H_005_london_shannon.png}
         \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
-        \label{fig:london-e}
+        \label{fig:london-005-shann}
     \end{subfigure}
     \caption{Detection of heterogeneous areas in a SAR image over London, UK: comparison with the tests $\small{S_{\widetilde{H}_{\lambda}}}$ and $\small{S_{\widetilde{H}_{\text{AO}}}}$.}
     \label{fig:london}
 \end{figure*}
 ```
 
-
-
 ```{=latex}
 \begin{figure*}[hbt]
     \centering
-    \begin{subfigure}{0.17\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/munich_1024.png}
+        \begin{subfigure}{0.145\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/munich_roi.png}
         \caption{SAR image}
-        \label{fig:munich-a}
+        \label{fig:munich-sar}
     \end{subfigure}
-    \hspace{0.01\textwidth}
-    \begin{subfigure}{0.20\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi_munich-H.png}
+    \hspace{0.00001\textwidth}
+  \begin{subfigure}{0.137\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/munich_optical.png}
+        \caption{Optical image}
+        \label{fig:munich-optical}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.178\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi-munich_H.png}
         \caption{$p$-value map for $\small{S_{\widetilde{H}_{\lambda}}}$}
-        \label{fig:munich-b}
+        \label{fig:munich-renyi}
     \end{subfigure}
-    \hspace{0.01\textwidth}
-    \begin{subfigure}{0.17\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/H_005_munich_renyi.png}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.144\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/H_005_renyi_munich.png}
         \caption{Binary map for $\small{S_{\widetilde{H}_{\lambda}}}$}
-        \label{fig:munich-c}
+        \label{fig:munich-005-renyi}
     \end{subfigure}
-    \hspace{0.01\textwidth}
-    \begin{subfigure}{0.20\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon_munich-H.png}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.178\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon-munich_H.png}
         \caption{$p$-value map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:munich-d}
+        \label{fig:munich-shann}
     \end{subfigure}
-    \hspace{0.01\textwidth}
-    \begin{subfigure}{0.17\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/H_005_munich_shannon.png}
+   \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.144\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/H_005_shannon_munich.png}
         \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
-        \label{fig:munich-e}
+        \label{fig:munich-005-shann}
     \end{subfigure}
     \caption{Detection of heterogeneous areas in a SAR image over Munich, Germany: comparison with the tests $\small{S_{\widetilde{H}_{\lambda}}}$ and $\small{S_{\widetilde{H}_{\text{AO}}}}$.}
     \label{fig:munich}
@@ -1288,61 +1348,289 @@ The Rényi entropy-based test demonstrated greater sensitivity in detecting text
 
 ```
 
-
 ```{=latex}
 \begin{figure*}[hbt]
     \centering
-    \begin{subfigure}{0.17\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/dublin_1100.png}
+        \begin{subfigure}{0.145\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/dublin_roi3.png}
         \caption{SAR image}
-        \label{fig:dublin-a}
+        \label{fig:dublin-sar}
     \end{subfigure}
-    \hspace{0.01\textwidth}
-    \begin{subfigure}{0.20\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi-dublin-B.png}
-        \caption{$p$-value map for $\small{S_{\widetilde{H}_{\lambda}}}$}
-        \label{fig:dublin-b}
+    \hspace{0.00001\textwidth}
+\begin{subfigure}{0.145\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/dublin.png}
+        \caption{Optical image}
+        \label{fig:dublin-optical}
     \end{subfigure}
-    \hspace{0.01\textwidth}
-    \begin{subfigure}{0.17\textwidth}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.178\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi-dublin_B.png}
+        \caption{$p$-value map $\small{S_{\widetilde{H}_{\lambda}}}$}
+        \label{fig:dublin-renyi}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.144\textwidth}
         \includegraphics[width=\linewidth]{./Figures-R1/H_005_dublin_renyi.png}
-        \caption{Binary map for $\small{S_{\widetilde{H}_{\lambda}}}$}
-        \label{fig:dublin-c}
+        \caption{Binary map $\small{S_{\widetilde{H}_{\lambda}}}$}
+        \label{fig:dublin-005-renyi}
     \end{subfigure}
-    \hspace{0.01\textwidth}
-    \begin{subfigure}{0.20\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon-dublin-B.png}
-        \caption{$p$-value map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:dublin-d}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.178\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon-dublin_B.png}
+        \caption{$p$-value $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:dublin-shann}
     \end{subfigure}
-    \hspace{0.01\textwidth}
-    \begin{subfigure}{0.17\textwidth}
+    \hspace{0.0000001\textwidth}
+    \begin{subfigure}{0.144\textwidth}
         \includegraphics[width=\linewidth]{./Figures-R1/H_005_dublin-shannon.png}
-        \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
-        \label{fig:dublin-e}
+        \caption{Binary $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:dublin-005-shann}
     \end{subfigure}
-   \caption{Detection of heterogeneous areas in a SAR image over Dublin Port, Ireland: comparison with the tests $\small{S_{\widetilde{H}_{\lambda}}}$ and $\small{S_{\widetilde{H}_{\text{AO}}}}$.}
-
+    \caption{Detection of heterogeneous areas in a SAR image over Dublin Port, Ireland: comparison with the tests $\small{S_{\widetilde{H}_{\lambda}}}$ and $\small{S_{\widetilde{H}_{\text{AO}}}}$.}
     \label{fig:dublin}
 \end{figure*}
 
 ```
 
+## Quantitative Evaluation
 
+Eight polygonal regions of interest (ROIs) were manually selected for each scene (Figs.&nbsp;\ref{fig:london-sar}-\ref{fig:dublin-sar}): heterogeneous areas (red, class 1) and homogeneous areas (blue, class 0). These ROIs were rasterized to match the SAR resolution, forming a partial ground-truth. 
+We thresholded the $p$-value maps at 0.05, labeling each pixel as heterogeneous (1) or homogeneous (0) and then compared these decision maps with the ground-truth to compute: F1-score ($F_1$), Kappa coefficient ($\kappa$), and overall accuracy (OA). Table&nbsp;\ref{tab:table_metrics} summarizes the results.
+Across all scenes, the Rényi-based test outperformed Shannon’s in all metrics, with notable gains in London ($F_1$: 0.695 vs. 0.617; $\kappa$: 0.626 vs. 0.542), highlighting its ability to capture  heterogeneity under strong speckle (single-look).
+
+\renewcommand{\arraystretch}{1.1} 
+```{r metrics_table, echo=FALSE, message=FALSE, warning=FALSE}
+
+load("./Data/metrics_london_renyi.RData")
+load("./Data/metrics_london_shannon.RData")
+load("./Data/metrics_munich_renyi.RData")
+load("./Data/metrics_munich_shannon.RData")
+load("./Data/metrics_dublin_renyi.RData")
+load("./Data/metrics_dublin_shannon.RData")
+
+all_metrics <- rbind(
+  metrics_london_renyi,
+  metrics_london_shannon,
+  metrics_munich_renyi,
+  metrics_munich_shannon,
+  metrics_dublin_renyi,
+  metrics_dublin_shannon
+)
+
+numeric_metrics <- all_metrics
+
+
+all_metrics$Method <- ifelse(
+  all_metrics$Method == "Renyi", 
+  "$S_{\\widetilde{H}_{\\lambda}}$", 
+  "$S_{\\widetilde{H}_{\\text{AO}}}$"
+)
+
+
+for (i in seq(1, nrow(all_metrics), by = 2)) {
+  for (col in c("F1", "Kappa", "OA")) {
+      val1 <- numeric_metrics[[col]][i]
+      val2 <- numeric_metrics[[col]][i + 1]
+
+    
+    if (val1 > val2) {
+      all_metrics[i, col]     <- sprintf("\\bm{$%.3f$}", val1)
+      all_metrics[i + 1, col] <- sprintf("$%.3f$", val2)
+    } else {
+      all_metrics[i, col]     <- sprintf("$%.3f$", val1)
+      all_metrics[i + 1, col] <- sprintf("\\textbf{$%.3f$}", val2)
+    }
+  }
+}
+
+
+colnames(all_metrics) <- c("\\textbf{Scene}", "\\textbf{Test}", "$\\bm{F_1}$", "$\\kappa$", "\\textbf{OA}")
+
+
+scene_labels <- all_metrics$Scene
+for (scene in unique(scene_labels)) {
+  idx <- which(scene_labels == scene)
+  scene_labels[idx[1]] <- paste0("\\multirow{2}{*}{", scene, "}")
+  scene_labels[idx[2]] <- ""
+}
+all_metrics$Scene <- scene_labels
+
+
+kable(all_metrics,
+      caption = "Quantitative measures of heterogeneity detection",
+      format = "latex",
+      booktabs = TRUE,
+      align = "cccccc",
+      escape = FALSE,
+      label = "table_metrics",
+      centering = FALSE,
+      table.envir = "table", 
+      position = "hbt",
+      row.names = FALSE) %>%
+  row_spec(0, align = "c") %>%
+  #collapse_rows(columns = 1, valign = "bottom") %>% 
+  collapse_rows(latex_hline = "major", valign = "bottom") %>%
+  kable_styling(latex_options = "scale_down", font_size = 7) %>%
+  kable_styling(full_width = TRUE)
+
+
+
+```
+
+Using the same ROIs as ground truth, we evaluated the continuous $p$-value maps by computing receiver operating characteristic (ROC) curves over all decision thresholds&nbsp;(Figs.&nbsp;\ref{ROC1-1}). Each curve plots the probability of detection (Pd) versus the probability of false alarm (PFA). Pd reflects the proportion of heterogeneous pixels correctly detected, while PFA represents the proportion of homogeneous pixels misclassified as heterogeneous.
+
+```{r fig-ROC2, eval=FALSE, echo=FALSE, message=FALSE, warning=FALSE, fig.show="hide", fig.fullwidth = TRUE, out.width="49%",  fig.pos="hbt", fig.cap="ROC curves.", fig.width=35, fig.height=10}
+
+#fig.show="hide",  oculta figura
+# eval=FALSE,  # no se ejecuta codigo
+roc_file <- "./Data/roc_results.RData"
+
+
+rotate_matrix <- function(m) t(apply(m, 2, rev))
+
+mk_raster <- function(mat, sar) {
+  r <- rast(nrows=nrow(mat), ncols=ncol(mat),
+            ext = ext(xmin(sar)+3*res(sar)[1], xmax(sar)-3*res(sar)[1],
+                      ymin(sar)+3*res(sar)[2], ymax(sar)-3*res(sar)[2]),
+            crs = crs(sar))
+  values(r) <- as.vector(mat)
+  flip(r, direction="vertical")
+}
+
+
+if (!file.exists(roc_file)) {
+ 
+  cities <- list(
+    London = list(
+      sar     = "./Data/SAR/envi_london_2000/Intensity_HH.img",
+      rois    = "./Data/rois_london_m.gpkg",
+      renyi   = "./Data/p_values_renyi_london.Rdata",
+      shannon = "./Data/p_values_shannon_london.Rdata"
+    ),
+    Munich = list(
+      sar     = "./Data/SAR/envi_munich_1024_final/Intensity_HH.img",
+      rois    = "./Data/rois_munich.gpkg",
+      renyi   = "./Data/p_values_renyi_munich.Rdata",
+      shannon = "./Data/p_values_shannon_munich.Rdata"
+    ),
+    Dublin = list(
+      sar     = "./Data/SAR/envi_dublin_1100_HH/Intensity_HH.img",
+      rois    = "./Data/rois_dublin_m.gpkg",
+      renyi   = "./Data/p_values_renyi_dublin.Rdata",
+      shannon = "./Data/p_values_shannon_dublin.Rdata"
+    )
+  )
+
+  
+  roc_list <- list()
+
+  for (city in names(cities)) {
+    cfg <- cities[[city]]
+    sar <- rast(cfg$sar)
+    rois <- st_read(cfg$rois, quiet=TRUE) |> st_transform(crs(sar))
+
+    matR <- rotate_matrix(get(load(cfg$renyi)))
+    matS <- rotate_matrix(get(load(cfg$shannon)))
+
+    rR <- mk_raster(matR, sar)
+    rS <- mk_raster(matS, sar)
+
+    gt <- rasterize(rois, rR, field="class")
+    idx <- !is.na(values(gt))
+    truth <- factor(values(gt)[idx], levels=c(0,1), labels=c("0","1"))
+    scoreR <- values(rR)[idx]
+    scoreS <- values(rS)[idx]
+
+    rocR <- roc(truth, scoreR, levels=c("0","1"), direction=">")
+    rocS <- roc(truth, scoreS, levels=c("0","1"), direction=">")
+    aucR <- round(auc(rocR), 3)
+    aucS <- round(auc(rocS), 3)
+
+    df <- data.frame(
+      FPR = c(1 - rocR$specificities, 1 - rocS$specificities),
+      TPR = c(rocR$sensitivities, rocS$sensitivities),
+      Method = factor(rep(c("Renyi", "Shannon"),
+                          times=c(length(rocR$sensitivities), length(rocS$sensitivities))),
+                      levels=c("Renyi","Shannon"))
+    )
+
+    labels <- c(
+      Renyi   = bquote(italic(S)[widetilde(italic(H))[lambda]] ~ "(AUC =" ~ .(aucR) ~ ")"),
+      Shannon = bquote(italic(S)[widetilde(italic(H))[AO]]      ~ "(AUC =" ~ .(aucS) ~ ")")
+    )
+
+    roc_list[[city]] <- list(df = df, labels = labels)
+  }
+
+  save(roc_list, file = roc_file)
+} else {
+  load(roc_file)
+}
+
+
+plot_city <- function(df, labels, title){
+  ggplot(df, aes(x = FPR, y = TPR, colour = Method, linewidth = Method)) +
+    geom_line(alpha = 0.7) +
+    scale_colour_manual(values=c(Renyi="#FC4E07", Shannon="#0072B2"),
+                        labels=labels) +
+    scale_linewidth_manual(values=c(Renyi=3.5, Shannon=3.1), guide=FALSE) +
+scale_x_continuous(minor_breaks = NULL, labels = scales::number_format(accuracy = 0.1)) +
+scale_y_continuous(minor_breaks = NULL, labels = scales::number_format(accuracy = 0.1))+
+    guides(colour = guide_legend(override.aes=list(linewidth=c(3.8,3.8), alpha=0.8))) +
+    labs(x = "PFA ",
+         y = "Pd ",
+         title = title) +
+   theme_minimal(base_family = "serif") +
+    theme(plot.title = element_text(hjust = 0.5, size = 38,  face = "bold"),
+          axis.title = element_text(size = 30, face = "bold"),
+          axis.text = element_text(size = 35),
+          #legend.text = element_text(size = 25),
+          #legend.position = "bottom",
+          legend.position = c(0.95, 0.05),      
+          legend.justification = c(1, 0),       
+          legend.text  = element_text(size = 32),
+          #legend.background = element_rect(fill = "white", color = "gray70", linewidth = 0.2),
+          legend.title = element_blank()
+
+)
+}
+
+
+p1 <- plot_city(roc_list$London$df, roc_list$London$labels, "London")
+p2 <- plot_city(roc_list$Munich$df, roc_list$Munich$labels, "Munich")
+p3 <- plot_city(roc_list$Dublin$df, roc_list$Dublin$labels, "Dublin")
+
+
+p1 + p2 + p3 + plot_layout(ncol = 3)
+
+
+
+```
+
+```{=latex}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=0.49\textwidth]{Figures-R1/ROC1-1.pdf}
+  \caption{ROC curves comparing the tests $S_{\widetilde{H}_{\lambda}}$ and $S_{\widetilde{H}_{\text{AO}}}$.}
+  \label{fig:roc}
+\end{figure}
+```
+
+
+The area under each ROC curve (AUC) quantifies global detection performance.
+The Rényi-based test  achieved higher AUCs across all scenes—London: 0.963 vs.\ 0.776; Munich: 0.996 vs.\ 0.989; Dublin: 0.980 vs.\ 0.971—demonstrating superior robustness compared to the Shannon-based test under various terrain conditions and textures.
 
 # Conclusions {#sec:conclusion}
 
-This study presented a new statistical approach based on Rényi entropy for detecting heterogeneity in SAR images, distinguishing between fully developed speckle and heterogeneous clutter. 
-The proposed test performance was evaluated by a Monte Carlo study. 
-The results showed that the method effectively controls the probability of Type&nbsp;I error while maintaining a high detection performance that improves as the sample size increases.
+This study presented a statistical approach based on Rényi entropy for detecting heterogeneity in SAR images, distinguishing between fully developed speckle and heterogeneous clutter.
+The proposed test was validated with synthetic experiments via a Monte Carlo study, demonstrating that it effectively controls the probability of Type&nbsp;I error while maintaining high detection performance that improves with sample size.
 
-<!-- ACF Again, where are the Shannon results? -->
-<!-- JA: The Shannon results are visually represented through p-value and binary maps for each image -->
-The effectiveness of the Rényi entropy-based test in SAR images was compared with the Shannon entropy-based test using $p$-value and binary maps. 
-The differences between the two methods are evident in the binary maps at a $0.05$ significance level.
-Although both tests successfully detected heterogeneous regions, the Rényi-based test performed better due to its flexibility in adjusting the $\lambda$ parameter, allowing for finer texture variation differentiation.
+\textcolor{blue}{Using real SAR data, we compared the Rényi-based test with a Shannon-based counterpart through $p$-value maps and binary decisions. Visual analysis showed greater sensitivity of the Rényi-based test to textural variations.
+Quantitative evaluation with ground-truth ROIs and standard classification metrics confirmed the superior performance of the Rényi-based test across all scenes.}
 
-Future work will explore additional statistical metrics to improve the comparison between both tests and better quantify their differences in detecting heterogeneity.
+\textcolor{blue}{Although machine learning-based SAR classifiers are widely used, our focus is on interpretable, statistically grounded methods that yield analytical significance measures. This makes them suitable for rapid detection, screening, and environments with limited data availability.}
+
+\textcolor{blue}{Future work will explore the integration of the improved Rényi estimator into SAR classification pipelines, both supervised and unsupervised, extending its utility beyond heterogeneity testing.}
 
 
 []{.appendix options="Derivation of the Rényi Entropy of $\mathcal{G}^0_I$"}
@@ -1368,19 +1656,12 @@ I= \gamma^{\,1 - \lambda}\,
 Using the Rényi entropy definition in \eqref{E:entropy2}: $H_\lambda(Z) = (1-\lambda)^{-1} \ln I$,
 and substituting $\gamma = -\mu(\alpha + 1)$, we obtain the final expression for $\mathcal{G}^0_I(\mu, \alpha, L)$ in \eqref{eq-HGI0}.
 
-<!-- # Acknowledgment {-} -->
-
-<!-- This study was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES) - Finance Code 001, and the Fundação de Amparo à Ciência e Tecnologia de Pernambuco (FACEPE), Brazil. -->
-
-# Computational Information {-}
-This article was written in Quarto and is fully reproducible. We used RStudio version 2024.12.1+563, and R version 4.4.2.
+<!-- # Computational Information {-} -->
+<!-- This article was written in Quarto and is fully reproducible. We used RStudio version 2024.12.1+563, and R version 4.4.2. -->
 
 ::: {.content-visible when-format="pdf"}
 # References {-}
 :::
-
-
-
 
 <!-- [^issues-1023]: ["_[longtable not compatible with 2-column LaTeX documents](https://github.com/jgm/pandoc/issues/1023>)_",  -->
 

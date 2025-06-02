@@ -53,7 +53,7 @@ title=#1
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\vspace{2cm}
+\vspace{0.5cm}
 \noindent Dear Editors
 \bigskip
 
@@ -65,40 +65,56 @@ Below we detail the changes and updates incorporated into the manuscript in this
 
 
 %-------------------------------------
+\vspace{2em}
 \begin{reviewbox}{Comment 1}
 1. The language needs further improvement and should be reviewed by a language expert.
 \end{reviewbox}
 
 \begin{responsebox}{Response}
-Text
+We have carefully revised the manuscript to improve its clarity.
 
 \end{responsebox}
 
+\vspace{3em}
 \begin{reviewbox}{Comment 2}
 2. The scientific content of the article is weak and requires further expansion.
 \end{reviewbox}
 
 \begin{responsebox}{Response}
 
-Text
-
+In the revised manuscript, we have expanded several sections to reinforce the scientific content and clarify the contributions of our work. 
+This article presents a complete statistical framework for detecting heterogeneity in SAR images using a Rényi entropy-based test. 
+The proposed method is analytically grounded, unsupervised, and provides interpretable $p$-values. 
+We enhance a non-parametric entropy estimator via bootstrap correction, validated its statistical properties through a Monte Carlo study, and demonstrated its application on real SAR data under challenging conditions. 
+The work further includes quantitative evaluation using standard metrics and ROC curves. We believe these contributions represent both theoretical and practical advances in SAR image analysis.
 
 \end{responsebox}
 
+
+\vspace{10em}
 \begin{reviewbox}{Comment 3}
  3. I did not observe any comparison of the authors' work's novelty index with the latest articles published in the field for the current years.
 \end{reviewbox}
 
 \begin{responsebox}{Response}
+We appreciate the reviewer’s suggestion. In response, we have expanded the introduction to better contextualize our contribution relative to recent work.
 
-Text
-	
+Specifically, we now cite recent studies that explore entropy-based methods for SAR analysis and classification. For example, Cassetti et al. (2022) evaluated several Shannon entropy estimators in both supervised and unsupervised SAR classification. Gallet et al. (2024) proposed an explainable classification framework based on learned Rényi divergences, demonstrating robustness under label noise and data scarcity. Parikh (2019) reviewed deep learning approaches for SAR classification and identified key challenges, including the need for large labeled datasets and complex hyperparameter tuning.
+
+In contrast to these data-driven or classification-focused methods, our work addresses heterogeneity detection from a statistically grounded perspective. We propose a hypothesis test based on a non-parametric Rényi entropy estimator, enhanced via bootstrap bias correction. This approach does not require training data, produces interpretable $p$-values, and is particularly suited for unsupervised analysis and scenarios with limited ground-truth information.
+
+\begin{quote}
+\textcolor{blue}{These comparisons and citations have been added to the revised Introduction to clarify the novelty and positioning of our contribution.}
+\end{quote}
 \end{responsebox}
+
+\vspace{3em}
+	
 \begin{reviewbox}{Comment 4}
 4. Conclusion requires redrafting.
 \end{reviewbox}
 \begin{responsebox}{Response}
-Text
+The conclusion section has been fully revised to improve clarity and better reflect the main contributions, evaluation results, and future research directions of the study.
 
 \end{responsebox}
 

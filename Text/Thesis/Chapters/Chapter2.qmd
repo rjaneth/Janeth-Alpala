@@ -1,0 +1,422 @@
+```{r setup, include=FALSE}
+source("setup.R")
+```
+# THEORETICAL BACKGROUND {#sec-Chapter2}
+
+##  Synthetic Aperture Radar
+
+## Statistical Models
+
+
+The main models considered for SAR intensity data are the $\Gamma_{\text{SAR}}$ distribution, which is suitable for fully developed speckle, and the $\mathcal{G}^0_I$ distribution, which is able to describe roughness\ [@Frery1997]. These distributions are characterized by the following probability density functions (pdfs):
+\begin{align}
+	f_{\Gamma_{\text{SAR}}}\bigl(z;L, \mu \bigr) 
+    &= \frac{L^L}{\Gamma(L)\,\mu^L} z^{L-1} 
+    \exp \biggl(-\frac{Lz}{\mu}\biggr)
+    \mathbbm 1_{\mathbbm R_+}(z) \label{E:gamma1}
+    \intertext{and}
+    f_{\mathcal{G}^0_I}\bigl(z; \mu, \alpha, L \bigr) 
+    &= \frac{L^L\,\Gamma(L-\alpha)}
+    {\bigl[-\mu(\alpha+1)\bigr]^{\alpha} \Gamma(-\alpha)\,\Gamma(L)}
+    \notag \\
+    &\quad \times
+    \frac{z^{L-1}}
+    {\bigl[-\mu(\alpha+1)+Lz\bigr]^{L-\alpha}}
+    \mathbbm 1_{\mathbbm R_+}(z), \label{E:gi01}
+\end{align}
+where $\mu > 0$ is the mean,
+$\alpha < 0$ measures the roughness, $L \geq 1$ is the number of
+looks, $\Gamma(\cdot)$ is the gamma function, and
+$\mathbbm 1_{A}(z)$ is the indicator function of the set $A$. 
+As demonstrated by\ [@Frery1997], the $\Gamma_{\text{SAR}}$  model is a particular case of the $\mathcal{G}^0_I$ distribution. Specifically, for a given $\mu$ fixed,
+$$
+f_{\mathcal{G}^0_I}\big(z; \mu, \alpha, L\big)
+\longrightarrow 
+f_{\Gamma_{\text{SAR}}}(z;L, \mu) 
+$$
+when $\alpha\to-\infty$.
+
+## Rényi Entropy
+
+
+Introduced by Alfréd Rényi in 1961\ [@renyi1961measures], this measure generalizes several well-known entropies, including the Shannon entropy\ [@Ribeiro2021]. For a continuous random variable $Z$ with pdf $f(z)$, the Rényi entropy of order $\lambda$, with $\lambda > 0$ and $\lambda \neq 1$, is defined as:
+\begin{align}
+\label{E:entropy2}
+H_\lambda(Z) = \frac{1}{1 - \lambda} \ln \int_{-\infty}^{\infty} [f(z)]^\lambda \, dz.
+\end{align}
+Using \eqref{E:entropy2}, we derive closed-form expressions for the Rényi entropy of the $\Gamma_{\mathrm{SAR}}$ and $\mathcal{G}^0_I$ distributions:
+\begin{multline}
+\label{eq-HGammaSAR}
+H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr)
+= 
+\ln \mu - \ln L + \frac{1}{1-\lambda}
+\Bigl[
+  -\lambda\,\ln\Gamma(L) \\  + \ln\Gamma\bigl(\lambda(L-1)+1\bigr)  - \bigl(\lambda(L-1)+1\bigr)\,\ln\lambda
+\Bigr]
+\end{multline}
+and
+\begin{multline}\label{eq-HGI0}
+H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr)=\ln\mu-\ln L +\ln(-1 - \alpha)\\
++ \frac{1}{\,1 - \lambda\,}
+\Bigl[
+   \lambda\bigl(
+      \ln\Gamma(L - \alpha)
+      -\ln\Gamma(-\alpha)
+      -\ln\Gamma(L)
+   \bigr)\\
+   +\ln\Gamma\bigl(\lambda(L - 1) + 1\bigr)
+   +\ln\Gamma\bigl(\lambda(-\alpha + 1) - 1\bigr)\\
+   -\ln\Gamma\bigl(\lambda(L - \alpha)\bigr)
+\Bigr].
+\end{multline}
+@fig-plot presents the Rényi entropy of $\mathcal{G}^0_I$ as a function of $\mu$ for different $\alpha$ values. As $\alpha \to -\infty$, it approaches the Rényi entropy of $\Gamma_{\text{SAR}}$, which is aligned with the fact that $\Gamma_{\text{SAR}}$ is a limiting case of the $\mathcal{G}^0_I$ model.
+
+```{r fig-plot, echo=FALSE, message=FALSE, warning=FALSE, fig.fullwidth = TRUE, out.width="45%",  fig.pos="hbt", fig.cap="$H_{\\lambda}(\\mathcal{G}^0_I)$ converges to the $H_{\\lambda}(\\Gamma_{\\text{SAR}})$ when $\\alpha\\to-\\infty$, with $L=8$ and $\\lambda=0.8$.", fig.width=5, fig.height=4.0}
+
+
+
+entropy_renyi_gamma_sar <- function(L, mu, lambda) {
+  entropy <- (lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1) +
+                (lambda * (L - 1) + 1) * log(lambda)) / (lambda - 1) + log(mu / L)
+  return(entropy)
+}
+
+
+entropy_GI0_renyi <- function(alpha, mu, L, lambda) {
+  if (lambda <= 0 || lambda == 1) {
+    stop("Lambda must be greater than 0 and not equal to 1.")
+  }
+  
+  
+  gamma <- -mu * (alpha + 1)
+  if (any(gamma <= 0)) {
+    stop("Gamma must be positive. Check the values of mu and alpha.")
+  }
+  
+  
+  a <- lambda * (L - 1) + 1
+  b <- lambda * (-alpha + 1) - 1
+  ab_sum <- lambda * (L - alpha)
+  
+  
+  if (any(a <= 0) || any(b <= 0) || any(ab_sum <= 0)) {
+    stop("Arguments of the Gamma functions must be positive. Check the values of lambda, L, and alpha.")
+  }
+  
+ 
+  term1 <- log(gamma / L)
+  
+  term2 <- lambda * (lgamma(L - alpha) - lgamma(-alpha) - lgamma(L))
+  
+  term3 <- lgamma(a)
+  term4 <- lgamma(b)
+  term5 <- lgamma(ab_sum)
+  
+  numerator <- term2 + term3 + term4 - term5
+  
+  
+  entropy <- term1 + numerator / (1 - lambda)
+  
+  return(entropy)
+}
+
+
+L <- 8
+alphas <- c(-3, -8, -20, -1000)
+alpha_labels <- c(expression(italic(alpha) == -3), 
+                  expression(italic(alpha) == -8), 
+                  expression(italic(alpha) == -20), 
+                  expression(italic(alpha) == -1000))
+
+mu <- seq(0.1, 10, length.out = 500)
+lambda <- 0.8  # Fixed lambda
+
+
+muEntropy <- data.frame()
+
+for (alpha in alphas) {
+  entropies_GI0 <- entropy_GI0_renyi(alpha, mu, L, lambda)
+  muEntropy <- rbind(muEntropy, data.frame(mu = mu, Entropy = entropies_GI0, alpha = as.factor(alpha)))
+}
+
+muEntropy.molten <- melt(muEntropy, id.vars = c("mu", "alpha"), value.name = "Entropy")
+
+
+entropies_gamma <- entropy_renyi_gamma_sar(L, mu, lambda)
+
+Entropy_gamma <- data.frame(mu, Entropy_Gamma = entropies_gamma)
+
+
+Entropy_gamma.molten <- melt(Entropy_gamma, id.vars = "mu", value.name = "Entropy_Gamma")
+
+
+ggplot() +
+  
+  geom_line(data = Entropy_gamma.molten, aes(x = mu, y = Entropy_Gamma), color = "black", 
+            linetype = "solid", linewidth = 1.5) + 
+ 
+  geom_line(data = muEntropy.molten, aes(x = mu, y = Entropy, color = alpha), 
+            linetype = "longdash", linewidth = 1) +
+  
+  annotate("text", x = max(mu) + 0.2, y = max(Entropy_gamma.molten$Entropy_Gamma), 
+           label = TeX("${italic(H)}_{\\lambda}(\\Gamma_{\\tiny{SAR}})$"), 
+           vjust = 1.6, hjust = 0.8, color = "black",linewidth = 0.2) +
+  
+  theme_minimal() +
+ 
+  scale_color_manual(values = pal_jama()(7)[2:5], labels = alpha_labels) +
+ # scale_color_manual(values = brewer.pal(4, "Dark2"), labels = alpha_labels) +
+  # Labels and titles
+  labs(color = "Roughness", 
+       x = expression(mu), 
+       y = "Rényi Entropy", 
+       linetype = NULL) +
+  
+  theme(text = element_text(family = "serif"),
+        legend.position = "bottom") +
+ 
+  coord_cartesian(xlim = c(0, 10), ylim = c(min(muEntropy.molten$Entropy, Entropy_gamma.molten$Entropy_Gamma), 
+                                            max(muEntropy.molten$Entropy, Entropy_gamma.molten$Entropy_Gamma) + 0.5))
+
+```
+
+For $\lambda \to 1$, this expression converges to the Shannon entropy. As we will see later, this property can lead to improved performance for heterogeneity detection compared to Shannon entropy.
+
+## Main Section 1
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ultricies lacinia euismod. Nam tempus risus in dolor rhoncus in interdum enim tincidunt. Donec vel nunc neque. In condimentum ullamcorper quam non consequat. Fusce sagittis tempor feugiat. Fusce magna erat, molestie eu convallis ut, tempus sed arcu. Quisque molestie, ante a tincidunt ullamcorper, sapien enim dignissim lacus, in semper nibh erat lobortis purus. Integer dapibus ligula ac risus convallis pellentesque.
+
+Let $\bm{Z}$
+
+$$
+\int_{A_i}{\lambda (\pmb{\mu})}
+$$ {#eq-pmb}
+
+
+$$
+\int_{A_i}{\lambda (\mathbf{x})} + x
+$$ {#eq-mathbf}
+
+### Subsection 1
+
+Nunc posuere quam at lectus tristique eu ultrices augue venenatis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam erat volutpat. Vivamus sodales tortor eget quam adipiscing in vulputate ante ullamcorper. Sed eros ante, lacinia et sollicitudin et, aliquam sit amet augue. In hac habitasse platea dictumst.
+
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+```
+
+```{r}
+#| fig-cap: "primera grafica"
+#| out-width: "12cm"
+penguins %>%
+  drop_na() %>%
+  ggplot(
+    aes(x = species, y =  body_mass_g, fill = sex)
+  ) +
+  geom_boxplot()
+  
+```
+
+```{r}
+peso <- mean(penguins$body_mass_g, na.rm = TRUE)
+```
+
+El peso es\> `r round(peso,2)`
+
+```{r}
+#| label: fig-charts
+#| fig-cap: "Charts"
+#| fig-subcap: 
+#|   - "Cars"
+#|   - "Pressure"
+#| layout-ncol: 2
+
+plot(cars)
+plot(pressure)
+```
+
+# Tablas
+
+| Nombre | **Apellido** | ***Telefono*** |
+|--------|--------------|----------------|
+| Maria  | ss           | 45             |
+| rosa   | sss          | 67             |
+
+: MI primera tabla
+
+```{r}
+#| tbl-cap: "tabla1"
+#| label: "tbl-ping"
+penguins %>% drop_na()%>% group_by(species, sex) %>%
+  summarise(peso = mean(body_mass_g))%>%
+  knitr::kable(col.names = c("Especie", "sexo", "peso"))
+```
+
+Como se muetsra en la tabla @tbl-ping.
+
+| nombre | apellido |
+|--------|----------|
+| diana  | Alpala   |
+| rosa   | Alpala   |
+
+: nueva tabla
+
+
+```{r table-example, results="asis"}
+library(knitr)
+library(kableExtra)
+
+# Creamos un data.frame sencillo:
+dt <- data.frame(
+  Id   = 1:5,
+  Name = c("Alice", "Bob", "Charlie", "Diana", "Ethan"),
+  Score = c(90, 85, 88, 92, 80)
+)
+
+kable(dt, format = "latex", booktabs = TRUE, caption = "Mi tabla") %>%
+  kable_styling(full_width = FALSE) #%>%
+  #footnote(
+  #  general = " Source: Author.",  # 
+   # general_title = ""                      # Deja en blanco para no mostrar "Note:"
+    #footnote_as_chunk = TRUE,
+    #threeparttable = TRUE
+  #)
+
+```
+
+
+
+
+<!-- ```{=latex} -->
+<!-- \begin{figure} -->
+<!--   \caption{My figure caption} -->
+<!--   \centering -->
+<!--   \includegraphics{Chapters/Figs/elephant.png} -->
+<!--   \caption*{Source: My source} -->
+<!-- \end{figure} -->
+<!-- ``` -->
+
+<!-- ::: {#fig-1} -->
+
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- plot(1:10) -->
+<!-- ``` -->
+
+<!-- Source: My source -->
+
+<!-- My figure caption. -->
+
+<!-- ::: -->
+
+<!-- See @fig-1. -->
+
+
+```{r parameters_sar, echo=FALSE, message=FALSE, warning=FALSE}
+
+SAR_data <- data.frame(
+  Site = c("Rotterdam", "Coast of Jalisco", "Illinois-Region 1", "Illinois-Region 2"),
+  Mission = c("TerraSAR-X", "Sentinel-1B", "Sentinel-1B", "Sentinel-1B"),
+  Mode = c("HS", "GRD EW", "GRD SM", "GRD SM"),
+  Band = c("X", "C", "C", "C"),
+  Polarization = c("HH", "VV", "VV", "VV"),
+   Size = c("$\\bm{512}\\times512$", "$\\textbf{512}\times512$", "$512\times512$", "$1024\times1024$"),
+  L = c(1, 18, 36, 36),
+   Resol = c("$0.85/0.85$", "$40/40$", "$10/10$", "$10/10$"),
+  Date = c("06-12-2018", "29-08-2021", "30-06-2020", "28-08-2021")
+)
+
+# colnames(SAR_data) <- c(
+#   "\\textbf{Site}",
+#   "\\textbf{Mission}",
+#   "\\textbf{Mode}",
+#   "\\textbf{Band}",
+#   "\\textbf{Polarization}",
+#   "\\textbf{Size}",
+#   "$\\bm{L}$",                 # <- Aquí sí quieres modo matemático (para la L)
+#   "\\textbf{Resolution}",
+#   "\\textbf{Acquisition Date}"
+# )
+
+
+SAR_data[] <- lapply(SAR_data, function(x) {
+  if (is.numeric(x)) {
+    if (all(x %% 1 == 0)) {
+      formatted_numbers <- sprintf("$%d$", x)
+    } else {
+      formatted_numbers <- ifelse(x < 0, sprintf("$%.1f$", x), sprintf("$\\phantom{-}%.1f$", x))
+    }
+    return(formatted_numbers)
+  } else {
+    return(x)
+  }
+})
+kable(
+  SAR_data,
+  caption = "Parameters of selected SAR images.",
+  format = "latex",
+  booktabs = TRUE,
+  align = "ccccccccc",
+  escape = FALSE,      # Importante para que interprete el LaTeX
+  digits = 2,
+  label = "table_param",
+  col.names = c(
+    "\\textbf{Site}", 
+    "Mission", 
+    "Mode", 
+    "Band", 
+    "Polarization", 
+    "Size", 
+     "$\\bm{L}$",              # L en modo matemático y negrita
+    "Resol",  # Ejemplo de texto en negrita con [m]
+    "Date"
+  )
+) %>%
+  row_spec(0, align = "c") %>%
+  kable_styling(latex_options = "scale_down", font_size = 12) %>%
+  kable_styling(full_width = TRUE) %>%
+  column_spec(1, width = "3.5cm") %>%
+  column_spec(2, width = "3cm") %>%
+  column_spec(3, width = "2cm") %>%
+  column_spec(4, width = "1cm") %>%
+  column_spec(5, width = "2cm") %>%
+  column_spec(6, width = "2.5cm") %>%
+  column_spec(7, width = "1cm") %>%
+  column_spec(8, width = "3cm") %>%
+  column_spec(9, width = "3cm")
+
+# kable(SAR_data, caption = "Parameters of selected SAR images.",
+#       format = "latex",
+#       booktabs = TRUE,
+#       align = "cccccccccc",
+#       escape = FALSE,
+#       digits = 2,
+#       label = "table_param",
+#       centering = FALSE
+#       #table.envir = "table", position = "H"
+#       ) %>%
+#   row_spec(0, align = "c") %>%
+#  kable_styling(latex_options = "scale_down", font_size = 10) %>% 
+#   kable_styling(full_width = TRUE) %>%
+#   column_spec(1, width = "3.5cm") %>%
+#   column_spec(2, width = "3cm") %>%
+#   column_spec(3, width = "2cm") %>%
+#   column_spec(4, width = "1cm") %>%
+#   column_spec(5, width = "2cm") %>%
+#   column_spec(6, width = "2.5cm") %>%
+#   column_spec(7, width = "1cm") %>%
+#   column_spec(8, width = "3cm") %>%
+#   column_spec(9, width = "3cm") 
+
+```
+
+### Subsection 2
+
+Morbi rutrum odio eget arcu adipiscing sodales. Aenean et purus a est pulvinar pellentesque. Cras in elit neque, quis varius elit. Phasellus fringilla, nibh eu tempus venenatis, dolor elit posuere quam, quis adipiscing urna leo nec orci. Sed nec nulla auctor odio aliquet consequat. Ut nec nulla in ante ullamcorper aliquam at sed dolor. Phasellus fermentum magna in augue gravida cursus. Cras sed pretium lorem. Pellentesque eget ornare odio. Proin accumsan, massa viverra cursus pharetra, ipsum nisi lobortis velit, a malesuada dolor lorem eu neque.
+
+
+## Main Section 2
+
+Sed ullamcorper quam eu nisl interdum at interdum enim egestas. Aliquam placerat justo sed lectus lobortis ut porta nisl porttitor. Vestibulum mi dolor, lacinia molestie gravida at, tempus vitae ligula. Donec eget quam sapien, in viverra eros. Donec pellentesque justo a massa fringilla non vestibulum metus vestibulum. Vestibulum in orci quis felis tempor lacinia. Vivamus ornare ultrices facilisis. Ut hendrerit volutpat vulputate. Morbi condimentum venenatis augue, id porta ipsum vulputate in. Curabitur luctus tempus justo. Vestibulum risus lectus, adipiscing nec condimentum quis, condimentum nec nisl. Aliquam dictum sagittis velit sed iaculis. Morbi tristique augue sit amet nulla pulvinar id facilisis ligula mollis. Nam elit libero, tincidunt ut aliquam at, molestie in quam. Aenean rhoncus vehicula hendrerit.

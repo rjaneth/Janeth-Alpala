@@ -1,0 +1,10 @@
+```{r setup, include=FALSE}
+source("setup.R")
+```
+# PROBLEM STATEMENT AND METHODOLOGY {#sec-Chapter3}
+
+## Bootstrap Correction for  Entropy Estimators
+
+## Hypothesis Testing
+
+## Proposed Test Statistics for Heterogeneity Detection

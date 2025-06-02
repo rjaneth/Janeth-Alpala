@@ -53,7 +53,7 @@ title=#1
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\vspace{2cm}
+\vspace{0.5cm}
 \noindent Dear Editors
 \bigskip
 
@@ -72,62 +72,112 @@ This manuscript proposes a statistically grounded method for quantifying roughne
 1. While the paper is generally well-written and structured, several mathematical expressions—particularly Equations (5) and (8)—may be difficult to interpret for practitioners or applied researchers. The authors are encouraged to provide more intuitive explanations or illustrative interpretations alongside the formulas.
 \end{reviewbox}
 
+
 \begin{responsebox}{Response}
+ We have revised the manuscript to clarify their meaning and practical relevance, as detailed below.
 
-We have 
+\vspace{0.5em}
 
-\begin{quote}
-	\textcolor{blue}{text  }
-\end{quote}
+\textbf{Equation (5): Rényi entropy of the $\mathcal{G}^{0}_{\!I}$ model.}  
+This expression presents the closed-form Rényi entropy of the heterogeneous $\mathcal{G}^{0}_{\!I}$ distribution as the sum of two components:
+\[
+H_\lambda\bigl(\mathcal{G}^{0}_{\!I}\bigr)
+=\;H_\lambda\bigl(\Gamma_{\text{SAR}}\bigr)
+\;+\;\bigl[\text{extra\ term depending on }\alpha\bigr].
+\]
 
+In intuitive terms:
+\begin{itemize}
+	\item $H_\lambda(\Gamma_{\text{SAR}})$ represents the “baseline entropy” of fully developed speckle (homogeneous clutter).
+	\item The additional term captures how much entropy increases due to texture (heterogeneity), caused by the roughness parameter $\alpha$.
+\end{itemize}
+When $\alpha\!\to\!-\infty$ (fully developed speckle), the excess term vanishes and (5) collapses to the homogeneous case in (4).  This motivates our test: we check whether the \emph{excess} is statistically different from zero.
+
+
+
+\vspace{0.3em}
+\textcolor{blue}{To improve clarity, we add an intuitive interpretation after equation (5), and include Figure~1 showing the reduction of the excess term as $\alpha$ decreases, illustrating convergence.}
 \end{responsebox}
 
+\begin{responsebox}{}
+\vspace{0.5em}
+\textbf{Equation (8): test statistic.}  
+The test statistic is simply defined as:
+\[
+S_{\widetilde H_\lambda}(Z;L)
+= \text{“estimated entropy”} - \text{“theoretical entropy under } H_0\text{”}.
+\]
+Its purpose is to detect deviations from homogeneity:
+\begin{itemize}
+	\item  If the data are homogeneous, both terms match closely $\;\Rightarrow\;S\approx0$.
+	\item  If the data are heterogeneous, the estimated entropy exceeds the theoretical one $\;\Rightarrow\;|S|$ increases and the $p$-value becomes small.
+\end{itemize}
+
+ This formulation not only supports the theoretical foundation of our test but also offers practical utility: the closed-form expression is not previously available in the SAR literature and can be reused as an analytical feature in other downstream applications
+
+\vspace{0.3em}
+\textcolor{blue}{We added a brief explanation below Equation (8), and clarified in the caption of Figure~4 that the centered distribution confirms correct behavior under $H_0$.}
+
+
+\textbf{Why Eq.(5) benefits practitioners.}  
+Closed-form Rényi entropy for $\mathcal{G}^{0}_{\!I}$ is absent from the SAR literature; Having it allows others to incorporate an analytical feature into algorithms and applications.
+
+\textcolor{blue}{These additions are included in Sections II-B and III-D of the revised manuscript.}
+\end{responsebox}
+
+
+\vspace{5em}
 \begin{reviewbox}{Comment 2}
 2. The current methodology assumes that the number of looks, L, is known a priori. In practice, this parameter may be unknown or inaccurately estimated from SAR metadata. The authors should discuss the sensitivity of the proposed test to variations or inaccuracies in L, and optionally suggest techniques for estimating L directly from the data or include robustness analysis. 
 \end{reviewbox}
 
 \begin{responsebox}{Response}
+We thank the reviewer for this important observation.
+
+In our experiments, we used the number of looks $L$ reported in the metadata of each SAR image, computed as the product of azimuth and range looks provided by the Sentinel Application Platform (SNAP). However, we recognize that this value may be imprecise in practice due to preprocessing steps such as multilooking.
+
+To validate its reliability, we manually selected homogeneous patches from each image and estimated the Equivalent Number of Looks (ENL) using the classical estimator based on the coefficient of variation ($\widehat{L} = 1/\text{CV}^2$). The results were consistent with the metadata; for example, in the Dublin image, we obtained $\widehat{L} \approx 16.3$ from water regions, which closely matches the metadata value $L = 16$.
+
+We also tested the sensitivity of the proposed hypothesis test to slight under- and overestimations of $L$, and found that the resulting $p$-value maps and binary decisions remained stable. These findings indicate that the test is robust to moderate inaccuracies in $L$.
 
 
-We have clarified that
 \begin{quote}
 	\textcolor{blue}{
-		In order to clarify the }
+		A brief explanation  have been included in Section~IV-A of the revised manuscript. }
 
 \end{quote}
 
 \end{responsebox}
 
+
+	
 \begin{reviewbox}{Comment 3}
 3. Figures (Figs. 6–8) are informative but could benefit from quantitative evaluation. Add comparative metrics beyond visual comparison.
 \end{reviewbox}
 
 \begin{responsebox}{Response}
+We agree with the reviewer and have added a quantitative performance evaluation to the revised manuscript. Specifically, we manually selected eight regions of interest (ROIs) in each SAR image: four clearly homogeneous areas (e.g., water, croplands) and four heterogeneous areas (e.g., urban centers). Each ROI was labeled as class~0 (blue) or class~1 (red), as illustrated in Figs.~6a, 7a, and 8a.
 
+These ROIs were rasterized to create a partial ground-truth mask. Binary decision maps were obtained by thresholding the $p$-value maps at $ 0.05$ significance level, assigning 1 to pixels with $p < 0.05$ (heterogeneous) and 0 otherwise (homogeneous). These predictions were compared to the ground-truth labels, and standard metrics F1-score, kappa coefficient, and overall accuracy were computed. The results are reported in Table~III.
 
-We include 
-
-
+To further support the evaluation, we computed ROC curves and the AUC metric for each test and image using the continuous $p$-values within the ROIs. .
 \begin{quote}
-	\textcolor{blue}{
-	text
-}
+\textcolor{blue}{These additions are included in Section~IV-C of the revised manuscript. }
 \end{quote}
-	
+
 \end{responsebox}
+
 
 
 \begin{reviewbox}{Comment 4}
 The manuscript convincingly shows that Rényi-based entropy measures offer advantages over classical Shannon entropy for heterogeneity detection. However, no comparisons are made to machine learning-based SAR classifiers or segmentation models, which are now widely adopted. Justification is required.
 \end{reviewbox}
 \begin{responsebox}{Response}
-We have clarified that
+While machine learning-based classifiers and segmentation models are widely used in SAR analysis, our focus in this study is on interpretable, statistically grounded methods that provide analytical significance measures in the form of $p$-values. 
+ In contrast to data-driven ML approaches, which typically require extensive labeled datasets, hyperparameter tuning, and large training efforts, our entropy-based tests offer lightweight, unsupervised alternatives that are easy to deploy and statistically explainable. These properties make them attractive for tasks such as rapid change detection or preliminary scene screening where data availability is limited or interpretability is essential. Moreover, our objective is not to outperform ML classifiers, but to compare the effectiveness of two statistical entropy measures under controlled conditions using SAR data.
 \begin{quote}
-	\textcolor{blue}{
-		text
-}
+\textcolor{blue}{We have clarified this distinction in the revised conclusions of the manuscript.}
 \end{quote}
-
 \end{responsebox}
 
 

@@ -1,0 +1,10 @@
+% preamble.tex
+\usepackage[toc,title,page]{appendix}
+\renewcommand{\appendixpagename}{APPENDICES}
+\renewcommand{\appendixtocname}{APPENDICES}
+
+\usepackage{etoolbox}
+\makeatletter
+% Quita la orden \clearforchapter, eliminando el salto de página
+\patchcmd{\@makechapterhead}{\clearforchapter}{}{}{}
+\makeatother

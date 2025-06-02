@@ -614,10 +614,10 @@ print(combined_plot_renyi)
 set.seed(1234567890, kind = "Mersenne-Twister")
 # Parameters
 sample_sizes <- c(49)
-R <- 2000# Number of replications con 200 y 
-B <- 300      # Number of bootstrap replications 10 tambien funciona 0.9 el valor optimo
+R <- 1000# Number of replications  
+B <- 100      # Number of bootstrap replications 10 tambien funciona 0.9 el valor optimo
 mu <- 1        # Fixed mu
-L <- 18        # Fixed L
+L <- 5       # Fixed L
 
 
 # Estimators

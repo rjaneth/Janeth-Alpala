@@ -1,0 +1,73 @@
+%\usepackage[utf8]{inputenc} % Required for inputting international characters
+%\usepackage[T1]{fontenc} % Output font encoding for international characters; causes problems for xelatex
+
+%\usepackage{mathpazo} % Use the Palatino font by default
+
+%\usepackage[backend=bibtex, style=authoryear, natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
+
+\usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
+
+\usepackage{pdfpages}
+\usepackage{etoolbox} % para la tabla de contenido y figura y tablas
+
+% Paquetes adicionales que no están en MastersDoctoralThesis.cls
+\usepackage{bbm}  % Bold math symbols
+\usepackage{mathrsfs}  % Script math fonts
+%\usepackage{siunitx}  % Scientific notation (verificar si ya está en cls)
+\usepackage{url}  % URLs
+\usepackage{color}  % Color support
+\usepackage{mathtools}  % Extended math tools
+%\usepackage{float}  % Better float control
+\usepackage{array}  % Advanced table formatting
+\usepackage{multirow}  % Table multirows
+\usepackage{wrapfig}  % Wrapping text around figures
+\usepackage{colortbl}  % Table colors
+\usepackage{pdflscape}  % Landscape pages
+\usepackage{xcolor}  % Advanced colors
+%\usepackage{amsmath}  % Math symbols
+
+\usepackage{float}
+
+%\usepackage{amsfonts}
+%\usepackage{amssymb}
+
+% Re-ajustar el setup sólo para las figuras
+% \captionsetup[figure]{position=above}
+% \floatstyle{plaintop}
+% \restylefloat{figure}
+
+% \usepackage{etoolbox}
+% 
+% % Para TODAS las figuras
+% \AtEndEnvironment{figure}{
+%   \par\medskip
+%   \centering
+%   \small Source: Author
+% }
+% 
+% % Para TODAS las tablas
+% \AtEndEnvironment{table}{
+%   \par\medskip
+%   \centering
+%   \small Source: Author
+% }
+
+%----------------------------------------------------------------------------------------
+%	MARGINS
+%----------------------------------------------------------------------------------------
+
+\geometry{
+	headheight=4ex,
+	includehead,
+	includefoot
+}
+
+\raggedbottom
+
+\AtBeginDocument{
+\hypersetup{pdftitle=\ttitle} % Set the PDF's title to your title
+\hypersetup{pdfauthor=\authorname} % Set the PDF's author to your name
+\hypersetup{pdfkeywords=\keywordnames} % Set the PDF's keywords to your keywords
+}
+
+%---------------------------------------------
