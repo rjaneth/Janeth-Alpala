@@ -1190,7 +1190,7 @@ print(table_combined_result)
 \textcolor{blue}{
 We applied the proposed test to SAR images using sliding windows of $7 \times 7$ pixels. 
 For each window, we computed the test statistic and calculated the $p$-value that quantifies the statistical evidence against local homogeneity. 
-High $p$-values, e.g., $p > 0.05$, indicate no evidence to reject homogeneity, while low values ($p < 0.05$) suggest statistically significant deviations and are interpreted as heterogeneity.
+High $p$-values, e.g., $p > 0.05$, indicate no evidence to reject homogeneity, while low values, e.g., $p < 0.05$, suggest statistically significant deviations and are interpreted as heterogeneity.
 }
 <!-- Note that the visual outputs in Figs.~\ref{fig:london}--\ref{fig:dublin} show the $p$-values obtained from the hypothesis testing procedure, not the test statistic or entropy values. -->
 
@@ -1243,7 +1243,7 @@ kable(SAR_data,
       digits = 2,
       label = "table_param",
       centering = TRUE,
-      caption = "Parameters of selected SAR images.",
+      caption = "Parameters of selected SAR images",
       table.envir = "table", position = "H") %>%
   row_spec(0, align = "c") %>%
   kable_styling(latex_options = "scale_down", font_size = 22) %>% 
