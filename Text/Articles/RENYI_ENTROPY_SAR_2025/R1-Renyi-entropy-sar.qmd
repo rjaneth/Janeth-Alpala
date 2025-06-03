@@ -1261,17 +1261,20 @@ kable(SAR_data,
 
 ```
 \textcolor{blue}{
-For each SAR image, the number of looks $L$ was obtained from the product of azimuth and range looks provided in the metadata (SNAP). To validate this value, we estimated the equivalent number of looks (ENL) from manually selected homogeneous areas using the classical formula $\text{ENL} = 1/\widehat{\text{CV}}^2$, based on the coefficient of variation. 
-The results were consistent with the metadata. We also verified that moderate deviations in $L$ did not significantly impact the outcome of the test, confirming the robustness of the proposed method.}
+For each SAR image, the number of looks $L$ was obtained from the product of azimuth and range looks provided in the metadata (SNAP). 
+We validated this nominal value with the equivalent number of looks (ENL) from manually selected homogeneous areas using the classical formula $\text{ENL} = 1/\widehat{\text{CV}}^2$, based on the sample coefficient of variation. 
+The results were consistent with the metadata. 
+We also verified that moderate deviations in $L$ did not significantly impact the outcome of the test, confirming the robustness of the proposed method.}
 
 
 ## Qualitative Inspection
 
 The output consists of $p$-value maps and binary maps at a $0.05$ significance level. 
-The $p$-value maps use a color gradient (Figs.&nbsp;\ref{fig:london-renyi},&nbsp;\ref{fig:london-shann},&nbsp;\ref{fig:munich-renyi},&nbsp;\ref{fig:munich-shann},&nbsp;\ref{fig:dublin-renyi},&nbsp;\ref{fig:dublin-shann}), where darker regions indicate areas with higher roughness, and lighter regions denote smoother, less textured surfaces. 
+The $p$-value maps use a color gradient (Figs.&nbsp;\ref{fig:london-renyi},&nbsp;\ref{fig:london-shann},&nbsp;\ref{fig:munich-renyi},&nbsp;\ref{fig:munich-shann},&nbsp;\ref{fig:dublin-renyi},&nbsp;\ref{fig:dublin-shann}), where darker regions indicate areas with higher roughness, and lighter regions denote less textured surfaces. 
 The binary maps (Figs.&nbsp;\ref{fig:london-005-renyi},&nbsp;\ref{fig:london-005-shann},&nbsp;\ref{fig:munich-005-renyi},&nbsp;\ref{fig:munich-005-shann},&nbsp;\ref{fig:dublin-005-renyi},&nbsp;\ref{fig:dublin-005-shann}) display heterogeneous detections in black ($p<0.05$) and homogeneous areas in white ($p \geq 0.05$).
 Visually, the Rényi test exhibits greater sensitivity in detecting textural variations due to the flexibility provided by the parameter $\lambda$.
 
+<!-- ACF Why three different colour tables? -->
 ```{=latex}
 \begin{figure*}[hbt]
     \centering
