@@ -160,7 +160,8 @@ We agree with the reviewer and have added a quantitative performance evaluation 
 
 These ROIs were rasterized to create a partial ground-truth mask. Binary decision maps were obtained by thresholding the $p$-value maps at $ 0.05$ significance level, assigning 1 to pixels with $p < 0.05$ (heterogeneous) and 0 otherwise (homogeneous). These predictions were compared to the ground-truth labels, and standard metrics F1-score, kappa coefficient, and overall accuracy were computed. The results are reported in Table~III.
 
-To further support the evaluation, we computed ROC curves and the AUC metric for each test and image using the continuous $p$-values within the ROIs. .
+To further support the evaluation, we computed ROC curves and the area under the curve (AUC) for each method in Fig. 9.
+
 \begin{quote}
 \textcolor{blue}{These additions are included in Section~IV-C of the revised manuscript. }
 \end{quote}

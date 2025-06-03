@@ -1275,7 +1275,9 @@ The binary maps (Figs.&nbsp;\ref{fig:london-005-renyi},&nbsp;\ref{fig:london-005
 Visually, the Rényi test exhibits greater sensitivity in detecting textural variations due to the flexibility provided by the parameter $\lambda$.
 
 <!-- ACF Why three different colour tables? -->
-<!-- JA: I used three different color gradients in the p-value maps to enhance visual contrast across the scenes. I can unify the maps using the same color scale if preferred. -->
+
+
+<!-- New color  Palettes viridis B (inferno) -->
 ```{=latex}
 \begin{figure*}[hbt]
     \centering
@@ -1292,7 +1294,7 @@ Visually, the Rényi test exhibits greater sensitivity in detecting textural var
     \end{subfigure}
     \hspace{0.00001\textwidth}
     \begin{subfigure}{0.179\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi-london_E.png}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi-london_B1.png}
         \caption{$p$-value map for $\small{S_{\widetilde{H}_{\lambda}}}$}
         \label{fig:london-renyi}
     \end{subfigure}
@@ -1304,7 +1306,139 @@ Visually, the Rényi test exhibits greater sensitivity in detecting textural var
     \end{subfigure}
    \hspace{0.00001\textwidth}
     \begin{subfigure}{0.18\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon-london_E.png}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon-london_B1.png}
+        \caption{$p$-value map for $\tiny{S_{\widetilde{H}_{\text{AO}}}}$ }
+        \label{fig:london-shann}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.145\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/H_005_london_shannon.png}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:london-005-shann}
+    \end{subfigure}
+    \caption{Detection of heterogeneous areas in a SAR image over London, UK: comparison with the tests $\small{S_{\widetilde{H}_{\lambda}}}$ and $\small{S_{\widetilde{H}_{\text{AO}}}}$.}
+    \label{fig:london}
+\end{figure*}
+```
+
+```{=latex}
+\begin{figure*}[hbt]
+    \centering
+        \begin{subfigure}{0.145\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/munich_roi.png}
+        \caption{SAR image}
+        \label{fig:munich-sar}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+  \begin{subfigure}{0.137\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/munich_optical.png}
+        \caption{Optical image}
+        \label{fig:munich-optical}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.178\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi-munich-B.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{H}_{\lambda}}}$}
+        \label{fig:munich-renyi}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.144\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/H_005_renyi_munich.png}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\lambda}}}$}
+        \label{fig:munich-005-renyi}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.178\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon-munich-B.png}
+        \caption{$p$-value map for $S_{\widetilde{H}_{\text{AO}}}$}
+        \label{fig:munich-shann}
+    \end{subfigure}
+   \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.144\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/H_005_shannon_munich.png}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:munich-005-shann}
+    \end{subfigure}
+    \caption{Detection of heterogeneous areas in a SAR image over Munich, Germany: comparison with the tests $\small{S_{\widetilde{H}_{\lambda}}}$ and $\small{S_{\widetilde{H}_{\text{AO}}}}$.}
+    \label{fig:munich}
+\end{figure*}
+
+```
+
+```{=latex}
+\begin{figure*}[hbt]
+    \centering
+        \begin{subfigure}{0.145\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/dublin_roi3.png}
+        \caption{SAR image}
+        \label{fig:dublin-sar}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+\begin{subfigure}{0.145\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/dublin.png}
+        \caption{Optical image}
+        \label{fig:dublin-optical}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.178\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi-dublin_B.png}
+        \caption{$p$-value map $\small{S_{\widetilde{H}_{\lambda}}}$}
+        \label{fig:dublin-renyi}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.144\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/H_005_dublin_renyi.png}
+        \caption{Binary map $\small{S_{\widetilde{H}_{\lambda}}}$}
+        \label{fig:dublin-005-renyi}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.178\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon-dublin_B.png}
+        \caption{$p$-value $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:dublin-shann}
+    \end{subfigure}
+    \hspace{0.0000001\textwidth}
+    \begin{subfigure}{0.144\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/H_005_dublin-shannon.png}
+        \caption{Binary $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:dublin-005-shann}
+    \end{subfigure}
+    \caption{Detection of heterogeneous areas in a SAR image over Dublin Port, Ireland: comparison with the tests $\small{S_{\widetilde{H}_{\lambda}}}$ and $\small{S_{\widetilde{H}_{\text{AO}}}}$.}
+    \label{fig:dublin}
+\end{figure*}
+
+```
+
+<!-- New color  Palettes viridis H (turbo) -->
+```{=latex}
+\begin{figure*}[hbt]
+    \centering
+    \begin{subfigure}{0.145\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/london_roi.png}
+        \caption{SAR image}
+        \label{fig:london-sar}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.142\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/london_optical.png}
+        \caption{Optical image}
+        \label{fig:london-optical}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.179\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi-london_H1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{H}_{\lambda}}}$}
+        \label{fig:london-renyi}
+    \end{subfigure}
+    \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.145\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/H_005_london_renyi_L1_.png}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\lambda}}}$}
+        \label{fig:london-005-renyi}
+    \end{subfigure}
+   \hspace{0.00001\textwidth}
+    \begin{subfigure}{0.18\textwidth}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon-london_H1.png}
         \caption{$p$-value map for $\tiny{S_{\widetilde{H}_{\text{AO}}}}$ }
         \label{fig:london-shann}
     \end{subfigure}
@@ -1379,7 +1513,7 @@ Visually, the Rényi test exhibits greater sensitivity in detecting textural var
     \end{subfigure}
     \hspace{0.00001\textwidth}
     \begin{subfigure}{0.178\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi-dublin_B.png}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi-dublin-H1.png}
         \caption{$p$-value map $\small{S_{\widetilde{H}_{\lambda}}}$}
         \label{fig:dublin-renyi}
     \end{subfigure}
@@ -1391,7 +1525,7 @@ Visually, the Rényi test exhibits greater sensitivity in detecting textural var
     \end{subfigure}
     \hspace{0.00001\textwidth}
     \begin{subfigure}{0.178\textwidth}
-        \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon-dublin_B.png}
+        \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon-dublin-H1.png}
         \caption{$p$-value $\small{S_{\widetilde{H}_{\text{AO}}}}$}
         \label{fig:dublin-shann}
     \end{subfigure}
@@ -1406,6 +1540,7 @@ Visually, the Rényi test exhibits greater sensitivity in detecting textural var
 \end{figure*}
 
 ```
+
 
 ## Quantitative Evaluation
 
