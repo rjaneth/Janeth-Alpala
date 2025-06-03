@@ -80,7 +80,7 @@ Our contribution lies in formulating a hypothesis test that uses the entropy est
 
 In addition, we enhance the non-parametric Rényi entropy estimator by incorporating a bootstrap based bias correction technique. This resampling strategy not only reduces the estimator’s bias but also improves the accuracy of entropy estimation, particularly when working with small sample sizes. This improvement is especially relevant in practical SAR image analysis, where estimations are commonly performed over small windows, such as \(7 \times 7\) pixels.
 
-Moreover, our aim is to propose a statistically grounded, interpretable approach that provides analytical significance measures. This distinguishes our method from data-driven alternatives, and makes it especially useful for unsupervised analysis or scenarios with limited ground-truth information.
+Moreover, our aim is to propose a statistically grounded, interpretable approach that provides analytical significance measures. This distinguishes our method from data-driven alternatives, and makes it especially useful for unsupervised analysis or scenarios with limited ground truth information.
 
 
 
@@ -158,18 +158,16 @@ We do not apply any additional filtering in order to keep the texture informatio
 \begin{responsebox}{Response}
 In the revised manuscript, we have included a quantitative performance evaluation to complement the visual comparison.
 
-Specifically, we manually defined eight polygonal regions of interest (ROIs) in each SAR image: four clearly homogeneous areas ( water, flat croplands) and four clearly heterogeneous areas (urban centers). Each ROI was labeled as either homogeneous (class 0, shown in blue) or heterogeneous (class 1, in red),  as illustrated in Figs.~5a, 6a, and 7a (corresponding to Figs.~6a, 7a, and 8a in the original submission).
+Specifically, we manually defined eight polygonal regions of interest (ROIs) in each SAR image: four clearly homogeneous areas (e.g., water, flat croplands) and four clearly heterogeneous areas (e.g., urban centers). Each ROI was labeled as either homogeneous (class 0, shown in blue) or heterogeneous (class 1, shown in red), as illustrated in Figs.~5a, 6a, and 7a (corresponding to Figs.~6a, 7a, and 8a in the original submission).
 
-These ROIs were then rasterized to create a partial ground-truth mask. 
-We thresholded the $p$-value maps at $0.05$ significance level to generate binary decision maps: values below this threshold were labeled as heterogeneous (1), and values above or equal to the threshold as homogeneous (0). 
-The resulting prediction maps were compared against the ground-truth labels within the ROIs. 
-From this comparison, we computed statistical performance metrics such as F1-score, kappa coefficient, and overall accuracy, summarized in Table~III.
+These ROIs were then rasterized to create a partial ground truth mask. The $p$-value maps were thresholded at a 0.05 significance level to generate binary decision maps: values below this threshold were labeled as heterogeneous (1), and those above or equal to it as homogeneous (0). The resulting prediction maps were compared against the ground truth labels within the ROIs.
 
-Additionally, to assess performance across all decision thresholds, we computed ROC curves and the area under the curve (AUC) for each method in Fig. 9.
+Based on this comparison, we computed standard performance metrics, including F1-score, kappa coefficient, and overall accuracy, summarized in Table~III.
+
+Additionally, to evaluate performance across all decision thresholds, we computed ROC curves and the corresponding AUC values for each method, as shown in Fig.~9.
 
 \begin{quote}
-\textcolor{blue}{These additions appear in Section~IV-C of the revised manuscript.
-}
+\textcolor{blue}{These additions appear in Section~IV-C of the revised manuscript.}
 \end{quote}
 \end{responsebox}
 

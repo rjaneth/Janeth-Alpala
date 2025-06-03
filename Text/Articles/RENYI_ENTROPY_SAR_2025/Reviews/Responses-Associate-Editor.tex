@@ -93,10 +93,12 @@ In intuitive terms:
 \end{itemize}
 When $\alpha\!\to\!-\infty$ (fully developed speckle), the excess term vanishes and (5) collapses to the homogeneous case in (4).  This motivates our test: we check whether the \emph{excess} is statistically different from zero.
 
-
-
 \vspace{0.3em}
-\textcolor{blue}{To improve clarity, we add an intuitive interpretation after equation (5), and include Figure~1 showing the reduction of the excess term as $\alpha$ decreases, illustrating convergence.}
+\begin{quote}
+
+\textcolor{blue}{To improve clarity, we expanded the explanation following Equation~(5) and clarified that Figure~1 illustrates the behavior of the excess entropy term as $\alpha$ decreases, confirming its convergence to the homogeneous case.}
+
+\end{quote}
 \end{responsebox}
 
 \begin{responsebox}{}
@@ -113,20 +115,26 @@ Its purpose is to detect deviations from homogeneity:
 	\item  If the data are heterogeneous, the estimated entropy exceeds the theoretical one $\;\Rightarrow\;|S|$ increases and the $p$-value becomes small.
 \end{itemize}
 
- This formulation not only supports the theoretical foundation of our test but also offers practical utility: the closed-form expression is not previously available in the SAR literature and can be reused as an analytical feature in other downstream applications
+This formulation avoids parameter estimation for the $\mathcal{G}^0_I$ model, offering a simple, interpretable, and statistically grounded test.
 
-\vspace{0.3em}
-\textcolor{blue}{We added a brief explanation below Equation (8), and clarified in the caption of Figure~4 that the centered distribution confirms correct behavior under $H_0$.}
+\begin{quote}
+\textcolor{blue}{We added a brief explanation below Equation (8), and clarified in the main text (related to Figure~4) that the centered distribution confirms correct behavior under $H_0$.}
+
+\end{quote}
 
 
 \textbf{Why Eq.(5) benefits practitioners.}  
 Closed-form Rényi entropy for $\mathcal{G}^{0}_{\!I}$ is absent from the SAR literature; Having it allows others to incorporate an analytical feature into algorithms and applications.
-
+\begin{quote}
 \textcolor{blue}{These additions are included in Sections II-B and III-D of the revised manuscript.}
+
+
+\textcolor{blue}{Note: Due to space limitations, the derivation of Equation~(5), which was previously included in the Appendix, has been omitted in the revised version.}
+\end{quote}
 \end{responsebox}
 
 
-\vspace{5em}
+\vspace{1em}
 \begin{reviewbox}{Comment 2}
 2. The current methodology assumes that the number of looks, L, is known a priori. In practice, this parameter may be unknown or inaccurately estimated from SAR metadata. The authors should discuss the sensitivity of the proposed test to variations or inaccuracies in L, and optionally suggest techniques for estimating L directly from the data or include robustness analysis. 
 \end{reviewbox}
@@ -156,17 +164,19 @@ We also tested the sensitivity of the proposed hypothesis test to slight under- 
 \end{reviewbox}
 
 \begin{responsebox}{Response}
-We agree with the reviewer and have added a quantitative performance evaluation to the revised manuscript. Specifically, we manually selected eight regions of interest (ROIs) in each SAR image: four clearly homogeneous areas (e.g., water, croplands) and four heterogeneous areas (e.g., urban centers). Each ROI was labeled as class~0 (blue) or class~1 (red), as illustrated in Figs.~5a, 6a, and 7a (corresponding to Figs.~6a, 7a, and 8a in the original submission).
+We thank the reviewer for the suggestion. We have added a quantitative performance evaluation to the revised manuscript to complement the visual comparison.
 
-These ROIs were rasterized to create a partial ground-truth mask. Binary decision maps were obtained by thresholding the $p$-value maps at $ 0.05$ significance level, assigning 1 to pixels with $p < 0.05$ (heterogeneous) and 0 otherwise (homogeneous). These predictions were compared to the ground-truth labels, and standard metrics F1-score, kappa coefficient, and overall accuracy were computed. The results are reported in Table~III.
+Specifically, we manually selected eight regions of interest (ROIs) in each SAR image: four clearly homogeneous areas (e.g., water, croplands) and four clearly heterogeneous areas (e.g., urban centers). Each ROI was labeled as class 0 (blue) or class 1 (red), as illustrated in Figs.~5a, 6a, and 7a (corresponding to Figs.~6a, 7a, and 8a in the original submission).
 
-To further support the evaluation, we computed ROC curves and the area under the curve (AUC) for each method in Fig. 9.
+These ROIs were rasterized to create a partial ground truth mask. Binary decision maps were obtained by thresholding the $p$-value maps at a 0.05 significance level, assigning a value of 1 to pixels with $p < 0.05$ (heterogeneous), and 0 otherwise (homogeneous). These predictions were compared to the ground truth labels, and standard metrics—F1-score, kappa coefficient, and overall accuracy—were computed. The results are reported in Table~III.
+
+To further support the evaluation, we computed ROC curves and the corresponding AUC values for each method, as shown in Fig.~9.
 
 \begin{quote}
-\textcolor{blue}{These additions are included in Section~IV-C of the revised manuscript. }
+\textcolor{blue}{These additions are included in Section~IV-C of the revised manuscript.}
 \end{quote}
-
 \end{responsebox}
+
 
 
 
