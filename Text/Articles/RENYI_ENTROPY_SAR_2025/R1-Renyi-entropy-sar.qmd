@@ -170,12 +170,12 @@ However, selecting suitable models is challenging due to small window sizes in p
 Entropy measures have gained attention for SAR analysis, with applications in edge detection&nbsp;[@Nascimento2014], segmentation&nbsp;[@Nobre2016], and noise reduction&nbsp;[@Chan2022]. Traditionally, Shannon entropy&nbsp;[@Shannon1948] has been widely used to quantify data uncertainty and disorder. 
 We explore a more general information measure: Rényi entropy—a generalization of Shannon’s formulation.
 
-\textcolor{blue}{
+
 Recent studies highlight the role of entropy in SAR classification. 
 Cassetti et al. [@Cassetti2022] evaluated entropy estimators in both supervised and unsupervised models. 
 Gallet et al. [@Gallet2024] proposed a Rényi divergence-based framework for explainable classification. 
 Parikh et al. [@Parikh2019] discussed challenges in deep learning for SAR, including limited availability of labeled data and the complexity of tuning hyperparameters. These works motivate lightweight, interpretable alternatives.
-}
+
 
 We propose a statistical test based on a non-parametric estimator of Rényi entropy to identify heterogeneous regions in SAR data.
 The test assesses whether the observed Rényi entropy significantly differs from its expected theoretical value under the homogeneity assumption, improving upon our previous Shannon-based approach&nbsp;[@Frery2024].
@@ -197,7 +197,7 @@ The main distributions considered for SAR intensity data are the $\Gamma_{\text{
 	f_{\Gamma_{\text{SAR}}}\bigl(z;L, \mu \bigr) 
     = \frac{L^L}{\Gamma(L)\,\mu^L} z^{L-1} 
     \exp \biggl(-\frac{Lz}{\mu}\biggr)
-    \mathbbm 1_{\mathbbm R_+}(z), \label{E:gamma1}
+    \mathbbm 1_{\mathbbm R_+}(z) \label{E:gamma1}
 \end{equation}
 and
 \begin{multline}
@@ -212,7 +212,7 @@ where $\mu > 0$ is the mean,
 $\alpha < 0$ measures the roughness, $L \geq 1$ is the number of
 looks, $\Gamma(\cdot)$ is the gamma function, and
 $\mathbbm 1_{A}(z)$ is the indicator function of the set $A$. 
-The $\Gamma_{\text{SAR}}$  model is a particular case of the $\mathcal{G}^0_I$ distribution&nbsp;[@Frery1997]: for $\mu$ fixed,
+The $\Gamma_{\text{SAR}}$  law is a particular case of the $\mathcal{G}^0_I$ distribution&nbsp;[@Frery1997]: for $\mu$ fixed,
 $$
 f_{\mathcal{G}^0_I}\big(z; \mu, \alpha, L\big)
 \longrightarrow 
@@ -222,7 +222,7 @@ $$
 ## Rényi Entropy
 
 <!-- Introduced by Alfréd Rényi in 1961&nbsp;[@renyi1961measures], this measure generalizes several well-known entropies, including Shannon's&nbsp;[@Ribeiro2021].  -->
-For a continuous random variable $Z$ with pdf $f(z)$, the Rényi entropy of order $\lambda \in \mathbbm R_+ \setminus \{1\}$, is defined as:
+For a continuous random variable $Z$ with pdf $f(z)$, the Rényi entropy of order $\lambda \in \mathbbm R_+ \setminus \{1\}$ is defined as:
 \begin{equation}
 \label{E:entropy2}
 H_\lambda(Z) = \frac{1}{1 - \lambda} \ln \int_{-\infty}^{\infty} [f(z)]^\lambda \, dz.
@@ -235,7 +235,7 @@ H_\lambda\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr)
 \ln \mu - \ln L + \frac{1}{1-\lambda}
 \Bigl[
   -\lambda\,\ln\Gamma(L)  \\ + \ln\Gamma\bigl(\lambda(L-1)+1\bigr)  - \bigl(\lambda(L-1)+1\bigr)\,\ln\lambda
-\Bigr],
+\Bigr]
 \end{multline}
 and
 \begin{multline}  
@@ -251,11 +251,12 @@ $$
 H_{\lambda}(\mathcal{G}^0_I)
 =
 \underbrace{H_\lambda\!\bigl(\Gamma_{\mathrm{SAR}}\bigr)}_{\text{baseline entropy}}
-\;\;\;\;\; +
-\underbrace{\Delta_\alpha}_{\text{extra entropy caused by texture}},
+\hspace{1.8em} + \hspace{-1.0em}
+\underbrace{\Delta_\alpha}_{\text{extra entropy caused by texture}}\hspace{-3.0em},
 $$
+
 \textcolor{blue}{where the excess term $\Delta_\alpha$ depends on the roughness parameter.
-When $\alpha\!\to\!-\infty$ (fully developed speckle) this excess tends to zero,
+When $\alpha\!\to\!-\infty$ (fully developed speckle), this excess tends to zero,
 %<!-- , so the heterogeneous model collapses to the homogeneous one in Equation \eqref{eq-HGammaSAR}.  -->
 and detecting heterogeneity is equivalent to deciding whether $\Delta_\alpha$ is significantly different from zero.}
 <!-- Note that the Rényi entropy of $\mathcal{G}^0_I$ can be expressed in terms of that of $\Gamma_{\mathrm{SAR}}$, with additional terms that depend on the roughness parameter $\alpha$. As $\alpha \to -\infty$, these terms tend to zero, reducing&nbsp;\eqref{eq-HGI0} to&nbsp;\eqref{eq-HGammaSAR}. -->
@@ -391,7 +392,7 @@ Recently, Al-Labadi et al.&nbsp;[@AlLabadi2024] proposed a non-parametric estima
 differences between order statistics (spacings).
 <!-- &nbsp;[@vasicek1976test;@Ebrahimi1994; @IbrahimAlOmari2014].  -->
 
-Let $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ be an independent and identically distributed random sample of size $n$ from a distribution $F$, and let $Z_{(1)} \leq Z_{(2)} \leq \dots \leq Z_{(n)}$ denote its order statistics.
+Let $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ be an independent and identically distributed random sample of size $n$ from $Z \sim F$, and let $Z_{(1)} \leq Z_{(2)} \leq \dots \leq Z_{(n)}$ denote its order statistics.
 The $m$-spacing density estimator is defined as:
 $$
 f_n(Z_{(i)}) = \frac{c_i m / n}{Z_{(i+m)} - Z_{(i-m)}},
@@ -415,16 +416,16 @@ The Rényi entropy can be estimated with this density estimator as
 This estimator is asymptotically consistent, i.e., it converges in
 probability to the true value when $m,n\rightarrow\infty$ and
 $m/n\rightarrow0$. 
-We used the heuristic spacing $m=\left[\sqrt{n}+0.5\right]$.
+We use the heuristic spacing $m=\left[\sqrt{n}+0.5\right]$.
 
 # PROPOSED METHODOLOGY {#sec:met}
 
 ## Finding an optimal value of $\lambda$
 
 \textcolor{blue}{
-We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator using simulated samples of size $n = 49$, drawn from the $\Gamma_{\text{SAR}}$ distribution.
+We aim to determine the optimal order $\lambda$ for the Rényi entropy estimator using simulated samples of size $n = 49$, drawn from  $Z\sim \Gamma_{\text{SAR}}(5,1)$ distribution.
 We computed the bias and the mean squared error (MSE) for vaying $\lambda$ with a Monte Carlo experiment.
-We found that for $L > 1$, $\lambda = 0.9$ consistently yields the lowest MSE while maintaining a low bias, thus offering a favorable trade-off between bias and variance. 
+We found that for $L > 1$, $\lambda = 0.9$  yields the lowest MSE while maintaining a low bias, thus offering a favorable trade-off between bias and variance. 
 As shown in Fig. \ref{fig-optimal_order}, $\lambda = 0.85$ produces slightly lower bias, but leads to higher MSE, supporting the choice of $\lambda = 0.9$.}
 
 
@@ -490,13 +491,13 @@ Particularly, for $L = 1$, the optimal $\lambda$ tends to be higher, and we chos
 
 ## Bootstrap Correction for Entropy Estimator
 
-Following Refs.&nbsp;[@Frery2024;@Alpala2024], we refined the non-parametric entropy estimator $\widehat{H}_{\lambda}$ in&nbsp;\eqref{eq:est_R} with bootstrap, obtaining $\widetilde{H}_{\lambda}$:
+Following Refs.&nbsp;[@Frery2024;@Alpala2024], we refine the non-parametric entropy estimator $\widehat{H}_{\lambda}$ in&nbsp;\eqref{eq:est_R} with bootstrap, obtaining $\widetilde{H}_{\lambda}$:
 \begin{equation*}
 \widetilde{H}_{\lambda} = 2\widehat{H}_{\lambda}(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{H}_{\lambda}(\bm{Z}^{(b)}),
 \end{equation*}
 where $B$ is the number of bootstrap replications, and $\bm{Z}^{(b)}$ is the $b$-th resampled dataset obtained by drawing $n$ observations with replacement from $\bm{Z}$.
 
-A Monte Carlo study with $1000$ replications for each sample size $n \in \{9, 25, 49, 81, 121\}$ from the $\Gamma_{\text{SAR}}$ ($L=5,\ \mu=1$) confirms that for $\lambda=0.9$, the bootstrap-corrected estimator $\widetilde{H}_{\lambda}$ ($B=200$) reduces both bias and MSE compared to the original $\widehat{H}_{\lambda}$, with significant improvements for small sample sizes, as shown in Fig. \ref{fig-bias_mse}.
+A Monte Carlo study with $1000$ replications for each sample size $n \in \{9, 25, 49, 81, 121\}$ from the $\Gamma_{\text{SAR}}$ (5,1) confirms that for $\lambda=0.9$, the bootstrap-corrected estimator $\widetilde{H}_{\lambda}$ ($B=200$) reduces both bias and MSE compared to the original $\widehat{H}_{\lambda}$, with significant improvements for small sample sizes, as shown in Fig. \ref{fig-bias_mse}.
 ```{r Simulated_data_bias_B1, echo=FALSE, message=FALSE, cache = TRUE, autodep = TRUE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
@@ -594,12 +595,12 @@ S_{\widetilde H_\lambda}
 = 
 \underbrace{\widetilde H_\lambda}_{\text{estimated}} 
 \;-\;
-\underbrace{H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)}_{\text{theoretical under } H_0},
+\underbrace{H_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)}_{\text{theoretical under } H_0}\hspace{-0.5em},
 $$
 \textcolor{blue}{the difference between the estimated entropy and the expected value under homogeneity. Values close to zero indicate that the region behaves like fully developed speckle, while large positive values signal excess entropy and, thus, heterogeneity.
-This formulation avoids estimating parameters of the $\mathcal{G}^0_I$ model such as $\alpha$, offering a simple, interpretable, and statistically grounded test. Moreover, the method remains effective for small samples, aided by the bootstrap bias correction.}
+This formulation avoids estimating  $\mathcal{G}^0_I$ parameters  such as $\alpha$, offering a simple, interpretable, and statistically grounded test. Moreover, the method remains effective for small samples, aided by the bootstrap bias correction.}
 
-Fig.&nbsp;\ref{fig-densities} shows the empirical distribution of $S_{\widetilde{H}_{\lambda}}$ under $\mathcal{H}_0$, obtained from $10^4$ Monte Carlo simulations with varying sample sizes ($n \in {49,81,121}$), $\lambda=0.9$, and $L \in {5,18}$. The concentration around zero confirms the test's expected behavior, while the heavy tails indicate sensitivity to deviations, enabling the detection of subtle texture changes.
+Fig.&nbsp;\ref{fig-densities} shows the empirical distribution of $S_{\widetilde{H}_{\lambda}}$ under $\mathcal{H}_0$, obtained from $10^4$ Monte Carlo experiments with varying sample sizes ($n \in {49,81,121}$), $\lambda=0.9$, and $L \in {5,18}$. The concentration around zero confirms the expected behavior of the test, while the heavy tails indicate sensitivity to deviations, enabling the detection of subtle texture changes.
 
 
 ```{r Simulated_densityR, echo=FALSE, message=FALSE}
@@ -760,15 +761,17 @@ print(combined_plot)
 
 Vasicek&nbsp;[@vasicek1976test] proved that, for sufficiently large samples, $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$ asymptotically follows a normal distribution:
 \begin{equation*}
-S_{\widetilde{H}_{\lambda}}(\bm{Z}; L) \overset{d}{\longrightarrow} \mathcal{N}(\mu_S,\,\sigma^{2}_S)\,,
+S_{\widetilde{H}_{\lambda}}(\bm{Z}; L) 
+\overset{\mathcal{D}}{\underset{n \to \infty}{\longrightarrow}} 
+\mathcal{N}(\mu_S,\,\sigma^{2}_S),
 \end{equation*}
-where $d$ represents convergence in distribution. Here, $\mu_S  = \mathbb{E}[S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)]$ and $\sigma^{2}_S = \text{Var}[S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)]$ are the theoretical mean and variance of $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$.
+where $\mathcal{D}$ represents convergence in distribution. Here, $\mu_S  = \mathbb{E}[S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)]$ and $\sigma^{2}_S = \text{Var}[S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)]$ are the theoretical mean and variance of $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$.
 
 The standardized test statistic 
 $\varepsilon = ({S_{\widetilde{H}_{\lambda}}(\bm{Z}; L) - \widehat{\mu}_S})/{\widehat{\sigma}_S}$ is asymptotically standard normal distributed,
-where $\widehat{\mu}_S$ and $\widehat{\sigma}_S$ are the empirical mean and standard deviation of $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, obtained by Monte Carlo simulations under the null hypothesis. 
+where $\widehat{\mu}_S$ and $\widehat{\sigma}_S$ are the estimated mean and standard deviation of $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, obtained by Monte Carlo simulations under the null hypothesis. 
 Thus, we compute the $p$-values as $2\Phi(-|\varepsilon|)$,
-where $\Phi(\cdot)$ is the cumulative distribution function of the standard normal distribution.
+where $\Phi(\cdot)$ is the cumulative distribution function of the standard normal law.
 <!-- Fig.&nbsp;\ref{fig-density_standardized} shows smoothed histograms of standardized test statistics. -->
 
 ```{r Simulated_densityR_standardized0, echo=FALSE, message=FALSE, eval=FALSE}
