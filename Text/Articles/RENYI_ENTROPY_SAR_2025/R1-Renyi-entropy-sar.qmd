@@ -1275,6 +1275,7 @@ The binary maps (Figs.&nbsp;\ref{fig:london-005-renyi},&nbsp;\ref{fig:london-005
 Visually, the Rényi test exhibits greater sensitivity in detecting textural variations due to the flexibility provided by the parameter $\lambda$.
 
 <!-- ACF Why three different colour tables? -->
+<!-- JA: I used three different color gradients in the p-value maps to enhance visual contrast across the scenes. I can unify the maps using the same color scale if preferred. -->
 ```{=latex}
 \begin{figure*}[hbt]
     \centering

@@ -156,7 +156,7 @@ We also tested the sensitivity of the proposed hypothesis test to slight under- 
 \end{reviewbox}
 
 \begin{responsebox}{Response}
-We agree with the reviewer and have added a quantitative performance evaluation to the revised manuscript. Specifically, we manually selected eight regions of interest (ROIs) in each SAR image: four clearly homogeneous areas (e.g., water, croplands) and four heterogeneous areas (e.g., urban centers). Each ROI was labeled as class~0 (blue) or class~1 (red), as illustrated in Figs.~6a, 7a, and 8a.
+We agree with the reviewer and have added a quantitative performance evaluation to the revised manuscript. Specifically, we manually selected eight regions of interest (ROIs) in each SAR image: four clearly homogeneous areas (e.g., water, croplands) and four heterogeneous areas (e.g., urban centers). Each ROI was labeled as class~0 (blue) or class~1 (red), as illustrated in Figs.~5a, 6a, and 7a (corresponding to Figs.~6a, 7a, and 8a in the original submission).
 
 These ROIs were rasterized to create a partial ground-truth mask. Binary decision maps were obtained by thresholding the $p$-value maps at $ 0.05$ significance level, assigning 1 to pixels with $p < 0.05$ (heterogeneous) and 0 otherwise (homogeneous). These predictions were compared to the ground-truth labels, and standard metrics F1-score, kappa coefficient, and overall accuracy were computed. The results are reported in Table~III.
 
