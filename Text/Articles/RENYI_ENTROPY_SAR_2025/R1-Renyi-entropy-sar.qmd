@@ -52,11 +52,11 @@ author:
     #   as the argument followed by the biography text.
     # note: "Template created June 23, 2023; revised `r format(Sys.Date(),format='%B %d, %Y')`."
 abstract: |
-  Quantifying surface roughness in synthetic aperture radar (SAR) data is critical for accurate geophysical interpretation and remote sensing applications. 
-  We propose a test statistic based on a non-parametric estimation of Rényi entropy to characterize surface roughness from SAR intensity data. 
+  Quantifying heterogeneity in synthetic aperture radar (SAR) data is critical for accurate geophysical interpretation and remote sensing applications. 
+  We propose a test statistic based on a non-parametric estimation of Rényi entropy to characterize return heterogeneity from SAR intensity data. 
   The statistic is refined using bootstrap to improve its stability, size, and power. 
-  This approach enhances roughness quantification by capturing scale-dependent variations and addressing data-driven uncertainty.
-  Experimental results demonstrate the robustness of the proposed method in distinguishing roughness patterns.
+  This approach enhances heterogeneity quantification by capturing scale-dependent variations and addressing data-driven uncertainty.
+  Experimental results establish the robustness of the proposed method in distinguishing heterogeneity patterns.
   <!-- , offering a statistically rigorous tool for SAR-based terrain analysis. -->
   <!-- Synthetic aperture radar (SAR) systems have already been successfully used to solve remote sensing problems.  -->
   <!-- A disadvantage of SAR images is the presence of speckle, which is fully developed in homogeneous areas and gamma-distributed in these scenes.  -->
@@ -71,7 +71,7 @@ keywords: [Rényi entropy, Gamma distribution, heterogeneity, SAR, hypothesis te
 #funding: 
  # statement: "The `quarto-ieee` "
 pageheader:
-  left: Journal XXX, Month Year
+  left: IEEE Geoscience and Remote Sensing Letters, Month Year
   right: #'D. Folio:  A Sample Article Using quarto-ieee'
   
 header-includes:
@@ -163,7 +163,7 @@ source("./Code/functions_sample_bias_mse_1.R")
  It provides high-resolution data independent of sunlight and operates in various weather conditions, facilitating global Earth monitoring&nbsp;[@Zeng2020].
 However, the effective use of SAR data depends on understanding its statistical properties because it is affected by speckle, a noise-like interference effect&nbsp;[@Baraha2023]. In intensity format, speckle is non-Gaussian, which complicates image analysis.
 
-The $\mathcal{G}^0_I$ distribution effectively characterizes SAR intensity data because it captures different roughness levels. 
+The $\mathcal{G}^0_I$ distribution effectively characterizes SAR intensity data because it captures different heterogeneity levels. 
 A limiting case is the Gamma distribution, associated with fully developed speckle in textureless regions.
 However, selecting suitable models is challenging due to small window sizes in practical applications and difficulties in parameter estimation, motivating alternative statistical approaches.
 
@@ -192,7 +192,7 @@ Finally, the conclusions are presented in Section&nbsp;\ref{sec:conclusion}.
 
 ## Statistical Models
 
-The main distributions considered for SAR intensity data are the $\Gamma_{\text{SAR}}$ distribution, which is suitable for fully developed speckle, and the $\mathcal{G}^0_I$ distribution, which can describe roughness&nbsp;[@Frery1997]. These distributions are characterized by the following probability density functions (pdfs):
+The main distributions considered for SAR intensity data are the $\Gamma_{\text{SAR}}$ distribution, which is suitable for fully developed speckle, and the $\mathcal{G}^0_I$ distribution, which can describe varying levels of heterogeneity&nbsp;[@Frery1997]. These distributions are characterized by the following probability density functions (pdfs):
 \begin{equation}
 	f_{\Gamma_{\text{SAR}}}\bigl(z;L, \mu \bigr) 
     = \frac{L^L}{\Gamma(L)\,\mu^L} z^{L-1} 
@@ -209,7 +209,7 @@ and
     \mathbbm 1_{\mathbbm R_+}(z), \label{E:gi01}
 \end{multline}
 where $\mu > 0$ is the mean,
-$\alpha < 0$ measures the roughness, $L \geq 1$ is the number of
+$\alpha < 0$ measures the heterogeneity, $L \geq 1$ is the number of
 looks, $\Gamma(\cdot)$ is the gamma function, and
 $\mathbbm 1_{A}(z)$ is the indicator function of the set $A$. 
 The $\Gamma_{\text{SAR}}$  law is a particular case of the $\mathcal{G}^0_I$ distribution&nbsp;[@Frery1997]: for $\mu$ fixed,
@@ -255,7 +255,7 @@ H_{\lambda}(\mathcal{G}^0_I)
 \underbrace{\Delta_\alpha}_{\text{extra entropy caused by texture}}\hspace{-3.0em},
 $$
 
-where the excess term $\Delta_\alpha$ depends on the roughness parameter.
+where the excess term $\Delta_\alpha$ depends on the heterogeneity parameter.
 When $\alpha\!\to\!-\infty$ (fully developed speckle), this excess tends to zero,
 %<!-- , so the heterogeneous model collapses to the homogeneous one in Equation \eqref{eq-HGammaSAR}.  -->
 and detecting heterogeneity is equivalent to deciding whether $\Delta_\alpha$ is significantly different from zero.
@@ -361,7 +361,7 @@ ggplot() +
   scale_color_manual(values = pal_jama()(7)[2:5], labels = alpha_labels) +
  # scale_color_manual(values = brewer.pal(4, "Dark2"), labels = alpha_labels) +
   # Labels and titles
-  labs(color = "Roughness", 
+  labs(color = "Heterogeneity", 
        x = expression(mu), 
        y = "Rényi Entropy", 
        linetype = NULL) +
@@ -1271,7 +1271,7 @@ We also verified that moderate deviations in $L$ did not significantly impact th
 ## Qualitative Inspection
 
 The output consists of $p$-value maps and binary maps at a $0.05$ significance level. 
-The $p$-value maps use a color gradient (Figs.&nbsp;\ref{fig:london-renyi},&nbsp;\ref{fig:london-shann},&nbsp;\ref{fig:munich-renyi},&nbsp;\ref{fig:munich-shann},&nbsp;\ref{fig:dublin-renyi},&nbsp;\ref{fig:dublin-shann}), where darker regions indicate areas with higher roughness, and lighter regions denote less textured surfaces. 
+The $p$-value maps use a color gradient (Figs.&nbsp;\ref{fig:london-renyi},&nbsp;\ref{fig:london-shann},&nbsp;\ref{fig:munich-renyi},&nbsp;\ref{fig:munich-shann},&nbsp;\ref{fig:dublin-renyi},&nbsp;\ref{fig:dublin-shann}), where darker regions indicate areas with higher heterogeneity, and lighter regions denote less textured surfaces. 
 The binary maps (Figs.&nbsp;\ref{fig:london-005-renyi},&nbsp;\ref{fig:london-005-shann},&nbsp;\ref{fig:munich-005-renyi},&nbsp;\ref{fig:munich-005-shann},&nbsp;\ref{fig:dublin-005-renyi},&nbsp;\ref{fig:dublin-005-shann}) display heterogeneous detections in black ($p<0.05$) and homogeneous areas in white ($p \geq 0.05$).
 Visually, the Rényi test exhibits greater sensitivity in detecting textural variations due to the flexibility provided by the parameter $\lambda$.
 

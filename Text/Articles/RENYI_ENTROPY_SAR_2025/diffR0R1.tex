@@ -1,7 +1,7 @@
 % *** Authors should verify (and, if needed, correct) their LaTeX system  ***
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF DEL R0-Renyi-entropy-sar.tex   Tue Jun  3 14:14:17 2025
-%DIF ADD R1-Renyi-entropy-sar.tex   Wed Jun  4 12:03:41 2025
+%DIF ADD R1-Renyi-entropy-sar.tex   Wed Jun  4 15:59:17 2025
 % *** with the testflow diagnostic prior to trusting their LaTeX platform ***
 % *** with production work. IEEE's font choices can trigger bugs that do  ***
 % *** not appear when using other class files.                            ***
@@ -410,7 +410,10 @@ executed in Quarto and is fully reproducible. We used RStudio version
 \begin{document}
 
 % The paper headers
-\markboth{Journal XXX, Month Year}{}
+\DIFdelbegin %DIFDELCMD < \markboth{Journal XXX, Month Year}{}
+%DIFDELCMD < %%%
+\DIFdelend \DIFaddbegin \markboth{IEEE Geoscience and Remote Sensing Letters, Month Year}{}
+\DIFaddend 
 
 % use for special paper notices
 
@@ -420,16 +423,17 @@ executed in Quarto and is fully reproducible. We used RStudio version
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
-Quantifying surface roughness in synthetic aperture radar (SAR) data is
+Quantifying \DIFdelbegin \DIFdel{surface roughness }\DIFdelend \DIFaddbegin \DIFadd{heterogeneity }\DIFaddend in synthetic aperture radar (SAR) data is
 critical for accurate geophysical interpretation and remote sensing
 applications. We propose a test statistic based on a non-parametric
-estimation of Rényi entropy to characterize surface roughness from SAR
-intensity data. The statistic is refined using bootstrap to improve its
-stability, size, and power. This approach enhances roughness
-quantification by capturing scale-dependent variations and addressing
-data-driven uncertainty. Experimental results demonstrate the robustness
-of the proposed method in distinguishing roughness patterns\DIFdelbegin \DIFdel{, offering a
-statistically rigorous tool for SAR-based terrain analysis}\DIFdelend .
+estimation of Rényi entropy to characterize \DIFdelbegin \DIFdel{surface roughness }\DIFdelend \DIFaddbegin \DIFadd{return heterogeneity }\DIFaddend from
+SAR intensity data. The statistic is refined using bootstrap to improve
+its stability, size, and power. This approach enhances \DIFdelbegin \DIFdel{roughness
+}\DIFdelend \DIFaddbegin \DIFadd{heterogeneity
+}\DIFaddend quantification by capturing scale-dependent variations and addressing
+data-driven uncertainty. Experimental results \DIFdelbegin \DIFdel{demonstrate }\DIFdelend \DIFaddbegin \DIFadd{establish }\DIFaddend the robustness
+of the proposed method in distinguishing \DIFdelbegin \DIFdel{roughness patterns, offering a
+statistically rigorous tool for SAR-based terrain analysis}\DIFdelend \DIFaddbegin \DIFadd{heterogeneity patterns}\DIFaddend .
 \end{abstract}
 % Note that keywords are not normally used for peerreview papers.
 \begin{IEEEkeywords}
@@ -480,7 +484,7 @@ is \DIFdelbegin \DIFdel{typically }\DIFdelend non-Gaussian, \DIFdelbegin \DIFdel
 complicates subsequent image analysistasks}\DIFdelend \DIFaddbegin \DIFadd{which complicates image analysis}\DIFaddend .
 
 The \(\mathcal{G}^0_I\) distribution effectively characterizes SAR
-intensity data because it captures different roughness levels. A
+intensity data because it captures different \DIFdelbegin \DIFdel{roughness }\DIFdelend \DIFaddbegin \DIFadd{heterogeneity }\DIFaddend levels. A
 limiting case is the Gamma distribution, \DIFdelbegin \DIFdel{which arises when speckle is
 fully developed
 , indicating }\DIFdelend \DIFaddbegin \DIFadd{associated with fully developed
@@ -573,13 +577,14 @@ Section~\ref{sec:conclusion}.
 The main distributions considered for SAR intensity data are the
 \(\Gamma_{\text{SAR}}\) distribution, which is suitable for fully
 developed speckle, and the \(\mathcal{G}^0_I\) distribution, which can
-describe roughness~\DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+describe \DIFdelbegin \DIFdel{roughness~\mbox{%DIFAUXCMD
 \citeproc{ref-Frery1997}{{[}14{]}}}\hskip0pt%DIFAUXCMD
-}\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+}\DIFdelend \DIFaddbegin \DIFadd{varying levels of
+heterogeneity~\mbox{%DIFAUXCMD
 \citeproc{ref-Frery1997}{{[}12{]}}}\hskip0pt%DIFAUXCMD
-}\DIFaddend . These
-distributions are characterized by the following probability density
-functions (pdfs): \begin{equation}
+}\DIFaddend . These distributions
+are characterized by the following probability density functions (pdfs):
+\begin{equation}
     f_{\Gamma_{\text{SAR}}}\bigl(z;L, \mu \bigr) 
     = \frac{L^L}{\Gamma(L)\,\mu^L} z^{L-1} 
     \exp \biggl(-\frac{Lz}{\mu}\biggr)
@@ -590,10 +595,10 @@ functions (pdfs): \begin{equation}
     \frac{z^{L-1}}{\bigl[-\mu(\alpha+1)+Lz\bigr]^{L-\alpha}}
     \mathbbm 1_{\mathbbm R_+}(z), \label{E:gi01}
 \end{multline} where \(\mu > 0\) is the mean, \(\alpha < 0\) measures
-the roughness, \(L \geq 1\) is the number of looks, \(\Gamma(\cdot)\) is
-the gamma function, and \(\mathbbm 1_{A}(z)\) is the indicator function
-of the set \(A\). The \(\Gamma_{\text{SAR}}\) \DIFdelbegin \DIFdel{model }\DIFdelend \DIFaddbegin \DIFadd{law }\DIFaddend is a particular case
-of the \(\mathcal{G}^0_I\)
+the \DIFdelbegin \DIFdel{roughness}\DIFdelend \DIFaddbegin \DIFadd{heterogeneity}\DIFaddend , \(L \geq 1\) is the number of looks,
+\(\Gamma(\cdot)\) is the gamma function, and \(\mathbbm 1_{A}(z)\) is
+the indicator function of the set \(A\). The \(\Gamma_{\text{SAR}}\) \DIFdelbegin \DIFdel{model }\DIFdelend \DIFaddbegin \DIFadd{law
+}\DIFaddend is a particular case of the \(\mathcal{G}^0_I\)
 distribution~\DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
 \citeproc{ref-Frery1997}{{[}14{]}}}\hskip0pt%DIFAUXCMD
 }\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
@@ -637,7 +642,8 @@ H_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H_\lambda\bigl(\Gamma_{\t
 + \bigl(\lambda(L-1)+1\bigr)\ln\lambda \Bigr].  
 \end{multline} \DIFdelbegin \DIFdel{The derivation of the latter result is proven in the
 Appendix. Note that the Rényi entropy of \(\mathcal{G}^0_I\) can be expressed in terms of that of \(\Gamma_{\mathrm{SAR}}\), with additional
-terms that depend }\DIFdelend \DIFaddbegin \DIFadd{Equation~\eqref{eq-HGI0} can be read as: }\[
+terms that depend on the roughness parameter\(\alpha\). As
+\(\alpha \to -\infty\), these terms tend }\DIFdelend \DIFaddbegin \DIFadd{Equation~\eqref{eq-HGI0} can be read as: }\[
 \DIFadd{H_{\lambda}(\mathcal{G}^0_I)
 =
 \underbrace{H_\lambda\!\bigl(\Gamma_{\mathrm{SAR}}\bigr)}_{\text{baseline entropy}}
@@ -645,9 +651,8 @@ terms that depend }\DIFdelend \DIFaddbegin \DIFadd{Equation~\eqref{eq-HGI0} can 
 \underbrace{\Delta_\alpha}_{\text{extra entropy caused by texture}}\hspace{-3.0em},
 }\]
 
-\DIFadd{where the excess term \(\Delta_\alpha\) depends }\DIFaddend on the roughness
-parameter\DIFdelbegin \DIFdel{\(\alpha\). As
-\(\alpha \to -\infty\), these terms tend }\DIFdelend \DIFaddbegin \DIFadd{. When \(\alpha\!\to\!-\infty\) (fully developed speckle), this
+\DIFadd{where the excess term \(\Delta_\alpha\) depends on the heterogeneity
+parameter. When \(\alpha\!\to\!-\infty\) (fully developed speckle), this
 excess tends }\DIFaddend to zero, \DIFdelbegin \DIFdel{reducing~\eqref{eq-HGI0} to~\eqref{eq-HGammaSAR}. This work's core idea
 is to check if this excess entropy }\DIFdelend \DIFaddbegin \DIFadd{\% and detecting heterogeneity is equivalent to
 deciding whether \(\Delta_\alpha\) }\DIFaddend is significantly different from zero.
@@ -1200,8 +1205,8 @@ Figs.~\ref{fig:london-d}--\ref{fig:london-e},~\ref{fig:munich-d}--\ref{fig:munic
 %DIFDELCMD < %%%
 \DIFdelend The \(p\)-value \DIFdelbegin \DIFdel{maps use a color gradient}\DIFdelend \DIFaddbegin \DIFadd{maps use a color gradient
 (Figs.~\ref{fig:london-renyi},~\ref{fig:london-shann},~\ref{fig:munich-renyi},~\ref{fig:munich-shann},~\ref{fig:dublin-renyi},~\ref{fig:dublin-shann})}\DIFaddend ,
-where darker regions indicate areas with higher roughness, and lighter
-regions denote \DIFdelbegin \DIFdel{smoother, }\DIFdelend less textured surfaces. The binary maps
+where darker regions indicate areas with higher \DIFdelbegin \DIFdel{roughness}\DIFdelend \DIFaddbegin \DIFadd{heterogeneity}\DIFaddend , and
+lighter regions denote \DIFdelbegin \DIFdel{smoother, }\DIFdelend less textured surfaces. The binary maps
 \DIFdelbegin \DIFdel{classify these results: white areas
 represent \(p\)-values greater than \(0.05\),indicating no statistical
 evidence to reject the null hypothesis (homogeneous regions). In
