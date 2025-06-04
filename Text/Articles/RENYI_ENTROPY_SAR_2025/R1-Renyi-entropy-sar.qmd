@@ -46,7 +46,7 @@ author:
       
       Alejandro C. Frery is with the School of Mathematics and Statistics, Victoria University of Wellington, Wellington, 6140, New Zealand (e-mail: alejandro.frery@vuw.ac.nz). \emph{Corresponding author: Alejandro C. Frery.}
       
-      Data and code are available at: <https://github.com/rjaneth/renyi-entropy> 
+      This research, including its outputs, e.g., this manuscript, was executed in Quarto and is fully reproducible. We used RStudio version 2024.12.1+563, and R version 4.4.2. Data and code are available at: <https://github.com/rjaneth/renyi-entropy> 
     # bio: |
     #   Use `IEEEbiographynophoto` and the author name
     #   as the argument followed by the biography text.
@@ -579,7 +579,8 @@ Under $\mathcal{H}_0$, the expected value of the entropy estimator should match 
 Significant deviations indicate heterogeneity.
 
 ## The Proposed Test
-The test statistic quantifies the discrepancy between estimated and theoretical entropy under homogeneity. Since $L\geq1$ is known, we define the test statistic as follows:
+
+We propose a test statistic that identifies the discrepancy between estimated and theoretical entropy under homogeneity. Since $L\geq1$ is known, we define the test statistic as follows:
 \begin{multline}
 \label{eq-test}
 S_{\widetilde{H}_{\lambda}}(\bm{Z}; L) = \widetilde{H}_{\lambda} - \bigl\{\ln \widehat{\mu} - \ln L + \frac{1}{1-\lambda}
