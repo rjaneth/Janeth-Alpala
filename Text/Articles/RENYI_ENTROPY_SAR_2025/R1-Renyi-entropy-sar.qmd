@@ -257,7 +257,7 @@ $$
 
 where the excess term $\Delta_\alpha$ depends on the heterogeneity parameter.
 When $\alpha\!\to\!-\infty$ (fully developed speckle), this excess tends to zero,
-%<!-- , so the heterogeneous model collapses to the homogeneous one in Equation \eqref{eq-HGammaSAR}.  -->
+<!-- , so the heterogeneous model collapses to the homogeneous one in Equation \eqref{eq-HGammaSAR}.  -->
 and detecting heterogeneity is equivalent to deciding whether $\Delta_\alpha$ is significantly different from zero.
 <!-- Note that the Rényi entropy of $\mathcal{G}^0_I$ can be expressed in terms of that of $\Gamma_{\mathrm{SAR}}$, with additional terms that depend on the roughness parameter $\alpha$. As $\alpha \to -\infty$, these terms tend to zero, reducing&nbsp;\eqref{eq-HGI0} to&nbsp;\eqref{eq-HGammaSAR}. -->
 <!-- This work's core idea is to check if this excess entropy is significantly different from zero. -->
@@ -1383,25 +1383,25 @@ Visually, the Rényi test exhibits greater sensitivity in detecting textural var
     \hspace{0.00001\textwidth}
     \begin{subfigure}{0.178\textwidth}
         \includegraphics[width=\linewidth]{./Figures-R1/p-values_renyi-dublin-H1.png}
-        \caption{$p$-value map $\small{S_{\widetilde{H}_{\lambda}}}$}
+        \caption{$p$-value map for $\small{S_{\widetilde{H}_{\lambda}}}$}
         \label{fig:dublin-renyi}
     \end{subfigure}
     \hspace{0.00001\textwidth}
     \begin{subfigure}{0.144\textwidth}
         \includegraphics[width=\linewidth]{./Figures-R1/H_005_dublin_renyi.png}
-        \caption{Binary map $\small{S_{\widetilde{H}_{\lambda}}}$}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\lambda}}}$}
         \label{fig:dublin-005-renyi}
     \end{subfigure}
     \hspace{0.00001\textwidth}
     \begin{subfigure}{0.178\textwidth}
         \includegraphics[width=\linewidth]{./Figures-R1/p-values_shannon-dublin-H1.png}
-        \caption{$p$-value $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \caption{$p$-value map for $S_{\widetilde{H}_{\text{AO}}}$}
         \label{fig:dublin-shann}
     \end{subfigure}
     \hspace{0.0000001\textwidth}
     \begin{subfigure}{0.144\textwidth}
         \includegraphics[width=\linewidth]{./Figures-R1/H_005_dublin-shannon.png}
-        \caption{Binary $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
         \label{fig:dublin-005-shann}
     \end{subfigure}
     \caption{Detection of heterogeneous areas in a SAR image over Dublin Port, Ireland: comparison with the tests $\small{S_{\widetilde{H}_{\lambda}}}$ and $\small{S_{\widetilde{H}_{\text{AO}}}}$.}
