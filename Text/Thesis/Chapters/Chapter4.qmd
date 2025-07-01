@@ -3,41 +3,191 @@ source("setup.R")
 ```
 # RESULTS {#sec-Chapter4}
 
-## Dataset Description
+## ANALYSIS WITH SIMULATED DATA
 
-The following steps were applied to the SAR data during pre-processing:
+Figure&nbsp;\ref{fig:sim_Phantom_1} presents the structural design of the synthetic phantom with dimensions of
+$500\times500$ pixels, proposed by  Gomez et al.&nbsp;[-@Gomez2017] as a tool to assess the performance of speckle-reduction filters. This layout serves as a base template to generate the simulated images shown in Figures&nbsp;\ref{fig:sim_Phantom_2}–\ref{fig:sim_Phantom_3}.
 
-1. Importing the SAR image into SNAP.  
-2. Creating a subset to focus on the area of interest.  
-3. Performing Geometric Correction, which includes Range Doppler Terrain Correction.  
-4. Exporting the processed data in ENVI format for further analysis.
+Each region is filled with data simulated from the $\mathcal{G}^0_I$ distribution&nbsp;\eqref{E:gi02}, using different combinations of the roughness parameter $\alpha$ and the mean $\mu$, as indicated by the labels in each quadrant of the image. Light regions correspond to textured observations (heterogeneous), while darker regions represent textureless areas (homogeneous).
+```{=latex}
+\begin{figure}[H]
+  \centering
+  \hspace{0.5em}
+  \begin{subfigure}[b]{0.37\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Figures/Phantom1}
+    \caption{Phantom.}
+    \label{fig:sim_Phantom_1}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.50\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Figures/Phantom_labels}
+    \caption{Simulated image, varying $\alpha$ and $\mu$, with $L=5$.}
+    \label{fig:sim_Phantom_2}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.50\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Figures/Phantom4_L9}
+    \caption{Simulated image, varying $\alpha$ and $\mu$, with $L=9$.}
+    \label{fig:sim_Phantom_3}
+  \end{subfigure}
+  \caption{Synthetic dataset.}
+  \label{fig:sim_Phantom}
+\end{figure}
+```
+The first simulated image uses $L = 5$, and the second uses $L = 9$, to evaluate how the test statistics behave as the number of looks increases and speckle noise is reduced. 
+
+The $\alpha$ parameter of the $G_I^0$ distribution is essential for
+interpreting texture characteristics. Values near zero greater than
+$-3$ suggest extremely textured targets, such as urban
+zones&nbsp;[@Frery2019a]. As the value decreases, it indicates regions
+with moderate texture (in the $\left[-6,-3\right]$ region), related to
+forest zones, while values below $-6$ correspond to textureless
+regions, such as pasture, agricultural fields, and water
+bodies&nbsp;[@Neto2023].
+
+We applied the three test statistics, $S_{\widetilde{H}_{\text{AO}}}$,  $S_{\widetilde{R}_{\lambda}}$, and
+$S_{\widetilde{T}_{\lambda}}$, to the simulated images using local sliding windows of size $7\times 7$. Figures&nbsp;\ref{fig:sim1r} and&nbsp;\ref{fig:sim2t} show the $p$-value maps (top row) and the corresponding binary maps (bottom row) for two simulations with $L=5$ and $L=9$, respectively. The $p$-value maps (Figures&nbsp;\ref{fig:sim1a}–\ref{fig:sim1c} and \ref{fig:sim2a}–\ref{fig:sim2c}) are displayed as gradient color maps, where dark blue tones (close to $0$) indicate strong evidence of heterogeneity, and lighter tones (toward red, near $1$) correspond to more homogeneous areas.
+
+The binary maps (Figures&nbsp;\ref{fig:sim1d}–\ref{fig:sim1f} and \ref{fig:sim2d}–\ref{fig:sim2f}) simplify these results using a threshold of $0.05$: pixels corresponding to $p$-values below this threshold are shown in black, suggesting statistically significant deviations and thus indicating heterogeneity. In contrast, pixels with $p \geq 0.05$ are displayed in white, representing no evidence to reject the null hypothesis of homogeneity.
+
+```{=latex}
+\begin{figure}[hbt]
+    \centering
+
+    % Primera fila
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/Phantom_4_z_b200_w7-AO.png}
+        \caption{$p$-value map $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:sim1a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/Phantom_4_z_0.9_b200_w7-renyi.png}
+        \caption{$p$-value map $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:sim1b}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/Phantom_4_z_0.85_b200_w7-tsallis77.png}
+        \caption{$p$-value map $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:sim1c}
+    \end{subfigure}
+
+    \vspace{1em} % Espacio entre filas
+
+    % Segunda fila
+    \hspace{-2.5em}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{Figures/0.05_Phantom_4_z_b200_w7-AO.png}
+        \caption{Binary map $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:sim1d}
+    \end{subfigure}
+    \hspace{2.8em}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{Figures/0.05_Phantom_4_z_0.9_b200_w7-renyi.png}
+        \caption{Binary map  $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:sim1e}
+    \end{subfigure}
+     \hspace{3.1em}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{Figures/0.05_Phantom_4_z_0.85_b200_w7-tsallis.png}
+        \caption{Binary map  $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:sim1f}
+    \end{subfigure}
+    \caption{Results on simulated data ($L = 5$) using $S_{\widetilde{H}_{\text{AO}}}$, $S_{\widetilde{R}_{\lambda}}$, and $S_{\widetilde{T}_{\lambda}}$. Top: $p$-value heatmaps. Bottom: binary maps ($5\%$ level).}
+%\caption{Comparison of test statistics $S_{\widetilde{H}_{\text{AO}}}$, $S_{\widetilde{R}_{\lambda}}$, and $S_{\widetilde{T}_{\lambda}}$ on a simulated image with $L = 5$. Top row: heatmaps of $p$-values computed using a $7 \times 7$ sliding window. Bottom row: binary maps at the 5\% significance level, where black pixels indicate rejection of the null hypothesis of homogeneity.}
+    \label{fig:sim1r}
+\end{figure}
+```
 
 
-## Analysis with Simulated data
+```{=latex}
+\begin{figure}[hbt]
+    \centering
 
-## Analysis with SAR data
-We compare two test statistics for detecting heterogeneity in SAR data: (i) the Rényi entropy-based test, $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, described in&nbsp;\eqref{eq-test}; and (ii) the Shannon entropy-based test, $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$, which is based on the Al-Omari estimator proposed in&nbsp;[@IbrahimAlOmari2014] and was improved via bootstrap in our previous work. The details of this test can be found in Frery et al.&nbsp;[@Frery2024].
+    % Primera fila
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/Phantom4_L9_1_8_b100_w7-AO-H.png}
+        \caption{$p$-value map $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:sim2a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/Phantom4_L9_1_8_b100_w7-09-renyi.png}
+        \caption{$p$-value map $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:sim2b}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/Phantom4_L9_1_8_0.85_b100_w7-tsallis.png}
+        \caption{$p$-value map $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:sim2c}
+    \end{subfigure}
+
+    \vspace{1em} % Espacio entre filas
+
+    % Segunda fila
+    \hspace{-1.6em}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{Figures/0.05_Phantom4_L9_1_8_b100_w7-AO.png}
+        \caption{Binary map $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:sim2d}
+    \end{subfigure}
+    \hspace{3.0em}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{Figures/0.05_Phantom4_L9_1_8_b100_w7-09-renyi.png}
+        \caption{Binary map  $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:sim2e}
+    \end{subfigure}
+     \hspace{3.1em}
+    \begin{subfigure}{0.25\textwidth}
+        \includegraphics[width=\linewidth]{Figures/0.05_Phantom4_L9_1_8_0.85_b100_w7-tsallis.png}
+        \caption{Binary map  $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:sim2f}
+    \end{subfigure}
+    \caption{Results on simulated data ($L = 9$) using $S_{\widetilde{H}_{\text{AO}}}$, $S_{\widetilde{R}_{\lambda}}$, and $S_{\widetilde{T}_{\lambda}}$. Top: $p$-value heatmaps. Bottom: binary maps ($5\%$ level).}
+   %  \caption{Comparison of test statistics $S_{\widetilde{H}_{\text{AO}}}$, $S_{\widetilde{R}_{\lambda}}$, and $S_{\widetilde{T}_{\lambda}}$ on a simulated image with $L = 9$. Top row: heatmaps of $p$-values computed using a $7 \times 7$ sliding window. Bottom row: binary maps at the 5\% significance level, where black pixels indicate rejection of the null hypothesis of homogeneity.}
+    \label{fig:sim2t}
+\end{figure}
+```
 
 
-We applied these tests to images covering urban, agricultural, and water regions. 
-We analyzed images from London, United Kingdom;  the surroundings of Munich, Germany; and  Dublin Port, Ireland, as shown in Figs.&nbsp;\ref{fig:london-a},&nbsp;\ref{fig:munich-a}, and&nbsp;\ref{fig:dublin-a}. All images were acquired in HH polarization.
-Table&nbsp;\ref{tab:table_param} provides the detailed acquisition parameters of these images.
+When the number of looks increases to $L=9$ (Figure&nbsp;\ref{fig:sim2t}), the maps become cleaner due to reduced speckle.
+All tests are able to detect zones with different levels of texture.
+However, some differences can be observed. The statistic $S_{\widetilde{R}_{\lambda}}$, based on Rényi entropy, is very sensitive to changes in texture and often highlights small variations and detailed patterns of heterogeneity. In contrast, $S_{\widetilde{T}_{\lambda}}$, based on Tsallis entropy, tends to avoid false detections in uniform areas and produces cleaner results. This is due to the underlying formulation: Rényi entropy emphasizes variability, making it effective in identifying heterogeneity; while Tsallis entropy is more robust to noise, which helps preserve homogeneous regions.
 
-\renewcommand{\arraystretch}{3}   
+## APPLICATIONS TO SAR DATA
+
+
+### SAR dataset and preprocessing {#sec:SAR-data}
+
+We evaluated the proposed test statistics using a set of eight SAR images acquired from different radar missions. These images cover diverse locations: the surroundings of London (United Kingdom), San Francisco (USA), Rotterdam (Netherlands), the outskirts of Munich and the city of New Orleans (USA), Dublin Port (Ireland), the coast of Jalisco (Mexico), and the area around Foggia (Italy) as shown in Figures&nbsp;\ref{fig:london-sar}-\ref{fig:fo-sar}. The selected scenes include a variety of land types, such as urban zones, mountainous areas, agricultural regions, and water bodies. This diversity allows us to assess the performance of the proposed statistical tests under different texture conditions. 
+
+To help interpret the SAR images, we also included corresponding optical images (Figures&nbsp;\ref{fig:london-optical}-\ref{fig:fo-optical}) obtained from Sentinel-2 Level-2A products. These optical scenes were acquired on dates close to those of the SAR acquisitions to ensure visual consistency. The optical data were  downloaded from the Copernicus Data Space platform\footnote{\url{https://dataspace.copernicus.eu/}}.
+
+The SAR images come from different missions: TanDEM-X, PAZ, and ICEYE (all operating in the X-band), UAVSAR (L-band), and Sentinel-1B (C-band). The two UAVSAR images were obtained from the Alaska Satellite Facility (ASF) platform\footnote{\url{https://search.asf.alaska.edu/}}, which provides access to airborne and satellite SAR data. The remaining images were downloaded from the European Space Agency’s Third Party Missions (ESA TPM) data service\footnote{\url{https://tpm-ds.eo.esa.int/collections/}}, which offers SAR products from various external missions operated by international partners and commercial providers. All images are single-polarization (HH or VV), and their acquisition parameters vary in resolution, scene size, and number of looks.
+
+Table&nbsp;\ref{tab:table_param} summarizes the main characteristics of each SAR image, including the spatial resolution, acquisition date, and number of looks.
+
+\renewcommand{\arraystretch}{2}   
 ```{r parameters_sar, echo=FALSE, message=FALSE, warning=FALSE}
 
 SAR_data <- data.frame(
-  Site = c("London", "Munich", "Dublin" ),
-  Mission = c("TanDEM-X", "UAVSAR", "TanDEM-X"),
-  Band = c("X", "L", "X"),
-  Size = c("$2000\\times2000$", "$1024\\times1024$", "$1100\\times1100$"),
-  L = c(1, 12, 16),
-  Resol = c("$0.99/0.99$", "$4.9/7.2$", "$1.35/1.35$"),
-  Date = c("12-11-2021", "16-04-2015", "03-09-2017")
+  Site = c("London", "San Francisco",  "Rotterdam", "Munich","New Orleans", "Dublin","Coast of Jalisco", "Foggia" ),
+  Mission = c("TanDEM-X", "PAZ", "TanDEM-X","UAVSAR", "UAVSAR", "TanDEM-X", "Sentinel-1B", "Iceye"),
+  Band = c("X",  "X","X","L","L", "X", "C", "X"),
+  Polarization = c("HH", "HH", "HH","HH","HH","HH", "VV", "VV"),
+  Size = c("$2000\\times2000$", "$3300\\times3300$",  "$1200\\times1200$", "$1024\\times1024$","$1400\\times1400$", "$1100\\times1100$","$512\\times512$","$1900\\times1900$"),
+  L = c(1, 1, 9, 12, 12,  16,18, 24),
+  Resol = c("$0.99/0.99$", "$1.84/1.84$",   "$2.5/2.5$", "$4.9/7.2$","$4.9/7.2$", "$1.35/1.35$","$40/40$", "$2.08/2.08$"),
+  Date = c("12-11-2021","30-07-2020","06-12-2018", "16-04-2015","13-03-2016", "03-09-2017","29-08-2021","28-03-2024")
 )
 
 colnames(SAR_data) <- c(
-  "\\textbf{Site}", "\\textbf{Mission}", "\\textbf{Band}", 
+  "\\textbf{Site}", "\\textbf{Mission}", "\\textbf{Band}", "\\textbf{Polarization}",
   "\\textbf{Size (pixels)}", "$\\bm{L}$", 
   "\\textbf{Resolution [m]}", "\\textbf{Acquisition Date}"
 )
@@ -58,7 +208,7 @@ SAR_data[] <- lapply(SAR_data, function(x) {
 kable(SAR_data, 
       format = "latex",
       booktabs = TRUE,
-      align = "ccccccc",
+      align = "cccccccc",
       escape = FALSE,
       digits = 2,
       label = "table_param",
@@ -68,488 +218,781 @@ kable(SAR_data,
   row_spec(0, align = "c") %>%
   kable_styling(latex_options = "scale_down", font_size = 21) %>% 
   kable_styling(full_width = TRUE) %>%
-  column_spec(1, width = "3.0cm") %>%
+  column_spec(1, width = "3.8cm") %>%
   column_spec(2, width = "3.7cm") %>%
-  column_spec(3, width = "1.5cm") %>%
-  column_spec(4, width = "4cm") %>%
-  column_spec(5, width = "1.5cm") %>%
-  column_spec(6, width = "4.0cm") %>%
-  column_spec(7, width = "4.5cm")
+  column_spec(3, width = "2.5cm") %>%
+  column_spec(4, width = "3.5cm") %>%
+  column_spec(5, width = "4cm") %>%
+  column_spec(6, width = "2.5cm") %>%
+  column_spec(7, width = "4.0cm") %>%
+  column_spec(8, width = "4.5cm")
 
 ```
-We used sliding windows of size $7\times 7$.
-The results are presented as $p$-value maps and binary maps at a $0.05$ significance level. 
-Figs.&nbsp;\ref{fig:london-b}--\ref{fig:london-c},&nbsp;\ref{fig:munich-b}--\ref{fig:munich-c}, and&nbsp;\ref{fig:dublin-b}--\ref{fig:dublin-c} correspond to $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, while Figs.&nbsp;\ref{fig:london-d}--\ref{fig:london-e},&nbsp;\ref{fig:munich-d}--\ref{fig:munich-e}, and&nbsp;\ref{fig:dublin-d}--\ref{fig:dublin-e} correspond to $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$.
 
-The $p$-value maps use a color gradient, where darker regions indicate areas with higher roughness, and lighter regions denote smoother, less textured surfaces.
-The binary maps classify these results: white areas represent $p$-values greater than $0.05$, indicating no statistical evidence to reject the null hypothesis (homogeneous regions). 
-In contrast, black areas represent regions with $p$-values below $0.05$, providing statistical evidence to reject the null hypothesis and indicating heterogeneity.
+For each SAR image, the number of looks $L$ was obtained from the
+product of azimuth and range looks provided in the metadata of SNAP. We
+validated this nominal value with the equivalent number of looks (ENL)
+from manually selected homogeneous areas using the classical formula
+$\text{ENL} = 1/\widehat{\text{CV}}^2$, based on the sample
+coefficient of variation. The results were consistent with the metadata.
+We also verified that moderate deviations in $L$ did not significantly
+impact the outcome of the test, confirming the robustness of the
+proposed method.
 
-The Rényi entropy-based test demonstrated greater sensitivity in detecting textural variations than the Shannon-based test due to the flexibility provided by the parameter $\lambda$, as observed in the binary maps in Figs.&nbsp;\ref{fig:london-c},&nbsp;\ref{fig:munich-c}, and&nbsp;\ref{fig:dublin-c}.
+The SAR images were preprocessed using the SNAP (Sentinel Application Platform) toolbox. The standard steps included terrain correction and multilooking (when necessary) to produce intensity images. UAVSAR scenes were also reprojected to align them with standard geographic coordinates. Finally, the resulting images were exported in ENVI format and used as input for statistical analysis in \texttt{R}, where the proposed tests were applied.
+
+
+### Qualitative Inspection {#qualitative-inspection}
+ 
+We applied the three bootstrap statistics
+$S_{\widetilde{H}_{\text{AO}}}$, $S_{\widetilde{R}_{\lambda}}$ and
+$S_{\widetilde{T}_{\lambda}}$ to eight intensity images as shown Figures&nbsp;\ref{fig:london-sar}-\ref{fig:fo-sar} using $7\times 7$ local sliding windows. Each figure is organised in three rows:
+the first row displays the SAR scene and a matching Sentinel-2
+optical image, the second row shows heat-maps of the
+$p$-values produced by the three tests, and the third row presents the
+binary decisions at the $5\%$ significance level
+(black $\,=\,$ heterogeneous, white $\,=\,$ homogeneous).
+
+Across all scenes the three tests identify the main textured elements
+(urban blocks, harbor facilities, roads, crop boundaries, mountainous areas, and river
+banks).  In the $p$-value heat-maps dark-blue tones
+($p\!<\!0.05$) cluster over these features, whereas red tones
+($p\!\approx\!1$) dominate smooth areas such as open water, uniform
+pasture or crop areas.  The corresponding binary maps make this pattern explicit, delineating heterogeneous areas with a black mask.
+
+
+The London and San Francisco images, acquired with $L=1$, exhibit strong speckle, making heterogeneity detection more difficult. 
+Among the three tests, the Rényi-based statistic $S_{\widetilde{R}{\lambda}}$ offers the most informative response: its $p$-value maps show dark-blue tones over heterogeneous regions and strong red tones ($p \approx 1$) over clearly homogeneous areas such as water bodies and smooth crop zones.
+In contrast, the Shannon and Tsallis-based tests produce $p$-value maps with softer, intermediate colors, which makes it harder to clearly distinguish between textured and smooth areas. Although the binary maps look generally similar, $S_{\widetilde{R}_{\lambda}}$ gives more precise and reliable detections, even under strong speckle.
+
+
+As the number of looks increases (Rotterdam, Munich and
+the remaining images) speckle is reduced and all tests
+improve, but differences persist:
+$S_{\widetilde{R}_{\lambda}}$ keeps the highest sensitivity to
+texture changes, whereas $S_{\widetilde{T}_{\lambda}}$ produces the
+cleanest white regions, indicating a stronger ability to preserve
+truly homogeneous surfaces.  $\:S_{\widetilde{H}_{\text{AO}}}$ shows an
+intermediate behaviour.
+
+These results mirror the properties already observed with simulated
+data.  The Rényi-based statistic reacts quickly to any local
+fluctuation, making it very effective for spotting heterogeneity even
+under severe speckle.  The Tsallis-based test is
+more conservative: it suppresses small, noisy variations and therefore
+preserves large homogeneous patches, while still detecting clear
+textural boundaries.  The Shannon-based test offers a balanced
+compromise but is less robust when $L$ is very low.
+
+
+<!-- The three statistical tests are applied to the SAR images using -->
+<!-- $7\times 7$ local sliding windows. This window size balances detailed -->
+<!-- local information and sufficient number of data points. -->
+
+<!-- The $p$-values obtained for each test are presented in -->
+<!-- Figures~\ref{fig:Rotterdam_pvalue}, \ref{fig:Mexico_pvalue}, -->
+<!-- \ref{fig:lake_pvalue} and~\ref{fig:Illinois_crops_pvalue}, respectively. -->
+
+<!-- In Figures~\ref{fig:Rotterdam_0.05}, \ref{fig:Mexico_crops_0.05}, -->
+<!-- \ref{fig:lake_0.05} and~\ref{fig:Illinois_crops_0.05}, the maps of -->
+<!-- $p$-values composed of a linear gradient of black and white colors, -->
+<!-- represent the decisions at a \SI{5}{\percent} significance level. Dark -->
+<!-- areas represent values below $0.05$, indicating evidence to reject the -->
+<!-- null hypothesis and suggesting heterogeneity in these regions. In -->
+<!-- contrast, values above 0.05 are represented as white areas, indicating -->
+<!-- no evidence to reject the fully-developed speckle hypothesis. -->
 
 
 
+<!-- We used sliding windows of size $7\times 7$. -->
+<!-- The results are presented as $p$-value maps and binary maps at a $0.05$ significance level.  -->
+<!-- Figs.&nbsp;\ref{fig:london-b}--\ref{fig:london-c},&nbsp;\ref{fig:munich-b}--\ref{fig:munich-c}, and&nbsp;\ref{fig:dublin-b}--\ref{fig:dublin-c} correspond to $S_{\widetilde{H}_{\lambda}}(\bm{Z}; L)$, while Figs.&nbsp;\ref{fig:london-d}--\ref{fig:london-e},&nbsp;\ref{fig:munich-d}--\ref{fig:munich-e}, and&nbsp;\ref{fig:dublin-d}--\ref{fig:dublin-e} correspond to $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$. -->
+
+<!-- The $p$-value maps use a color gradient, where darker regions indicate areas with higher roughness, and lighter regions denote smoother, less textured surfaces. -->
+<!-- The binary maps classify these results: white areas represent $p$-values greater than $0.05$, indicating no statistical evidence to reject the null hypothesis (homogeneous regions).  -->
+<!-- In contrast, black areas represent regions with $p$-values below $0.05$, providing statistical evidence to reject the null hypothesis and indicating heterogeneity. -->
+
+<!-- The Rényi entropy-based test demonstrated greater sensitivity in detecting textural variations than the Shannon-based test due to the flexibility provided by the parameter $\lambda$, as observed in the binary maps in Figs.&nbsp;\ref{fig:london-c},&nbsp;\ref{fig:munich-c}, and&nbsp;\ref{fig:dublin-c}. -->
 
 ```{=latex}
 \begin{figure}[H]
     \centering
-    % First row: main SAR image
-        \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{Figures/london_optical_.png}
-        \caption*{(a) Optical image}
-        \label{fig:london-a}
-    \end{minipage}
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{Figures/london_2000.png}
-        \caption*{(b) SAR image}
-        \label{fig:london-b}
-    \end{minipage}
-    \vspace{1em} % Space between rows
-        % Second row: p-value maps
-\begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.3\textwidth]{Figures/H_pvalue_london_Shannon_c1.png}
-        \caption*{(c) $p$-value map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:london-c}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{Figures/H_005_london_shannon.png}
-        \caption*{(d) Binary map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:london-d}
-    \end{minipage}
-        \vspace{1em} % Space between rows
 
-    % Third row: binary maps
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.3\textwidth]{Figures/H_pvalue_london_renyi.png}
-        \caption*{(e) $p$-value map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:london-e}
-    \end{minipage}
+    % Primera fila: 2 imágenes
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/london_2000.png}
+        \caption{SAR image}
+        \label{fig:london-sar}
+    \end{subfigure}
+    \hspace{2em}
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/london_optical_.png}
+        \caption{Optical image}
+        \label{fig:london-optical}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_shannon-london_H1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:london-shann1}
+    \end{subfigure}
     \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_renyi-london_H1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:london-shann-renyi1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_tsallis-london_H1_new.png} % <--
+        \caption{$p$-value map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:london-tsallis1}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    % Tercera fila: 3 imágenes (binary maps)
+    \begin{subfigure}{0.30\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_london_shannon.png}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:london-005-shann2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.30\textwidth}
         \includegraphics[width=\linewidth]{Figures/H_005_london_renyi_L1_.png}
-        \caption*{(f) Binary map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:london-f}
-    \end{minipage}
-    \caption{Detection of heterogeneous areas in a SAR image over London, UK: comparison with the tests $S_{\widetilde{H}_{\text{AO}}}$ and $S_{\widetilde{H}_{\lambda}}$.}
+        \caption{Binary map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:london-005-renyi2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.30\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_london1_TSALLIS.png} %
+        \caption{Binary map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:london-005-tsallis2}
+    \end{subfigure}
+
+    \caption{Detection of heterogeneous areas in a SAR image over London, UK: comparison of test statistics $\small{S_{\widetilde{H}_{\text{AO}}}}$, $\small{S_{\widetilde{R}_{\lambda}}}$, and $\small{S_{\widetilde{T}_{\lambda}}}$. Top: input images. Middle: $p$-value maps. Bottom: binary maps (\SI{5}{\percent} level).}
     \label{fig:london}
 \end{figure}
-
 ```
 
 ```{=latex}
 \begin{figure}[H]
     \centering
-    % First row: SAR image
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.85\textwidth]{Figures/munich_optical1.png}
-        \caption*{(a) Optical image}
-        \label{fig:munich-a}
-    \end{minipage}
+
+    % Primera fila: 2 imágenes
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/SF_3300.png}
+        \caption{SAR image}
+        \label{fig:sf-sar}
+    \end{subfigure}
+    \hspace{2em}
+    \begin{subfigure}{0.295\textwidth}
+        \includegraphics[width=\linewidth]{Figures/san-francisco-optical1.png}
+        \caption{Optical image}
+        \label{fig:sf-optical}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_results_SF_AO_w7.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:sf-shann1}
+    \end{subfigure}
     \hfill
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{Figures/munich_1024.png}
-        \caption*{(b) SAR image}
-        \label{fig:munich-b}
-    \end{minipage}
-
-    \vspace{1em} % Space between rows
-
-    % Second row: p-value and binary for Shannon AO
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.2\textwidth]{Figures/H_pvalue_muni_Shan22.png}
-        \caption*{(c) $p$-value map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:munich-c}
-    \end{minipage}
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_SF_3300_renyi_w7_3_L1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:sf-renyi1}
+    \end{subfigure}
     \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=0.9\linewidth]{Figures/H_005_munich_sh_AO_L12.png}
-        \caption*{(d) Binary map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:munich-d}
-    \end{minipage}
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-valuesL1_SanFrancisco_tsallis_b100_w7s.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:sf-tsallis1}
+    \end{subfigure}
 
-\vspace{1em} % Space between rows
+    \vspace{1.2em}
 
-    % Third row: p-value and binary for Renyi
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.2\textwidth]{Figures/H_pvalue_muni_renyi.png}
-        \caption*{(e) $p$-value map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:munich-e}
-    \end{minipage}
+    % Tercera fila: 3 imágenes (binary maps)
+    \begin{subfigure}{0.30\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_results_ENVI_SF_3300_L1_AO_w7.png}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:sf-005-shann2}
+    \end{subfigure}
     \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=0.9\linewidth]{Figures/H_005_munich_renyi.png}
-        \caption*{(f) Binary map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:munich-f}
-    \end{minipage}
-    \caption{Detection of heterogeneous areas in a SAR image over Munich, Germany: comparison with the tests $S_{\widetilde{H}_{\text{AO}}}$ and $S_{\widetilde{H}_{\lambda}}$.}
-    \label{fig:munich}
+    \begin{subfigure}{0.30\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_SF_3300_renyi_w7_3_L1.png}
+        \caption{Binary map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:sf-005-renyi2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.30\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_L1_SanFrancisco_tsallis_b100_w7_.png} %
+        \caption{Binary map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:sf-005-tsallis2}
+    \end{subfigure}
+
+    \caption{Detection of heterogeneous areas in a SAR image over San Francisco, USA: comparison of test statistics $\small{S_{\widetilde{H}_{\text{AO}}}}$, $\small{S_{\widetilde{R}_{\lambda}}}$, and $\small{S_{\widetilde{T}_{\lambda}}}$. Top: input images. Middle: $p$-value maps. Bottom: binary maps (\SI{5}{\percent} level).}
+    \label{fig:sf}
 \end{figure}
-
 ```
-
 
 ```{=latex}
 \begin{figure}[H]
     \centering
-    % First row: SAR image
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{Figures/dublin.png}
-        \caption*{(a) Optical image}
-        \label{fig:dublin-a}
-    \end{minipage}
+
+    % Primera fila: 2 imágenes
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/rotterdam_1200_L9_2.png}
+        \caption{SAR image}
+        \label{fig:rott-sar}
+    \end{subfigure}
+    \hspace{2em}
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/rotterdam_optical2.png}
+        \caption{Optical image}
+        \label{fig:rott-optical}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_L9_envi_Rotterdam2_size_1200_AO_w7_b100-H1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:rott-shann1}
+    \end{subfigure}
     \hfill
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{Figures/dublin_1100_hh.png}
-        \caption*{(b) SAR image}
-        \label{fig:dublin-b}
-    \end{minipage}
-    \vspace{1em} % Space between rows
-
-    % Third row: p-value and binary for Shannon AO
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.3\textwidth]{Figures/AO_w7_L16_b100.png}
-        \caption*{(c) $p$-value map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:dublin-c}
-    \end{minipage}
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_L16_L9_envi_Rotterdam2_sizeRENYI_1200-H1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:rott-renyi1}
+    \end{subfigure}
     \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{Figures/H_005_AO_w7_L16_b100.png}
-        \caption*{(d) Binary map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:dublin-d}
-    \end{minipage}
-    \vspace{0.9em} % Space between rows
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_L9_Rotterdam2_1200_tsallis_085_B100-H1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:rott-tsallis1}
+    \end{subfigure}
 
-    % Second row: p-value and binary for Renyi
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.3\textwidth]{Figures/dublin_renyi_09_w7_b100.png}
-        \caption*{(e) $p$-value map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:dublin-e}
-    \end{minipage}
+    \vspace{1.2em}
+
+    % Tercera fila: 3 imágenes (binary maps)
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/0.05_L9_envi_Rotterdam2_size_1200_AO_w7_b100.png}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:rott-005-shann2}
+    \end{subfigure}
     \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{Figures/H_005_dublin_renyi_09_w7_b100.png}
-        \caption*{(f) Binary map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:dublin-f}
-    \end{minipage}
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_L16_L9_envi_Rotterdam2_sizeRENYI_1200.png}
+        \caption{Binary map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:rott-005-renyi2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_L9_Rotterdam2_1200_tsallis_lambda85_B100.png} %
+        \caption{Binary map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:rott-005-tsallis2}
+    \end{subfigure}
 
-
-
-    \caption{Detection of heterogeneous areas in a SAR image over Dublin Port, Ireland: comparison with the tests $S_{\widetilde{H}_{\text{AO}}}$ and $S_{\widetilde{H}_{\lambda}}$.}
-    \label{fig:dublin}
+    \caption{Detection of heterogeneous areas in a SAR image over Rotterdam, Netherlands: comparison of test statistics $\small{S_{\widetilde{H}_{\text{AO}}}}$, $\small{S_{\widetilde{R}_{\lambda}}}$, and $\small{S_{\widetilde{T}_{\lambda}}}$. Top: input images. Middle: $p$-value maps. Bottom: binary maps (\SI{5}{\percent} level).}
+    \label{fig:rott}
 \end{figure}
-
 ```
 
 ```{=latex}
 \begin{figure}[H]
     \centering
-    % First row: SAR image
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{Figures/foggia-italy-optical.png}
-        \caption*{(a) Optical image}
-        \label{fig:Foggia-a}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{Figures/foggia-italy_1900.png}
-        \caption*{(b) SAR image}
-        \label{fig:Foggia-b}
-    \end{minipage}
-    
-    \vspace{1em} % Space between rows
 
-    % Third row: p-value and binary for Shannon AO
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.3\textwidth]{Figures/H_pvalue_italy_AO_1900-H.png}
-        \caption*{(c) $p$-value map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:Foggia-c}
-    \end{minipage}
+    % Primera fila: 2 imágenes
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/munich_1024.png}
+        \caption{SAR image}
+        \label{fig:mun-sar}
+    \end{subfigure}
+    \hspace{2em}
+    \begin{subfigure}{0.28\textwidth}
+        \includegraphics[width=\linewidth]{Figures/munich_optical.png}
+        \caption{Optical image}
+        \label{fig:mun-optical}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_shannon-munich-H.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:mun-shann1}
+    \end{subfigure}
     \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_renyi-munich-H1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:mun-renyi1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values__tsallis_lambda85_B100-H1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:mun-tsallis1}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    % Tercera fila: 3 imágenes (binary maps)
+    \begin{subfigure}{0.28\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_shannon_munich.png}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:mun-005-shann2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.28\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_renyi_munich.png}
+        \caption{Binary map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:mun-005-renyi2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.28\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005L12_envi_munich_size_1024_tsallis_lambda85_B100.png} %
+        \caption{Binary map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:mun-005-tsallis2}
+    \end{subfigure}
+
+    \caption{Detection of heterogeneous areas in a SAR image over the outskirts
+of Munich, Germany: comparison of test statistics $\small{S_{\widetilde{H}_{\text{AO}}}}$, $\small{S_{\widetilde{R}_{\lambda}}}$, and $\small{S_{\widetilde{T}_{\lambda}}}$. Top: input images. Middle: $p$-value maps. Bottom: binary maps (\SI{5}{\percent} level).}
+    \label{fig:mun}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[H]
+    \centering
+
+    % Primera fila: 2 imágenes
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/NewOrleans_1400.png}
+        \caption{SAR image}
+        \label{fig:no-sar}
+    \end{subfigure}
+    \hspace{2em}
+    \begin{subfigure}{0.27\textwidth}
+        \includegraphics[width=\linewidth]{Figures/new-orleans-optical.png}
+        \caption{Optical image}
+        \label{fig:no-optical}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_shannon-New_or-H.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:no-shann1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_renyi-New_or-H.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:no-renyi1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_L_12_New_orleans_size_1400_tsallis_lambda085_B100-H1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:no-tsallis1}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    % Tercera fila: 3 imágenes (binary maps)
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_NewOrleans_1400_AO.png}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:no-005-shann2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_NewOrleans_1400_renyi.png}
+        \caption{Binary map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:no-005-renyi2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/0.05_L_12_New_orleans_size_1400_tsallis_lambda085_B100.png} %
+        \caption{Binary map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:no-005-tsallis2}
+    \end{subfigure}
+
+    \caption{Detection of heterogeneous areas in a SAR image over New Orleans city, USA: comparison of test statistics $\small{S_{\widetilde{H}_{\text{AO}}}}$, $\small{S_{\widetilde{R}_{\lambda}}}$, and $\small{S_{\widetilde{T}_{\lambda}}}$. Top: input images. Middle: $p$-value maps. Bottom: binary maps (\SI{5}{\percent} level).}
+    \label{fig:NO}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[H]
+    \centering
+
+    % Primera fila: 2 imágenes
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/dublin_1100.png}
+        \caption{SAR image}
+        \label{fig:no-sar}
+    \end{subfigure}
+    \hspace{2em}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/dublin.png}
+        \caption{Optical image}
+        \label{fig:du-optical}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_AO_1100-dublin-H1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:no-shann1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_renyi_1100-dublin-H1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:du-renyi1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_L16_envi_dublin_size_1100_tsallis_lambda085_B100-H1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:du-tsallis1}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    % Tercera fila: 3 imágenes (binary maps)
+    \begin{subfigure}{0.28\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_dublin_AO_1100.png}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:du-005-shann2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.28\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_dublin_renyi_1100.png}
+        \caption{Binary map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:du-005-renyi2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.28\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_L16_envi_dublin_size_1100_tsallis_lambda085_B100.png} %
+        \caption{Binary map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:du-005-tsallis2}
+    \end{subfigure}
+
+    \caption{Detection of heterogeneous areas in a SAR image over Dublin Port, Ireland: comparison of test statistics $\small{S_{\widetilde{H}_{\text{AO}}}}$, $\small{S_{\widetilde{R}_{\lambda}}}$, and $\small{S_{\widetilde{T}_{\lambda}}}$. Top: input images. Middle: $p$-value maps. Bottom: binary maps (\SI{5}{\percent} level).}
+    \label{fig:du}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[H]
+    \centering
+
+    % Primera fila: 2 imágenes
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/mexico_512.png}
+        \caption{SAR image}
+        \label{fig:ja-sar}
+    \end{subfigure}
+    \hspace{2em}
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/mexico2_512.png}
+        \caption{Optical image}
+        \label{fig:ja-optical}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_results_Mexico_512_7_AO_300b11.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:ja-shann1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_L16_envi_mexico_512_renyi_lambda09_B200.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:ja-renyi1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_L18_envi_mexico_tsallis_lambda085_B200_w7__H1.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:ja-tsallis1}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    % Tercera fila: 3 imágenes (binary maps)
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/0.05_results_Mexico_512_7_AO_300b.png}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:ja-005-shann2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/0.05_L16_envi_mexico_512_renyi_lambda09_B200.png}
+        \caption{Binary map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:ja-005-renyi2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_L18_envi_mexico_tsallis_lambda085_B200_w7_.png} %
+        \caption{Binary map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:ja-005-tsallis2}
+    \end{subfigure}
+
+    \caption{Detection of heterogeneous areas in a SAR image over the Coast of Jalisco, Mexico: comparison of test statistics $\small{S_{\widetilde{H}_{\text{AO}}}}$, $\small{S_{\widetilde{R}_{\lambda}}}$, and $\small{S_{\widetilde{T}_{\lambda}}}$. Top: input images. Middle: $p$-value maps. Bottom: binary maps (\SI{5}{\percent} level).}
+    \label{fig:ja}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[H]
+    \centering
+
+    % Primera fila: 2 imágenes
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth]{Figures/foggia-italy_1900.png}
+        \caption{SAR image}
+        \label{fig:fo-sar}
+    \end{subfigure}
+    \hspace{2em}
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/foggia-italy-optical.png}
+        \caption{Optical image}
+        \label{fig:fo-optical}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_shannon-Foggia-H_77.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:fo-shann1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_renyi-foggiaH-new.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:du-renyi1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.31\textwidth}
+        \includegraphics[width=\linewidth]{Figures/p-values_L24_Foggia1900_tsallis_lambda085_B100aa.png}
+        \caption{$p$-value map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:fo-tsallis1}
+    \end{subfigure}
+
+    \vspace{1.2em}
+
+    % Tercera fila: 3 imágenes (binary maps)
+    \begin{subfigure}{0.29\textwidth}
         \includegraphics[width=\linewidth]{Figures/H_005_AO_italy_1900.png}
-        \caption*{(d) Binary map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:Foggia-d}
-    \end{minipage}
-
-    \vspace{1em} % Space between rows
-
-    % Second row: p-value and binary for Renyi
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.3\textwidth]{Figures/H_pvalue_Renyi_Italy_1900_H.png}
-        \caption*{(e) $p$-value map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:Foggia-e}
-    \end{minipage}
+        \caption{Binary map for $\small{S_{\widetilde{H}_{\text{AO}}}}$}
+        \label{fig:fo-005-shann2}
+    \end{subfigure}
     \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
+    \begin{subfigure}{0.29\textwidth}
         \includegraphics[width=\linewidth]{Figures/H_005_renyi_italy_1900_L1.png}
-        \caption*{(f) Binary map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:Foggia-f}
-    \end{minipage}
+        \caption{Binary map for $\small{S_{\widetilde{R}_{\lambda}}}$}
+        \label{fig:du-005-renyi2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.29\textwidth}
+        \includegraphics[width=\linewidth]{Figures/H_005_L24_envi_Foggia_size_1900_tsallis_lambda085_B100.png} %
+        \caption{Binary map for $\small{S_{\widetilde{T}_{\lambda}}}$}
+        \label{fig:fo-005-tsallis2}
+    \end{subfigure}
 
-    \caption{Detection of heterogeneous areas in a SAR image over Foggia, Italy: comparison with the tests $S_{\widetilde{H}_{\text{AO}}}$ and $S_{\widetilde{H}_{\lambda}}$.}
-    \label{fig:Foggia}
+    \caption{Detection of heterogeneous areas in a SAR image over  Foggia, Italy: comparison of test statistics $\small{S_{\widetilde{H}_{\text{AO}}}}$, $\small{S_{\widetilde{R}_{\lambda}}}$, and $\small{S_{\widetilde{T}_{\lambda}}}$. Top: input images. Middle: $p$-value maps. Bottom: binary maps (\SI{5}{\percent} level).}
+    \label{fig:du}
 \end{figure}
-
 ```
+
+
+
+Overall, the experiments on real SAR images confirm the simulated
+findings: for highly speckled data ($L\!\approx\!1$) the Rényi
+statistic is the most reliable detector of heterogeneity, whereas for
+multi-look products the Tsallis statistic delivers cleaner segmentations
+with fewer false positives.
+
+ 
+Window size also plays an important role in the detection process. Although not shown in this work, we explored alternative sliding windows
+of $5\times5$ ($n=25$) and $9\times9$ ($n=81$) on both simulated and real SAR data. 
+The smaller window tended to miss heterogeneous features, especially in 
+single–look images where few pixels are available. 
+In contrast, larger windows occasionally led to over-detection, particularly 
+on multi-look scenes, where homogeneous regions were sometimes misclassified 
+as heterogeneous. Based on these observations and prior recommendations in the literature, 
+we adopted $7\times7$ ($n=49$) as a compromise that preserves local detail 
+while ensuring statistical stability for bootstrap estimation.
+
+In the specific case of $L=1$, we observed that larger windows 
+(e.g., $9\times9$) produced more consistent detection, particularly for 
+the Tsallis-based test, improving sensitivity without excessive false alarms.
+
+
+### Quantitative Evaluation
+
+Eight polygonal regions of interest (ROIs) were manually selected for each of the three SAR scenes chosen for quantitative evaluation, London, Munich, and Dublin (Figures \ref{fig:london-sar-roi1}–\ref{fig:dublin-sar-roi1}). These ROIs correspond to heterogeneous areas (red, class 1) and homogeneous areas (blue, class 0). The polygons were rasterized to match the spatial resolution of each SAR image, forming a partial ground truth. We thresholded the $p$-value maps at 0.05, labeling each pixel as heterogeneous (1) or homogeneous (0), and compared these decision maps with the ground truth to compute the F1-score ($F_1$), Kappa coefficient ($\kappa$), and overall accuracy (OA). Table \ref{tab:table_metrics1} summarizes the results.
 
 ```{=latex}
 \begin{figure}[H]
     \centering
-    % First row: SAR image
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{Figures/san-francisco-optical1.png}
-        \caption*{(a) Optical image}
-        \label{fig:san-francisco-a}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{Figures/SF_3300.png}
-        \caption*{(b) SAR image}
-        \label{fig:san-francisco-b}
-    \end{minipage}
-    \vspace{1em} % Space between rows
-
-    % Third row: p-value and binary for Shannon AO
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.3\textwidth]{Figures/H_pvalue_SF_AO_3300_H.png}
-        \caption*{(c) $p$-value map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:san-francisco-c}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{Figures/H_005_AO_SF_3300_L1_3.png}
-        \caption*{(d) Binary map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:san-francisco-d}
-    \end{minipage}
-
-    \vspace{0.9em} % Space between rows
-
-    % Second row: p-value and binary for Renyi
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.3\textwidth]{Figures/H_pvalue_renyi_SF_3300_H2_L1_3.png}
-        \caption*{(e) $p$-value map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:san-francisco-e}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{Figures/H_005_renyi_SF_3300_L1_3.png}
-        \caption*{(f) Binary map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:san-francisco-f}
-    \end{minipage}
-
-    \caption{Detection of heterogeneous areas in a SAR image over San Francisco, USA: comparison with the tests $S_{\widetilde{H}_{\text{AO}}}$ and $S_{\widetilde{H}_{\lambda}}$.}
-    \label{fig:san-francisco}
+    % London
+    \begin{subfigure}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{Figures/london_roi.png}
+        \caption{London SAR image with selected ROIs.}
+        \label{fig:london-sar-roi1}
+    \end{subfigure}
+   \hspace{4em} 
+    % Munich
+    \begin{subfigure}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{Figures/munich_roi.png}
+        \caption{Munich SAR image with selected ROIs.}
+        \label{fig:munich-sar-roi1}
+    \end{subfigure}
+    \vspace{1.8em}
+    % Dublin
+    \begin{subfigure}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{Figures/dublin_roi3.png}
+        \caption{Dublin SAR image with selected ROIs.}
+        \label{fig:dublin-sar-roi1}
+    \end{subfigure}
+    \caption{Selected ROIs for the quantitative evaluation. Red polygons indicate heterogeneous areas (class 1), and blue polygons indicate homogeneous areas (class 0).}
+    \label{fig:roi-scenes}
 \end{figure}
 
 ```
 
+When comparing the three entropy-based tests, distinct patterns emerge depending on the scene characteristics. In London, the Rényi-based test produced the best performance across all metrics ($F_1$: 0.695; $\kappa$: 0.626; OA: 0.877), outperforming both Shannon and Tsallis. This suggests that Rényi entropy is particularly robust under strong speckle conditions, as is typical in single-look SAR imagery.
+
+In contrast, in the Munich and Dublin scenes, where the image quality is higher and speckle is reduced, the Tsallis-based test achieved the highest scores across all three metrics. Specifically, in Munich, Tsallis achieved $F_1 = 0.930$, $\kappa = 0.871$, and OA = 0.936, marginally outperforming Rényi. Similarly, in Dublin, Tsallis led with $F_1 = 0.879$, $\kappa = 0.776$, and OA = 0.887. These results indicate that Tsallis entropy may be more sensitive to finer textural differences in lower-speckle environments.
+
+The Shannon-based test consistently yielded the lowest scores across all scenes, suggesting that it is less effective at distinguishing between heterogeneous and homogeneous regions under the tested conditions. Overall, the results demonstrate that Rényi and Tsallis entropies are both strong detectors of heterogeneity, with Rényi showing advantages in noisy contexts, and Tsallis offering improved discrimination in scenes with more subtle textural variations.
 
 
+\renewcommand{\arraystretch}{1.1} 
+```{r metrics_table_k, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+
+# 
+load("./Data/metrics_london_shannon.RData")
+load("./Data/metrics_london_renyi.RData")
+load("./Data/metrics_london_tsallis.RData")
+
+load("./Data/metrics_munich_shannon.RData")
+load("./Data/metrics_munich_renyi.RData")
+load("./Data/metrics_munich_tsallis.RData")
+
+load("./Data/metrics_dublin_shannon.RData")
+load("./Data/metrics_dublin_renyi.RData")
+load("./Data/metrics_dublin_tsallis.RData")
+
+# 
+all_metrics <- rbind(
+  metrics_london_shannon,
+  metrics_london_renyi,
+  metrics_london_tsallis,
+  
+  metrics_munich_shannon,
+  metrics_munich_renyi,
+  metrics_munich_tsallis,
+  
+  metrics_dublin_shannon,
+  metrics_dublin_renyi,
+  metrics_dublin_tsallis
+)
+
+
+numeric_metrics <- all_metrics
+
+
+all_metrics$Method <- dplyr::recode(
+  all_metrics$Method,
+  "Shannon" = "$S_{\\widetilde{H}_{\\text{AO}}}$",
+  "Renyi"   = "$S_{\\widetilde{R}_{\\lambda}}$",
+  "Tsallis" = "$S_{\\widetilde{T}_{\\lambda}}$"
+)
+
+#
+for (i in seq(1, nrow(all_metrics), by = 3)) {
+  for (col in c("F1", "Kappa", "OA")) {
+    vals <- numeric_metrics[[col]][i:(i+2)]
+    best <- which.max(vals)
+    for (j in 1:3) {
+      val_fmt <- sprintf("$%.3f$", vals[j])
+      if (j == best) val_fmt <- sprintf("\\bm{%s}", val_fmt)
+      all_metrics[i + j - 1, col] <- val_fmt
+    }
+  }
+}
+
+# Cambiar nombres de columnas
+colnames(all_metrics) <- c("\\textbf{Scene}", "\\textbf{Test}", "$\\bm{F_1}$", "$\\kappa$", "\\textbf{OA}")
+
+# Aplicar multirow a la columna de ciudad (cada 3 filas)
+scene_labels <- all_metrics$Scene
+for (scene in unique(scene_labels)) {
+  idx <- which(scene_labels == scene)
+  scene_labels[idx[1]] <- paste0("\\multirow{3}{*}{", scene, "}")
+  scene_labels[idx[2:3]] <- ""
+}
+all_metrics$Scene <- scene_labels
+
+# Mostrar tabla con formato LaTeX
+kable(all_metrics,
+      caption = "Quantitative measures of heterogeneity detection",
+      format = "latex",
+      booktabs = TRUE,
+      align = "cccccc",
+      escape = FALSE,
+      label = "table_metrics1",
+      centering = FALSE,
+      table.envir = "table", 
+      position = "H",
+      row.names = FALSE) %>%
+  row_spec(0, align = "c") %>%
+  collapse_rows(latex_hline = "major", valign = "bottom") %>%
+  kable_styling(latex_options = "scale_down", font_size = 10) %>%
+  kable_styling(full_width = TRUE)
+
+``` 
+
+Using the same ROIs as ground truth, we evaluated the continuous $p$-value maps by computing receiver operating characteristic (ROC) curves over all decision thresholds (Figure \ref{fig:roc}). Each curve plots the probability of detection (Pd) versus the probability of false alarm (PFA). Pd reflects the proportion of heterogeneous pixels correctly detected, while PFA represents the proportion of homogeneous pixels misclassified as heterogeneous.
 
 ```{=latex}
 \begin{figure}[H]
-    \centering
-    % First row: SAR image
-    \begin{minipage}{0.47\textwidth}
-        \centering
-        \includegraphics[width=0.8\textwidth]{Figures/new-orleans-optical.png}
-        \caption*{(a) Optical image}
-        \label{fig:new-orleans-a}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.85\textwidth]{Figures/NewOrleans_1400.png}
-        \caption*{(b) SAR image}
-        \label{fig:new-orleans-b}
-    \end{minipage}
-    
-    \vspace{1em} % Space between rows
-
-    % Third row: p-value and binary for Shannon AO
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.2\textwidth]{Figures/H_pvalue_NewOrleans_1400_AO-H.png}
-        \caption*{(c) $p$-value map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:new-orleans-c}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=0.9\linewidth]{Figures/H_005_NewOrleans_1400_AO.png}
-        \caption*{(d) Binary map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:new-orleans-d}
-    \end{minipage}
-
-    \vspace{1em} % Space between rows
-
-    % Second row: p-value and binary for Renyi
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.2\textwidth]{Figures/H_pvalue_NewOrleans_1400_renyi-H.png}
-        \caption*{(e) $p$-value map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:new-orleans-e}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=0.9\linewidth]{Figures/H_005_NewOrleans_1400_renyi.png}
-        \caption*{(f) Binary map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:new-orleans-f}
-    \end{minipage}
-
-    \caption{Detection of heterogeneous areas in a SAR image over New Orleans city, USA: comparison with the tests $S_{\widetilde{H}_{\text{AO}}}$ and $S_{\widetilde{H}_{\lambda}}$.}
-    \label{fig:new-orleans}
+  \centering
+  \includegraphics[width=0.98\textwidth]{Figures/fig-ROC6-1.pdf}
+  \caption{ROC curves comparing the tests $S_{\widetilde{H}_{\text{AO}}}$, $S_{\widetilde{R}_{\lambda}}$ and $S_{\widetilde{T}_{\lambda}}$.}
+  \label{fig:roc}
 \end{figure}
-
 ```
+The area under each ROC curve (AUC) quantifies overall detection performance, with higher values indicating better discrimination between classes. Across all scenes, the Rényi-based test yielded the highest AUC in London ($0.963$), followed by Tsallis ($0.824$) and Shannon ($0.776$), reaffirming Rényi’s robustness under strong speckle conditions.
 
-```{=latex}
-\begin{figure}[H]
-    \centering
-    % First row: SAR image
-    \begin{minipage}{0.47\textwidth}
-        \centering
-        \includegraphics[width=0.8\textwidth]{Figures/san-diego-optical.png}
-        \caption*{(a) Optical image}
-        \label{fig:san-diego-a}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.85\textwidth]{Figures/sandiego_1300.png}
-        \caption*{(b) SAR image}
-        \label{fig:san-diego-b}
-    \end{minipage}
-    
-    \vspace{1em} % Space between rows
+In Munich, both Rényi and Tsallis performed similarly with near-perfect AUCs ($0.996$ and $0.998$ respectively), while Shannon slightly lagged behind ($0.989$). In Dublin, a similar pattern is observed: Tsallis again leads marginally with an AUC of $0.994$, followed by Rényi ($0.990$) and Shannon ($0.986$).
 
-    % Third row: p-value and binary for Shannon AO
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.2\textwidth]{Figures/H_pvalue_sandiego_1300_AO-A.png}
-        \caption*{(c) $p$-value map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:san-diego-c}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=0.9\linewidth]{Figures/H_005_sandiego_1300_AO.png}
-        \caption*{(d) Binary map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:san-diego-d}
-    \end{minipage}
-
-    \vspace{1em} % Space between rows
-
-    % Second row: p-value and binary for Renyi
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.2\textwidth]{Figures/H_pvalue_SanDiego_1300_renyi-A.png}
-        \caption*{(e) $p$-value map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:san-diego-e}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=0.9\linewidth]{Figures/H_005_sandiego_1300_renyi.png}
-        \caption*{(f) Binary map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:san-diego-f}
-    \end{minipage}
-
-    \caption{Detection of heterogeneous areas in a SAR image over San Diego city, USA: comparison with the tests $S_{\widetilde{H}_{\text{AO}}}$ and $S_{\widetilde{H}_{\lambda}}$.}
-    \label{fig:san-diego}
-\end{figure}
-
-```
+These results confirm that Rényi and Tsallis entropies consistently outperform Shannon, with Tsallis showing slightly superior performance in higher-quality scenes. The ROC analysis aligns with the classification metrics, supporting the conclusion that Tsallis and Rényi are more effective in detecting heterogeneity across varying image conditions.
 
 
-```{=latex}
-\begin{figure}[H]
-    \centering
-    % First row: SAR image
-    \begin{minipage}{0.47\textwidth}
-        \centering
-        \includegraphics[width=0.85\textwidth]{Figures/rotterdam_optical.png}
-        \caption*{(a) Optical image}
-        \label{fig:san-diego-a}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.85\textwidth]{Figures/rotterdam.png}
-        \caption*{(b) SAR image}
-        \label{fig:san-diego-b}
-    \end{minipage}
-    
-    \vspace{1em} % Space between rows
 
-    % Third row: p-value and binary for Shannon AO
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.2\textwidth]{Figures/H_pvalue_rotterdam1_1200_AO-B.png}
-        \caption*{(c) $p$-value map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:san-diego-c}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=0.85\linewidth]{Figures/H_005_rotterdam_AO_L9_B100_1.png}
-        \caption*{(d) Binary map for $S_{\widetilde{H}_{\text{AO}}}$}
-        \label{fig:san-diego-d}
-    \end{minipage}
 
-    \vspace{1em} % Space between rows
 
-    % Second row: p-value and binary for Renyi
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.2\textwidth]{Figures/H_pvalue_rotterdam1_renyi_1200-B.png}
-        \caption*{(e) $p$-value map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:san-diego-e}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=0.85\linewidth]{Figures/H_005_renyi_rotterdam1_B100_09.png}
-        \caption*{(f) Binary map for $S_{\widetilde{H}_{\lambda}}$}
-        \label{fig:san-diego-f}
-    \end{minipage}
 
-    \caption{Detection of heterogeneous areas in a SAR image over Rotterdam, Netherlands: comparison with the tests $S_{\widetilde{H}_{\text{AO}}}$ and $S_{\widetilde{H}_{\lambda}}$.}
-    \label{fig:san-diego}
-\end{figure}
 
-```
+
 
 

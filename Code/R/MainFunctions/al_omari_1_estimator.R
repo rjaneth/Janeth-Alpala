@@ -26,8 +26,26 @@ al_omari_1_estimator <- function(data) {
 # test_data <- rnorm(10)
 # result <- al_omari_1_estimator(test_data)
 # print(result)
-
-# Example usage:
+# 
 # data <- c(1.2, 1.5,3.6, 2.0, 2.1, 2.5, 2.6, 3.0, 3.1, 3.5)
 # result <- al_omari_1_estimator(data)
 # cat("Al-Omari-1 Estimator:", result, "\n")
+# gi0_sample <- function(mu, alpha, L, n) {
+#   if (alpha >= -1) stop("alpha debe ser < -1")
+#   X <- rinvgamma(n, shape = -alpha, rate = mu * (-alpha - 1))
+#   Y <- rgamma(n, shape = L, rate = L)
+#   X * Y
+# }
+# 
+# set.seed(42)
+# n <- 2000
+# B <- 200
+# x <- gi0_sample(mu = 3, alpha = -5, L = 4, n)
+
+# estimación simple
+#h_hat <- al_omari_1_estimator(x)
+# estimación bias-corrected
+#h_bc  <- bootstrap_shannon_alomari(x, B)
+
+#cat("Estimador original :", h_hat, "\n")
+#cat("Bias-corrected     :", h_bc , "\n")

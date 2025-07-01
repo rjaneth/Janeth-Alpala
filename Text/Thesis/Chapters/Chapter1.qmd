@@ -6,91 +6,115 @@
 <!-- #     bibliography: ../example.bib -->
 <!-- # --- -->
 
+
 # INTRODUCTION {#sec-Chapter1}
 
-The technology of Synthetic Aperture Radar (SAR) imaging operates on the comprehensive aperture principle to produce high-resolution SAR images.
-In contrast to conventional optical remote sensing images, SAR images remain unaffected by external factors, making them suitable for identifying ground targets in diverse weather conditions and expansive areas.  
-Consequently, SAR imagery has become essential for environmental monitoring, crop mapping, ship target detection, and climatology.  
-However, the effective use of SAR
-data depends on a thorough understanding of its statistical properties
-because it is corrupted by speckle. This noise-like interference effect
-is inherent in SAR data due to the coherent nature of the imaging
-process.
 
-Speckle in intensity format is non-Gaussian. 
-Thus, SAR data require reliable statistical models for accurate processing. 
-The $\mathcal{G}^0$ distribution, which is suitable for SAR data, includes
-the Gamma law as the limiting case for fully-developed
-speckle and provides flexibility with fewer
-parameters for analysis.
+Synthetic Aperture Radar (SAR) technology has become essential in  remote sensing, as it offers high-resolution imaging capabilities independently of sunlight and weather conditions, thus facilitating continuous and reliable Earth observation&nbsp;[@Mondini2021; @Zeng2020]. SAR imagery finds extensive applications in environmental monitoring, disaster management, agriculture mapping, climatology, urban planning, and maritime surveillance, among others&nbsp;[@Akbarizadeh2012;@Moreira2013; @Mu2019;@Yu2023]. Despite these advantages, effective exploitation of SAR data requires a robust understanding of its unique statistical characteristics, particularly the presence of speckle noise, a granular interference pattern inherent to coherent imaging systems like SAR&nbsp;[@Argenti2013;@Choi2019].
 
-When deciding which model is the best, practitioners face a problem. 
-On the one hand, if they opt for the Gamma law when the data come from the
-$\mathcal{G}^0$ distribution, they lose all the information about the
-number of scatterers, which is revealed by one of the parameters of the
-latter model. 
-On the other hand, if they apply the $\mathcal{G}^0$ distribution under fully developed speckle, maximum
-likelihood estimation is tricky: bias increases making estimation
-unreliable, and the likelihood is
-flat, so numerical optimization may not
-converge. 
+Speckle arises from the constructive and destructive interference of backscattered signals within a resolution cell, manifesting as multiplicative, non-Gaussian noise that severely complicates image analysis [@Baraha2023]. Hence, accurate processing and interpretation of SAR data depend critically on appropriate statistical models to describe speckle behavior.
 
-Our work aims to improve the identification of potential roughness
-features in SAR intensity data. 
-Physical modeling of SAR data allows the
-use of the Gamma distribution in the presence of fully-developed
-speckle, where an infinite number of independent backscatterers per
-resolution unit is assumed, commonly referred to as homogeneous regions.
+Among the statistical frameworks available, the $\mathcal{G}_I^0$ distribution has been recognized for effectively characterizing SAR intensity data across various levels of scene heterogeneity. Its versatility comes from incorporating a texture parameter that accounts for the spatial variability of scatterers, thus generalizing the simpler Gamma distribution, which represents fully developed speckle typically found in homogeneous, textureless regions&nbsp;[@Frery1997; @Ferreira2020]. In practice, the Gamma model can be considered a limiting case of the $\mathcal{G}_I^0$ distribution as scene texture becomes homogeneous.
 
-Entropy is a fundamental concept in information theory with far-reaching
-applications in pattern recognition, statistical physics, image
-processing, edge detection and SAR image
-analysis.
-@Shannon1948 introduced this concept for a random variable to measure information and uncertainty. 
-Shannon entropy is a crucial descriptive parameter in statistics, especially for evaluating data
-dispersion and performing tests for normality, exponentiality and
-uniformity [@Wieczorkowski1999; @Zamanzade2012]. 
-
-Entropy estimation is challenging, especially when the model is unknown. In these cases,
-non-parametric methods are used. Spacing methods have been discussed as
-a non-parametric approach in Refs. [@AlizadehNoughabi2010;@Subhash2021]. This strategy is flexible
-and robust because it does not enforce a model or parametric
-constraints. In this context, we introduce a novel approach: a bootstrap-improved non-parametric estimator for Shannon entropy.
+Parameter estimation for these statistical models, however, presents significant challenges, especially when using small-sized windows necessary to preserve spatial resolution in SAR images. Traditional likelihood-based or moment-based estimators often become biased or unstable under these practical constraints&nbsp;[@Nascimento2010; @VasconcellosFrerySilva]. This limitation motivates alternative statistical approaches not reliant on precise parameter estimation or large sample sizes.
 
 
-When applying these statistical concepts to SAR image analysis, we aim to discern between homogeneous and non-homogeneous regions, contributing to the improved interpretation and understanding of SAR data.  In our study, we devise test statistics based on these three estimators: the classical coefficient of variation, a robust version, and the Shannon entropy estimator. We apply these test statistics to generate maps of evidence of homogeneity that reveal different types of targets in the SAR data, assuming the number of looks is known. Likewise, we show that our proposed method is superior to existing approaches with simulated data and SAR images.
+Entropy, introduced by Shannon&nbsp;[-@Shannon1948], quantifies the uncertainty associated with a random variable and has found extensive application across fields such as pattern recognition [@Avval2021], statistical physics&nbsp;[@Presse2013], image processing&nbsp;[@MohammadDjafari2015], and particularly in SAR analysis&nbsp;[@Nascimento2014; @Nascimento2019;@Nobre2016; @Chan2022]. Beyond Shannon's original formulation, Rényi entropy generalizes the measure through an order parameter&nbsp;[@renyi1961measures], while Tsallis entropy offers an alternative non-additive generalization&nbsp;[@Tsallis1988].
+Recent studies highlight the role of entropy in SAR classification.
+Cassetti et al.&nbsp;[-@Cassetti2022] evaluated entropy estimators in both supervised and unsupervised models.
+Gallet et al.&nbsp;[-@Gallet2024] proposed a Rényi divergence-based framework for explainable classification.
+Parikh et al.&nbsp;[-@Parikh2019] discussed challenges in deep learning for SAR, including limited availability of labeled data and the complexity of tuning hyperparameters. These works motivate lightweight, interpretable alternatives.
+
+When the underlying distribution of data is unknown, entropy measures must be estimated non-parametrically. Spacing-based estimators, first proposed by Vasicek&nbsp;[-@vasicek1976test] and further refined in subsequent studies&nbsp;[@VanEs1992; @Ebrahimi1994; @IbrahimAlOmari2014], approximate entropy via spacings of order statistics. These estimators have desirable statistical properties, such as strong consistency and asymptotic normality under mild assumptions. Recent advancements have extended spacing-based methods to estimate Rényi entropy&nbsp;[@AlLabadi2024]. Importantly, spacing estimators do not rely on any specific model for the data and do not require choosing parameters, making them simple and flexible tools for entropy estimation.
 
 
 
-## OBJETIVES
+
+## MOTIVATION AND PROBLEM STATEMENT
+
+Typically, SAR data exhibit heterogeneous clutter or fully developed speckle, depending on terrain characteristics and imaging conditions. Distinguishing between these two cases is critical for accurate interpretation and analysis.
+
+While the $\mathcal{G}_I^0$ distribution effectively models heterogeneous SAR intensity data, practitioners face a significant challenge: choosing between simpler (Gamma-based) and more complex ($\mathcal{G}_I^0$-based) statistical models. Opting for the simpler Gamma model risks losing important texture information about scatterer variability, encapsulated within the $\mathcal{G}_I^0$ distribution's parameters&nbsp;[@Yue2021]. Conversely, directly applying the $\mathcal{G}_I^0$ distribution in homogeneous regions introduces substantial estimation difficulties, such as increased parameter estimation bias and computational instability due to flat likelihood surfaces, particularly when analysis windows are small&nbsp;[@FreryCribariSouza; @Nascimento2010].
+
+These estimation issues motivate the development of alternative methodologies that avoid explicit parametric estimation. In this context, non-parametric statistical tests based on entropy measures emerge as an appealing alternative. Such tests exploit entropy’s sensitivity to deviations from homogeneity assumptions without relying on explicit parameter estimates.
+
+This thesis proposes three novel entropy-based statistical tests (using Shannon, Rényi, and Tsallis entropies) designed specifically to distinguish heterogeneous clutter from fully developed speckle under the assumption that SAR intensity follows the Gamma SAR distribution in homogeneous regions. These tests assess whether observed entropy significantly differs from theoretical expectations under the homogeneity hypothesis, making them highly interpretable and practically applicable even when ground truth information is limited or unavailable.
+
+To enhance accuracy, particularly within small-window analysis contexts common in practical SAR scenarios, we further propose a bootstrap-based bias-correction procedure for the entropy estimators. Overall, our approach provides robust, unsupervised statistical tools well-suited for operational scenarios, bridging a critical gap in existing methodologies.
 
 
-The aim of this work is the identification of roughness features in SAR intensity data by developing novel test statistics for distinguishing between homogeneous and heterogeneous domains.  
-To achieve this goal, we propose the following procedure:
 
-- Select the optimal non-parametric estimator of entropy, refined through bootstrap techniques, aiming to reduce bias and mean square error.
-- Propose three test statistics: the first based on the selected non-parametric estimator of entropy; the second utilizing the classical coefficient of variation; and the third using a robust approach of CV variant.
-- Conduct computational experiments to evaluate the performance of the proposed test statistics across various simulated data scenarios.
-- Apply the test statistics to SAR data to assess their effectiveness in identifying roughness features.
+## OBJECTIVES
 
+<!-- The primary objective of this thesis is to develop and validate a set of entropy-based statistical tests for the detection of heterogeneity in SAR intensity images. These tests are designed to distinguish between fully developed speckle, modeled by the Gamma distribution, and heterogeneous clutter, modeled by the $\mathcal{G}_I^0$ distribution, in a robust and interpretable manner. -->
+
+### General Objective
+
+To propose and evaluate entropy-based statistical tests for detecting heterogeneity in SAR imagery, using non-parametric estimation and bootstrap correction to enhance accuracy in small-sample scenarios.
+
+
+### Specific Objectives
+
+- To derive closed-form expressions for  Rényi and Tsallis entropies under the Gamma SAR and $\mathcal{G}_I^0$ models, which serve as theoretical benchmarks for hypothesis testing. 
+
+- To identify and refine suitable non-parametric estimators of entropy for SAR data, incorporating bootstrap techniques to reduce bias and improve estimation accuracy.
+
+- To formulate three entropy-based test statistics that compare the estimated entropy from observed data with its theoretical value under the homogeneity assumption.
+
+- To evaluate the empirical size and power of the proposed tests via Monte Carlo simulations.
+
+- To apply the proposed tests to both simulated and real SAR data using a sliding window scheme, and generate $p$-value maps for visual inspection and quantitative assessment.
 
 
 ## CONTRIBUTIONS
 
 The main contributions of this work are the following:
 
+1. **Closed-form entropy derivations.** Analytical expressions for Rényi, and Tsallis entropies under the Gamma SAR and $\mathcal{G}_I^0$ models are derived, filling a gap in the literature and enabling  hypothesis testing.
 
-The main contributions of this work are the following:
 
-1. Development of a new non-parametric entropy-based test statistic for roughness detection in SAR images.
-2. Comparative study of three different test statistics under various simulated scenarios.
-3. Integration of bootstrap techniques to improve estimation accuracy and robustness.
-4. Application of the proposed methods to real SAR data, demonstrating their practical relevance.
+2. **Non-parametric estimator and bootstrap bias-correction.** A new spacing-based estimator is proposed for Tsallis entropy. A bootstrap bias-correction procedure is developed to improve the precision of all non-parametric estimators, substantially reducing bias and mean squared error in small-window analyses.
+
+3. **Entropy-based test statistics.** Proposal of three  entropy-based statistical tests for heterogeneity detection in SAR imagery, using Shannon, Rényi, and Tsallis entropy measures.
+
+<!-- 4. **Comprehensive validation.** Evaluation of the statistical performance of the proposed tests through extensive Monte Carlo simulations, analyzing Type I error (size), power, and robustness under various speckle and texture conditions. -->
+
+<!-- 5. **Real applications.** Application of the proposed methodology to both simulated and real SAR data, producing $p$-value maps through sliding window analysis for visual and quantitative assessment of spatial heterogeneity. -->
+
+
+## COMPUTATIONAL SUPPORT AND REPRODUCIBILITY
+
+Simulations, tests, and data analyses presented in this thesis were implemented using the free, open-source programming language \texttt{R}\footnote{\url{https://www.r-project.org/}} within \texttt{RStudio} (version 2024.12.1+563, \texttt{R} version 4.4.2). The manuscript was written in \texttt{Quarto}\footnote{\url{https://quarto.org/}}, a dynamic publishing system that integrates code, output, and narrative to ensure full reproducibility&nbsp;[@bauer2023reproducible].
+
+The numerical experiments were performed on a personal computer equipped with an AMD Ryzen 9 5900X 12-Core Processor (3.70 GHz) and 32 GB RAM.
+
+All code and data for this research, including the manuscript source, are  available at \url{https://github.com/rjaneth/Thesis-UFPE}, supporting reproducibility. This work follows best practices recommended by Frery et al.&nbsp;[-@Frery2020].
+
+### Related Publications
+
+The following peer-reviewed articles and conference paper have been published as part of or related to this research:
+
+
+1. [@Alpala2025]: [Quantifying Heterogeneity in SAR Imagery with the Rényi Entropy.](https://openaccess.wgtn.ac.nz/articles/journal_contribution/Quantifying_Heterogeneity_in_SAR_Imagery_with_the_R_nyi_Entropy/29376944?file=55548095)
+
+
+2. [@Frery2024]: [Identifying Heterogeneity in SAR Data with New Test Statistics.](https://www.mdpi.com/2072-4292/16/11/1973) 
+
+3. [@Alpala2024]: [Identifying departures from the fully developed speckle hypothesis in intensity SAR data with non-parametric estimation of the entropy.](https://ieeexplore.ieee.org/document/10544448)
 
 
 ## STRUCTURE OF THE THESIS
 
-@sec-Chapter2 provides a background on remote sensing and SAR images. @sec-Chapter3 presents methodological aspects, including statistical modeling, entropy estimation for intensity SAR data, and hypothesis testing, and @sec-Chapter4 the statistical modelling choices common to all objectives of this thesis. @sec-Chapter5 presents the main results obtained in our study with both simulated and actual data. @sec-Chapter6 concludes with a discussion on heterogeneity implications of the findings and areas for future research building on the work in this thesis.
+This thesis is organized into five chapters as follows:
+
+- @sec-Chapter2 presents the theoretical foundations of the work. It includes statistical modeling of SAR intensity data, entropy measures, and nonparametric estimation techniques based on order statistics.
+
+- @sec-Chapter3 describes the proposed methodology. It covers the selection and bias correction of entropy estimators, the construction of the test statistics, and the hypothesis testing framework based on Shannon, Rényi, and Tsallis entropy.
+
+- @sec-Chapter4 presents the results obtained from simulated and real SAR datasets. This includes both qualitative and quantitative analyses that demonstrate the effectiveness of the proposed methods.
+
+- @sec-Chapter5 summarizes the conclusions drawn from the study and outlines potential directions for future research.
+
 
 
 

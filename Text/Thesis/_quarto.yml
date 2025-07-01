@@ -3,19 +3,19 @@ project:
   output-dir: .
 
 book:
-  title: A doctoral thesis 
+  title:  Thesis-Janeth 
   date: December 15, 2024
   author:
-    name: Jane Doe
-    url: http://www.janedoe.com
+    name: 
+    url: 
   downloads: [pdf]
   chapters:
     #- setup.R
     - index.qmd
-   # - Chapters/Chapter1.qmd
+   #- Chapters/Chapter1.qmd # Do not activate this chapter because it is included in index.qmd
     - Chapters/Chapter2.qmd
     - Chapters/Chapter3.qmd
-    #- Chapters/Chapter4.qmd
+    - Chapters/Chapter4.qmd
     - Chapters/Chapter5.qmd
     - references.qmd
   appendices:
@@ -25,19 +25,19 @@ book:
   repo-url: https://github.com/nmfs-opensci/quarto-thesis
   repo-actions: [edit, source, issue]
   search: true
-
+#the cover is edited in \_extensions\quarto-thesis\partials\before-body.tex
 thesis:
   supervisor: 
-    name: Dr. Ashok Kunil
-    url: https://quarto.org/
-  degree-name: Doctor of Philosophy
-  university: University of Ottawa
-  department: Department of Mathematics
-  group: Informatics Program
-  faculty: Applied Math Group
+    name: 
+    url: 
+  degree-name: 
+  university: 
+  department: 
+  group: 
+  faculty: 
   #declaration: "Frontmatter/declaration.tex"
   #dedication: "Frontmatter/dedication.tex"
-  acknowledgements: "Frontmatter/acknowledgements.tex"
+  #acknowledgements: "Frontmatter/acknowledgements.tex"
   abstract: "Frontmatter/abstract.tex"
   resumo: "Frontmatter/resumo.tex"
   abbreviations: "Frontmatter/abbreviations.tex"
@@ -47,22 +47,23 @@ thesis:
   
   
 
-#bibliography: [example.bib]
+
 bibliography: ../Common/references.bib
-csl: "abnt.csl"
+#csl: "universidade-federal-de-pernambuco-abnt"
+csl: "universidade-do-estado-do-rio-de-janeiro-abnt" 
 link-citations: true
 #appendix: true
 #execute:
   #echo: false
   #code-overflow: wrap
 execute:
-  cache: false
+  cache: true
   #freeze: auto
   eval: true
   echo: false
   warning: false
   message: false
-  #pre-render: setup.R  #  Esto ejecutará setup.R antes de compilar cualquier capítulo
+  #pre-render: setup.R  
 
 # urlcolor changes the url color in the body of the PDF
 # linkcolor changes color of internal links (like to figures)

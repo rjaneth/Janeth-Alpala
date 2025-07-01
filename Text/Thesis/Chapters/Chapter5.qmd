@@ -5,3 +5,29 @@ source("setup.R")
 
 # CONCLUSIONS AND FUTURE WORK {#sec-Chapter5}
 
+This thesis presented a statistical framework for detecting heterogeneity in SAR images, offering both theoretical and practical insights into a fundamental question: How can one effectively distinguish heterogeneous clutter from fully developed speckle, assuming SAR intensity is modeled by the Gamma SAR ($\Gamma_{\text{SAR}}$) distribution?
+
+To address this, we proposed three novel hypothesis tests based on entropy measures: Shannon, Rényi, and Tsallis entropies. A key theoretical contribution was the derivation of closed-form analytical expressions for the Rényi and Tsallis entropies under both the $\Gamma_{\text{SAR}}$ and $\mathcal{G}^0_I$ distributions, which were previously unavailable in the literature. Using these expressions, we developed bootstrap-based statistical tests corresponding to each entropy measure.
+
+A comprehensive Monte Carlo simulation study was conducted to evaluate the performance of the proposed tests, assessing both their size (Type&nbsp;I error rate) and power (probability of correctly rejecting the null hypothesis under the alternative). The results demonstrated that the methods maintained reliable control over false alarms while significantly improving detection performance as the sample size and number of looks increased.
+
+These theoretical findings were further validated with experiments on both simulated  and real SAR data acquired by various radar missions (TanDEM-X, PAZ, ICEYE, UAVSAR, Sentinel-1B), covering a range of resolutions, polarizations, and look numbers. Visual analysis using $p$-value heatmaps and binary decision maps revealed notable distinctions among the entropy-based tests. In particular, the Rényi-based test exhibited the highest sensitivity in detecting subtle textural variations, effectively identifying heterogeneity even under high-speckle conditions. The Tsallis-based test provided complementary advantages by reliably identifying homogeneous regions, thereby minimizing false alarms (i.e., incorrectly classifying homogeneous areas as heterogeneous). In contrast, the Shannon-based test displayed intermediate performance and lower robustness at low numbers of looks.
+
+Quantitative evaluations using ground truth regions of interest (ROIs) and standard classification metrics further confirmed the superior overall performance of both Rényi and Tsallis-based tests across all tested scenes.
+
+Compared to conventional classification methods, the proposed entropy-based statistical tests offer practical advantages:  they provide interpretable, analytical significance measures and require no training data or manual labeling, facilitating rapid analysis suitable for environments with limited data availability. Typical computations are efficient, generally taking only a few minutes depending on the image size and number of bootstrap replications. Since the three tests share a common computational structure, their execution times are comparable, making the proposed methods particularly attractive for quick screening and exploratory analysis.
+
+Future research directions identified from this thesis include integrating the improved bootstrap-based Rényi and Tsallis estimators into broader SAR classification frameworks, both supervised and unsupervised, to expand their applicability beyond heterogeneity detection. This integration could enable the development of multi-level texture classification schemes (e.g., low, moderate, high heterogeneity) that go beyond binary discrimination and provide a more detailed understanding of the scene, without requiring labeled training data.
+
+Additionally, extending the proposed methodology to polarimetric SAR (PolSAR) data represents a promising avenue. One approach could involve analyzing the intensity channels independently and fusing the resulting entropy information using multivariate models. Alternatively, a fully polarimetric analysis could be pursued by testing deviations from the scaled complex Wishart distribution. In this context, exploring the asymptotic behavior of the generalized variance (i.e., the determinant of the covariance matrix) under the complex Wishart model may offer valuable theoretical insights for detecting structural changes in polarimetric data.
+
+
+
+
+
+
+
+
+
+
+

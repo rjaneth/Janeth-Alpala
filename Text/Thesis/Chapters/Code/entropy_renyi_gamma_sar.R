@@ -1,8 +1,8 @@
-entropy_renyi_gamma_sar <- function(L, mu, alpha) {
-  entropy <- (alpha * lgamma(L) - lgamma(alpha * (L - 1) + 1) +
-                (alpha * (L - 1) + 1) * log(alpha)) / (alpha - 1) + log(mu / L)
-  return(entropy)
-}
+# entropy_renyi_gamma_sar <- function(L, mu, alpha) {
+#   entropy <- (alpha * lgamma(L) - lgamma(alpha * (L - 1) + 1) +
+#                 (alpha * (L - 1) + 1) * log(alpha)) / (alpha - 1) + log(mu / L)
+#   return(entropy)
+# }
 
 entropy_renyi_gamma_sar <- function(L, mu, lambda) {
   entropy <- (lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1) +

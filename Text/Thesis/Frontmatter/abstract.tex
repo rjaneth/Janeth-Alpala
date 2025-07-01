@@ -2,36 +2,39 @@
 %\begin{abstract}
 %\phantomsection
 %\addcontentsline{toc}{chapter}{Abstract}
-This work presents a statistical approach to identify the
-underlying roughness characteristics in synthetic aperture radar (SAR)
-intensity data. The physical modeling of this kind of data allows the
-use of the Gamma distribution in the presence of fully-developed
-speckle, i.e., when there are infinitely many independent backscatterers
-per resolution cell, and none dominates the return. Such areas are often
-called ``homogeneous'' or ``textureless'' regions. The
-\(\mathcal{G}_I^0\) distribution is also a widely accepted law for
-heterogeneous and extremely heterogeneous regions, i.e., areas where the
-fully-developed speckle hypotheses do not hold.
-One issue involving the parametric space of $\mathcal{G}_I^0$ is the analytical 
-infeasibility of testing homogeneity against heterogeneity using classical tests. 
-As solutions to this problem, we propose three test
-statistics to distinguish between homogeneous and inhomogeneous regions,
-i.e., between Gamma and \(\mathcal{G}_I^0\) distributed data, both with
-a known number of looks. The first test statistic uses a bootstrapped
-non-parametric estimator of Shannon entropy, providing an
-assessment in uncertain distributional assumptions. The second test uses
-the classical coefficient of variation (CV). The third test uses an
-alternative form of estimating the CV based on the ratio of the mean
-absolute deviation from the median to the median. We apply our test
-statistic to create maps of \(p\)-values for the homogeneity hypothesis.
-Finally, we show that our proposal, the entropy-based test, outperforms
-existing methods, such as the classical CV and its alternative variant,
-in identifying heterogeneity when applied to both simulated and actual
-data.
-%\end{abstract}
 
+This work  presents a statistical approach to detect heterogeneity 
+in synthetic aperture radar (SAR) intensity data using entropy-based methods.
+In homogeneous regions, where fully developed speckle is present, SAR returns 
+are well modeled by the Gamma distribution. 
+In contrast, heterogeneous areas exhibit more complex scattering behaviors, 
+typically modeled by the $\mathcal{G}_I^0$ distribution. Distinguishing between 
+these regimes is fundamental for accurate interpretation in remote sensing applications, 
+yet classical parametric tests often fail to address this task effectively due to analytical 
+and numerical limitations.
+To overcome these challenges, we propose three test statistics for detecting heterogeneity 
+in SAR imagery based on Shannon, Rényi, and Tsallis entropy measures. These tests rely on 
+nonparametric entropy estimators constructed from sample spacings, avoiding explicit assumptions 
+about the underlying distribution. To enhance their accuracy, particularly in small samples, 
+we incorporate a bootstrap bias-correction procedure that improves the estimators’ stability, 
+reduces bias, and lowers mean squared error.
+The proposed tests are evaluated using Monte Carlo simulations, assessing size and power 
+under varying sample sizes and numbers of looks.
+Results demonstrate that the Rényi and Tsallis-based tests outperform the Shannon-based version by 
+detecting more subtle texture variations while maintaining greater reliability in identifying 
+truly homogeneous regions.
+Finally, the methodology is applied to both simulated and real SAR data. We generate $p$-value maps using a 
+sliding window analysis, allowing for visual and quantitative assessment of spatial heterogeneity. 
+The Rényi-based test consistently identifies fine-scale roughness patterns, 
+while the Tsallis-based test shows strength in reliably detecting homogeneous areas. 
+Together, these entropy-based tools provide a robust, interpretable, and unsupervised 
+framework for heterogeneity detection in SAR data.
+
+\vspace{1em}
 \par
-\noindent \textbf{Keywords:} SAR; heterogeneity; entropy; coefficient of variation; hypothesis tests
+\noindent \textbf{Keywords:} SAR; Heterogeneity; Entropy; Nonparametric Estimation; Bootstrap; Statistical Test
+
+
 
 
 

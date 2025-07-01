@@ -1,5 +1,5 @@
 # entropia exacta formula correcta 
-rm(list = ls())
+#rm(list = ls())
 entropy_GI0_renyi <- function(alpha, mu, L, lambda) {
   if (lambda <= 0 || lambda == 1) {
     stop("Lambda debe ser mayor que 0 y diferente de 1.")
@@ -37,10 +37,10 @@ entropy_GI0_renyi <- function(alpha, mu, L, lambda) {
   return(entropy)
 }
 
-alpha <- -3
-mu <- 1.0
-L <- 5
-lambda <- 0.8
-
-entropy_value <- entropy_GI0_renyi(alpha, mu, L, lambda)
-print(entropy_value)
+# alpha <- -3
+# mu <- 1.0
+# L <- 5
+# lambda <- 0.8
+# 
+# entropy_value <- entropy_GI0_renyi(alpha, mu, L, lambda)
+# print(entropy_value)

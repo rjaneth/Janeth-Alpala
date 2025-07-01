@@ -1,10 +1,2433 @@
 ```{r setup, include=FALSE}
 source("setup.R")
+
+
+
+source("./Code/entropy_gamma_sar.R")
+source("./Code/entropy_gI0.R")
+source("./Code/gamma_sar_sample.R")
+source("./Code/gi0_sample.R")
+source("./Code/al_omari_1_estimator.R")
+source("./Code/bootstrap_al_omari_1_estimator.R")
+source("./Code/renyi_entropy_estimator_v1.R")
+source("./Code/bootstrap_renyi_entropy_estimator_v1.R")
+source("./Code/entropy_renyi_gamma_sar.R")
+
+
+source("./Code/vasicek_estimator.R")
+source("./Code/van_es_estimator.R")
+source("./Code/noughabi_arghami_estimator.R")
+source("./Code/correa_estimator.R")
+source("./Code/ebrahimi_estimator.R")
+source("./Code/bootstrap_correa_estimator.R")
+
+source("./Code/tsallis_entropy_gamma_sar.R")
+source("./Code/tsallis_estimator.R")
+source("./Code/bootstrap_tsallis_entropy.R")
+source("./Code/tsallis_estimator_optimized.R")
+source("./Code/bootstrap_tsallis_entropy_optimized.R")
+
+source("./Code/renyi_estimator.R")
+source("./Code/bootstrap_renyi_estimator.R")
+source("./Code/renyi_entropy_optimized.R")
+source("./Code/bootstrap_renyi_estimator_Op.R")
+
+source("./Code/shannon_alomari_estimator.R")
+source("./Code/bootstrap_shannon_alomari.R")
+source("./Code/shannon_entropy_gamma_sar.R")
+
+source("./Code/functions_sample_bias_mse.R")
+source("./Code/functions_sample_bias_mse_1.R")
+
+theme_set(theme_minimal() +
+            theme(text = element_text(family = "serif"),
+                  legend.position = "bottom"))
+
+
+
 ```
-# PROBLEM STATEMENT AND METHODOLOGY {#sec-Chapter3}
 
-## Bootstrap Correction for  Entropy Estimators
+# METHODOLOGY {#sec-Chapter3}
 
-## Hypothesis Testing
+## SELECTION OF THE BEST SHANNON ENTROPY ESTIMATORS  {#sec:shannon_selection}
 
-## Proposed Test Statistics for Heterogeneity Detection
+Although several nonparametric estimators have been proposed for Shannon entropy, their performance depends on factors such as sample size and the underlying distribution. We evaluate the six estimators described in Section \ref{sec:sh_est}: the Vasicek \eqref{E:Vasi}, Van Es \eqref{E:VanEs}, Ebrahimi et al.\ \eqref{E:Ebrahimi}, Correa \eqref{E:Correa}, Noughabi–Arghami \eqref{E:rohtua}, and Al–Omari \eqref{E:AO} estimators. Their performance is evaluated through a simulation study under fixed conditions. The selection is based on two standard criteria: bias and mean squared error (MSE).
+
+The goal of this analysis is to identify the estimators with the best overall performance, which will then be used in the subsequent stages of the methodology, including bootstrap correction and hypothesis testing. This selection process is exclusive to Shannon entropy, as only a single estimator was considered for Rényi and Tsallis entropies.
+
+
+Our experimental setup involves the analysis of bias and MSE for each estimator through a Monte Carlo study. For each sample size $n \in \{9, 25, 49, 81, 121\}$, we generate $1000$  independent synthetic samples from $Z \sim \Gamma_{\text{SAR}}(5,1)$. The results are consistent across other values of $\mu$ and $L$.
+We adopt the heuristic spacing $m = \left[\sqrt{n} + 0.5\right]$, a choice commonly recommended in the literature [@Wieczorkowski1999].
+
+Figure \ref{fig:Plot_bias_mse-sh} presents the bias and MSE for each of the non-parametric estimators of Shannon entropy. The results are summarized in @tbl-out.
+
+
+```{=latex}
+\begin{figure}[H]
+\caption{Performance of Shannon entropy estimators under $\Gamma_{\text{SAR}}(5,1)$.}\label{fig:Plot_bias_mse-sh}
+{\centering \includegraphics[width=1\linewidth]{Figures/Plot_bias_shannon_L5b-1}
+
+}
+\end{figure}
+```
+
+```{r Simulated_data_L51_cached2, echo=FALSE, message=FALSE, cache=TRUE, autodep=TRUE}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+file_name <- "./Data/results_estimator_sh2.Rdata"
+
+if (file.exists(file_name)) {
+  load(file_name)
+  message("Loaded existing results from results_estimator_sh2.Rdata")
+} else {
+  # Parámetros del experimento
+  sample_sizes <- c(9, 25, 49, 81, 121 )
+
+# Number of replications
+R <-500
+
+# Number of bootstrap replications
+#B1 <- 1
+mu_values <- c(1)
+alpha <- -500
+L <- 5
+
+estimators <- list(
+  "Vasicek" = vasicek_estimator,
+  "Van Es" = van_es_estimator,
+  "Ebrahimi" = ebrahimi_estimator,
+  "Correa" = correa_estimator,
+  "Noughabi" = noughabi_arghami_estimator,
+  "AlOmari" = al_omari_1_estimator
+
+
+  # "Correa" = correa_estimator,
+  # "Ebrahimi" = ebrahimi_estimator,
+  # "Al Omari" = al_omari_1_estimator,
+  # "Correa Bootstrap" = bootstrap_correa_estimator,
+  # "Ebrahimi Bootstrap" = bootstrap_ebrahimi_estimator,
+  # "Al Omari Bootstrap" = bootstrap_al_omari_1_estimator
+)
+
+calculate_results_gi0 <- function(sample_sizes, R, B1, mu_values, alpha, L, estimators) {
+  results_list <- list()
+
+  for (mu_val in mu_values) {
+
+    results <- calculate_bias_mse_gi0(sample_sizes, R, B1, mu_val, alpha, L, estimators)
+    df <- as.data.frame(results)
+
+    results_list[[as.character(mu_val)]] <- df
+  }
+
+  return(results_list)
+}
+
+
+results_gi0 <- calculate_results_gi0(sample_sizes, R, B1, mu_values, alpha, L, estimators)
+
+
+
+  save(results_gi0, file = file_name)
+  message("Simulation completed and results saved.")
+}
+```
+
+```{r fig-bias_shannon_L5-011, eval=FALSE, echo=FALSE, message=FALSE, warning=FALSE, fig.show="hide",   out.width="95%", fig.pos = 'H',  fig.cap="Bias and MSE of the entropy estimators for the $\\Gamma_{\\text{SAR}}$, with $L=2$.", fig.width=7,fig.height=3}
+#fig.show="hide", 
+# eval=FALSE,  #
+
+load("./Data/results_estimator_sh2.Rdata")
+
+
+estimators_to_plot <- c("Vasicek", "Van Es", "Ebrahimi",  "Correa", "Noughabi", "AlOmari" )
+  latex_estimator_names <- c("Vasicek" = expression("$\\widehat{italic(H)}_{V}$"),
+                             "Van Es" = expression("$\\widehat{italic(H)}_{VE}$"),
+                            "Ebrahimi" = expression("$\\widehat{italic(H)}_{E}$"),
+                            "Correa" = expression("$\\widehat{italic(H)}_{C}$"),
+                            "Noughabi" = expression("$\\widehat{italic(H)}_{N}$"),
+                            "AlOmari" = expression("$\\widehat{italic(H)}_{AO}$"))
+selected_estimators_latex <- latex_estimator_names[estimators_to_plot]
+mu_values <- 1
+combined_plot_gi0 <- generate_plot_gi0_esp(results_gi0, mu_values, selected_estimators_latex, ncol = 1, nrow = 1)
+
+print(combined_plot_gi0)
+```
+
+\renewcommand{\arraystretch}{1.8} 
+```{r Table_estimators_shannon2, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+#| label: tbl-out
+#| tbl-cap: 'Bias and MSE of Shannon entropy estimators under $\Gamma_{\text{SAR}}(5,1)$.'
+
+cat("\\setlength{\\tabcolsep}{4pt}\n")
+load("./Data/results_estimator_sh2.Rdata")
+
+
+estimators_to_table <- c("Vasicek", "Van Es", "Ebrahimi", "Correa", "Noughabi", "AlOmari")
+
+reshaped_results <- purrr::map_dfr(
+  results_gi0,
+  ~ .x %>% dplyr::filter(Estimator %in% estimators_to_table),
+  .id = "mu"
+) %>%
+  tidyr::pivot_wider(names_from = Estimator, values_from = c(Bias, MSE))
+
+
+for (j in seq_along(reshaped_results)) {
+  v <- reshaped_results[[j]]
+  if (is.numeric(v)) {
+    if (j == 1) {                    # μ  → entero, scriptstyle
+      reshaped_results[[j]] <- sprintf("$\\scriptstyle %d$", v)
+    } else if (j == 2) {             # n  → entero “normal”
+      reshaped_results[[j]] <- sprintf("$%d$", v)
+    } else {                         # resto → 3 decimales + phantom
+      reshaped_results[[j]] <- ifelse(
+        v < 0,
+        sprintf("$%.3f$", v),
+        sprintf("$\\phantom{-}%.3f$", v)
+      )
+    }
+  }
+}
+
+
+
+cols_to_bold <- c(5, 6, 8, 11, 12, 14)  # según el orden final de la tabla
+
+bold_math <- function(x) {
+  sub("^\\$(.*)\\$$", "\\$\\\\mathbf{\\1}\\$", x)
+}
+
+reshaped_results[cols_to_bold] <- lapply(reshaped_results[cols_to_bold], bold_math)
+
+colnames(reshaped_results) <- c(
+  "$\\bm{\\mu}$", "$\\bm{n}$",
+  "$\\bm{\\widehat{H}_{\\text{V}}}$",  "$\\bm{\\widehat{H}_{\\text{VE}}}$",
+  "$\\bm{\\widehat{H}_{\\text{E}}}$",  "$\\bm{\\widehat{H}_{\\text{C}}}$",
+  "$\\bm{\\widehat{H}_{\\text{N}}}$", "$\\bm{\\widehat{H}_{\\text{AO}}}$",
+  "$\\bm{\\widehat{H}_{\\text{V}}}$",  "$\\bm{\\widehat{H}_{\\text{VE}}}$",
+  "$\\bm{\\widehat{H}_{\\text{E}}}$",  "$\\bm{\\widehat{H}_{\\text{C}}}$",
+  "$\\bm{\\widehat{H}_{\\text{N}}}$", "$\\bm{\\widehat{H}_{\\text{AO}}}$"
+)
+
+# 5. kable ---------------------------------------------------------------------
+knitr::kable(
+  reshaped_results,
+  #caption   = "Bias and MSE of Shannon entropy estimators under $\\Gamma_{\\text{SAR}}(5,1)$.",
+  format    = "latex",
+  booktabs  = TRUE,
+  align     = "crllllllllllll",  # 
+  escape    = FALSE,
+ # label     = "#tbl-tablesh",
+  centering = FALSE,
+ # table.envir = "table",
+  #position  = "htb",
+  linesep   = ""
+) %>%
+  add_header_above(c(" ", " ", "Bias" = 6, "MSE" = 6)) %>%
+  collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") %>%
+  row_spec(0, align = "r") %>%
+  kable_styling(latex_options = "scale_down")
+
+```
+
+As shown in the simulation results, the estimators $\widehat{H}_{\text{C}}$, $\widehat{H}_{\text{E}}$, and $\widehat{H}_{\text{AO}}$ show low bias and achieve convergence for sample sizes larger than 81. These estimators exhibit good behavior in terms of bias and MSE across various parameter combinations.
+
+In contrast, estimator $\widehat{H}_{\text{N}}$ displays the lowest MSE across all scenarios. However, the bias remains unchanged and high for sample sizes larger than 25, indicating that the convergence is not very fast. Additionally, we observe that both $\widehat{H}_{\text{V}}$ and $\widehat{H}_{\text{VE}}$ estimators exhibit larger bias and slower convergence compared to their counterparts. Notably, the $\widehat{H}_{\text{V}}$ estimator shows the highest MSE.
+
+
+Although the estimators $\widehat{H}_{\text{C}}$, $\widehat{H}_{\text{E}}$, and $\widehat{H}_{\text{AO}}$ demonstrate good performance in terms of bias and MSE for sufficiently large samples (e.g., $n \geq 81$), practical scenarios in SAR image processing often involve much smaller sample sizes. In particular, local texture analysis is typically performed on small windows, such as $7 \times 7$, which correspond to $n = 49$. Under these conditions, bias can become significant, and convergence is slower or incomplete.
+
+To address this issue and improve estimation accuracy in small-sample regimes, we introduce a bootstrap-based correction methodology. The next subsection presents the bias-reduction procedure and the definition of the corrected entropy estimator.
+
+
+## BOOTSTRAP BIAS CORRECTION FOR ENTROPY ESTIMATORS
+
+
+The nonparametric estimators of entropy considered in this work include the Shannon entropy $\widehat{H}(\bm{Z})$, the Rényi entropy $\widehat{R}_\lambda(\bm{Z})$, and the Tsallis entropy $\widehat{T}_\lambda(\bm{Z})$. We assume that these estimators are inherently biased; that is, their expected value does not coincide with the true entropy, as shown in Equation \eqref{eq:bias_def}:
+\begin{equation}
+\operatorname{Bias}(\widehat{\theta}) = \mathbb{E}[\widehat{\theta}] - \theta \neq 0,
+\label{eq:bias_def}
+\end{equation}
+where $\widehat{\theta}$ denotes any of the estimators listed above, and $\theta$ is the corresponding true entropy value.
+
+To reduce this bias, we apply a bootstrap correction method. Let $\bm{Z} = (Z_1, Z_2, \dots, Z_n)$ be a random sample of size $n$ from an unknown distribution. Using bootstrap resampling, we generate $B$ new samples $\bm{Z}^{(1)}, \bm{Z}^{(2)}, \dots, \bm{Z}^{(B)}$ by sampling with replacement from $\bm{Z}$. For each bootstrap sample $\bm{Z}^{(b)}$, we compute the corresponding estimator $\widehat{\theta}(\bm{Z}^{(b)})$.
+
+The bias is then estimated using Equation \eqref{eq:bias_estimate}, which calculates the difference between the average of the bootstrap estimates and the original estimate:
+\begin{equation}
+\widehat{\operatorname{Bias}} = \frac{1}{B} \sum_{b=1}^{B} \widehat{\theta}(\bm{Z}^{(b)}) - \widehat{\theta}(\bm{Z}).
+\label{eq:bias_estimate}
+\end{equation}
+A bias-corrected estimator is then defined by subtracting the estimated bias from the original estimator, as expressed in Equation \eqref{eq:bias_corrected}:
+\begin{equation}
+\widetilde{\theta} = \widehat{\theta} - \widehat{\operatorname{Bias}}.
+\label{eq:bias_corrected}
+\end{equation}
+Substituting the estimate from Equation \eqref{eq:bias_estimate} into Equation \eqref{eq:bias_corrected} yields the explicit formula for the corrected estimator:
+\begin{equation}
+\widetilde{\theta} = 2\widehat{\theta}(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{\theta}(\bm{Z}^{(b)}).
+\label{eq:theta_explicit}
+\end{equation}
+<!-- This expression follows from the classical bias correction formula: -->
+<!-- \begin{equation} -->
+<!-- \text{Bias-corrected estimate} = \text{Original estimate} - \text{Bias estimate}. -->
+<!-- \label{eq:bias_correction_principle} -->
+<!-- \end{equation} -->
+Thus, $\widetilde{\theta}$ is an approximately unbiased estimator of $\theta$. The effectiveness of the correction depends on the number of bootstrap replicates $B$ and the characteristics of the underlying distribution, but it systematically reduces bias, particularly when working with small sample sizes.
+
+
+To distinguish the bootstrap-improved estimators from their original forms, we adopt the following notation: $\widetilde{H}_{\text{V}}$, $\widetilde{H}_{\text{VE}}$, $\widetilde{H}_{\text{E}}$, $\widetilde{H}_{\text{C}}$, $\widetilde{H}_{\text{N}}$, and $\widetilde{H}_{\text{AO}}$, respectively. For the other entropy types, we denote the bootstrap-corrected estimators as $\widetilde{R}_\lambda$ for Rényi entropy and $\widetilde{T}_\lambda$ for Tsallis entropy.
+
+
+
+In order to assess the effectiveness of the bootstrap technique, we present comparisons of the bias and MSE between each original non-parametric Shannon entropy estimator and its respective bootstrap-enhanced version, using samples from the $\Gamma_{\text{SAR}}(5,1)$, with $B=100$ bootstrap replicates and varying $n$, as shown in Figures \ref{fig:Firstfigure}--\ref{fig:subfig6}.
+
+```{=latex}
+\begin{figure}[htb]
+  \caption{Comparing Bias and MSE: original vs. bootstrap estimators, with, $\mu=1$ and $L=5$.}
+  \label{fig:all_estimator}
+  \centering
+  \begin{subfigure}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/Plot_bias_mse_vasicek-1}
+    \caption{}
+    \label{fig:Firstfigure}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/Plot_bias_mse_VanEs-1}
+    \caption{}
+    \label{fig:Secondfigure}
+  \end{subfigure}
+	\begin{subfigure}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/Plot_bias_mse_Ebrahimi-1}
+    \caption{}
+    \label{fig:subfig3}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/Plot_bias_mse_correa-1}
+    \caption{}
+    \label{fig:subfig4}
+  \end{subfigure}
+	\begin{subfigure}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/Plot_bias_mse_noughabi-1}
+    \caption{}
+    \label{fig:subfig5}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/Plot_bias_mse_AO-1}
+    \caption{}
+    \label{fig:subfig6}
+  \end{subfigure}
+\end{figure}
+```
+
+The estimators $\widetilde{H}_{\text{V}}$ and $\widetilde{H}_{\text{VE}}$ show consistent bias reduction, though convergence remains slow. For $\widetilde{H}_{\text{E}}$, the correction improves bias only for small $n$, while its MSE steadily decreases. In contrast, the bootstrap technique did not improve the $\widetilde{H}_{\text{N}}$ estimator. This might occur because the original estimator overestimates the entropy values, showing a positive bias. This tendency to overestimate persists with the use of bootstrap, contributing to an increase in bias and MSE.
+
+The most notable improvements are observed with $\widetilde{H}_{\text{C}}$ and $\widetilde{H}_{\text{AO}}$, which achieve both low bias and MSE even for small sample sizes, demonstrating faster convergence.
+
+While the bias-corrected estimator $\widetilde{\theta}$ is theoretically motivated to reduce bias, its effectiveness is not guaranteed for all entropy estimators. In practice, the performance of the bootstrap correction varies depending on the characteristics of the original estimator and the sample size.
+
+To finalize the selection of the non-parametric Shannon entropy estimator used in the following simulations, we consider the execution time of the bootstrap versions of $\widetilde{H}_{\text{C}}$ and $\widetilde{H}_{\text{AO}}$. 
+
+ @tbl-out-time shows the processing time of each estimator across different settings of $L$  and $n$.
+<!-- <!-- # ```{r Simulated_comparative_time6, eval=FALSE, echo=FALSE} --> 
+```{r Simulated_comparative_time6, echo=FALSE, message=FALSE}
+set.seed(1234567890, kind = "Mersenne-Twister")
+R <- 600
+mu <- 1
+B <- 40
+
+sample.size <- c(25,49, 81, 121)
+L_values <- c(5, 18)
+
+bootstrap_estimators <- list(
+  "$\\widetilde{H}_{\\text{C}}$" = bootstrap_correa_estimator,
+  "$\\widetilde{H}_{\\text{AO}}$" = bootstrap_al_omari_1_estimator
+)
+if (!file.exists("./Data/results_data_time_sh.Rdata")) {#results_data_timenn
+  set.seed(1234567890, kind = "Mersenne-Twister")
+
+  all_TestStatistics <- list()
+  execution_times <- list()
+
+  for (estimator_name in names(bootstrap_estimators)) {
+    TestStatistics <- list()
+
+    for (L in L_values) {
+      TestStat <- list()
+
+      for (s in sample.size) {
+        TestStat1 <- numeric(R)
+        start_time <- Sys.time() # start time
+
+        for (r in 1:R) {
+          z <- gamma_sar_sample(L, mu, s)
+          TestStat1[r] <- bootstrap_estimators[[estimator_name]](z, B) - (log(mean(z)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+        }
+
+        TestStatistics[[as.character(s)]] <- data.frame("SampleSize" = rep(s, R), "Test_Statistics" = TestStat1)
+
+        end_time <- Sys.time() # end time
+        execution_time <- end_time - start_time # total time
+        execution_times[[paste(estimator_name, L, s)]] <- execution_time # save time
+      }
+
+      all_TestStatistics[[paste(estimator_name, L)]] <- TestStatistics
+    }
+  }
+
+  save(all_TestStatistics, execution_times, file = "./Data/results_data_time_sh.Rdata")#
+}
+
+
+```
+\renewcommand{\arraystretch}{1.1}
+```{r Table_statistic_time_6,  echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+#| label: tbl-out-time
+#| tbl-cap: 'Processing time for bootstrap-improved estimators $\widetilde{H}_{\text{C}}$ and $\widetilde{H}_{\text{AO}}$'
+
+
+cat("\\setlength{\\tabcolsep}{10pt}\n")
+load("./Data/results_data_time_sh.Rdata")
+#fig.show="hide",
+# eval=FALSE,
+combined_results <- data.frame(
+  Estimator   = character(),
+  L           = numeric(),
+  SampleSize  = numeric(),
+  Time        = numeric()
+)
+
+# Organizar resultados
+for (estimator_name in names(bootstrap_estimators)) {
+  for (L in L_values) {
+    for (sample_size in sample.size) {
+      key <- paste(estimator_name, L, sample_size)
+      if (!is.null(execution_times[[key]])) {
+        combined_results <- rbind(combined_results, data.frame(
+          Estimator   = estimator_name,
+          L           = L,
+          SampleSize  = sample_size,
+          Time        = as.numeric(execution_times[[key]], units = "secs")
+        ))
+      }
+    }
+  }
+}
+
+# Filas para negrita (índices 9:16)
+rows_to_bold <- 9:16
+
+# Formato columnas de texto
+combined_results$L          <- sprintf("$%d$", combined_results$L)
+combined_results$SampleSize <- sprintf("$%d$", combined_results$SampleSize)
+combined_results$Time       <- sapply(seq_along(combined_results$Time), function(i) {
+  val <- combined_results$Time[i]
+  if (i %in% rows_to_bold) {
+    sprintf("$\\mathbf{\\phantom{-}%.2f}$", val)
+  } else {
+    sprintf("$\\phantom{-}%.2f$", val)
+  }
+})
+
+# Renombrar columnas para LaTeX
+colnames(combined_results) <- c("\\textbf{Estimator}", "$\\bm{L}$", "$\\bm{n}$", "\\textbf{Time} (s)")
+
+# Generar tabla con kable (latex)
+knitr::kable(
+  combined_results,
+#  caption    = "Processing time for bootstrap-improved estimators \\(\\widetilde{H}_{\\text{C}}\\) and \\(\\widetilde{H}_{\\text{AO}}\\).",
+  format     = "latex",
+  booktabs   = TRUE,
+  align      = "cccc",
+  escape     = FALSE,
+  #label      = "table_time",
+  #table.envir= "table",
+ # position   = "H",
+  linesep    = ""
+) %>%
+  row_spec(4,  extra_latex_after = "\\cline{3-4}") %>%
+  row_spec(12, extra_latex_after = "\\cline{3-4}") %>%
+  collapse_rows(latex_hline = "major", valign = "middle") %>%
+  row_spec(0, align = "c") %>%
+  kable_styling(latex_options = "scale_down", full_width = TRUE)
+
+
+```
+
+The results indicate that $\widetilde{H}_{\text{AO}}$ consistently achieves lower computational times compared to $\widetilde{H}_{\text{C}}$. This makes it the more efficient option, particularly relevant for large datasets, such as SAR images discussed in @sec-Chapter4. Consequently, $\widetilde{H}_{\text{AO}}$ is selected as the representative non-parametric Shannon entropy estimator in the simulations presented in the following sections.
+
+## Optimal $\lambda$ Selection 
+<!-- Finding the Optimal Value of $\lambda$ for the Rényi and Tsallis Entropy Estimators -->
+
+We aim to determine the optimal order $\lambda$ for the nonparametric entropy estimators of Rényi ($\widetilde{R}_{\lambda}$) and Tsallis ($\widetilde{T}_{\lambda}$), using simulated samples of size $n = 49$ from $Z\sim\Gamma_{\text{SAR}}(5,  1)$ distribution.
+
+To assess estimator performance, we conducted a Monte Carlo simulation with $R = 1000$ replications. For each value of $\lambda$, independent samples were generated, and entropy was estimated for each sample using the bootstrap bias-corrected version with $B = 100$ resamples  to reduce bias. The resulting estimates were compared to the theoretical entropy to compute the bias and MSE. This simulation-based procedure allows us to evaluate how the choice of $\lambda$ affects estimation accuracy, and whether the bootstrap improves performance.
+
+For the Rényi estimator (see Fig. \ref{fig-optimal_order}), $\lambda = 0.9$ minimizes the MSE while keeping the bias low, achieving a favorable bias-variance trade-off. Although $\lambda = 0.85$ yields slightly lower bias, it produces a higher MSE, supporting the choice of $\lambda = 0.9$ as optimal.
+
+Similarly, for the Tsallis estimator (Fig. \ref{fig-optimal_order-tsallis}), $\lambda = 0.85$ results in the lowest MSE with moderate bias, making it the most suitable choice.
+
+
+
+```{r fig-optimal_order,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="65%",  fig.pos="H", fig.cap="Bias and MSE as a function of $\\lambda$, for the Rényi entropy estimator, with $n = 49$, $L = 5$.", fig.width=5, fig.height=3}
+#fig.show="hide", 
+# eval=FALSE,  # 
+
+data <- data.frame(
+  Lambda = c(0.9,  0.85, 0.99, 1.1, 1.5),
+  Bias = c(0.00158,  -0.00250, 0.02077, 0.03751, 0.06512),
+  MSE = c(0.01273,  0.01441, 0.01653, 0.01697, 0.01906)
+)
+
+
+data <- data[order(data$Lambda), ]
+
+bias_plot <- ggplot(data, aes(x = Lambda, y = Bias)) +
+  geom_line(color = "#00AFBB", linewidth = 1.0) +  
+  geom_point(color = "#00AFBB", size = 3) +  
+  geom_hline(yintercept = 0, color = "gray50", linetype = "dashed", linewidth = 0.5) +
+  #annotate("text", x = max(data$Lambda) - 0.1, y = max(data$Bias), 
+         #  label = "Bias", color = "#00AFBB", fontface = "italic", hjust = 1.0) +
+  #scale_x_continuous(breaks = data$Lambda, labels = data$Lambda) +
+  scale_x_continuous(breaks = data$Lambda, labels = data$Lambda, minor_breaks = NULL)+
+  scale_y_continuous(minor_breaks = NULL)+
+  labs(x = expression(lambda), y = "Bias") +
+  theme_minimal() +
+  theme(text = element_text(family = "serif"),
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+
+
+mse_plot <- ggplot(data, aes(x = Lambda, y = MSE)) +
+  geom_line(color = "#E69F00", linewidth = 1.0) +  
+  geom_point(color = "#E69F00", size = 3) +
+  #geom_hline(yintercept = 0, color = "gray50", linetype = "dashed", linewidth = 0.5) +
+  #annotate("text", x = max(data$Lambda) - 0.1, y = max(data$MSE), 
+           #label = "MSE", color = "#E69F00", fontface = "italic", hjust = 1.0) +
+   #scale_x_continuous(breaks = data$Lambda, labels = data$Lambda) + 
+  scale_x_continuous(breaks = data$Lambda, labels = data$Lambda, minor_breaks = NULL)+
+  scale_y_continuous(minor_breaks = NULL)+
+  labs(x = expression(lambda), y = "MSE") +
+  theme_minimal() +
+  theme(text = element_text(family = "serif"),
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+
+
+grid.arrange(bias_plot, mse_plot, nrow = 2)
+
+```
+
+
+
+```{r fig-optimal_order-tsallis,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="65%",  fig.pos="H", fig.cap="Bias and MSE as a function of $\\lambda$, for the Tsallis entropy estimator, with $n = 49$, $L = 5$.", fig.width=5, fig.height=3}
+#fig.show="hide", 
+# eval=FALSE,  # 
+
+data <- data.frame(
+  Lambda = c(0.8,  0.85, 0.9, 0.95, 1.1, 1.5),
+  Bias = c(-0.094,  0.00047, 0.009, 0.04,0.3, 0.6),
+  MSE = c(0.0215,  0.022, 0.023, 0.026, 0.029, 0.031)
+)
+
+
+data <- data[order(data$Lambda), ]
+
+bias_plot <- ggplot(data, aes(x = Lambda, y = Bias)) +
+  geom_line(color = "#8E44AD", linewidth = 1.0) +  
+  geom_point(color = "#8E44AD", size = 3) +  
+  geom_hline(yintercept = 0, color = "gray50", linetype = "dashed", linewidth = 0.5) +
+  #annotate("text", x = max(data$Lambda) - 0.1, y = max(data$Bias), 
+         #  label = "Bias", color = "#00AFBB", fontface = "italic", hjust = 1.0) +
+  #scale_x_continuous(breaks = data$Lambda, labels = data$Lambda) +
+  scale_x_continuous(breaks = data$Lambda, labels = data$Lambda, minor_breaks = NULL)+
+  scale_y_continuous(minor_breaks = NULL)+
+  labs(x = expression(lambda), y = "Bias") +
+  theme_minimal() +
+  theme(text = element_text(family = "serif"),
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+
+
+mse_plot <- ggplot(data, aes(x = Lambda, y = MSE)) +
+  geom_line(color = "#27AE60", linewidth = 1.0) +  
+  geom_point(color = "#27AE60", size = 3) +
+  #geom_hline(yintercept = 0, color = "gray50", linetype = "dashed", linewidth = 0.5) +
+  #annotate("text", x = max(data$Lambda) - 0.1, y = max(data$MSE), 
+           #label = "MSE", color = "#E69F00", fontface = "italic", hjust = 1.0) +
+   #scale_x_continuous(breaks = data$Lambda, labels = data$Lambda) + 
+  scale_x_continuous(breaks = data$Lambda, labels = data$Lambda, minor_breaks = NULL)+
+  scale_y_continuous(minor_breaks = NULL)+
+  labs(x = expression(lambda), y = "MSE") +
+  theme_minimal() +
+  theme(text = element_text(family = "serif"),
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+
+
+grid.arrange(bias_plot, mse_plot, nrow = 2)
+
+```
+
+<!-- ```{=latex} -->
+<!-- \begin{figure}[hbt] -->
+<!--   \centering -->
+<!--   \includegraphics[width=0.42\textwidth]{Figures-R1/fig-optimal_order-1.pdf} -->
+<!--   \vspace{0.5em} -->
+<!--   \caption{Bias and MSE as a function of $\lambda$, with $n=49$, $L=5$.} -->
+<!--   \label{fig-optimal_order} -->
+<!-- \end{figure} -->
+<!-- ``` -->
+In the case of $L = 1$, the bootstrap procedure does not provide meaningful improvement and often leads to unstable estimates. Therefore, we omit bootstrap in this setting. Under these conditions, higher values of $\lambda$ yield better results: $\lambda = 3$ is preferred for the Rényi estimator, and $\lambda = 1.2$ for the Tsallis estimator. 
+
+### Bootstrap Bias Correction in Rényi and Tsallis Entropy Estimation
+
+
+Building upon the previous Monte Carlo setup, we further assess the performance of the Rényi and Tsallis entropy estimators by analyzing their behavior across varying sample sizes $n \in \{9, 25, 49, 81, 121\}$. Using the optimal values of the order parameter ($\lambda = 0.9$ for Rényi and $\lambda = 0.85$ for Tsallis) already identified in the earlier analysis, we compute the bias and MSE for both the original and bootstrap-corrected versions of the estimators. As illustrated in Figures \ref{fig-bias_mse_rm1} and \ref{fig-bias_mse_Tsallis}, the bootstrap estimators consistently show improved performance, especially for small samples. In particular, at $n = 49$, both estimators exhibit low bias and MSE, confirming their robustness in moderate sample regimes and supporting their use in practical applications.
+
+
+```{r Simulated_data_bias_m1, echo=FALSE, message=FALSE }
+set.seed(1234567890, kind = "Mersenne-Twister")
+#cache = TRUE, autodep = TRUE
+
+file_name <- "./Data/results_renyi_m1.Rdata"
+
+if (file.exists(file_name)) {
+
+  load(file_name)
+  message("Loaded existing results from results_renyi_m1.Rdata")
+} else {
+  # Parameters
+  sample_sizes <- c(9, 25, 49, 81, 121)
+  R <- 500
+  B <- 100
+  mu <- 1
+  L <- 5
+  alpha_values <- c(0.9)
+
+
+  estimators <- list(
+    "Renyi Estimator" = renyi_estimator,
+    "Renyi Estimator Bootstrap" = bootstrap_renyi_estimator
+  )
+
+
+  results <- calculate_bias_mse_r2(sample_sizes, R, B, mu, L, alpha_values, estimators)
+
+
+  save(results, file = file_name)
+  message("Simulations completed and results saved.")
+}
+```
+
+
+```{r fig-bias_mse_rm1,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="70%",  fig.pos="H",  fig.cap="Bias and MSE of the Rényi entropy estimators for $\\Gamma_{\\text{SAR}}$, with $L=5$", fig.width=5.5, fig.height=4}
+
+theme_set(theme_minimal() +
+            theme(text = element_text(family = "serif"),
+                  legend.position = "bottom"))
+#fig.show="hide",
+# eval=FALSE,  #
+#  out.width="80%",
+load("./Data/results_renyi_m1.Rdata")
+
+alpha_values <- 0.9
+estimators_to_plot <- c("Renyi Estimator", "Renyi Estimator Bootstrap")
+latex_estimator_names <- c("Renyi Estimator" = expression("$\\widehat{italic(R)}_{\\lambda}$"),#
+                           "Renyi Estimator Bootstrap" = expression("$\\widetilde{italic(R)}_{\\lambda}$"))
+selected_estimators_latex <- latex_estimator_names[estimators_to_plot]
+
+
+combined_plot_renyi <- generate_plot_renyi(results, alpha_values, selected_estimators_latex, ncol = 1, nrow = 1)
+
+
+print(combined_plot_renyi)
+
+
+```
+
+
+```{r}
+tsallis_entropy_gamma_sar <- function(mu, L, lambda) {
+  (1 - exp((1 - lambda)*log(mu) +
+             (lambda - 1)*log(L) +
+             lgamma(lambda*(L - 1) + 1) -
+             lambda*lgamma(L) -
+             (lambda*(L - 1) + 1)*log(lambda))) / (lambda - 1)
+}
+# Función para calcular Bias y MSE para la entropía de Tsallis
+calculate_bias_mse_tsallis <- function(sample_sizes, R, B, mu, L, lambda_values, estimators) {
+  output <- data.frame(
+    n = integer(0),
+    Estimator = character(0),
+    Lambda = numeric(0),
+    Bias = numeric(0),
+    MSE = numeric(0)
+  )
+  
+  for (lambda in lambda_values) {
+    true_entropy <- tsallis_entropy_gamma_sar(mu, L, lambda)
+    
+    for (ssize in sample_sizes) {
+      samples <- generate_samples(ssize, R, mu, L)
+      
+      for (estimator_name in names(estimators)) {
+        estimator <- estimators[[estimator_name]]
+        v.entropy <- numeric(R)
+        
+        for (r in 1:R) {
+          sample <- samples[[r]]
+          
+          if (grepl("Bootstrap", estimator_name)) {
+            v.entropy[r] <- estimator(sample, B = B, lambda = lambda)
+          } else {
+            v.entropy[r] <- estimator(sample, lambda = lambda)
+          }
+        }
+        
+        mse <- mean((v.entropy - true_entropy)^2)
+        bias <- mean(v.entropy) - true_entropy
+        
+        output <- rbind(output, data.frame(
+          n = ssize,
+          Estimator = estimator_name,
+          Lambda = lambda,
+          Bias = round(bias, 5),
+          MSE = round(mse, 5)
+        ))
+      }
+    }
+  }
+  
+  return(output)
+}
+
+```
+
+```{r Simulated_data_bias_tt, echo=FALSE, message=FALSE }
+set.seed(1234567890, kind = "Mersenne-Twister")
+#cache = TRUE, autodep = TRUE
+
+file_name_tsallis <- "./Data/results_tsallis_jj.Rdata"
+
+if (file.exists(file_name_tsallis)) {
+
+  load(file_name_tsallis)
+  message("Loaded existing results from results_tsallis_jj.Rdata")
+
+} else {
+  # Parámetros
+  sample_sizes <- c(9, 25, 49, 81, 121)
+  R <- 50
+  B <- 200
+  mu <- 1
+  L <- 5
+  lambda_values <- c(0.85)
+
+  estimators <- list(
+    "Tsallis Estimator" = tsallis_estimator_optimized,
+    "Tsallis Estimator Bootstrap" = bootstrap_tsallis_entropy_optimized
+  )
+
+  results_tsallis <- calculate_bias_mse_tsallis(sample_sizes, R, B, mu, L, lambda_values, estimators)
+
+  save(results_tsallis, file = file_name_tsallis)
+  message("Simulations for Tsallis completed and results saved.")
+}
+
+```
+
+
+```{r}
+generate_plot_tsallisn <- function(results_df, lambda_values, selected_estimators, ncol = 1, nrow = 6) {
+  library(ggplot2)
+  library(patchwork)
+  
+  plot_list <- list()
+  
+  for (lambda_val in lambda_values) {
+    df <- results_df[results_df$Lambda == lambda_val, ]
+    df_filtered <- df[df$Estimator %in% names(selected_estimators), ]
+    df_filtered$Estimator <- selected_estimators[df_filtered$Estimator]
+    df_filtered$Estimator <- as.character(df_filtered$Estimator)
+    
+    plot_bias <- ggplot(df_filtered, aes(x = n, y = Bias, color = Estimator)) +
+      geom_hline(yintercept = 0, color = "gray50", linetype = "dashed", linewidth = 0.5) +
+      geom_point(size = 3.2) +
+      geom_line(linetype = "solid", linewidth = 1.5, alpha = 0.8) +
+      labs(y = "Bias", x = expression(italic(n))) +
+      scale_x_continuous(breaks = unique(df_filtered$n), minor_breaks = NULL) +
+      scale_y_continuous(minor_breaks = NULL) +
+      scale_color_manual(values = c("#7570b3", "#e7298a"), labels = TeX(df_filtered$Estimator)) +
+      ggtitle(bquote(lambda == .(lambda_val))) +
+      theme_minimal() +
+      theme(text = element_text(family = "serif"),
+            axis.text = element_text(size = 11),
+            axis.title = element_text(size = 12),
+            plot.title = element_text(size = 11, hjust = 0),
+            legend.position = "bottom",
+            legend.box = "horizontal",
+            legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12)) +
+      guides(color = guide_legend(nrow = 1))
+    
+    plot_mse <- ggplot(df_filtered, aes(x = n, y = MSE, color = Estimator)) +
+      geom_hline(yintercept = 0, color = "gray50", linetype = "dashed", linewidth = 0.5) +
+      geom_point(size = 3.2) +
+      geom_line(linetype = "solid", linewidth = 1.5, alpha = 0.8) +
+      labs(y = "MSE", x = expression(italic(n))) +
+      scale_x_continuous(breaks = unique(df_filtered$n), minor_breaks = NULL) +
+      scale_y_continuous(minor_breaks = NULL) +
+      scale_color_manual(values = c("#7570b3", "#e7298a"), labels = TeX(df_filtered$Estimator)) +
+      theme_minimal() +
+      theme(text = element_text(family = "serif"),
+            axis.text = element_text(size = 11),
+            axis.title = element_text(size = 12),
+            legend.position = "bottom",
+            legend.box = "horizontal",
+            legend.text = element_text(size = 12),
+            legend.title = element_text(size = 12)) +
+      guides(color = guide_legend(nrow = 1))
+    
+    combined_plot <- plot_bias / plot_mse
+    plot_list[[as.character(lambda_val)]] <- combined_plot
+  }
+  
+  combined_plot_all <- wrap_plots(plot_list, ncol = ncol, nrow = nrow) +
+    plot_layout(guides = "collect")
+  
+  return(combined_plot_all)
+}
+```
+
+```{r fig-bias_mse_Tsallis,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="70%",  fig.pos="H",  fig.cap="Bias and MSE of the Tsallis entropy estimators for $\\Gamma_{\\text{SAR}}$, with $L=5$", fig.width=5.5, fig.height=4}
+
+
+theme_set(theme_minimal() +
+            theme(text = element_text(family = "serif"),
+                  legend.position = "bottom"))
+
+# Cargar resultados simulados
+load("./Data/results_tsallis_jj.Rdata")
+
+lambda_values <- 0.85
+estimators_to_plot_tsallis <- c("Tsallis Estimator", "Tsallis Estimator Bootstrap")
+
+# Etiquetas LaTeX para leyenda
+latex_estimator_names_tsallis <- c(
+  "Tsallis Estimator" = expression("$\\widehat{italic(T)}_{\\lambda}$"),
+  "Tsallis Estimator Bootstrap" = expression("$\\widetilde{italic(T)}_{\\lambda}$")
+)
+
+selected_estimators_latex_tsallis <- latex_estimator_names_tsallis[estimators_to_plot_tsallis]
+
+# Graficar
+combined_plot_tsallis <- generate_plot_tsallisn(
+  results_tsallis,
+  lambda_values,
+  selected_estimators_latex_tsallis,
+  ncol = 1,
+  nrow = 1
+)
+
+print(combined_plot_tsallis)
+
+
+
+```
+
+
+From this point forward, all subsequent simulations and comparisons will be based on the improved bootstrap estimators: $\widetilde{H}_{\text{AO}}$ for Shannon, $\widetilde{R}_{\lambda}$ for Rényi, and $\widetilde{T}_{\lambda}$ for Tsallis entropy.
+
+
+<!-- ```{r Simulated_data_bias_shannon1, echo=FALSE, message=FALSE} -->
+<!-- set.seed(1234567890) -->
+
+<!-- file_name <- "./Data/results_shannon_v1.Rdata" -->
+
+<!-- if (file.exists(file_name)) { -->
+<!--   load(file_name) -->
+<!--   message("Loaded existing results from results_shannon_v1.Rdata") -->
+<!-- } else { -->
+<!--   sample_sizes <- c(9, 25, 49, 81, 121) -->
+<!--   R <- 500 -->
+<!--   B <- 100 -->
+<!--   mu <- 1 -->
+<!--   L <- 16 -->
+
+<!--   estimators <- list( -->
+<!--     "Shannon Estimator" = al_omari_1_estimator, -->
+<!--     "Shannon Estimator Bootstrap" = bootstrap_al_omari_1_estimator -->
+<!--   ) -->
+
+<!--   results <- calculate_bias_mse_shannon(sample_sizes, R, B, mu, L, estimators) -->
+
+<!--   save(results, file = file_name) -->
+<!--   message("Simulaciones completadas y resultados guardados.") -->
+<!-- } -->
+
+<!-- ``` -->
+<!-- ```{r fig-bias_mse_shannonm, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.cap="Bias and MSE of the Shannon–Al-Omari entropy estimators for $\\Gamma_{\\text{SAR}}$.", fig.width=6, fig.height=5} -->
+<!-- load("./Data/results_shannon_v1.Rdata") -->
+
+<!-- estimators_to_plot <- c("Shannon Estimator", "Shannon Estimator Bootstrap") -->
+<!-- latex_estimator_names <- c( -->
+<!--   "Shannon Estimator" = expression("$\\widehat{italic(H)}$"), -->
+<!--   "Shannon Estimator Bootstrap" = expression("$\\widetilde{italic(H)}$") -->
+<!-- ) -->
+<!-- selected_estimators_latex <- latex_estimator_names[estimators_to_plot] -->
+
+<!-- combined_plot_shannon <- generate_plot_shannon(results, selected_estimators_latex, ncol = 1, nrow = 1) -->
+
+<!-- print(combined_plot_shannon) -->
+
+<!-- ``` -->
+
+<!-- ```{=latex} -->
+<!-- \begin{figure}[hbt] -->
+<!--   \centering -->
+<!--   \includegraphics[width=0.40\textwidth]{Figures-R1/fig-bias_mse-1.pdf} -->
+<!--   \vspace{0.1em} -->
+<!--   \caption{Bias and MSE of the Rényi entropy estimators for $\Gamma_{\text{SAR}}$.} -->
+<!--   \label{fig-bias_mse} -->
+<!-- \end{figure} -->
+<!-- ``` -->
+<!-- We use the $\widetilde{H}_{\lambda}$ estimator for subsequent simulations. -->
+
+
+
+
+
+## HYPOTHESIS TESTING
+
+We aim to determine whether a local region in a SAR intensity image is statistically homogeneous or heterogeneous. This is done by comparing a nonparametric entropy estimator $\widetilde{\theta}$ computed from the observed data to the theoretical entropy $\theta(\Gamma_{\text{SAR}})$ expected under the assumption of fully developed speckle.
+
+Formally, the hypothesis test is:
+\begin{equation}\label{eq:hypothesis_test}
+\begin{cases}
+\mathcal{H}_0: \mathbb{E}[\widetilde{\theta}] = \theta(\Gamma_{\text{SAR}}) & \text{(homogeneous region)}, \\[6pt]
+\mathcal{H}_1: \mathbb{E}[\widetilde{\theta}] = \theta(\mathcal{G}^0_I) & \text{(heterogeneous region)},
+\end{cases}
+\end{equation}
+
+where $\theta$ denotes a generic entropy function (Shannon entropy $H$, Rényi entropy $R_\lambda$, or Tsallis entropy $T_\lambda$), and $\widetilde{\theta}$ is the corresponding nonparametric estimator ($\widetilde{H}_{\text{AO}}$, $\widetilde{R}_\lambda$ and $\widetilde{T}_\lambda$ ).
+
+This formulation allows us to construct specific test statistics for each entropy measure. The null hypothesis $\mathcal{H}_0$ assumes that the data follow the Gamma distribution (homogeneous texture), while the alternative $\mathcal{H}_1$ considers the presence of texture modeled by the $\mathcal{G}^0_I$ distribution.
+
+As in the parametric setting it is not possible to define the null hypothesis as $\mathcal{H}_0\!: \alpha = -\infty$, classical inference techniques such as the likelihood ratio, score, gradient, or Wald tests cannot be applied. To address this, we construct non-parametric entropy-based test statistics as described below.
+
+### The Proposed Test Based on Shannon Entropy
+
+Given a random sample $\bm{Z} = (Z_1, Z_2, \ldots, Z_n)$ from a distribution $\mathcal{D}$, we define a test statistic based on the difference between a non-parametric estimator of Shannon entropy, $\widetilde{H}_{\text{AO}}(\bm{Z})$, and the analytical Shannon entropy of the Gamma SAR model ($\Gamma_{\text{SAR}}$) in $\eqref{eq:gamma-sh1}$, which depends on the known number of looks $L \geq 1$ and the sample mean $\widehat{\mu}$.
+
+The test statistic is given by:
+\begin{equation}
+\label{eq-test-sh}
+S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L) = \widetilde{H}_{\text{AO}} - \bigl\{ L - \ln L + \ln\Gamma(L) + (1 - L)\psi^{(0)}(L) + \ln\widehat{\mu} \bigr\},
+\end{equation}
+where $\widehat{\mu} = \frac{1}{n} \sum_{i=1}^n Z_i$ is the sample mean.
+
+This statistic can be interpreted as:
+$$
+S_{\widetilde{H}_{\text{AO}}} = 
+\underbrace{\widetilde{H}_{\text{AO}}}_{\text{estimated}} - 
+\underbrace{H(\Gamma_{\text{SAR}})}_{\text{expected under } \mathcal{H}_0}\hspace{-0.7em},
+$$
+that is, the discrepancy between the estimated entropy and the theoretical value assuming homogeneity. Values close to zero indicate consistency with the fully developed speckle model, while large positive values suggest higher entropy and therefore, heterogeneity.
+
+<!-- This approach eliminates the need to estimate parameters from the $\mathcal{G}^0_I$ distribution, such as $\alpha$, offering a simpler and more interpretable test. In addition, the method remains effective for small sample sizes, especially when combined with bootstrap bias correction. -->
+
+### The Proposed Test Based on Rényi Entropy
+
+To assess deviations from homogeneity in SAR data, we define a test statistic based on Rényi entropy. The statistic contrasts the non-parametric estimator $\widetilde{R}_\lambda(\bm{Z})$ with the theoretical Rényi entropy of the $\Gamma_{\text{SAR}}$ model in $\eqref{eq-GammaSAR-R}$, assuming that the number of looks $L \geq 1$ is known. The proposed statistic is defined as:
+\begin{equation}
+\label{eq-test-renyi}
+S_{\widetilde{R}_{\lambda}}(\bm{Z}; L) = \widetilde{R}_{\lambda} - \left\{ \ln \widehat{\mu} - \ln L + \frac{1}{1-\lambda}
+\left[ -\lambda \ln\Gamma(L) + \ln\Gamma\bigl(\lambda(L-1)+1\bigr) - \bigl(\lambda(L-1)+1\bigr)\ln\lambda \right] \right\},
+\end{equation}
+where $\widehat{\mu} = \frac{1}{n} \sum_{i=1}^n Z_i$ is the sample mean.
+
+This test statistic measures the discrepancy between the empirical entropy and the value expected under the fully developed speckle assumption and can be interpreted as:
+$$
+S_{\widetilde{R}_\lambda} = 
+\underbrace{\widetilde{R}_\lambda}_{\text{estimated}} -
+\underbrace{R_\lambda(\Gamma_{\text{SAR}})}_{\text{expected under } \mathcal{H}_0}\hspace{-0.7em},
+$$
+the difference between the estimated entropy and the expected value under homogeneity. Values of $S_{\widetilde{R}_\lambda}$ near zero suggest that the observed region is statistically homogeneous, while large deviations indicate the presence of texture or roughness.
+
+### The Proposed Test Based on Tsallis Entropy
+
+To evaluate heterogeneity in SAR imagery, we define a test statistic using Tsallis entropy. This statistic contrasts the non-parametric estimator $\widetilde{T}_\lambda(\bm{Z})$ with the analytical Tsallis entropy under the $\Gamma_{\text{SAR}}$ model, as derived in Equation \eqref{eq:gammasar-Tsallis}. We assume the number of looks $L \geq 1$ is known and use the following formulation:
+
+\begin{multline}
+\label{eq-test-tsallis}
+S_{\widetilde{T}_{\lambda}}(\bm{Z}; L) = \widetilde{T}_{\lambda} - \biggl\{ \frac{1}{\lambda - 1} \Bigl[ 1 -
+\exp\Bigl(
+(1 - \lambda)\ln \widehat{\mu}
++ (\lambda - 1)\ln L
++ \ln\Gamma\bigl(\lambda(L - 1) + 1\bigr) \\
+- \lambda\ln\Gamma(L)
+- \bigl(\lambda(L - 1) + 1\bigr)\ln \lambda
+\Bigr) \Bigr] \biggr\},
+\end{multline}
+
+where $\widehat{\mu} = \frac{1}{n} \sum_{i=1}^n Z_i$ is the sample mean.
+
+As in the previous cases, this test statistic measures the difference between the empirical entropy and its theoretical counterpart under the assumption of fully developed speckle:
+$$
+S_{\widetilde{T}_\lambda} =
+\underbrace{\widetilde{T}_\lambda}_{\text{estimated}} -
+\underbrace{T_\lambda(\Gamma_{\text{SAR}})}_{\text{expected under } \mathcal{H}_0}\hspace{-0.9em}.
+$$
+
+Values of $S_{\widetilde{T}_\lambda}$ close to zero indicate that the observed region aligns with the homogeneous model. In contrast, significantly positive values suggest the presence of structural variations or texture, signaling statistical heterogeneity in the scene.
+
+
+An important advantage shared by all three proposed test statistics (\eqref{eq-test-sh}, \eqref{eq-test-renyi} and \eqref{eq-test-tsallis}) is that they avoid the need to estimate parameters from the alternative $\mathcal{G}^0_I$ distribution, such as the roughness parameter $\alpha$. This leads to a simpler, more interpretable, and statistically grounded testing procedure.
+
+Additionally, the tests are computationally efficient and suitable for practical applications, including large-scale image processing. This robustness is especially evident in small sample sizes, where bootstrap correction improves the reliability of the entropy estimates and stabilizes the resulting $p$-values used for decision-making.
+
+\subsection*{Empirical behaviour of the three statistics} 
+
+Figures [-@fig-densities-shannon]-[-@fig-densities-tsallis4] display the empirical distributions of the three entropy-based statistics:Shannon $S_{\widetilde{H}}(\mathbf Z;L)$, Rényi $S_{\widetilde{R}_{\lambda}}(\mathbf Z;L)$ (with $\lambda=0.9$) and Tsallis $S_{\widetilde{T}_{\lambda}}(\mathbf Z;L)$ ($\lambda=0.85$) obtained from $10^{4}$ Monte Carlo replications of $\Gamma_{\text{SAR}}$ data for window sizes $n\in\{49,81,121\}$ and looks $L\in\{5,18\}$.  
+All three empirical densities are tightly concentrated around zero, confirming that under $\mathcal{H}_0$ the test statistic has mean approximately $0$; at the same time, their moderately heavy tails reveal sensitivity to departures from homogeneity, which is desirable for detecting subtle texture.
+
+```{r Simulated_density-shannon, echo=FALSE, message=FALSE}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+R <- 10000
+mu <- 1
+B <- 50
+
+sample.size <- c(49, 81, 121)
+L_values <- c(5, 18)
+
+all_summary_stats <- list()
+all_TestStatistics <- list()
+
+for (L in L_values) {
+  file_name <- paste0("./Data/resultsS_", L, ".Rdata")
+  
+  if (file.exists(file_name)) {
+    load(file_name)
+    message(paste("Loaded existing data for L =", L))
+  } else {
+    
+    TestStatistics1 <- list()
+    summary_stats <- data.frame(
+      LValue = character(),
+      SampleSize = numeric(),
+      Mean = numeric(),
+      SD = numeric()
+    )  
+    
+    for (s in sample.size) {
+      TestStat1 <- numeric(R)
+      
+      for (r in 1:R) {
+        z <- gamma_sar_sample(L, mu, s)
+        TestStat1[r] <- bootstrap_al_omari_1_estimator(z, B) -
+                        (log(mean(z)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+      }
+      
+      TestStatistics1[[as.character(s)]] <- data.frame(
+        "SampleSize" = rep(s, R), 
+        "Test_Statistics" = TestStat1
+      )
+      
+      summary_stats <- rbind(summary_stats, data.frame(
+        LValue = as.character(L),
+        SampleSize = s,
+        Mean = mean(TestStat1),
+        SD = sd(TestStat1)
+      )) 
+    }
+    
+    all_TestStatistics[[as.character(L)]] <- TestStatistics1
+    all_summary_stats[[as.character(L)]] <- summary_stats
+    
+    save(all_TestStatistics, all_summary_stats, file = file_name)
+    message(paste("Saved new results for L =", L))
+  }
+}
+
+```
+
+
+```{r fig-densities-shannon, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.pos="hbt", fig.cap="Empirical densities of $S_{\\widetilde{H}_{AO}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$.", fig.width=9, fig.height=4.0}
+
+theme_set(theme_minimal() +
+            theme(text = element_text(family = "serif"),
+                  legend.position = "bottom",
+                  legend.text = element_text(angle = 0, vjust = 0.5)))
+
+x_limits <- c(-0.5, 0.5)
+x_breaks <- seq(-0.4, 0.4, by = 0.2)
+y_limits <- c(0, 7)
+
+selected_L_values <- c(5, 18)
+
+all_plots <- list()
+
+for (L in selected_L_values) {
+  load(paste0("./Data/resultsS_", L, ".Rdata"))
+  
+  combined_data <- do.call(rbind, all_TestStatistics[[as.character(L)]])
+  combined_data$L <- L
+  combined_data$CurveOrder <- factor(combined_data$SampleSize, levels = rev(sample.size))
+  combined_data$LegendOrder <- factor(combined_data$SampleSize, levels = sample.size)
+
+  p <- ggplot(combined_data, aes(x = Test_Statistics, col = LegendOrder, linetype = LegendOrder, group = CurveOrder)) +
+  geom_line(stat = "density", linewidth = 1.5) +
+ # scale_color_brewer(palette = "Dark2", name = "Sample Size") +
+  scale_color_viridis(discrete = TRUE, option = "D", direction = -1, begin = 0.2, end = 0.7, name = "Sample Size") +
+  scale_linetype_manual(values = rep("solid", length(sample.size)), name = "Sample Size") +
+  scale_x_continuous(limits = x_limits, breaks = x_breaks, minor_breaks = NULL) +
+  scale_y_continuous(limits = y_limits, minor_breaks = NULL) +
+  labs(
+      x = expression("Test Statistic" ~ S[widetilde(italic(H))[AO]](italic(bold(Z))* ";" **phantom(" ")* italic(L))), 
+      y = "Density"
+  ) +
+  ggtitle(bquote(italic(L) == .(L))) +
+  theme(plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 2)),
+        axis.text = element_text(size = 16),     
+        axis.title = element_text(size = 16),    
+        legend.text = element_text(size = 16),   
+        legend.title = element_text(size = 16)) 
+
+  # p <- ggplot(combined_data, aes(x = Test_Statistics, col = LegendOrder, linetype = LegendOrder, group = CurveOrder)) +
+  #   geom_line(stat = "density", linewidth = 1.5) +
+  #   scale_color_viridis(discrete = TRUE, option = "C", direction = -1, begin = 0.2, end = 0.7, name = "Sample Size") +
+  #   scale_linetype_manual(values = rep("solid", length(sample.size)), name = "Sample Size") +
+  #   scale_x_continuous(limits = x_limits, breaks = x_breaks, minor_breaks = NULL) +
+  #   scale_y_continuous(limits = y_limits, minor_breaks = NULL) +
+  #   labs(
+  #       x = expression("Test Statistic" ~ S[widetilde(italic(T))](italic(bold(Z))* ";" **phantom(" ")* italic(L))), 
+  #       y = "Density"
+  #   ) +
+  #   ggtitle(bquote(italic(L) == .(L))) +
+  #   theme(plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 2)),
+  #         axis.text = element_text(size = 16),     
+  #         axis.title = element_text(size = 16),    
+  #         legend.text = element_text(size = 16),   
+  #         legend.title = element_text(size = 16)) 
+
+  all_plots[[as.character(L)]] <- p
+}
+
+combined_plot <- wrap_plots(all_plots, ncol = 2, nrow = 1) +
+  plot_layout(guides = "collect")
+
+print(combined_plot)
+```
+
+```{r Simulated_densityR, echo=FALSE, message=FALSE}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+R <- 10000
+mu <- 1
+B <- 50
+
+lambda <- 0.9
+
+sample.size <- c(49, 81, 121)
+L_values <- c(5, 18)
+
+all_summary_stats <- list()
+all_TestStatistics <- list()
+
+# 
+for (L in L_values) {
+  
+  
+  file_name <- paste0("./Data/resultsR_", L, ".Rdata")
+  
+  
+  if (file.exists(file_name)) {
+    load(file_name)
+    message(paste("Loaded existing data for L =", L))
+  } else {
+    
+    TestStatistics1 <- list()  
+    summary_stats <- data.frame(
+      LValue = character(),
+      SampleSize = numeric(),
+      Mean = numeric(),
+      SD = numeric()
+      #Variance = numeric(),
+      #Skewness = numeric(),
+     # Kurtosis = numeric(),
+      #adpvalue = numeric()
+    )  
+  
+    # Para cada tamaño de muestra
+    for (s in sample.size) {
+      TestStat1 <- numeric(R)
+    
+      for (r in 1:R) {
+        z <- gamma_sar_sample(L, mu, s)
+        TestStat1[r] <- TestStat <- bootstrap_renyi_entropy_estimator_v1(z, B, lambda) -((lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1) +
+                                                                        (lambda * (L - 1) + 1) * log(lambda)) / (lambda - 1) + log(mean(z))-log(L))
+      }
+    
+      TestStatistics1[[as.character(s)]] <- data.frame(
+        "SampleSize" = rep(s, R), 
+        "Test_Statistics" = TestStat1
+      )
+
+      mean_val <- mean(TestStat1)
+      sd_val <- sd(TestStat1)
+      #var_val <- var(TestStat1)
+     # skewness_val <- skewness(TestStat1)
+     # kurtosis_val <- kurtosis(TestStat1)
+     # ad_p_value <- ad.test(TestStatistics1[[as.character(s)]]$Test_Statistics)$p.value
+    
+      summary_stats <- rbind(summary_stats, data.frame(
+        LValue = as.character(L),
+        SampleSize = s,
+        Mean = mean_val,
+        SD = sd_val
+      #  Variance = var_val,
+       # Skewness = skewness_val,
+       # Kurtosis = kurtosis_val,
+       # adpvalue = ad_p_value
+      )) 
+    }
+    
+    all_TestStatistics[[as.character(L)]] <- TestStatistics1
+    all_summary_stats[[as.character(L)]] <- summary_stats
+    
+    
+    save(all_TestStatistics, all_summary_stats, file = file_name)
+    message(paste("Saved new results for L =", L))
+  }
+}
+
+```
+
+```{r fig-densities,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="80%", fig.pos="hbt",  fig.cap="Empirical densities of $S_{\\widetilde{R}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$, with $\\lambda=0.9$.", fig.width=9, fig.height=4.0}
+#fig.show="hide", 
+# eval=FALSE,  #
+
+theme_set(theme_minimal() +
+            theme(text = element_text(family = "serif"),
+                  legend.position = "bottom",
+                  legend.text = element_text(angle = 0, vjust = 0.5)))
+
+x_limits <- c(-0.5, 0.5)  # Límites del eje X
+x_breaks <- seq(-0.4, 0.4, by = 0.2)  # Ticks del eje X
+y_limits <- c(0, 7)       # Límites del eje Y
+
+
+selected_L_values <- c(5, 18)
+
+all_plots <- list()
+
+for (L in selected_L_values) {
+  load(paste0("./Data/resultsR_", L, ".Rdata"))
+
+  combined_data <- do.call(rbind, all_TestStatistics[[as.character(L)]])
+  combined_data$L <- L
+  
+  
+  combined_data$CurveOrder <- factor(combined_data$SampleSize, levels = rev(sample.size))
+  
+  
+  combined_data$LegendOrder <- factor(combined_data$SampleSize, levels = sample.size)
+
+  p <- ggplot(combined_data, aes(x = Test_Statistics, col = LegendOrder, linetype = LegendOrder, group = CurveOrder)) +
+    geom_line(stat = "density", linewidth = 1.5) +
+    scale_color_viridis(discrete = TRUE, option = "C", direction = -1, begin = 0.2, end = 0.7, name = "Sample Size") +
+    scale_linetype_manual(values = rep("solid", length(sample.size)), name = "Sample Size") +
+    scale_x_continuous(limits = x_limits, breaks = x_breaks, minor_breaks = NULL) +
+    #scale_x_continuous(limits = x_limits, breaks = x_breaks) + 
+    scale_y_continuous(limits = y_limits, minor_breaks = NULL)+
+    #scale_y_continuous(limits = y_limits) +  
+    labs(
+        x = expression("Test Statistic" ~ S[widetilde(italic(R))[lambda]](italic(bold(Z))* ";" **phantom(" ")* italic(L))), 
+        y = "Density"
+    ) +
+    ggtitle(bquote(italic(L) == .(L))) +
+    theme(plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 2)),
+          axis.text = element_text(size = 16),     
+        axis.title = element_text(size = 16),    
+        legend.text = element_text(size = 16),   
+        legend.title = element_text(size = 16)   
+          ) 
+
+  all_plots[[as.character(L)]] <- p
+}
+
+
+combined_plot <- wrap_plots(all_plots, ncol = 2, nrow = 1) +
+  plot_layout(guides = "collect")
+
+print(combined_plot)
+
+
+```
+
+
+```{r Simulated_density-tsallis2, echo=FALSE, message=FALSE}
+set.seed(1234567890, kind = "Mersenne-Twister")
+
+R <- 10000
+mu <- 1
+B <- 50
+
+lambda <- 0.9
+
+sample.size <- c(49, 81, 121)
+L_values <- c(5, 18)
+
+all_summary_stats <- list()
+all_TestStatistics <- list()
+
+# 
+for (L in L_values) {
+  
+  
+  file_name <- paste0("./Data/resultsT2_", L, ".Rdata")
+  
+  
+  if (file.exists(file_name)) {
+    load(file_name)
+    message(paste("Loaded existing data for L =", L))
+  } else {
+    
+    TestStatistics1 <- list()  
+    summary_stats <- data.frame(
+      LValue = character(),
+      SampleSize = numeric(),
+      Mean = numeric(),
+      SD = numeric()
+      #Variance = numeric(),
+      #Skewness = numeric(),
+     # Kurtosis = numeric(),
+      #adpvalue = numeric()
+    )  
+  
+    # Para cada tamaño de muestra
+    for (s in sample.size) {
+      TestStat1 <- numeric(R)
+    
+      for (r in 1:R) {
+        z <- gamma_sar_sample(L, mu, s)
+        TestStat1[r]  <- bootstrap_tsallis_entropy_optimized(z, B, lambda) -((1 - exp((1 - lambda)*log(mean(z)) +
+             (lambda - 1)*log(L) +
+             lgamma(lambda*(L - 1) + 1) -
+             lambda*lgamma(L) -
+             (lambda*(L - 1) + 1)*log(lambda))) / (lambda - 1))
+      }
+    
+      TestStatistics1[[as.character(s)]] <- data.frame(
+        "SampleSize" = rep(s, R), 
+        "Test_Statistics" = TestStat1
+      )
+
+      mean_val <- mean(TestStat1)
+      sd_val <- sd(TestStat1)
+      #var_val <- var(TestStat1)
+     # skewness_val <- skewness(TestStat1)
+     # kurtosis_val <- kurtosis(TestStat1)
+     # ad_p_value <- ad.test(TestStatistics1[[as.character(s)]]$Test_Statistics)$p.value
+    
+      summary_stats <- rbind(summary_stats, data.frame(
+        LValue = as.character(L),
+        SampleSize = s,
+        Mean = mean_val,
+        SD = sd_val
+      #  Variance = var_val,
+       # Skewness = skewness_val,
+       # Kurtosis = kurtosis_val,
+       # adpvalue = ad_p_value
+      )) 
+    }
+    
+    all_TestStatistics[[as.character(L)]] <- TestStatistics1
+    all_summary_stats[[as.character(L)]] <- summary_stats
+    
+    
+    save(all_TestStatistics, all_summary_stats, file = file_name)
+    message(paste("Saved new results for L =", L))
+  }
+}
+
+```
+
+```{r fig-densities-tsallis4,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="80%", fig.pos="H",  fig.cap="Empirical densities of $S_{\\widetilde{T}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$, with $\\lambda=0.85$.", fig.width=9, fig.height=4.0}
+#fig.show="hide", 
+# eval=FALSE,  #
+
+theme_set(theme_minimal() +
+            theme(text = element_text(family = "serif"),
+                  legend.position = "bottom",
+                  legend.text = element_text(angle = 0, vjust = 0.5)))
+
+x_limits <- c(-0.5, 0.5)  # Límites del eje X
+x_breaks <- seq(-0.4, 0.4, by = 0.2)  # Ticks del eje X
+y_limits <- c(0, 7)       # Límites del eje Y
+
+
+selected_L_values <- c(5, 18)
+
+all_plots <- list()
+
+for (L in selected_L_values) {
+  load(paste0("./Data/resultsT2_", L, ".Rdata"))
+
+  combined_data <- do.call(rbind, all_TestStatistics[[as.character(L)]])
+  combined_data$L <- L
+  
+  
+  combined_data$CurveOrder <- factor(combined_data$SampleSize, levels = rev(sample.size))
+  
+  
+  combined_data$LegendOrder <- factor(combined_data$SampleSize, levels = sample.size)
+  
+    p <- ggplot(combined_data, aes(x = Test_Statistics, col = LegendOrder, linetype = LegendOrder, group = CurveOrder)) +
+  geom_line(stat = "density", linewidth = 1.5) +
+  scale_color_brewer(palette = "Set1", name = "Sample Size") +
+  scale_linetype_manual(values = rep("solid", length(sample.size)), name = "Sample Size") +
+  scale_x_continuous(limits = x_limits, breaks = x_breaks, minor_breaks = NULL) +
+  scale_y_continuous(limits = y_limits, minor_breaks = NULL) +
+  labs(
+      x = expression("Test Statistic" ~ S[widetilde(italic(T))[lambda]](italic(bold(Z))* ";" **phantom(" ")* italic(L))), 
+      y = "Density"
+  ) +
+  ggtitle(bquote(italic(L) == .(L))) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 2)),
+    axis.text = element_text(size = 16),     
+    axis.title = element_text(size = 16),    
+    legend.text = element_text(size = 16),   
+    legend.title = element_text(size = 16)
+  )
+
+
+  # p <- ggplot(combined_data, aes(x = Test_Statistics, col = LegendOrder, linetype = LegendOrder, group = CurveOrder)) +
+  #   geom_line(stat = "density", linewidth = 1.5) +
+  #   scale_color_viridis(discrete = TRUE, option = "C", direction = -1, begin = 0.2, end = 0.7, name = "Sample Size") +
+  #   scale_linetype_manual(values = rep("solid", length(sample.size)), name = "Sample Size") +
+  #   scale_x_continuous(limits = x_limits, breaks = x_breaks, minor_breaks = NULL) +
+  #   #scale_x_continuous(limits = x_limits, breaks = x_breaks) + 
+  #   scale_y_continuous(limits = y_limits, minor_breaks = NULL)+
+  #   #scale_y_continuous(limits = y_limits) +  
+  #   labs(
+  #       x = expression("Test Statistic" ~ S[widetilde(italic(T))[lambda]](italic(bold(Z))* ";" **phantom(" ")* italic(L))), 
+  #       y = "Density"
+  #   ) +
+  #   ggtitle(bquote(italic(L) == .(L))) +
+  #   theme(plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 2)),
+  #         axis.text = element_text(size = 16),     
+  #       axis.title = element_text(size = 16),    
+  #       legend.text = element_text(size = 16),   
+  #       legend.title = element_text(size = 16)   
+  #         ) 
+
+  all_plots[[as.character(L)]] <- p
+}
+
+
+combined_plot <- wrap_plots(all_plots, ncol = 2, nrow = 1) +
+  plot_layout(guides = "collect")
+
+print(combined_plot)
+
+
+```
+
+Under the asymptotic properties of the entropy estimators [@vasicek1976test;@VanEs1992], for sufficiently large samples, $S_{\widetilde{\theta}}(\bm{Z};L)$ follows an asymptotic normal distribution:
+<!-- From the asymptotic theory of entropy estimators [@vasicek1976test;@VanEs1992], we know that for sufficiently large samples the statistic $S_{\widetilde{\theta}}(\bm{Z};L)$ converges in distribution to a normal law. Formally, as: -->
+$$
+  S_{\widetilde{\theta}}(\mathbf Z;L)\;
+  \overset{\mathcal{D}}{\underset{n \to \infty}{\longrightarrow}}\;
+  \mathcal N\!\bigl(\mu_S,\sigma_S^{2}\bigr),
+$$
+where ${\widetilde{\theta}\in\{\widetilde{H},\;\widetilde{R}_\lambda,\;\widetilde{T}_\lambda\}}$  and $\xrightarrow{\mathcal{D}}$ denotes convergence in distribution.
+
+Here, $\mu_S = \mathbb{E}[S_{\widetilde{\theta}}(\bm{Z};L)]$ and $\sigma^2_S = \mathrm{Var}[S_{\widetilde{\theta}}(\bm{Z};L)]$ are the theoretical mean and variance of the test statistic under $\mathcal{H}_0$. This asymptotic normality can be explained by noting that the entropy estimator (and hence $S_{\widetilde{\theta}}$) can be expressed as a sum or average of numerous observations; therefore, by the Central Limit Theorem and the delta method, its sampling distribution approaches a Gaussian form for large $n$.
+
+In practice, we estimate $\widehat{\mu}_S$ and $\widehat{\sigma}_S$ via Monte Carlo under $\mathcal{H}_0$.
+\begin{equation*}
+\varepsilon = \frac{{S_{\widetilde{\theta}}(\bm{Z}; L) - \widehat{\mu}_S}}{{\widehat{\sigma}_S}},
+\end{equation*} 
+which is asymptotically standard normal distributed for large $n$. Consequently, two-sided $p$-values are obtained as $2\Phi(-|\varepsilon|)$, where $\Phi(\cdot)$ is the cumulative distribution function of the standard normal distribution.
+<!-- Because all three tests share the same asymptotic distribution, the practical procedure is identical: compute the raw statistic, centre and scale it using $(\widehat{\mu}_S,\widehat{\sigma}_S)$, and read the $p$-value from the standard normal table—no model parameters from the alternative $\mathcal{G}^0_I$ law need to be estimated. -->
+
+Because all three test statistics share the same asymptotic distribution, the practical procedure is identical. First, the test statistic $S_{\widetilde{\theta}}(\bm{Z}; L)$ is computed for the observed data. Then, it is standardized using the estimated mean and standard deviation $(\widehat{\mu}_S, \widehat{\sigma}_S)$. Finally, the $p$-value is computed as $2\Phi(-|\varepsilon|)$. As shown in Figure \ref{fig:entropy-diagram-test}.
+
+```{=latex}
+\begin{figure}[H]
+    \centering
+\begin{tikzpicture}[
+  node distance=1cm and 1cm,
+  box/.style={
+    rectangle, draw=black, fill=teal!20,
+    minimum width=3cm, minimum height=1cm,
+    align=center, font=\small, text=black, font=\bfseries
+  },
+  arrow/.style={
+    -{Stealth[length=2mm, width=1.2mm]},
+    semithick,
+    shorten >=1pt, shorten <=1pt
+  }
+]
+  \node[box] (raw) {1. Compute\\test statistic\\ $S(\bm{Z})$};
+  \node[box,right=of raw] (std) {2. Standardize\\ $\varepsilon=(S-\hat\mu_S)/\hat\sigma_S$};
+  \node[box,right=of std] (pval) {3. Compute \\ $2\Phi(-|\varepsilon|)$};
+  \node[box,right=of pval] (dec) {4. Reject if\\ $p<0.05$};
+
+  \draw[arrow] (raw)  -- (std);
+  \draw[arrow] (std) -- (pval);
+  \draw[arrow] (pval) -- (dec);
+\end{tikzpicture}
+    \caption{Workflow of the entropy‐based hypothesis test: compute statistic, standardize, derive $p$-value, and decision by threshold $0.05$.}
+    \label{fig:entropy-diagram-test}
+\end{figure}
+
+```
+Importantly, no parameters from the alternative $\mathcal{G}^0_I$ model are needed, which simplifies implementation and avoids complex estimation procedures.
+
+In the next chapter, we apply this procedure to SAR images using a sliding window of size $7 \times 7$ pixels. For each window, we compute the corresponding test statistic and derive a $p$-value, which quantifies the statistical evidence against local homogeneity. High $p$-values (e.g., $p > 0.05$) indicate no significant deviation from the fully developed speckle model, suggesting homogeneity. Conversely, low $p$-values (e.g., $p < 0.05$)  suggest statistically significant deviations and are interpreted as heterogeneity.
+
+### Size and Power Analysis of the Proposed Tests
+
+The statistical validity and effectiveness of the proposed tests based on Shannon, Rényi, and Tsallis entropies were assessed through the analysis of two key properties: \emph{size} and \emph{power}. These properties provide insight into the probability of making incorrect decisions during hypothesis testing.
+
+The size of a statistical test, also known as the Type&nbsp;I error rate, refers to the probability of incorrectly rejecting the null hypothesis $\mathcal{H}_0$ when it is in fact true. In hypothesis testing, practitioners typically specify a nominal significance level, commonly set at \SI{1}{\percent}, \SI{5}{\percent}, and \SI{10}{\percent}.  These values define the acceptable probability of committing a Type&nbsp;I error. A well-calibrated test should exhibit empirical Type~I error rates that closely match the nominal levels across different sample sizes and conditions.
+
+To evaluate this, we performed a Monte Carlo simulation with $1000$ replications for each combination of sample size and number of looks $L$, under the null hypothesis $\mathcal{H}_0$, where the data follow a $\Gamma_{\text{SAR}}$ distribution with mean $\mu = 1$. For each replication, the corresponding test statistic was computed using a bootstrap-based entropy estimator with $B = 100$ resamples. In the case of the Rényi and Tsallis entropy-based tests, we used order parameters $\lambda = 0.9$ and $\lambda = 0.85$, respectively. The empirical size was then estimated as the proportion of replications in which the null hypothesis was incorrectly rejected.
+
+The observed Type&nbsp;I error rates for the three entropy-based tests were consistently close to the nominal levels ($0.01$, $0.05$, $0.10$), thereby confirming the validity and proper calibration of the procedures. These results are summarized in Tables&nbsp;\ref{tab:table_size_power_shannon}-\ref{tab:size-power-tsallis}, and are visualized in the top panel of&nbsp;@fig-compare_size_power_plot0.
+
+The power of a statistical test is defined as the probability of correctly rejecting the null hypothesis when it is false, that is, when the data are generated under the alternative hypothesis $\mathcal{H}_1$. It is mathematically given by $1 - \beta$, where $\beta$ represents the Type&nbsp;II error rate (the probability of failing to reject a false null hypothesis). In other words, high power indicates low probability of committing a Type II error, and reflects the test’s sensitivity to deviations from $\mathcal{H}_0$.
+
+To assess this property, we simulated data under the alternative hypothesis $\mathcal{H}_1$, assuming the $\mathcal{G}^0_I$ distribution with $\mu = 1$ and  $\alpha = -2$. For each combination of sample size and number of looks $L$, we performed $1000$ Monte Carlo replications. In each replication, the corresponding test statistic was computed using a bootstrap-based entropy estimator with $B = 100$ resamples. For the Rényi and Tsallis entropy-based tests, we used order parameters $\lambda = 0.9$ and $\lambda = 0.85$, respectively. Power was estimated as the proportion of replications in which the null hypothesis $\mathcal{H}_0$ was correctly rejected.
+
+As expected, power increased with both the sample size and the number of looks. This trend was consistent across all three entropic measures, demonstrating the effectiveness of the tests in identifying departures from the null hypothesis under heterogeneous conditions.
+The results are shown in Tables&nbsp;\ref{tab:table_size_power_shannon}-\ref{tab:size-power-tsallis}, with graphical representations provided in the lower panel of&nbsp;@fig-compare_size_power_plot0.
+
+<!-- The observed increase in power with both sample size and number of looks is theoretically justified. Larger sample sizes provide more information about the underlying distribution, which reduces variability in the estimation of the test statistic and improves its ability to detect departures from the null hypothesis. Similarly, in the context of the $\Gamma_{\text{SAR}}$ and $\mathcal{G}^0_I$ models, a higher number of looks $L$ corresponds to less speckle noise and more stable observations. This leads to more reliable test statistics, further enhancing the ability of the test to distinguish between homogeneous and heterogeneous regions. Therefore, both increased $n$ and $L$ contribute to higher sensitivity, which is reflected in the rising power curves observed in the simulations. -->
+```{r Simulated_error_type_I-shannon1, echo=FALSE, message=FALSE}
+if (!file.exists("./Data/type_I_results-shannon1.Rdata")) {
+  
+  message("Archivo de tamaño tipo I (Shannon) no encontrado. Generando resultados...")
+
+  set.seed(1234567890, kind = "Mersenne-Twister")
+
+  calculate_p_value <- function(test_statistic, mu_W, sigma_W, alpha_nominal) {
+    epsilon <- test_statistic / sigma_W
+    p_value <- 2 * (1 - pnorm(abs(epsilon)))
+    return(p_value < alpha_nominal)
+  }
+
+  R <- 1000
+  mu <- 1
+  B <- 50
+  L_values <- c(5, 8, 18)
+  sample_sizes <- c(25, 49, 81, 121)
+  alpha_nominals <- c(0.01, 0.05, 0.1)
+  results <- data.frame()
+
+  for (L in L_values) {
+    for (alpha_nominal in alpha_nominals) {
+      TestStatistics <- NULL
+      mean_entropy <- numeric(length(sample_sizes))
+      sd_entropy <- numeric(length(sample_sizes))
+
+      for (s in sample_sizes) {
+        TestStat <- numeric(R)
+
+        for (r in 1:R) {
+          z <- gamma_sar_sample(L, mu, s)
+          TestStat[r] <- bootstrap_al_omari_1_estimator(z, B) -
+                         (log(mean(z)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+        }
+
+        mean_entropy[sample_sizes == s] <- mean(TestStat)
+        sd_entropy[sample_sizes == s] <- sd(TestStat)
+
+        TestStatistics <- rbind(
+          TestStatistics,
+          data.frame(
+            "L" = rep(L, R),
+            "Sample_Size" = rep(s, R),
+            "Test_Statistics" = TestStat
+          )
+        )
+      }
+
+      mu_W <- mean_entropy
+      sigma_W <- sqrt(sd_entropy^2)
+
+      p_values <- apply(TestStatistics, 1, function(row) {
+        calculate_p_value(
+          row["Test_Statistics"],
+          mu_W[sample_sizes == row["Sample_Size"]],
+          sigma_W[sample_sizes == row["Sample_Size"]],
+          alpha_nominal
+        )
+      })
+
+      result <- data.frame(
+        "L" = TestStatistics$L,
+        "Sample_Size" = TestStatistics$Sample_Size,
+        "Alpha_Nominal" = alpha_nominal,
+        "P_Value" = p_values
+      )
+      results <- rbind(results, result)
+    }
+  }
+
+  save(results, file = "./Data/type_I_results-shannon1.Rdata")
+  
+} else {
+  message("Archivo de tamaño tipo I (Shannon) encontrado. Cargando resultados...")
+  load("./Data/type_I_results-shannon.Rdata")
+}
+```
+
+```{r Simulated_power-shannon2, echo=FALSE, message=FALSE}
+if (!file.exists("./Data/results_power-shannon2.Rdata")) {
+
+  message("Archivo de potencia (Shannon) no encontrado. Generando resultados...")
+
+  set.seed(1234567890, kind = "Mersenne-Twister")
+
+  calculate_p_value <- function(test_statistic, mu_W, sigma_W) {
+    epsilon <- test_statistic / sigma_W
+    p_value <- 2 * (1 - pnorm(abs(epsilon)))
+    return(p_value)
+  }
+
+  calculate_type_II_error_rate <- function(p_values, alpha_nominal) {
+    mean(p_values >= alpha_nominal)
+  }
+
+  calculate_power <- function(R, mu, L_values, B, sample_sizes, alpha_nominals) {
+    results <- data.frame()
+
+    for (L in L_values) {
+      for (alpha_nominal in alpha_nominals) {
+        TestStatistics <- list()
+        mean_entropy <- numeric(length(sample_sizes))
+        sd_entropy <- numeric(length(sample_sizes))
+
+        for (s in sample_sizes) {
+          TestStat <- numeric(R)
+
+          for (r in 1:R) {
+            z <- gi0_sample(mu, -1.5, L, s)
+            TestStat[r] <- bootstrap_al_omari_1_estimator(z, B) -
+                           (log(mean(z)) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L)))
+          }
+
+          mean_entropy[sample_sizes == s] <- mean(TestStat)
+          sd_entropy[sample_sizes == s] <- sd(TestStat)
+          TestStatistics[[as.character(s)]] <- TestStat
+        }
+
+        mu_W <- mean_entropy
+        sigma_W <- sqrt(sd_entropy^2)
+
+        p_values <- lapply(TestStatistics, function(TestStat) {
+          sapply(TestStat, function(stat) {
+            calculate_p_value(stat, mu_W, sigma_W[sample_sizes == as.numeric(names(TestStatistics)[1])])
+          })
+        })
+
+        type_II_error_rates <- sapply(p_values, function(pv) {
+          calculate_type_II_error_rate(pv, alpha_nominal)
+        })
+
+        power <- 1 - type_II_error_rates
+
+        result_row <- data.frame(
+          L = L,
+          alpha_nominal = alpha_nominal,
+          Sample_Size = sample_sizes,
+          power = power
+        )
+
+        results <- rbind(results, result_row)
+      }
+    }
+
+    return(results)
+  }
+
+  R <- 1000
+  mu <- 1
+  L_values <- c(5, 8, 18)
+  B <- 50
+  sample_sizes <- c(25, 49, 81, 121)
+  alpha_nominals <- c(0.01, 0.05, 0.1)
+
+  results_power <- calculate_power(R, mu, L_values, B, sample_sizes, alpha_nominals)
+
+  save(results_power, file = "./Data/results_power-shannon2.Rdata")
+
+} else {
+  message("Archivo de potencia (Shannon) encontrado. Cargando resultados...")
+  load("./Data/results_power-shannon2.Rdata")
+}
+
+```
+
+\renewcommand{\arraystretch}{1}
+```{r Table_size_and_power-shannon3, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+suppressMessages({
+  suppressWarnings({
+    load("./Data/type_I_results-shannon.Rdata")
+    type_I_error_rates <- tapply(
+      results$P_Value, 
+      INDEX = list(results$L, results$Sample_Size, results$Alpha_Nominal),
+      FUN = function(p_values) sum(p_values) / length(p_values)
+    )
+
+    type_I_error_results <- as.data.frame(as.table(type_I_error_rates))
+    colnames(type_I_error_results) <- c("L", "Sample_Size", "Alpha_Nominal", "Type_I_Error_Rate")
+
+    spread_results <- type_I_error_results %>%
+      pivot_wider(names_from = Alpha_Nominal, values_from = Type_I_Error_Rate)
+
+    load("./Data/results_power-shannon.Rdata")
+
+    summary_stats <- results_power %>%
+      pivot_wider(names_from = alpha_nominal, values_from = power)
+
+    combined_results <- merge(spread_results, summary_stats, by = c("L", "Sample_Size")) %>%
+      arrange(L, Sample_Size)
+
+    selected_columns <- c("L", "Sample_Size", grep("^0\\.", colnames(combined_results), value = TRUE))
+
+    if (length(selected_columns) == 8) {
+      combined_results <- combined_results[, selected_columns, drop = FALSE]
+      colnames(combined_results) <- c("$\\bm{L}$", "$\\bm{n}$", 
+        "$\\hphantom{00}\\SI{1}{\\percent}$", 
+        "$\\hphantom{00}\\SI{5}{\\percent}$", 
+        "$\\hphantom{00}\\SI{10}{\\percent}$", 
+        "$\\hphantom{00}\\SI{1}{\\percent}$", 
+        "$\\hphantom{00}\\SI{5}{\\percent}$", 
+        "$\\hphantom{00}\\SI{10}{\\percent}$")
+    }
+
+    combined_results[] <- lapply(combined_results, function(x) {
+      if (is.numeric(x)) {
+        if (all(x %% 1 == 0)) {
+          sprintf("$%d$", x)
+        } else {
+          ifelse(
+            x < 0, 
+            sprintf("$%.3f$", x),
+            sprintf("$\\phantom{-}%.3f$", x)
+          )
+        }
+      } else {
+        x
+      }
+    })
+  })
+})
+
+table_combined_result <- knitr::kable(
+  combined_results,
+  caption = "Size and Power of the $S_{\\widetilde{H}}(\\bm{Z})$ test statistic (Shannon).",
+  format = "latex",
+  booktabs = TRUE,
+  align = "cccccccc",
+  escape = FALSE,
+  digits = 3,
+  label = "table_size_power_shannon",
+  centering = FALSE,
+  table.envir = "table", 
+  position="H", 
+  linesep = ""
+) %>%
+  add_header_above(c(" " = 2, "Size" = 3, "Power" = 3)) %>%
+  collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") %>%
+  row_spec(0, align = "c") %>%
+  kable_styling(latex_options = "scale_down", font_size = 10) %>%
+  kable_styling(full_width = T)
+
+print(table_combined_result)
+
+```
+
+```{r Simulated_error_type_I, echo=FALSE, message=FALSE}
+if (!file.exists("./Data/type_I_results.Rdata")) {
+  
+  message("AFile type_I_results.Rdata not found. Generating results...")
+
+  set.seed(1234567890, kind = "Mersenne-Twister")
+
+  calculate_p_value <- function(test_statistic, mu_W, sigma_W, alpha_nominal) {
+    epsilon <- test_statistic / sigma_W
+    p_value <- 2 * (1 - pnorm(abs(epsilon)))
+    return(p_value < alpha_nominal)  
+  }
+
+  R <- 1000
+  mu <- 1
+  B <- 100
+  lambda <- 0.9
+  L_values <- c(5, 8, 18)
+  sample_sizes <- c(25, 49, 81, 121)
+  alpha_nominals <- c(0.01, 0.05, 0.1)
+  results <- data.frame()
+
+  for (L in L_values) {
+    for (alpha_nominal in alpha_nominals) {
+      TestStatistics <- NULL
+      mean_entropy <- numeric(length(sample_sizes))
+      sd_entropy <- numeric(length(sample_sizes))
+      
+      for (s in sample_sizes) {
+        TestStat <- numeric(R)
+        
+        for (r in 1:R) {
+          z <- gamma_sar_sample(L, mu, s)
+          TestStat[r] <- bootstrap_renyi_entropy_estimator_v1(z, B, lambda) - (
+            (lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1) + 
+             (lambda * (L - 1) + 1) * log(lambda)) / (lambda - 1) +
+            log(mean(z)) - log(L)
+          )
+        }
+        
+        mean_entropy[sample_sizes == s] <- mean(TestStat)
+        sd_entropy[sample_sizes == s] <- sd(TestStat)
+        
+        TestStatistics <- rbind(
+          TestStatistics,
+          data.frame(
+            "L" = rep(L, R),
+            "Sample_Size" = rep(s, R),
+            "Test_Statistics" = TestStat
+          )
+        )
+      }
+      
+      mu_W <- mean_entropy
+      sigma_W <- sqrt(sd_entropy^2)
+      
+      p_values <- apply(TestStatistics, 1, function(row) {
+        calculate_p_value(
+          row["Test_Statistics"],
+          mu_W[sample_sizes == row["Sample_Size"]],
+          sigma_W[sample_sizes == row["Sample_Size"]],
+          alpha_nominal
+        )
+      })
+      
+      result <- data.frame(
+        "L" = TestStatistics$L,
+        "Sample_Size" = TestStatistics$Sample_Size,
+        "Alpha_Nominal" = alpha_nominal,
+        "P_Value" = p_values
+      )
+      results <- rbind(results, result)
+    }
+  }
+  
+  
+  save(results, file = "./Data/type_I_results.Rdata")
+  
+} else {
+  
+  
+  message("File type_I_results.Rdata found. Generating results...")
+  load("./Data/type_I_results.Rdata")
+  
+}
+```
+
+
+```{r Simulated_power, echo=FALSE, message=FALSE}
+
+if (!file.exists("./Data/results_power.Rdata")) {
+  
+  message("File type_I_results.Rdata not found. Generating results...")
+
+  set.seed(1234567890, kind = "Mersenne-Twister")
+
+  calculate_p_value <- function(test_statistic, mu_W, sigma_W) {
+    epsilon <- test_statistic  / sigma_W
+    p_value <- 2 * (1 - pnorm(abs(epsilon)))
+    return(p_value)
+  }
+
+  calculate_type_II_error_rate <- function(p_values, alpha_nominal) {
+    type_II_error_rate <- sum(p_values >= alpha_nominal) / length(p_values)
+    return(type_II_error_rate)
+  }
+
+  calculate_power <- function(R, mu, L_values, B, lambda, sample_sizes, alpha_nominals) {
+    results <- data.frame()
+    
+    for (L in L_values) {
+      for (alpha_nominal in alpha_nominals) {
+        TestStatistics <- list()
+        mean_entropy <- numeric(length(sample_sizes))
+        sd_entropy <- numeric(length(sample_sizes))
+        
+        for (s in sample_sizes) {
+          TestStat <- numeric(R)
+          
+          for (r in 1:R) {
+            z <- gi0_sample(mu, -2, L, s)
+            TestStat[r] <- bootstrap_renyi_entropy_estimator_v1(z, B, lambda) - (
+              (lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1) + 
+               (lambda * (L - 1) + 1) * log(lambda)) / (lambda - 1) + 
+              log(mean(z)) - log(L)
+            )
+          }
+          
+          mean_entropy[sample_sizes == s] <- mean(TestStat)
+          sd_entropy[sample_sizes == s] <- sd(TestStat)
+          TestStatistics[[as.character(s)]] <- TestStat
+        }
+        
+        mu_W <- mean_entropy  
+        sigma_W <- sqrt(sd_entropy^2)
+        
+        p_values <- lapply(TestStatistics, function(TestStat) {
+          apply(
+            data.frame("Test_Statistics" = TestStat),
+            1,
+            function(row) {
+              calculate_p_value(row["Test_Statistics"], mu_W, sigma_W[as.numeric(names(TestStatistics)) == as.numeric(s)])
+            }
+          )
+        })
+        
+        type_II_error_rates <- sapply(p_values, function(p_values_for_size) {
+          calculate_type_II_error_rate(p_values_for_size, alpha_nominal)
+        })
+        
+        power <- 1 - type_II_error_rates
+        
+        result_row <- data.frame(
+          L = L,
+          alpha_nominal = alpha_nominal,
+          Sample_Size = sample_sizes,
+          power = power
+        )
+        
+        results <- rbind(results, result_row)
+      }
+    }
+    
+    return(results)
+  }
+
+  
+  R <- 1000
+  mu <- 1
+  L_values <- c(5, 8, 18)
+  B <- 100
+  lambda <- 0.9
+  sample_sizes <- c(25, 49, 81, 121)
+  alpha_nominals <- c(0.01, 0.05, 0.1)
+
+  
+  results_power <- calculate_power(R, mu, L_values, B, lambda, sample_sizes, alpha_nominals)
+
+  
+  save(results_power, file = "./Data/results_power.Rdata")
+  
+} else {
+  
+  
+  message("File type_I_results.Rdata found. Generating results...")
+  load("./Data/results_power.Rdata")
+  
+}
+```
+
+
+\renewcommand{\arraystretch}{1}
+```{r Table_size_and_power-renyi, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+suppressMessages({
+  suppressWarnings({
+
+   
+    load("./Data/type_I_results.Rdata")
+    type_I_error_rates <- tapply(
+      results$P_Value, 
+      INDEX = list(results$L, results$Sample_Size, results$Alpha_Nominal),
+      FUN = function(p_values) sum(p_values) / length(p_values)
+    )
+
+    type_I_error_results <- as.data.frame(as.table(type_I_error_rates))
+    colnames(type_I_error_results) <- c("L", "Sample_Size", "Alpha_Nominal", "Type_I_Error_Rate")
+
+    spread_results <- type_I_error_results %>%
+      pivot_wider(names_from = Alpha_Nominal, values_from = Type_I_Error_Rate)
+
+    load("./Data/results_power.Rdata")
+
+    summary_stats <- results_power %>%
+      pivot_wider(names_from = alpha_nominal, values_from = power)
+
+    combined_results <- merge(spread_results, summary_stats, by = c("L", "Sample_Size")) %>%
+      arrange(L, Sample_Size)
+
+    selected_columns <- c("L", "Sample_Size", grep("^0\\.", colnames(combined_results), value = TRUE))
+
+    if (length(selected_columns) == 8) {
+      combined_results <- combined_results[, selected_columns, drop = FALSE]
+      colnames(combined_results) <- c("$\\bm{L}$", "$\\bm{n}$", 
+  "$\\hphantom{00}\\SI{1}{\\percent}$", 
+  "$\\hphantom{00}\\SI{5}{\\percent}$", 
+  "$\\hphantom{00}\\SI{10}{\\percent}$", 
+  "$\\hphantom{00}\\SI{1}{\\percent}$", 
+  "$\\hphantom{00}\\SI{5}{\\percent}$", 
+  "$\\hphantom{00}\\SI{10}{\\percent}$")
+    }
+
+    combined_results[] <- lapply(combined_results, function(x) {
+      if (is.numeric(x)) {
+        if (all(x %% 1 == 0)) {
+          sprintf("$%d$", x)  # Para enteros en formato LaTeX
+        } else {
+          ifelse(
+            x < 0, 
+            sprintf("$%.3f$", x),
+            sprintf("$\\phantom{-}%.3f$", x)
+          )
+        }
+      } else {
+        x
+      }
+    })
+
+  })
+})
+
+table_combined_result <- knitr::kable(
+  combined_results,
+  caption = "Size and Power of the $S_{\\widetilde{R}_{\\lambda}}(\\bm{Z})$ test statistic (Rényi).",
+  format = "latex",
+  booktabs = TRUE,
+  align = "cccccccc",
+  escape = FALSE,
+  digits = 3,
+  label = "size-power-renyi",
+  centering = FALSE,
+  table.envir = "table", 
+  position="H", 
+  linesep = ""
+) %>%
+  add_header_above(c(" " = 2, "Size" = 3,  "Power" = 3)) %>%
+  collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") %>%
+  row_spec(0, align = "c") %>%
+  kable_styling(latex_options = "scale_down", font_size = 10) %>%
+  kable_styling(full_width = T)
+
+print(table_combined_result)
+```
+
+
+```{r Simulated_error_type_I-tsallis1, echo=FALSE, message=FALSE}
+if (!file.exists("./Data/type_I_results-tsallis1.Rdata")) {
+  
+  message("AFile type_I_results-tsallis1.Rdata not found. Generating results...")
+
+  set.seed(1234567890, kind = "Mersenne-Twister")
+
+  calculate_p_value <- function(test_statistic, mu_W, sigma_W, alpha_nominal) {
+    epsilon <- test_statistic / sigma_W
+    p_value <- 2 * (1 - pnorm(abs(epsilon)))
+    return(p_value < alpha_nominal)  
+  }
+
+  R <- 500
+  mu <- 1
+  B <- 100
+  lambda <- 0.85
+  L_values <- c(5, 8, 18)
+  sample_sizes <- c(25, 49, 81, 121)
+  alpha_nominals <- c(0.01, 0.05, 0.1)
+  results <- data.frame()
+
+  for (L in L_values) {
+    for (alpha_nominal in alpha_nominals) {
+      TestStatistics <- NULL
+      mean_entropy <- numeric(length(sample_sizes))
+      sd_entropy <- numeric(length(sample_sizes))
+      
+      for (s in sample_sizes) {
+        TestStat <- numeric(R)
+        
+        for (r in 1:R) {
+          z <- gamma_sar_sample(L, mu, s)
+          TestStat[r] <- bootstrap_tsallis_entropy_optimized(z, B, lambda) -((1 - exp((1 - lambda)*log(mean(z)) +
+             (lambda - 1)*log(L) +
+             lgamma(lambda*(L - 1) + 1) -
+             lambda*lgamma(L) -
+             (lambda*(L - 1) + 1)*log(lambda))) / (lambda - 1))
+        }
+        
+        mean_entropy[sample_sizes == s] <- mean(TestStat)
+        sd_entropy[sample_sizes == s] <- sd(TestStat)
+        
+        TestStatistics <- rbind(
+          TestStatistics,
+          data.frame(
+            "L" = rep(L, R),
+            "Sample_Size" = rep(s, R),
+            "Test_Statistics" = TestStat
+          )
+        )
+      }
+      
+      mu_W <- mean_entropy
+      sigma_W <- sqrt(sd_entropy^2)
+      
+      p_values <- apply(TestStatistics, 1, function(row) {
+        calculate_p_value(
+          row["Test_Statistics"],
+          mu_W[sample_sizes == row["Sample_Size"]],
+          sigma_W[sample_sizes == row["Sample_Size"]],
+          alpha_nominal
+        )
+      })
+      
+      result <- data.frame(
+        "L" = TestStatistics$L,
+        "Sample_Size" = TestStatistics$Sample_Size,
+        "Alpha_Nominal" = alpha_nominal,
+        "P_Value" = p_values
+      )
+      results <- rbind(results, result)
+    }
+  }
+  
+  
+  save(results, file = "./Data/type_I_results-tsallis1.Rdata")
+  
+} else {
+  
+  
+  message("File type_I_results-tsallis1.Rdata found. Generating results...")
+  load("./Data/type_I_results-tsallis1.Rdata")
+  
+}
+```
+
+
+```{r Simulated_power-tsallis1, echo=FALSE, message=FALSE}
+
+if (!file.exists("./Data/results_power-tsallis1.Rdata")) {
+  
+  message("File results_power-tsallis1 not found. Generating results...")
+
+  set.seed(1234567890, kind = "Mersenne-Twister")
+
+  calculate_p_value <- function(test_statistic, mu_W, sigma_W) {
+    epsilon <- test_statistic  / sigma_W
+    p_value <- 2 * (1 - pnorm(abs(epsilon)))
+    return(p_value)
+  }
+
+  calculate_type_II_error_rate <- function(p_values, alpha_nominal) {
+    type_II_error_rate <- sum(p_values >= alpha_nominal) / length(p_values)
+    return(type_II_error_rate)
+  }
+
+  calculate_power <- function(R, mu, L_values, B, lambda, sample_sizes, alpha_nominals) {
+    results <- data.frame()
+    
+    for (L in L_values) {
+      for (alpha_nominal in alpha_nominals) {
+        TestStatistics <- list()
+        mean_entropy <- numeric(length(sample_sizes))
+        sd_entropy <- numeric(length(sample_sizes))
+        
+        for (s in sample_sizes) {
+          TestStat <- numeric(R)
+          
+          for (r in 1:R) {
+            z <- gi0_sample(mu, -2, L, s)
+            TestStat[r] <- bootstrap_tsallis_entropy_optimized(z, B, lambda) -((1 - exp((1 - lambda)*log(mean(z)) +
+             (lambda - 1)*log(L) +
+             lgamma(lambda*(L - 1) + 1) -
+             lambda*lgamma(L) -
+             (lambda*(L - 1) + 1)*log(lambda))) / (lambda - 1))
+          }
+          
+          mean_entropy[sample_sizes == s] <- mean(TestStat)
+          sd_entropy[sample_sizes == s] <- sd(TestStat)
+          TestStatistics[[as.character(s)]] <- TestStat
+        }
+        
+        mu_W <- mean_entropy  
+        sigma_W <- sqrt(sd_entropy^2)
+        
+        p_values <- lapply(TestStatistics, function(TestStat) {
+          apply(
+            data.frame("Test_Statistics" = TestStat),
+            1,
+            function(row) {
+              calculate_p_value(row["Test_Statistics"], mu_W, sigma_W[as.numeric(names(TestStatistics)) == as.numeric(s)])
+            }
+          )
+        })
+        
+        type_II_error_rates <- sapply(p_values, function(p_values_for_size) {
+          calculate_type_II_error_rate(p_values_for_size, alpha_nominal)
+        })
+        
+        power <- 1 - type_II_error_rates
+        
+        result_row <- data.frame(
+          L = L,
+          alpha_nominal = alpha_nominal,
+          Sample_Size = sample_sizes,
+          power = power
+        )
+        
+        results <- rbind(results, result_row)
+      }
+    }
+    
+    return(results)
+  }
+
+  
+  R <- 500
+  mu <- 1
+  L_values <- c(5, 8, 18)
+  B <- 100
+  lambda <- 0.85
+  sample_sizes <- c(25, 49, 81, 121)
+  alpha_nominals <- c(0.01, 0.05, 0.1)
+
+  
+  results_power <- calculate_power(R, mu, L_values, B, lambda, sample_sizes, alpha_nominals)
+
+  
+  save(results_power, file = "./Data/results_power-tsallis1.Rdata")
+  
+} else {
+  
+  
+  message("File results_power-tsallis1.Rdata found. Generating results...")
+  load("./Data/results_power-tsallis1.Rdata")
+  
+}
+```
+
+
+\renewcommand{\arraystretch}{1}
+```{r Table_size_and_power-tsallis0, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+suppressMessages({
+  suppressWarnings({
+
+   
+    load("./Data/type_I_results-tsallis.Rdata")
+    type_I_error_rates <- tapply(
+      results$P_Value, 
+      INDEX = list(results$L, results$Sample_Size, results$Alpha_Nominal),
+      FUN = function(p_values) sum(p_values) / length(p_values)
+    )
+
+    type_I_error_results <- as.data.frame(as.table(type_I_error_rates))
+    colnames(type_I_error_results) <- c("L", "Sample_Size", "Alpha_Nominal", "Type_I_Error_Rate")
+
+    spread_results <- type_I_error_results %>%
+      pivot_wider(names_from = Alpha_Nominal, values_from = Type_I_Error_Rate)
+
+    load("./Data/results_power-tsallis.Rdata")
+
+    summary_stats <- results_power %>%
+      pivot_wider(names_from = alpha_nominal, values_from = power)
+
+    combined_results <- merge(spread_results, summary_stats, by = c("L", "Sample_Size")) %>%
+      arrange(L, Sample_Size)
+
+    selected_columns <- c("L", "Sample_Size", grep("^0\\.", colnames(combined_results), value = TRUE))
+
+    if (length(selected_columns) == 8) {
+      combined_results <- combined_results[, selected_columns, drop = FALSE]
+      colnames(combined_results) <- c("$\\bm{L}$", "$\\bm{n}$", 
+  "$\\hphantom{00}\\SI{1}{\\percent}$", 
+  "$\\hphantom{00}\\SI{5}{\\percent}$", 
+  "$\\hphantom{00}\\SI{10}{\\percent}$", 
+  "$\\hphantom{00}\\SI{1}{\\percent}$", 
+  "$\\hphantom{00}\\SI{5}{\\percent}$", 
+  "$\\hphantom{00}\\SI{10}{\\percent}$")
+    }
+
+    combined_results[] <- lapply(combined_results, function(x) {
+      if (is.numeric(x)) {
+        if (all(x %% 1 == 0)) {
+          sprintf("$%d$", x)  # Para enteros en formato LaTeX
+        } else {
+          ifelse(
+            x < 0, 
+            sprintf("$%.3f$", x),
+            sprintf("$\\phantom{-}%.3f$", x)
+          )
+        }
+      } else {
+        x
+      }
+    })
+
+  })
+})
+
+table_combined_result <- knitr::kable(
+  combined_results,
+  caption = "Size and Power of the $S_{\\widetilde{T}_{\\lambda}}(\\bm{Z})$ test statistic (Tsallis).",
+  format = "latex",
+  booktabs = TRUE,
+  align = "cccccccc",
+  escape = FALSE,
+  digits = 3,
+  label = "size-power-tsallis",
+  centering = FALSE,
+  table.envir = "table", 
+  position="H", 
+  linesep = ""
+) %>%
+  add_header_above(c(" " = 2, "Size" = 3,  "Power" = 3)) %>%
+  collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") %>%
+  row_spec(0, align = "c") %>%
+  kable_styling(latex_options = "scale_down", font_size = 10) %>%
+  kable_styling(full_width = T)
+
+print(table_combined_result)
+```
+
+```{r Compare_size_power_data, echo=FALSE, message=FALSE}
+library(tidyverse)
+
+load("./Data/type_I_results-shannon.Rdata")
+load("./Data/results_power-shannon.Rdata")
+type_I_shannon <- results %>%
+  group_by(L, Sample_Size, Alpha_Nominal) %>%
+  summarise(Type_I_Error = mean(P_Value), .groups = "drop") %>%
+  mutate(Entropy = "Shannon")
+
+power_shannon <- results_power %>%
+  rename(Alpha_Nominal = alpha_nominal) %>%
+  mutate(Entropy = "Shannon")
+load("./Data/type_I_results.Rdata")
+load("./Data/results_power.Rdata")
+type_I_renyi <- results %>%
+  group_by(L, Sample_Size, Alpha_Nominal) %>%
+  summarise(Type_I_Error = mean(P_Value), .groups = "drop") %>%
+  mutate(Entropy = "Rényi")
+
+power_renyi <- results_power %>%
+  rename(Alpha_Nominal = alpha_nominal) %>%
+  mutate(Entropy = "Rényi")
+
+load("./Data/type_I_results-tsallis.Rdata")
+load("./Data/results_power-tsallis.Rdata")
+type_I_tsallis <- results %>%
+  group_by(L, Sample_Size, Alpha_Nominal) %>%
+  summarise(Type_I_Error = mean(P_Value), .groups = "drop") %>%
+  mutate(Entropy = "Tsallis")
+
+power_tsallis <- results_power %>%
+  rename(Alpha_Nominal = alpha_nominal) %>%
+  mutate(Entropy = "Tsallis")
+
+
+
+# Unir Size y Power
+size_all <- bind_rows(type_I_shannon,  type_I_renyi, type_I_tsallis)
+power_all <- bind_rows(power_shannon,  power_renyi, power_tsallis)
+
+# Fusionar en tabla larga
+comparison_data <- left_join(size_all, power_all,
+                             by = c("L", "Sample_Size", "Alpha_Nominal", "Entropy"))
+```
+
+
+
+
+```{r fig-compare_size_power_plot0, echo=FALSE, fig.width=10, fig.height=12, fig.pos="H", fig.cap="Comparative performance of test statistics based on Shannon, Rényi and Tsallis entropies. Size and Power for different sample sizes and $L$ values."}
+library(ggplot2)
+
+theme_set(theme_minimal() +
+            theme(text = element_text(family = "serif"),
+                  legend.position = "bottom"))
+#library(patchwork)
+
+# Gráfico 1: Size (Error tipo I)
+plot_size <- ggplot(comparison_data, aes(x = Sample_Size, y = Type_I_Error, color = Entropy)) +
+  geom_hline(yintercept = c(0.01, 0.05, 0.1), linetype = "dotted", color = "gray70", linewidth = 0.4) +
+  geom_line(linewidth = 1.2, alpha = 0.8) +
+  facet_grid(Alpha_Nominal ~ L, labeller = labeller(
+    Alpha_Nominal = function(x) paste0(x),
+    L = label_both
+  )) +
+  scale_y_continuous(breaks = seq(0, 0.15, by = 0.05), limits = c(0, 0.15)) +
+  scale_x_continuous(breaks = c(25, 49, 81, 121)) +  # <-- 
+  scale_color_brewer(palette = "Dark2") +
+  labs(
+    title = "Empirical Size (Type I Error)",
+    x = "Sample Size",
+    y = "Size",
+    color = "Entropy"
+  ) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "serif"),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14),
+    legend.position = "bottom",
+    legend.box = "horizontal",
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 12)
+  ) +
+  guides(color = guide_legend(nrow = 1))
+
+# Gráfico 2: Power
+plot_power <- ggplot(comparison_data, aes(x = Sample_Size, y = power, color = Entropy)) +
+  geom_line(linewidth = 1.2, alpha = 0.8) +
+  facet_grid(Alpha_Nominal ~ L, labeller = labeller(
+    Alpha_Nominal = function(x) paste0(x),
+    L = label_both
+  )) +
+  scale_y_continuous(breaks = seq(0.7, 1.0, by = 0.1), limits = c(0.5, 1.0)) +
+  scale_x_continuous(breaks = c(25, 49, 81, 121)) +  # 
+  scale_color_brewer(palette = "Dark2") +
+  labs(
+    title = "Empirical Power",
+    x = "Sample Size",
+    y = "Power",
+    color = "Entropy"
+  ) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "serif"),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14),
+    legend.position = "bottom",
+    legend.box = "horizontal",
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 12)
+  ) +
+  guides(color = guide_legend(nrow = 1))
+
+# Mostrar juntos (patchwork)
+(plot_size / plot_power) + plot_layout(guides = "collect") & theme(legend.position = "bottom")
+
+```
+
+

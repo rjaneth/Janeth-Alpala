@@ -1,16 +1,33 @@
-Este trabalho apresenta uma abordagem estatística para identificar as características de rugosidade subjacentes em dados de imagens em formation de intensidade de sensores de radar de abertura sintética (SAR -- \textit{Synthetic Aperture Radar}). 
-A modelagem física desse tipo de dados permite o uso da distribuição Gamma na presença de speckle totalmente desenvolvido, ou seja, quando há infinitos retroespalhadores independentes por célula de resolução e nenhum domina o retorno.
-Essas áreas são frequentemente chamadas de regiões ``homogêneas'' ou ``sem textura''. 
-A distribuição $\mathcal{G}_I^0$ também é uma lei amplamente aceita para regiões heterogêneas e extremamente heterogêneas, ou seja, áreas onde as hipóteses de speckle totalmente desenvolvidas não se aplicam.
-Uma problemática envolvendo o espaço paramétrico da $\mathcal{G}_I^0$ é a inviabilidade analítica de se testar homogeneidade contra heterogeneidade a partir de testes clássicos. 
-Como soluções para esta questão, propomos três testes de hipóteses  para distinguir entre regiões homogêneas e não homogêneas, ou seja, entre dados distribuídos Gamma e $\mathcal{G}_I^0$, ambos com um número conhecido de looks.
-A primeira estatística de teste usa um estimador não paramétrico da entropia de Shannon, incorporando metodologias de bootstrap.
-O segundo teste usa o coeficiente de variação clássico (CV). 
-O terceiro teste usa uma forma alternativa de estimar o CV com base na razão da média do desvio absoluto em relação à mediana.
-Mostramos que nossa proposta, o teste baseado em entropia, supera métodos existentes, tais como o CV clássico e sua variante alternativa, na identificação de heterogeneidade quando aplicado a dados simulados e imagens SAR.
-Aplicamos nossa estatística de teste para criar mapas de $p$-valores para a hipótese de homogeneidade. 
 
 
+Este trabalho apresenta uma abordagem estatística para a detecção de heterogeneidade 
+em dados de intensidade de radar de abertura sintética (SAR) utilizando medidas 
+baseadas em entropia. Em regiões homogêneas, onde há speckle totalmente desenvolvido, 
+os retornos SAR são bem modelados pela distribuição Gama. Em contraste, áreas heterogêneas 
+apresentam comportamentos de espalhamento mais complexos, normalmente descritos pela 
+distribuição $\mathcal{G}_I^0$. Distinguir entre esses dois regimes é fundamental 
+para uma interpretação precisa em aplicações de sensoriamento remoto. No entanto, 
+testes paramétricos clássicos geralmente não são adequados para essa tarefa devido a 
+limitações analíticas e numéricas.
+Para superar esses desafios, propomos três estatísticas de teste para detectar heterogeneidade 
+em imagens SAR com base nas entropias de Shannon, Rényi e Tsallis. Esses testes utilizam 
+estimadores não paramétricos de entropia construídos a partir de espaçamentos amostrais, 
+evitando suposições explícitas sobre a distribuição subjacente. Para aumentar a precisão dos testes, 
+especialmente em amostras pequenas, incorporamos um procedimento de correção de viés via bootstrap, 
+que melhora a estabilidade dos estimadores, reduz o viés e o erro quadrático médio.
+As estatísticas propostas são avaliadas por meio de simulações de Monte Carlo, 
+onde analisamos seu tamanho e poder sob diferentes condições de speckle e textura. 
+Os resultados mostram que os testes baseados em Rényi e Tsallis superam a versão baseada 
+em Shannon, detectando variações de textura mais sutis e mantendo maior confiabilidade na 
+identificação de regiões verdadeiramente homogêneas.
+Por fim, a metodologia é aplicada a dados SAR simulados e reais. 
+A análise é realizada com janelas deslizantes, gerando mapas de valores de $p$ que permitem a a
+valiação visual e quantitativa da heterogeneidade espacial. O teste baseado na entropia de 
+Rényi mostra desempenho superior na identificação de padrões de rugosidade em pequena escala, 
+enquanto o teste baseado em Tsallis é eficaz na detecção de regiões homogêneas. Em conjunto, 
+essas ferramentas baseadas em entropia oferecem uma estrutura robusta, interpretável e não 
+supervisionada para a detecção de heterogeneidade em dados SAR.
 
+\vspace{1em}
 \par
-\noindent \textbf{Palavras-chave:} SAR; heterogeneidade; entropia; coeficiente de variação; testes de hipóteses
+\noindent \textbf{Palavras-chave:} SAR; Heterogeneidade; Entropia; Estimativa não paramétrica; Bootstrap; Teste estatístico

@@ -227,13 +227,13 @@
 
 \RequirePackage{longtable} % Required for tables that span multiple pages (used in the symbols, abbreviations and physical constants pages)
 
-%\RequirePackage{siunitx} % Required for \SI commands
+\RequirePackage{siunitx} % Required for \SI commands
 
 \RequirePackage{graphicx} % Required to include images
 \graphicspath{{Figures/}{./}} % Specifies where to look for included images
 
 \RequirePackage{booktabs} % Required for better table rules
-
+\RequirePackage{float}
 % \RequirePackage{helvet} % use Arial-like font (Helvetica) in thesis
 % \renewcommand{\familydefault}{\sfdefault}
 % \RequirePackage{amsmath}
@@ -249,10 +249,16 @@
 \renewcommand{\familydefault}{\sfdefault} % Texto en "Latin Modern Sans"
 \RequirePackage{amsmath}
 \RequirePackage{amssymb}
-\RequirePackage{bm}     % Para \bm
-
+\RequirePackage{bm} 
+%\RequirePackage{placeins}
+\RequirePackage{array}
+\RequirePackage{multirow}    % Para \bm
+\RequirePackage{tabu}
 \RequirePackage{caption} % Required for customising the captions
 \captionsetup{justification=justified,font=small,labelfont=bf,margin=50pt}
+
+\RequirePackage{tikz}
+\usetikzlibrary{shapes, arrows.meta, positioning}
 
 %----------------------------------------------------------------------------------------
 %	DEFINE CUSTOM THESIS INFORMATION COMMANDS
