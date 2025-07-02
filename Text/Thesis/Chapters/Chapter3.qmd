@@ -59,7 +59,7 @@ The goal of this analysis is to identify the estimators with the best overall pe
 Our experimental setup involves the analysis of bias and MSE for each estimator through a Monte Carlo study. For each sample size $n \in \{9, 25, 49, 81, 121\}$, we generate $1000$  independent synthetic samples from $Z \sim \Gamma_{\text{SAR}}(5,1)$. The results are consistent across other values of $\mu$ and $L$.
 We adopt the heuristic spacing $m = \left[\sqrt{n} + 0.5\right]$, a choice commonly recommended in the literature [@Wieczorkowski1999].
 
-Figure \ref{fig:Plot_bias_mse-sh} presents the bias and MSE for each of the non-parametric estimators of Shannon entropy. The results are summarized in @tbl-out.
+Figure \ref{fig:Plot_bias_mse-sh} presents the bias and MSE for each of the non-parametric estimators of Shannon entropy. The results are summarized in @tbl-out-shannon.
 
 
 ```{=latex}
@@ -155,9 +155,14 @@ print(combined_plot_gi0)
 ```
 
 \renewcommand{\arraystretch}{1.8} 
-```{r Table_estimators_shannon2, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
-#| label: tbl-out
+```{r}
+#| label: tbl-out-shannon
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'asis'
 #| tbl-cap: 'Bias and MSE of Shannon entropy estimators under $\Gamma_{\text{SAR}}(5,1)$.'
+
 
 cat("\\setlength{\\tabcolsep}{4pt}\n")
 load("./Data/results_estimator_sh2.Rdata")
@@ -268,16 +273,10 @@ Substituting the estimate from Equation \eqref{eq:bias_estimate} into Equation \
 \widetilde{\theta} = 2\widehat{\theta}(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{\theta}(\bm{Z}^{(b)}).
 \label{eq:theta_explicit}
 \end{equation}
-<!-- This expression follows from the classical bias correction formula: -->
-<!-- \begin{equation} -->
-<!-- \text{Bias-corrected estimate} = \text{Original estimate} - \text{Bias estimate}. -->
-<!-- \label{eq:bias_correction_principle} -->
-<!-- \end{equation} -->
 Thus, $\widetilde{\theta}$ is an approximately unbiased estimator of $\theta$. The effectiveness of the correction depends on the number of bootstrap replicates $B$ and the characteristics of the underlying distribution, but it systematically reduces bias, particularly when working with small sample sizes.
 
 
 To distinguish the bootstrap-improved estimators from their original forms, we adopt the following notation: $\widetilde{H}_{\text{V}}$, $\widetilde{H}_{\text{VE}}$, $\widetilde{H}_{\text{E}}$, $\widetilde{H}_{\text{C}}$, $\widetilde{H}_{\text{N}}$, and $\widetilde{H}_{\text{AO}}$, respectively. For the other entropy types, we denote the bootstrap-corrected estimators as $\widetilde{R}_\lambda$ for Rényi entropy and $\widetilde{T}_\lambda$ for Tsallis entropy.
-
 
 
 In order to assess the effectiveness of the bootstrap technique, we present comparisons of the bias and MSE between each original non-parametric Shannon entropy estimator and its respective bootstrap-enhanced version, using samples from the $\Gamma_{\text{SAR}}(5,1)$, with $B=100$ bootstrap replicates and varying $n$, as shown in Figures \ref{fig:Firstfigure}--\ref{fig:subfig6}.
@@ -338,7 +337,7 @@ While the bias-corrected estimator $\widetilde{\theta}$ is theoretically motivat
 To finalize the selection of the non-parametric Shannon entropy estimator used in the following simulations, we consider the execution time of the bootstrap versions of $\widetilde{H}_{\text{C}}$ and $\widetilde{H}_{\text{AO}}$. 
 
  @tbl-out-time shows the processing time of each estimator across different settings of $L$  and $n$.
-<!-- <!-- # ```{r Simulated_comparative_time6, eval=FALSE, echo=FALSE} --> 
+
 ```{r Simulated_comparative_time6, echo=FALSE, message=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 R <- 600
@@ -389,10 +388,16 @@ if (!file.exists("./Data/results_data_time_sh.Rdata")) {#results_data_timenn
 
 
 ```
+
 \renewcommand{\arraystretch}{1.1}
-```{r Table_statistic_time_6,  echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+```{r}
 #| label: tbl-out-time
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'asis'
 #| tbl-cap: 'Processing time for bootstrap-improved estimators $\widetilde{H}_{\text{C}}$ and $\widetilde{H}_{\text{AO}}$'
+
 
 
 cat("\\setlength{\\tabcolsep}{10pt}\n")
@@ -849,64 +854,6 @@ print(combined_plot_tsallis)
 From this point forward, all subsequent simulations and comparisons will be based on the improved bootstrap estimators: $\widetilde{H}_{\text{AO}}$ for Shannon, $\widetilde{R}_{\lambda}$ for Rényi, and $\widetilde{T}_{\lambda}$ for Tsallis entropy.
 
 
-<!-- ```{r Simulated_data_bias_shannon1, echo=FALSE, message=FALSE} -->
-<!-- set.seed(1234567890) -->
-
-<!-- file_name <- "./Data/results_shannon_v1.Rdata" -->
-
-<!-- if (file.exists(file_name)) { -->
-<!--   load(file_name) -->
-<!--   message("Loaded existing results from results_shannon_v1.Rdata") -->
-<!-- } else { -->
-<!--   sample_sizes <- c(9, 25, 49, 81, 121) -->
-<!--   R <- 500 -->
-<!--   B <- 100 -->
-<!--   mu <- 1 -->
-<!--   L <- 16 -->
-
-<!--   estimators <- list( -->
-<!--     "Shannon Estimator" = al_omari_1_estimator, -->
-<!--     "Shannon Estimator Bootstrap" = bootstrap_al_omari_1_estimator -->
-<!--   ) -->
-
-<!--   results <- calculate_bias_mse_shannon(sample_sizes, R, B, mu, L, estimators) -->
-
-<!--   save(results, file = file_name) -->
-<!--   message("Simulaciones completadas y resultados guardados.") -->
-<!-- } -->
-
-<!-- ``` -->
-<!-- ```{r fig-bias_mse_shannonm, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.cap="Bias and MSE of the Shannon–Al-Omari entropy estimators for $\\Gamma_{\\text{SAR}}$.", fig.width=6, fig.height=5} -->
-<!-- load("./Data/results_shannon_v1.Rdata") -->
-
-<!-- estimators_to_plot <- c("Shannon Estimator", "Shannon Estimator Bootstrap") -->
-<!-- latex_estimator_names <- c( -->
-<!--   "Shannon Estimator" = expression("$\\widehat{italic(H)}$"), -->
-<!--   "Shannon Estimator Bootstrap" = expression("$\\widetilde{italic(H)}$") -->
-<!-- ) -->
-<!-- selected_estimators_latex <- latex_estimator_names[estimators_to_plot] -->
-
-<!-- combined_plot_shannon <- generate_plot_shannon(results, selected_estimators_latex, ncol = 1, nrow = 1) -->
-
-<!-- print(combined_plot_shannon) -->
-
-<!-- ``` -->
-
-<!-- ```{=latex} -->
-<!-- \begin{figure}[hbt] -->
-<!--   \centering -->
-<!--   \includegraphics[width=0.40\textwidth]{Figures-R1/fig-bias_mse-1.pdf} -->
-<!--   \vspace{0.1em} -->
-<!--   \caption{Bias and MSE of the Rényi entropy estimators for $\Gamma_{\text{SAR}}$.} -->
-<!--   \label{fig-bias_mse} -->
-<!-- \end{figure} -->
-<!-- ``` -->
-<!-- We use the $\widetilde{H}_{\lambda}$ estimator for subsequent simulations. -->
-
-
-
-
-
 ## HYPOTHESIS TESTING
 
 We aim to determine whether a local region in a SAR intensity image is statistically homogeneous or heterogeneous. This is done by comparing a nonparametric entropy estimator $\widetilde{\theta}$ computed from the observed data to the theoretical entropy $\theta(\Gamma_{\text{SAR}})$ expected under the assumption of fully developed speckle.
@@ -1104,22 +1051,6 @@ for (L in selected_L_values) {
         legend.text = element_text(size = 16),   
         legend.title = element_text(size = 16)) 
 
-  # p <- ggplot(combined_data, aes(x = Test_Statistics, col = LegendOrder, linetype = LegendOrder, group = CurveOrder)) +
-  #   geom_line(stat = "density", linewidth = 1.5) +
-  #   scale_color_viridis(discrete = TRUE, option = "C", direction = -1, begin = 0.2, end = 0.7, name = "Sample Size") +
-  #   scale_linetype_manual(values = rep("solid", length(sample.size)), name = "Sample Size") +
-  #   scale_x_continuous(limits = x_limits, breaks = x_breaks, minor_breaks = NULL) +
-  #   scale_y_continuous(limits = y_limits, minor_breaks = NULL) +
-  #   labs(
-  #       x = expression("Test Statistic" ~ S[widetilde(italic(T))](italic(bold(Z))* ";" **phantom(" ")* italic(L))), 
-  #       y = "Density"
-  #   ) +
-  #   ggtitle(bquote(italic(L) == .(L))) +
-  #   theme(plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 2)),
-  #         axis.text = element_text(size = 16),     
-  #         axis.title = element_text(size = 16),    
-  #         legend.text = element_text(size = 16),   
-  #         legend.title = element_text(size = 16)) 
 
   all_plots[[as.character(L)]] <- p
 }
@@ -1414,26 +1345,7 @@ for (L in selected_L_values) {
   )
 
 
-  # p <- ggplot(combined_data, aes(x = Test_Statistics, col = LegendOrder, linetype = LegendOrder, group = CurveOrder)) +
-  #   geom_line(stat = "density", linewidth = 1.5) +
-  #   scale_color_viridis(discrete = TRUE, option = "C", direction = -1, begin = 0.2, end = 0.7, name = "Sample Size") +
-  #   scale_linetype_manual(values = rep("solid", length(sample.size)), name = "Sample Size") +
-  #   scale_x_continuous(limits = x_limits, breaks = x_breaks, minor_breaks = NULL) +
-  #   #scale_x_continuous(limits = x_limits, breaks = x_breaks) + 
-  #   scale_y_continuous(limits = y_limits, minor_breaks = NULL)+
-  #   #scale_y_continuous(limits = y_limits) +  
-  #   labs(
-  #       x = expression("Test Statistic" ~ S[widetilde(italic(T))[lambda]](italic(bold(Z))* ";" **phantom(" ")* italic(L))), 
-  #       y = "Density"
-  #   ) +
-  #   ggtitle(bquote(italic(L) == .(L))) +
-  #   theme(plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 2)),
-  #         axis.text = element_text(size = 16),     
-  #       axis.title = element_text(size = 16),    
-  #       legend.text = element_text(size = 16),   
-  #       legend.title = element_text(size = 16)   
-  #         ) 
-
+  
   all_plots[[as.character(L)]] <- p
 }
 
@@ -1504,7 +1416,7 @@ In the next chapter, we apply this procedure to SAR images using a sliding windo
 
 The statistical validity and effectiveness of the proposed tests based on Shannon, Rényi, and Tsallis entropies were assessed through the analysis of two key properties: \emph{size} and \emph{power}. These properties provide insight into the probability of making incorrect decisions during hypothesis testing.
 
-The size of a statistical test, also known as the Type&nbsp;I error rate, refers to the probability of incorrectly rejecting the null hypothesis $\mathcal{H}_0$ when it is in fact true. In hypothesis testing, practitioners typically specify a nominal significance level, commonly set at \SI{1}{\percent}, \SI{5}{\percent}, and \SI{10}{\percent}.  These values define the acceptable probability of committing a Type&nbsp;I error. A well-calibrated test should exhibit empirical Type~I error rates that closely match the nominal levels across different sample sizes and conditions.
+The size of a statistical test, also known as the Type&nbsp;I error rate, refers to the probability of incorrectly rejecting the null hypothesis $\mathcal{H}_0$ when it is in fact true. In hypothesis testing, practitioners typically specify a nominal significance level, commonly set at \SI{1}{\percent}, \SI{5}{\percent}, and \SI{10}{\percent}.  These values define the acceptable probability of committing a Type&nbsp;I error. A well-calibrated test should exhibit empirical Type&nbsp;I error rates that closely match the nominal levels across different sample sizes and conditions.
 
 To evaluate this, we performed a Monte Carlo simulation with $1000$ replications for each combination of sample size and number of looks $L$, under the null hypothesis $\mathcal{H}_0$, where the data follow a $\Gamma_{\text{SAR}}$ distribution with mean $\mu = 1$. For each replication, the corresponding test statistic was computed using a bootstrap-based entropy estimator with $B = 100$ resamples. In the case of the Rényi and Tsallis entropy-based tests, we used order parameters $\lambda = 0.9$ and $\lambda = 0.85$, respectively. The empirical size was then estimated as the proportion of replications in which the null hypothesis was incorrectly rejected.
 

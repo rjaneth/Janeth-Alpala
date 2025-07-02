@@ -1,14 +1,15 @@
 
 
-Este trabalho apresenta uma abordagem estatística para a detecção de heterogeneidade 
-em dados de intensidade de radar de abertura sintética (SAR) utilizando medidas 
-baseadas em entropia. Em regiões homogêneas, onde há speckle totalmente desenvolvido, 
-os retornos SAR são bem modelados pela distribuição Gama. Em contraste, áreas heterogêneas 
-apresentam comportamentos de espalhamento mais complexos, normalmente descritos pela 
-distribuição $\mathcal{G}_I^0$. Distinguir entre esses dois regimes é fundamental 
-para uma interpretação precisa em aplicações de sensoriamento remoto. No entanto, 
-testes paramétricos clássicos geralmente não são adequados para essa tarefa devido a 
-limitações analíticas e numéricas.
+Este trabalho apresenta uma abordagem estatística para detectar heterogeneidade em dados de 
+intensidade de radar de abertura sintética (SAR) utilizando métodos baseados em entropia. 
+Na análise de dados SAR, uma interpretação precisa do terreno depende fundamentalmente da 
+distinção entre dois regimes principais: regiões homogêneas, caracterizadas por speckle 
+totalmente desenvolvido e modeladas pela distribuição Gamma, e áreas heterogêneas, que 
+exibem comportamentos de espalhamento complexos, geralmente representados pela distribuição 
+$\mathcal{G}_I^0$.
+Embora essa discriminação seja essencial para aplicações de sensoriamento remoto, 
+testes paramétricos clássicos muitas vezes não a abordam de forma eficaz devido a 
+limitações analíticas e instabilidades numéricas.
 Para superar esses desafios, propomos três estatísticas de teste para detectar heterogeneidade 
 em imagens SAR com base nas entropias de Shannon, Rényi e Tsallis. Esses testes utilizam 
 estimadores não paramétricos de entropia construídos a partir de espaçamentos amostrais, 
@@ -30,4 +31,4 @@ supervisionada para a detecção de heterogeneidade em dados SAR.
 
 \vspace{1em}
 \par
-\noindent \textbf{Palavras-chave:} SAR; Heterogeneidade; Entropia; Estimativa não paramétrica; Bootstrap; Teste estatístico
+\noindent \textbf{Palavras-chave:} Entropia; SAR; Heterogeneidade; Distribuição Gama; Teste de hipótese; Bootstrap

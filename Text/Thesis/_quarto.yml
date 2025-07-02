@@ -4,13 +4,12 @@ project:
 
 book:
   title:  Thesis-Janeth 
-  date: December 15, 2024
+  date: July, 2025
   author:
-    name: 
+    name: Janeth Alpala
     url: 
   downloads: [pdf]
   chapters:
-    #- setup.R
     - index.qmd
    #- Chapters/Chapter1.qmd # Do not activate this chapter because it is included in index.qmd
     - Chapters/Chapter2.qmd
@@ -25,16 +24,10 @@ book:
   repo-url: https://github.com/nmfs-opensci/quarto-thesis
   repo-actions: [edit, source, issue]
   search: true
+  
+  
 #the cover is edited in \_extensions\quarto-thesis\partials\before-body.tex
 thesis:
-  supervisor: 
-    name: 
-    url: 
-  degree-name: 
-  university: 
-  department: 
-  group: 
-  faculty: 
   #declaration: "Frontmatter/declaration.tex"
   #dedication: "Frontmatter/dedication.tex"
   #acknowledgements: "Frontmatter/acknowledgements.tex"
@@ -73,7 +66,6 @@ format:
   quarto-thesis-pdf: 
     pdf-engine:  pdflatex # xelatex
     keep-tex: true 
-    #latex-math: true
     urlcolor: black
     linkcolor: blue
     toclinkcolor: black

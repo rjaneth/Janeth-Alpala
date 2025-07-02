@@ -92,7 +92,7 @@ f_{\mathcal{G}^0_I}\big(z; \mu, \alpha, L\big)
 f_{\Gamma_{\text{SAR}}}(z;L, \mu) \quad \text{ when } \alpha\to-\infty.
 $$
 
-In this work, we do not focus on parameter estimation using likelihood-based or moment-based methods. Instead, we adopt a testing framework to detect heterogeneity in SAR imagery. The analytical expressions of entropy measures derived from the $\Gamma_{\text{SAR}}$ and $\mathcal{G}_I^0$ models form the theoretical basis for constructing these statistical tests. In the following section, we introduce the entropy-based measures, specifically Shannon, Rényi, and Tsallis, on which our detection strategy is built.
+In this work, we do not focus on parameter estimation using likelihood-based or moment-based methods. Instead, we adopt a hypothesis testing framework to detect heterogeneity in SAR imagery. The analytical expressions of entropy measures derived from the $\Gamma_{\text{SAR}}$ and $\mathcal{G}_I^0$ models form the theoretical basis for constructing these statistical tests. In the following section, we introduce the entropy-based measures, specifically Shannon, Rényi, and Tsallis, on which our detection strategy is built.
 
 
 
@@ -107,7 +107,7 @@ This section focuses on three widely used entropy formulations that offer comple
 
 \textbf{Rényi entropy}, introduced by Alfréd Rényi&nbsp;[-@renyi1961measures], is a one-parameter generalization of Shannon's measure. By tuning the parameter $\lambda > 0$, the analyst can adjust the sensitivity of the entropy to the tails of the distribution. This property is particularly relevant in applications where rare events (e.g., bright scatterers, outliers) carry significant informational weight, such as in SAR-based texture discrimination or target detection.
 
-\textbf{Tsallis entropy},  was first introduced by Havrda and Charvat&nbsp;[-@Havrda1967]  in the context of information theory. Then, Tsallis&nbsp;[-@Tsallis1988] exploited its non-extensive features and placed it in a physical setting, known as generalized Tsallis entropy of order $\lambda$,  offers an alternative generalization motivated by non-extensive systems, those exhibiting long-range dependencies, memory effects, or multifractal behavior. Unlike Rényi, Tsallis entropy does not obey the additivity property under independent systems, which makes it particularly suitable for modeling complex spatial structures and textured regions in SAR images.
+\textbf{Tsallis entropy} was first introduced by Havrda and Charvát&nbsp;[-@Havrda1967] in the context of information theory. Later, Tsallis&nbsp;[-@Tsallis1988] extended it by emphasizing its non-extensive features and placing it in a physical context. The generalized Tsallis entropy of order $\lambda$ offers an alternative formulation motivated by non-extensive systems, such as those exhibiting long-range dependencies, memory effects, or multifractal behavior. Unlike Rényi entropy, it does not obey the additivity property under independence, making it particularly suitable for modeling complex spatial structures and textured regions in SAR images.
 
 In the context of SAR imaging, homogeneous areas produce fully developed speckle and are effectively modeled by the $Z \sim\Gamma_{\text{SAR}}(L, \mu)$ distribution. In contrast, textured or heterogeneous regions are better represented by the  $Z \sim\mathcal{G}^0_I(\mu, \alpha, L)$ model, where the roughness parameter $\alpha$ controls the degree of heterogeneity. Across this section, we show that all three entropy measures applied to $\mathcal{G}^0_I$ can be decomposed as:
 \begin{equation}
@@ -240,13 +240,6 @@ $$
 \lim_{\alpha \to -\infty} R_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = R_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L, \mu)\bigr).
 $$ 
 Appendix&nbsp;\ref{app:A24} provides proof of this limiting behavior.
-
-<!-- When $\alpha\!\to\!-\infty$ (fully developed speckle), this excess tends to zero, -->
-<!--  so the heterogeneous model collapses to the homogeneous one in Equation \eqref{eq-HGammaSAR}.   -->
-<!-- and detecting heterogeneity is equivalent to deciding whether $\Delta_\alpha$ is significantly different from zero. -->
-<!--  Note that the Rényi entropy of $\mathcal{G}^0_I$ can be expressed in terms of that of $\Gamma_{\mathrm{SAR}}$, with additional terms that depend on the roughness parameter $\alpha$. As $\alpha \to -\infty$, these terms tend to zero, reducing&nbsp;\eqref{eq-HGI0} to&nbsp;\eqref{eq-HGammaSAR}.  -->
-<!-- This work's core idea is to check if this excess entropy is significantly different from zero. -->
-<!-- Fig.&nbsp;\ref{fig-convergence-renyi} illustrates this behaviour: as $\alpha$ decreases the colored curves of $R_\lambda(\mathcal{G}^0_I)$ converge towards the solid black curve of $R_\lambda(\Gamma_{\mathrm{SAR}})$, confirming the limiting behavior. -->
 
 
 ### Tsallis entropy

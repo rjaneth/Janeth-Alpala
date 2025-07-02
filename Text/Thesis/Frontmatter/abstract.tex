@@ -3,20 +3,19 @@
 %\phantomsection
 %\addcontentsline{toc}{chapter}{Abstract}
 
-This work  presents a statistical approach to detect heterogeneity 
+This work presents a statistical approach to detect heterogeneity 
 in synthetic aperture radar (SAR) intensity data using entropy-based methods.
-In homogeneous regions, where fully developed speckle is present, SAR returns 
-are well modeled by the Gamma distribution. 
-In contrast, heterogeneous areas exhibit more complex scattering behaviors, 
-typically modeled by the $\mathcal{G}_I^0$ distribution. Distinguishing between 
-these regimes is fundamental for accurate interpretation in remote sensing applications, 
-yet classical parametric tests often fail to address this task effectively due to analytical 
-and numerical limitations.
+In SAR data analysis, accurate terrain interpretation fundamentally depends 
+on distinguishing two key regimes: homogeneous regions, characterized by fully 
+developed speckle and modeled by the Gamma distribution, and heterogeneous areas, 
+which exhibit complex scattering behaviors typically captured by the $\mathcal{G}_I^0$ distribution.
+While this discrimination is essential for remote sensing applications, classical parametric tests often fail to address it 
+effectively due to analytical limitations and numerical instabilities.
 To overcome these challenges, we propose three test statistics for detecting heterogeneity 
 in SAR imagery based on Shannon, Rényi, and Tsallis entropy measures. These tests rely on 
 nonparametric entropy estimators constructed from sample spacings, avoiding explicit assumptions 
 about the underlying distribution. To enhance their accuracy, particularly in small samples, 
-we incorporate a bootstrap bias-correction procedure that improves the estimators’ stability, 
+we incorporate a bootstrap bias-correction procedure that improves the stability of the estimators, 
 reduces bias, and lowers mean squared error.
 The proposed tests are evaluated using Monte Carlo simulations, assessing size and power 
 under varying sample sizes and numbers of looks.
@@ -25,14 +24,14 @@ detecting more subtle texture variations while maintaining greater reliability i
 truly homogeneous regions.
 Finally, the methodology is applied to both simulated and real SAR data. We generate $p$-value maps using a 
 sliding window analysis, allowing for visual and quantitative assessment of spatial heterogeneity. 
-The Rényi-based test consistently identifies fine-scale roughness patterns, 
-while the Tsallis-based test shows strength in reliably detecting homogeneous areas. 
-Together, these entropy-based tools provide a robust, interpretable, and unsupervised 
-framework for heterogeneity detection in SAR data.
+The Rényi-based test consistently identifies fine-scale roughness patterns, while the Tsallis-based 
+test proves more effective in reliably detecting homogeneous areas. Together, these entropy-based 
+tools provide a robust, interpretable, and fully unsupervised framework for heterogeneity detection 
+in SAR data.
 
 \vspace{1em}
 \par
-\noindent \textbf{Keywords:} SAR; Heterogeneity; Entropy; Nonparametric Estimation; Bootstrap; Statistical Test
+\noindent \textbf{Keywords:}  Entropy; SAR; Heterogeneity; Gamma distribution; Hypothesis testing; Bootstrap
 
 
 

@@ -845,27 +845,27 @@ the Tsallis-based test, improving sensitivity without excessive false alarms.
 
 ### Quantitative Evaluation
 
-Eight polygonal regions of interest (ROIs) were manually selected for each of the three SAR scenes chosen for quantitative evaluation, London, Munich, and Dublin (Figures \ref{fig:london-sar-roi1}–\ref{fig:dublin-sar-roi1}). These ROIs correspond to heterogeneous areas (red, class 1) and homogeneous areas (blue, class 0). The polygons were rasterized to match the spatial resolution of each SAR image, forming a partial ground truth. We thresholded the $p$-value maps at 0.05, labeling each pixel as heterogeneous (1) or homogeneous (0), and compared these decision maps with the ground truth to compute the F1-score ($F_1$), Kappa coefficient ($\kappa$), and overall accuracy (OA). Table \ref{tab:table_metrics1} summarizes the results.
+Eight polygonal regions of interest (ROIs) were manually selected for each of the three SAR scenes chosen for quantitative evaluation, London, Munich, and Dublin (Figures \ref{fig:london-sar-roi1}–\ref{fig:dublin-sar-roi1}). These ROIs correspond to heterogeneous areas (red, class 1) and homogeneous areas (blue, class 0). The polygons were rasterized to match the spatial resolution of each SAR image, forming a partial ground truth. 
 
 ```{=latex}
 \begin{figure}[H]
     \centering
     % London
-    \begin{subfigure}{0.33\textwidth}
+    \begin{subfigure}{0.30\textwidth}
         \includegraphics[width=\linewidth]{Figures/london_roi.png}
         \caption{London SAR image with selected ROIs.}
         \label{fig:london-sar-roi1}
     \end{subfigure}
    \hspace{4em} 
     % Munich
-    \begin{subfigure}{0.33\textwidth}
+    \begin{subfigure}{0.30\textwidth}
         \includegraphics[width=\linewidth]{Figures/munich_roi.png}
         \caption{Munich SAR image with selected ROIs.}
         \label{fig:munich-sar-roi1}
     \end{subfigure}
-    \vspace{1.8em}
+    \vspace{0.5em}
     % Dublin
-    \begin{subfigure}{0.33\textwidth}
+    \begin{subfigure}{0.30\textwidth}
         \includegraphics[width=\linewidth]{Figures/dublin_roi3.png}
         \caption{Dublin SAR image with selected ROIs.}
         \label{fig:dublin-sar-roi1}
@@ -875,13 +875,7 @@ Eight polygonal regions of interest (ROIs) were manually selected for each of th
 \end{figure}
 
 ```
-
-When comparing the three entropy-based tests, distinct patterns emerge depending on the scene characteristics. In London, the Rényi-based test produced the best performance across all metrics ($F_1$: 0.695; $\kappa$: 0.626; OA: 0.877), outperforming both Shannon and Tsallis. This suggests that Rényi entropy is particularly robust under strong speckle conditions, as is typical in single-look SAR imagery.
-
-In contrast, in the Munich and Dublin scenes, where the image quality is higher and speckle is reduced, the Tsallis-based test achieved the highest scores across all three metrics. Specifically, in Munich, Tsallis achieved $F_1 = 0.930$, $\kappa = 0.871$, and OA = 0.936, marginally outperforming Rényi. Similarly, in Dublin, Tsallis led with $F_1 = 0.879$, $\kappa = 0.776$, and OA = 0.887. These results indicate that Tsallis entropy may be more sensitive to finer textural differences in lower-speckle environments.
-
-The Shannon-based test consistently yielded the lowest scores across all scenes, suggesting that it is less effective at distinguishing between heterogeneous and homogeneous regions under the tested conditions. Overall, the results demonstrate that Rényi and Tsallis entropies are both strong detectors of heterogeneity, with Rényi showing advantages in noisy contexts, and Tsallis offering improved discrimination in scenes with more subtle textural variations.
-
+We thresholded the $p$-value maps at 0.05, labeling each pixel as heterogeneous (1) or homogeneous (0), and compared these decision maps with the ground truth to compute the F1-score ($F_1$), Kappa coefficient ($\kappa$), and overall accuracy (OA). Table \ref{tab:table_metrics1} summarizes the results.
 
 \renewcommand{\arraystretch}{1.1} 
 ```{r metrics_table_k, echo=FALSE, message=FALSE, warning=FALSE}
@@ -970,6 +964,12 @@ kable(all_metrics,
   kable_styling(full_width = TRUE)
 
 ``` 
+When comparing the three entropy-based tests, distinct patterns emerge depending on the scene characteristics. In London, the Rényi-based test produced the best performance across all metrics ($F_1$: 0.695; $\kappa$: 0.626; OA: 0.877), outperforming both Shannon and Tsallis. This suggests that Rényi entropy is particularly robust under strong speckle conditions, as is typical in single-look SAR imagery.
+
+In contrast, in the Munich and Dublin scenes, where the image quality is higher and speckle is reduced, the Tsallis-based test achieved the highest scores across all three metrics. Specifically, in Munich, Tsallis achieved $F_1 = 0.930$, $\kappa = 0.871$, and OA = 0.936, marginally outperforming Rényi. Similarly, in Dublin, Tsallis led with $F_1 = 0.879$, $\kappa = 0.776$, and OA = 0.887. These results indicate that Tsallis entropy may be more sensitive to finer textural differences in lower-speckle environments.
+
+The Shannon-based test consistently yielded the lowest scores across all scenes, suggesting that it is less effective at distinguishing between heterogeneous and homogeneous regions under the tested conditions. Overall, the results demonstrate that Rényi and Tsallis entropies are both strong detectors of heterogeneity, with Rényi showing advantages in noisy contexts, and Tsallis offering improved discrimination in scenes with more subtle textural variations.
+
 
 Using the same ROIs as ground truth, we evaluated the continuous $p$-value maps by computing receiver operating characteristic (ROC) curves over all decision thresholds (Figure \ref{fig:roc}). Each curve plots the probability of detection (Pd) versus the probability of false alarm (PFA). Pd reflects the proportion of heterogeneous pixels correctly detected, while PFA represents the proportion of homogeneous pixels misclassified as heterogeneous.
 

@@ -1,7 +1,7 @@
 <!-- # --- -->
 <!-- # title: "APPENDICES" -->
 <!-- # appendix: true {#sec-appA} -->
-<!-- # numbered: false  # <--- evita que se numere como "Capítulo 3" -->
+<!-- # numbered: false  # 
 <!-- # --- -->
 
 <!-- ```{=latex} -->
