@@ -121,7 +121,6 @@ In the context of SAR imaging, homogeneous areas produce fully developed speckle
 \Delta_{\alpha}
 \;}
 \end{equation}
-
 where  $\Delta_\alpha$ represents the \textit{excess entropy} induced by the roughness parameter $\alpha$. Notably, this excess vanishes in the homogeneous limit ($\alpha \to -\infty$), reducing \eqref{eq:decomp-intro} to the baseline case.
 
 This decomposition plays a central role in the thesis. It forms the theoretical foundation for a statistical test to detect heterogeneity: if $\Delta_\alpha \neq 0$, then the observed region departs from the homogeneous model, signaling the presence of texture. Each entropy measure offers a different sensitivity profile to such deviations, and their comparative behavior provides valuable insights into the textural structure of SAR imagery.
