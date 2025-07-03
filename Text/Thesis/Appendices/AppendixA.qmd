@@ -8,9 +8,8 @@
 <!-- \appendix -->
 <!-- ``` -->
 
-# ENTROPY EXPRESSIONS AND DERIVATIONS {#sec-appendix-A}
+# LIMIT BEHAVIOR OF ENTROPY FUNCTIONS {#sec-appendix-A}
 
-This appendix provides supporting derivations and analytical results for the entropy measures discussed in the main text.
 
 ##  Limit Behavior of $H\bigl(\mathcal{G}^0_I\bigr)$ as $\alpha \to -\infty$ {#app:A1}
 
@@ -91,273 +90,9 @@ $$
 $$ 
 which concludes the proof.
 
-## Derivation of the Rényi Entropy {#app:A2}
-
-### For the $\Gamma_{\text{SAR}}(L, \mu)$ Distribution {#app:A21}
-
-The Rényi entropy of order $\lambda$ for a continuous random variable $Z$ with density $f_Z(z)$ is given by
-\begin{align}
-R_\lambda(Z) 
-&= \frac{1}{\,1 - \lambda\,} \,\ln \Bigl( \int_{0}^{\infty} [f_Z(z)]^\lambda \, dz \Bigr),
-\quad \lambda > 0, \;\lambda \neq 1.
-\label{eq:RenyiDefinition}
-\end{align}
-
-Let $Z \sim \Gamma_{\text{SAR}}(L, \mu)$ with pdf
-\begin{align*}
-f_{\Gamma_{\text{SAR}}}(z; L, \mu)
-&= \frac{L^L}{\Gamma(L)\,\mu^L}\,z^{\,L - 1} 
-  \exp\Bigl(-\tfrac{L z}{\mu}\Bigr)\mathbbm 1_{\mathbbm R_+}(z).
-\end{align*}
-Define
-\begin{align*}
-I 
-&= \int_{0}^{\infty}\!\bigl[f_{\Gamma_{\text{SAR}}}(z; L,\mu)\bigr]^\lambda \,dz 
- = \biggl(\frac{L^L}{\Gamma(L)\,\mu^L}\biggr)^{\!\lambda}
-   \int_{0}^{\infty} 
-   z^{\,\lambda\,(L-1)} \exp\Bigl(-\tfrac{\lambda\,L}{\mu}\,z\Bigr)\,dz.
-\end{align*}
-Using the Gamma integral 
-$\displaystyle
-  \int_{0}^{\infty} x^{p-1} e^{-qx}\,dx 
-   = \frac{\Gamma(p)}{q^p},$
-with $p = \lambda L - \lambda + 1$ and $q = \tfrac{\lambda L}{\mu}$, it follows that
-\begin{align*}
-I 
-&= \biggl(\frac{L^L}{\Gamma(L)\,\mu^L}\biggr)^{\!\lambda}
-   \frac{\Gamma(\lambda L - \lambda + 1)}
-        {\Bigl(\tfrac{\lambda\,L}{\mu}\Bigr)^{\lambda L - \lambda + 1}}.
-\end{align*}
-Taking the natural logarithm,
-\begin{align}
-\ln I 
-&= \lambda\Bigl(L \ln L - L \ln \mu - \ln \Gamma(L)\Bigr)
-   \;+\; \ln\Gamma\!\bigl(\lambda L - \lambda + 1\bigr)
-   \;-\; \bigl(\lambda L - \lambda + 1\bigr)\,\Bigl(\ln(\lambda L) - \ln\mu\Bigr).
-\label{eq:lnI}
-\end{align}
-By expanding \eqref{eq:lnI} and collecting terms in $\ln L$ and $\ln \mu$, 
-\begin{align}
-\ln I 
-&= (1 - \lambda)\bigl(\ln \mu - \ln L\bigr)
-   \;-\;\lambda\,\ln \Gamma(L)
-   \;+\;\ln\Gamma\!\bigl(\lambda(L-1)+1\bigr)
-   \;-\;\bigl(\lambda(L-1)+1\bigr)\,\ln \lambda.
-\label{eq:lnIsimplified}
-\end{align}
-Substituting \eqref{eq:lnIsimplified} into \eqref{eq:RenyiDefinition} and simplifying,
-\begin{multline}
-R_\lambda\bigl(\Gamma_{\text{SAR}}(L,\mu)\bigr) 
-= \ln \mu - \ln L 
-  + \frac{1}{\,1-\lambda\,}
-  \Bigl[
-    -\lambda\,\ln\Gamma(L)
-    + \ln\Gamma\!\bigl(\lambda\,(L-1)+1\bigr)
-    - \bigl(\lambda\,(L-1)+1\bigr)\,\ln\lambda
-  \Bigr].
-\label{eq:RenyiFinal}
-\end{multline}
-This completes the derivation.
 
 
-
-
-### For the $\mathcal{G}^0_I$ Distribution
-
-\medskip
-
-\noindent
-Let $Z \sim \mathcal{G}^0_I(\alpha, \gamma, L)$ with pdf
-\begin{align*}
-f_{\mathcal{G}^0_I}(z; \alpha, \gamma, L) 
-&= \frac{L^L\,\Gamma(L-\alpha)}{\gamma^{\alpha}\,\Gamma(-\alpha)\,\Gamma(L)}
-   \,\frac{z^{\,L-1}}{\bigl(\gamma + L\,z\bigr)^{\,L-\alpha}}\mathbbm 1_{\mathbbm R_+}(z). \label{E:gamma1}
-\end{align*}
-In particular, this parameterization is consistent with $\gamma = -\mu(\alpha + 1)$, 
-so the final expression can be rewritten in terms of $\mu$.
-
-\medskip
-
-\noindent
-Define
-\begin{align*}
-I 
-&= \int_{0}^{\infty} \bigl[f_{\mathcal{G}^0_I}(z; \alpha, \gamma, L)\bigr]^\lambda \,dz
-= C^\lambda 
-  \int_{0}^{\infty} 
-    \frac{z^{\,\lambda(L - 1)}}
-         {\bigl(\gamma + L\,z\bigr)^{\,\lambda(L - \alpha)}} 
-  \,dz,
-\end{align*}
-where
-$$
-C 
-= \frac{L^L\,\Gamma(L - \alpha)}{\gamma^\alpha\,\Gamma(-\alpha)\,\Gamma(L)}.
-$$
-Using the change of variables 
-$t = \tfrac{Lz}{\gamma}$, $z = \tfrac{\gamma\,t}{L}$, and $dz = \tfrac{\gamma}{L}\,dt$, 
-we obtain
-\begin{align*}
-I 
-&= C^\lambda
-   \int_{0}^{\infty}
-     \Bigl(\tfrac{\gamma\,t}{L}\Bigr)^{\,\lambda(L - 1)}
-     \Bigl(\gamma + L\,\tfrac{\gamma\,t}{L}\Bigr)^{-\lambda(L - \alpha)}
-     \,\tfrac{\gamma}{L}\,dt
-\\
-&= C^\lambda 
-   \,\frac{\gamma^{\,1+\lambda(\alpha - 1)}}{L^{\,1+\lambda(L - 1)}}
-   \int_{0}^{\infty}
-     \frac{t^{\,\lambda(L - 1)}}
-          {(1 + t)^{\,\lambda(L - \alpha)}}
-   \,dt.
-\end{align*}
-By the Beta-function identity
-$$
-\int_{0}^{\infty} \frac{t^{\,a - 1}}{(1 + t)^{\,a + b}} \, dt 
-= B(a,b),
-$$
-where 
-$$
-a = \lambda(L - 1) + 1,
-\quad
-b = \lambda(-\alpha + 1) - 1,
-$$
-it follows that
-\begin{align*}
-I 
-&= C^\lambda \,\frac{\gamma^{\,1+\lambda(\alpha - 1)}}{L^{\,1+\lambda(L - 1)}}
-   \,B(a,b).
-\end{align*}
-Next, we note that 
-$\gamma^{\,1 + \lambda(\alpha - 1)} = \gamma^{\,1 - \lambda + \lambda\alpha}$ 
-and 
-$L^{\,1 + \lambda(L - 1)} = L^{\,\lambda L + 1 - \lambda}.$ 
-Since
-$$
-C^\lambda 
-= \biggl(\tfrac{L^L}{\gamma^\alpha\,\Gamma(-\alpha)\,\Gamma(L)}\,\Gamma(L - \alpha)\biggr)^{\!\lambda}
-= L^{\lambda L}\,\gamma^{-\alpha \lambda}
-  \Bigl(\tfrac{\Gamma(L - \alpha)}{\Gamma(-\alpha)\,\Gamma(L)}\Bigr)^\lambda,
-$$
-we obtain
-\begin{align*}
-I
-&= \gamma^{\,1 - \lambda}\,
-   L^{\,\lambda - 1}
-   \Bigl(\tfrac{\Gamma(L - \alpha)}{\Gamma(-\alpha)\,\Gamma(L)}\Bigr)^\lambda
-   \,B(a,b).
-\end{align*}
-
-\medskip
-
-\noindent
-By \eqref{eq:RenyiDefinition}, the Rényi entropy, is given by:
-\begin{align*}
-R_\lambda(Z)
-&= \frac{1}{\,1 - \lambda\,} \,\ln I.
-\end{align*}
-Hence,
-\begin{align*}
-R_\lambda(Z) 
-&= \frac{1}{\,1 - \lambda\,}
-  \,\ln\!\Bigl[
-    \gamma^{\,1 - \lambda}\,
-    L^{\,\lambda - 1}\,
-    \Bigl(\tfrac{\Gamma(L - \alpha)}{\Gamma(-\alpha)\,\Gamma(L)}\Bigr)^\lambda
-    \,B(a,b)
-  \Bigr].
-\end{align*}
-Thus, for $Z \sim \mathcal{G}^0_I(\alpha, \gamma, L)$,
-\begin{align*}
-R_\lambda\bigl(\mathcal{G}^0_I(\alpha, \gamma, L)\bigr)
-&= \ln\Bigl(\tfrac{\gamma}{\,L}\Bigr)
-  + \frac{1}{\,1 - \lambda\,}
-    \Bigl[
-      \lambda\bigl(\ln \Gamma(L - \alpha) 
-            - \ln \Gamma(-\alpha) 
-            - \ln \Gamma(L)\bigr)
-      + \ln B(a,b)
-    \Bigr].
-\end{align*}
-Using the property 
-$$
-\ln B(a,b) 
-= \ln \Gamma(a) + \ln \Gamma(b) - \ln \Gamma(a + b),
-$$
-where $a + b = \lambda(L - \alpha)$, we have
-\begin{multline}
-R_\lambda\bigl(\mathcal{G}^0_I( \alpha,\gamma, L)\bigr)
-= \ln\Bigl(\tfrac{\gamma}{L}\Bigr)
- + \frac{1}{\,1 - \lambda\,}
-   \Bigl[
-     \lambda\bigl(\ln \Gamma(L - \alpha) 
-            - \ln \Gamma(-\alpha) 
-            - \ln \Gamma(L)\bigr)
-     + \ln \Gamma(a)
-     + \ln \Gamma(b) \\
-     - \ln \Gamma\bigl(\lambda(L - \alpha)\bigr)
-   \Bigr].
-\label{eq:GI0RenyiInGamma}
-\end{multline}
-Finally, noting that 
-$$
-\mu = -\tfrac{\gamma}{\alpha + 1}
-\quad\Longrightarrow\quad
-\gamma = -\mu(\alpha + 1),
-$$
-and substituting $\gamma$ into \eqref{eq:GI0RenyiInGamma}, we obtain
-\begin{multline}
-R_\lambda\bigl(\mathcal{G}^0_I( \alpha,\mu, L)\bigr)
-= \ln \mu  -  \ln L + \ln(- 1-\alpha)
-+ \frac{1}{\,1 - \lambda\,}
-  \Bigl[
-    \lambda\Bigl(\ln \Gamma(L - \alpha) 
-        - \ln \Gamma(-\alpha) 
-        - \ln \Gamma(L)\Bigr)\\
-    + \ln \Gamma\bigl(\lambda(L - 1) + 1\bigr)
-    + \ln \Gamma\bigl(\lambda(-\alpha + 1) - 1\bigr)
-    - \ln \Gamma\bigl(\lambda(L - \alpha)\bigr)
-  \Bigr],
-\label{eq:RenyiGI0Final}
-\end{multline}
-which completes the derivation.
-
-
-
-### Relation to the \texorpdfstring{$\Gamma_{\mathrm{SAR}}$}{Gamma SAR} Distribution
-
-The Rényi entropy of the 
-$\mathcal{G}^0_I(\alpha,\mu,L)$ distribution can be expressed 
-in terms of the Rényi entropy of the 
-$\Gamma_{\mathrm{SAR}}(L,\mu)$ distribution, plus additional terms 
-involving $\alpha$. 
-Specifically, we can write:
-\begin{multline}
-R_\lambda\bigl(\mathcal{G}^0_I(\alpha,\mu,L)\bigr)
-= 
-\underbrace{\Bigl[
-  \ln\mu -\ln L + \frac{1}{\,1-\lambda\,}\Bigl(
-    -\lambda \,\ln\Gamma(L) 
-    +\ln\Gamma\bigl(\lambda(L-1)+1\bigr)
-    -\bigl(\lambda(L-1)+1\bigr)\ln\lambda
-  \Bigr)
-\Bigr]}_{\displaystyle R_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L,\mu)\bigr)}
-\\[6pt]
-+~\ln\bigl(-1-\alpha\bigr)
-+~\frac{1}{\,1-\lambda\,} 
- \Bigl[
-   \lambda\bigl(\ln\Gamma(L-\alpha) - \ln\Gamma(-\alpha)\bigr)
-   \;+\;\ln\Gamma\bigl(\lambda(-\alpha+1)-1\bigr)
-   \;-\;\ln\Gamma\bigl(\lambda(L-\alpha)\bigr) \\
-   \;+\;\bigl(\lambda(L-1)+1\bigr)\,\ln(\lambda)
- \Bigr].
-\label{eq:GI0_in_terms_of_GammaSAR}
-\end{multline}
-
-
-
-### Limit Behavior of \texorpdfstring{$R_\lambda(\mathcal{G}^0_I)$}{Hl(GI0)} as \texorpdfstring{$\alpha \to -\infty$}{alpha->-∞} {#app:A24}
+## Limit Behavior of \texorpdfstring{$R_\lambda(\mathcal{G}^0_I)$}{Hl(GI0)} as \texorpdfstring{$\alpha \to -\infty$}{alpha->-∞} {#app:A24}
 
 
 We want to show that 
@@ -368,7 +103,7 @@ R_\lambda\bigl(\mathcal{G}^0_I\bigr)(\mu, \alpha, L)
 R_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu, L).
 $$
 
-We can express \eqref{eq:GI0_in_terms_of_GammaSAR} as follows:
+We can express \eqref{eq-HGI0-R} as follows:
 \begin{align*}
 R_\lambda\bigl(\mathcal{G}^0_I\bigr)(\mu,\alpha,L)
 &=
@@ -475,201 +210,8 @@ R_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu,L).
 $$
 
 
-## Derivation of the Tsallis Entropy {#app:A3}
 
-### For the $\Gamma_{\text{SAR}}(L, \mu)$ Distribution {#app:A31}
-
-Let $Z$ be a continuous random variable with density $f_Z$. The Tsallis entropy of order $\lambda \in \mathbb{R}_+ \setminus \{1\}$ is defined as
-\begin{equation}
-T_\lambda(Z)
-= \frac{1}{\lambda - 1} \left( 1 - \int_0^\infty [f_Z(z)]^\lambda \, dz \right).
-\label{eq:TsallisDef}
-\end{equation}
-
-Assume $Z \sim \Gamma_{\text{SAR}}(L,\mu)$ with probability density function
-\begin{equation*}
-f_{\Gamma_{\text{SAR}}}(z;L,\mu)
-  = \frac{L^L}{\Gamma(L)\,\mu^L}\,
-     z^{L-1} \exp\left(-\frac{L z}{\mu}\right)\,
-     \mathbbm{1}_{\mathbb{R}_{+}}(z).
-\end{equation*}
-
-We define the integral
-\begin{equation*}
-J
-= \int_0^\infty \left[f_{\Gamma_{\text{SAR}}}(z;L,\mu)\right]^{\lambda} \, dz.
-\end{equation*}
-Substituting the density function and simplifying constants, we get
-\begin{equation*}
-J
-= \left(\frac{L^L}{\Gamma(L)\,\mu^L}\right)^{\lambda}
-  \int_0^\infty
-     z^{\lambda(L-1)}
-     \exp\left(-\frac{\lambda L}{\mu} z\right)\, dz.
-\end{equation*}
-
-To evaluate the integral, we use the standard identity
-\begin{equation*}
-\int_0^\infty x^{p-1} e^{-q x} dx = \frac{\Gamma(p)}{q^p},
-\end{equation*}
-with $p = \lambda(L-1) + 1$ and $q = \frac{\lambda L}{\mu}$. This leads to
-\begin{equation*}
-J
-= \left(\frac{L^L}{\Gamma(L)\,\mu^L}\right)^{\lambda}
-  \cdot
-  \frac{\Gamma\big(\lambda(L-1)+1\big)}
-       {\left(\frac{\lambda L}{\mu}\right)^{\lambda(L-1)+1}}.
-\end{equation*}
-After rearranging powers of $L$, $\mu$ and $\lambda$, we obtain
-\begin{equation}
-J
-= \frac{L^{\lambda - 1}\,\mu^{1 - \lambda}\;
-       \Gamma\big(\lambda(L - 1) + 1\big)}
-      {\lambda^{\lambda(L - 1) + 1}\,
-       \left[\Gamma(L)\right]^{\lambda}}.
-\label{eq:Jgamma}
-\end{equation}
-
-Substituting Equation \eqref{eq:Jgamma} into the Tsallis entropy definition \eqref{eq:TsallisDef}, we have:
-\begin{equation}
-T_\lambda\big(\Gamma_{\text{SAR}}(L,\mu)\big)
-= \frac{1}{\lambda - 1}
-   \left[
-     1 -
-     \frac{L^{\lambda - 1}\,\mu^{1 - \lambda}\;
-           \Gamma\big(\lambda(L - 1) + 1\big)}
-          {\lambda^{\lambda(L - 1) + 1}\;
-           \left[\Gamma(L)\right]^{\lambda}}
-   \right].
-\label{eq:TsallisGammaFinal1}
-\end{equation}
-
-This expression can also be written in equivalent forms:
-\begin{equation*}
-T_\lambda\big(\Gamma_{\text{SAR}}(L,\mu)\big)
-= \frac{1}{\lambda - 1} \left[
-   1 -
-   \mu^{1 - \lambda}\,
-   L^{\lambda - 1}\,
-   \lambda^{ - [\lambda(L - 1) + 1] }\,
-   \Gamma\big(\lambda(L - 1) + 1\big)\,
-   \Gamma(L)^{ - \lambda}
-\right],
-\end{equation*}
-\begin{multline*}
-T_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L,\mu)\bigr)=
-\frac{1}{\lambda-1}\Bigl\{1-
-\exp\Bigl[
-(1-\lambda)\ln\mu
-+(\lambda-1)\ln L
-+\ln\Gamma\bigl(\lambda(L-1)+1\bigr) \\
--\lambda\ln\Gamma(L)
--(\lambda(L-1)+1)\ln\lambda
-\Bigr]\Bigr\}.
-\end{multline*}
-
-### For the $\mathcal{G}^0_I$ Distribution
-The pdf of the $\mathcal{G}_I^0(\alpha, \gamma, L)$ distribution is
-\begin{equation*}
-f_{\mathcal{G}_I^0}(z; \alpha, \gamma, L) = 
-\frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)} 
-\cdot \frac{z^{L-1}}{(\gamma + Lz)^{L - \alpha}}, \quad z > 0,
-\end{equation*}
-where $\alpha < 0$, $\gamma > 0$, and $L \geq 1$.
-
-The Tsallis entropy of order $\lambda > 0$, $\lambda \neq 1$, for a continuous random variable $Z$ with density $f_Z$ is defined by
-\begin{equation*}
-T_\lambda(Z) = \frac{1}{\lambda - 1} \left( 1 - \int_0^\infty [f_Z(z)]^\lambda  dz \right).
-\label{eq:tsallis_def}
-\end{equation*}
-
-We begin by evaluating the integral
-\begin{equation*}
-J = \int_0^\infty \left[ f_{\mathcal{G}_I^0}(z) \right]^\lambda dz,
-\end{equation*}
-which, upon substitution of the density, becomes
-\begin{equation*}
-J = \left[ \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
-\int_0^\infty \frac{z^{\lambda(L-1)}}{(\gamma + Lz)^{\lambda(L - \alpha)}}  dz.
-\label{eq:J_initial}
-\end{equation*}
-
-Introducing the change of variables $t = \frac{Lz}{\gamma}$ (so that $z = \frac{\gamma t}{L}$ and $dz = \frac{\gamma}{L} dt$), we obtain
-\begin{align}
-J &= \left[ \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
-\frac{\gamma}{L} \int_0^\infty \frac{\left( \frac{\gamma t}{L} \right)^{\lambda(L-1)}}
-{[\gamma(1 + t)]^{\lambda(L - \alpha)}}  dt\nonumber \\
-&= \left[ \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
-\frac{\gamma^{1 + \lambda(\alpha - 1)}}{L^{1 + \lambda(L-1)}} 
-\int_0^\infty t^{\lambda(L-1)} (1 + t)^{-\lambda(L - \alpha)}  dt.
-\label{eq:J_transformed}
-\end{align}
-
-This integral matches the Beta function identity
-\begin{equation*}
-\int_0^\infty \frac{t^{a-1}}{(1+t)^{a+b}} dt = B(a,b) = \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)},
-\end{equation*}
-for parameters
-\begin{equation*}
-a = \lambda(L-1) + 1, \quad b = \lambda(-\alpha + 1) - 1.
-\end{equation*}
-Using this, we simplify \eqref{eq:J_transformed} to
-\begin{equation}
-J = \left[ \frac{\Gamma(L - \alpha)}{\Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
-\frac{\gamma^{1-\lambda}}{L^{1-\lambda}} 
-\cdot \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}.
-\label{eq:J_beta}
-\end{equation}
-
-To express $J$ in terms of the mean $\mu$, we use the relation $\gamma = -\mu(\alpha + 1)$ valid for $\alpha < -1$. Substituting into \eqref{eq:J_beta} gives
-\begin{equation}
-J = [-\mu(\alpha + 1)]^{1-\lambda} L^{\lambda-1} 
-\left[ \frac{\Gamma(L - \alpha)}{\Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
-\frac{\Gamma(a)\Gamma(b)}{\Gamma(\lambda(L - \alpha))}.
-\label{eq:J_mu}
-\end{equation}
-
-Next, we write the Tsallis entropy of the $\mathcal{G}_I^0$ distribution as a decomposition into a homogeneous baseline and a texture-dependent term:
-\begin{equation*}
-T_\lambda(\mathcal{G}_I^0) = 
-T_\lambda(\Gamma_{\mathrm{SAR}}) + \Delta_\alpha,
-\end{equation*}
-where the homogeneous entropy term is given by
-\begin{equation*}
-T_\lambda(\Gamma_{\text{SAR}}(L,\mu)) = 
-\frac{1}{\lambda-1} \left[ 
-1 - \mu^{1-\lambda} L^{\lambda-1} \lambda^{-\lambda(L-1)-1} 
-\Gamma(\lambda(L-1)+1) \Gamma(L)^{-\lambda} 
-\right],
-\end{equation*}
-and the texture-induced component is
-\begin{align*}
-\Delta_\alpha &= \frac{J_0}{\lambda-1} (1 - Q_\alpha), \\
-J_0 &= \mu^{1-\lambda} L^{\lambda-1} \lambda^{-\lambda(L-1)-1} 
-\Gamma(\lambda(L-1)+1) \Gamma(L)^{-\lambda}, \\
-Q_\alpha &= (-\alpha-1)^{1-\lambda} 
-\left[ \frac{\Gamma(L - \alpha)}{\Gamma(-\alpha)} \right]^\lambda 
-\lambda^{\lambda(L-1)+1} 
-\frac{\Gamma(b)}{\Gamma(\lambda(L - \alpha))}.
-\end{align*}
-
-Alternatively, these expressions can be written in exponential-logarithmic form. The term $J_0$ becomes:
-\begin{multline*}
-J_0 = \exp\Bigl(
-(1-\lambda)\ln\mu + (\lambda-1)\ln L + \ln\Gamma(\lambda(L-1)+1) 
-- \lambda\ln\Gamma(L) - \left[\lambda(L-1)+1\right]\ln\lambda
-\Bigr),
-\end{multline*}
-and $Q_\alpha$ becomes:
-\begin{multline*}
-Q_\alpha = \exp\Bigl[
-(1-\lambda)\ln(-\alpha-1) + \lambda\ln\Gamma(L-\alpha) 
-- \lambda\ln\Gamma(-\alpha) + \ln\Gamma(\lambda(1-\alpha)-1) \\
-- \ln\Gamma(\lambda(L-\alpha)) + \left[\lambda(L-1)+1\right]\ln\lambda
-\Bigr].
-\end{multline*}
-
-### Limit Behavior of \texorpdfstring{$T_\lambda(\mathcal{G}^0_I)$}{Hl(GI0)} as \texorpdfstring{$\alpha \to -\infty$}{alpha->-∞} {#app:A33}
+## Limit Behavior of \texorpdfstring{$T_\lambda(\mathcal{G}^0_I)$}{Hl(GI0)} as \texorpdfstring{$\alpha \to -\infty$}{alpha->-∞} {#app:A33}
 
 We want to show that 
 $$
@@ -746,14 +288,14 @@ This appendix mirrors the derivation given for Vasicek’s estimator of Shannon 
 The differential entropy of a continuous random variable $Z$ with density $f(z)$ is given by:
 
 $$
-H(f) = - \int_{-\infty}^{\infty} f(z)\ln f(z)\,dz.
+H(Z) = - \int_{-\infty}^{\infty} f(z)\ln f(z)\,dz.
 $$
 
 We now perform a change of variables using the CDF of $F(z)$ and its inverse, the quantile function $Q(p) = F^{-1}(p)$.
 
 - Let $p = F(z)$ so that $z = Q(p)$.
 - Then, using the change of variables:
-
+\vspace{-15pt}
 $$
 dz = Q'(p)\,dp, \quad \text{and} \quad f(z) = F'(z) = \frac{1}{Q'(p)}.
 $$
@@ -762,36 +304,31 @@ Substituting into the integral:
 
 $$
 \begin{aligned}
-H(f) &= - \int_{-\infty}^{\infty} f(z)\ln f(z)\,dz \\
+H(Z) &= - \int_{-\infty}^{\infty} f(z)\ln f(z)\,dz \\
      &= - \int_0^1 f(Q(p))\ln f(Q(p)) \cdot Q'(p)\,dp \\
      &= - \int_0^1 \ln f(Q(p))\,dp.
 \end{aligned}
 $$
 
 Now, since $f(Q(p)) = \frac{1}{Q'(p)}$, we get:
-
 $$
 \ln f(Q(p)) = -\ln Q'(p),
 $$
 
 thus,
-
+\vspace{-15pt}
 $$
-H(f) = \int_0^1 \ln Q'(p)\,dp.
+H(Z) = \int_0^1 \ln Q'(p)\,dp.
 $$
 
  Entropy can be expressed without needing the explicit density $f(z)$. It is sufficient to integrate the logarithm of the derivative of the quantile function over $p \in (0,1)$.
 
-<!-- ###  Approximating $Q'(p)$ with $m$–Spacings {.unnumbered} -->
-
 In practice, the quantile function $Q$ is unknown, but we have access to a sample $\{Z_1, \dots, Z_n\}$, whose ordered values are:
-
 $$
 Z_{(1)} \le Z_{(2)} \le \cdots \le Z_{(n)}.
 $$
 
 Each order statistic $Z_{(i)}$ serves as an empirical quantile:
-
 $$
 Z_{(i)} \approx Q\left( \frac{i}{n+1} \right).
 $$
@@ -809,15 +346,13 @@ This is a symmetric window of width $2m$, valid for $m < i < n - m$.
 <!-- ###  Approximating the Integral as a Discrete Average {.unnumbered} -->
 
 The integral over $p \in [0,1]$ is approximated by a Riemann sum:
-
 $$
 \int_0^1 \ln Q'(p)\,dp \approx \frac{1}{n} \sum_{i=1}^{n} \ln Q'(p_i).
 $$
 
 Substituting the approximation of $Q'(p_i)$:
-
 $$
-\widehat{H}_{\text{V}}(m,n) = \frac{1}{n} \sum_{i=1}^{n} \ln\left[ \frac{n+1}{2m} \left(Z_{(i+m)} - Z_{(i-m)} \right) \right].
+\widehat{H}_{\text{V}}(\bm{Z}) = \frac{1}{n} \sum_{i=1}^{n} \ln\left[ \frac{n+1}{2m} \left(Z_{(i+m)} - Z_{(i-m)} \right) \right].
 $$
 
 This is the Vasicek estimator of Shannon entropy.
@@ -826,120 +361,148 @@ This is the Vasicek estimator of Shannon entropy.
 
 ## Tsallis Entropy and the Quantile Function  {#app:tsallis_1} 
 
-For a continuous random variable $Z$ with pdf $f$ and CDF $F$, the Tsallis entropy is
-
+For a continuous random variable $Z$ with pdf $f$ and CDF $F$, the Tsallis entropy is  defined by:
 $$
-T_\lambda(f)
-\;=\;
-\frac{1}{\lambda - 1}\!
-\left(
-  1 - \mathbb{E}\!\left[f^{\,\lambda - 1}(Z)\right]
-\right)
-\;=\;
-\frac{1}{\lambda - 1}\!
-\left(
-  1 - \int_{\mathbb{R}} f^\lambda(z)\,dz
-\right).
+  T_\lambda(Z)
+  \;=\;
+  \frac{1}{\lambda-1}
+  \Bigl(
+    1 - \mathbb{E}\bigl[f^{\,\lambda-1}(Z)\bigr]
+  \Bigr)
+  \;=\;
+  \frac{1}{\lambda-1}
+  \Bigl(
+    1 - \textstyle\int_{\mathbb R} f^{\lambda}(z)\,dz
+  \Bigr).
+  \tag{A.1}
 $$
-
-Let the quantile (inverse CDF) be $Q(p) = F^{-1}(p)$ with $p \in (0,1)$. Because $f(Q(p)) = Q'(p)$, the integral can be rewritten as
-
+To express $T_\lambda$ in terms of the quantile function
+$Q(p)=F^{-1}(p)$ for $p\in(0,1)$, note that
+$F\!\bigl(Q(p)\bigr)=p$.
+Differentiating with respect to $p$ yields:
+\begin{equation}
+  f\!\bigl(Q(p)\bigr)\,Q'(p)=1
+  \quad\Longrightarrow\quad
+  Q'(p)=\frac{1}{f\!\bigl(Q(p)\bigr)}.
+  \tag{A.2}
+\end{equation}
+Using the change of variables $z=Q(p)$ ($dz = Q'(p)\,dp$) in
+the integral of (A.1) and applying (A.2),
 $$
-\mathbb{E}\!\left[f^{\,\lambda - 1}(Z)\right]
-\;=\;
-\int_{0}^{1} \left(Q'(p)\right)^{1 - \lambda} \,dp.
+  \mathbb{E}\bigl[f^{\,\lambda-1}(Z)\bigr]
+  \;=\;
+  \int_0^1
+    \bigl[f(Q(p))\bigr]^{\lambda-1}\,dp
+  \;=\;
+  \int_0^1
+    \bigl[Q'(p)\bigr]^{1-\lambda}\,dp.
 $$
+Hence the entropy can be written solely in terms of the quantile
+derivative:
+\begin{equation}
+  T_\lambda(Z)
+  \;=\;
+  \frac{1}{\lambda-1}
+  \Bigl\{
+     1-\displaystyle\int_0^1
+       \bigl[Q'(p)\bigr]^{1-\lambda}\,dp
+  \Bigr\}.
+  \tag{A.3}
+\end{equation}
 
-Hence,
+Equation (A.3) dispenses with the pdf itself, once we can estimate $Q'(p)$, we obtain an estimator of
+$T_\lambda$.
 
+Draw an i.i.d.\ sample $Z_1,\dots,Z_n\sim F$ and sort it,
+$Z_{(1)}\le\cdots\le Z_{(n)}$.
+Fix an integer window
+$m\in\{1,\dots,\lfloor n/2\rfloor\}$.
+For every index $i=1,\dots,n$ define the (centred)
+\emph{$m$–spacing}
 $$
-T_\lambda(f)
-\;=\;
-\frac{1}{\lambda - 1}
-\left\{
-  1 - \int_{0}^{1} \left(Q'(p)\right)^{1 - \lambda} \,dp
-\right\}.
+  D_{i,m}
+  \;=\;
+  Z_{(i+m)}-Z_{(i-m)},
 $$
+with the conventions $Z_{(i-m)}:=Z_{(1)}$ when $i\le m$
+and $Z_{(i+m)}:=Z_{(n)}$ when $i\ge n-m$.
 
-Equation above expresses the entropy entirely via $Q'(p)$, i.e., without the pdf itself. This is the key that lets us replace derivatives by sample spacings.
-
-<!-- ### Approximating $Q'(p)$ with $m$–Spacings {.unnumbered} -->
-
-
-Draw an i.i.d. sample $Z_1,\dots,Z_n \sim F$ and sort it: $Z_{(1)} \le \dots \le Z_{(n)}$.
-
-For an integer window $1 \le m < \frac{n}{2}$, define the  $m$–spacing:
-
+Because $Z_{(i)}\approx Q\!\bigl(i/n\bigr)$, the points
+$Z_{(i-m)}$ and $Z_{(i+m)}$ correspond roughly to the
+probabilities $(i-m)/n$ and $(i+m)/n$, so that\,
+$\Delta p = 2m/n$.
+A centred finite–difference therefore gives the
+\emph{quantile-slope estimator}
 $$
-D_{i,m} = Z_{(i+m)} - Z_{(i-m)},
-\qquad
-i = 1, \dots, n,
-$$
-
-where by convention $Z_{(i-m)} := Z_{(1)}$ if $i \le m$ and $Z_{(i+m)} := Z_{(n)}$ if $i \ge n - m$.
-
-<!-- ### Finite–difference for the quantile slope {.unnumbered} -->
-
-Because $Z_{(i)} \approx Q\left(\frac{i}{n+1}\right)$, a centered finite difference gives
-
-$$
-Q'\left(\frac{i}{n+1}\right)
-\;\approx\;
-\frac{Z_{(i+m)} - Z_{(i-m)}}{\frac{i+m}{n+1} - \frac{i-m}{n+1}}
-=
-\frac{n+1}{2m} \, D_{i,m}.
-$$
-
-<!-- ### Boundary weights $c_i$ {.unnumbered} -->
-
-Near the edges, using a full $2m$ window inflates variance. Ebrahimi et al. (1994) propose position–dependent weights
-
-$$
-c_i =
-\begin{cases}
-  1 + \frac{i-1}{m}, & 1 \le i \le m, \\
-  2, & m+1 \le i \le n-m, \\
-  1 + \frac{n-i}{m}, & n-m+1 \le i \le n,
-\end{cases}
-$$
-
-so that the local slope estimate becomes
-
-$$
-\widehat{Q'}(p_i)
-=
-\frac{c_i\,m/n}{D_{i,m}},
-\qquad
-p_i \approx \frac{i}{n}.
+  \widehat{Q'}\!\bigl(p_i\bigr)
+  \;=\;
+  \frac{Z_{(i+m)}-Z_{(i-m)}}{\displaystyle\frac{2m}{n}}
+  =\frac{n}{2m}\,D_{i,m},
+  \qquad p_i:=\frac{i}{n}.
+  \tag{A.4}
 $$
 
-<!-- ### A Tsallis $m$–Spacing Estimator {.unnumbered} -->
-
-Replace $Q'(p)$ in the integral with $\widehat{Q'}(p_i)$ and approximate it by an average:
-
+To reduce edge bias Ebrahimi et al.&nbsp;[-@Ebrahimi1994]
+suggest position-dependent correction factors
 $$
-\widehat{T}_{\lambda}
-=
-\frac{1}{\lambda - 1}
-\left\{
-  1 -
-  \frac{1}{n}
-  \sum_{i=1}^{n}
-  \left[
-    \widehat{Q'}(p_i)
-  \right]^{1 - \lambda}
-\right\}
-=
-\frac{1}{\lambda - 1}
-\left\{
-  1 -
-  \frac{1}{n}
-  \sum_{i=1}^{n}
-  \left(
-    \frac{c_i\,m/n}{D_{i,m}}
-  \right)^{1 - \lambda}
-\right\}.
+  c_i=
+  \begin{cases}
+    1+\dfrac{i-1}{m}, & 1\le i\le m,\\[6pt]
+    2,                & m+1\le i\le n-m,\\[6pt]
+    1+\dfrac{n-i}{m}, & n-m+1\le i\le n.
+  \end{cases}
+  \tag{A.5}
 $$
+The resulting boundary-corrected $m$-spacing
+density estimator is
+\begin{equation}
+  \widehat f_n\bigl(Z_{(i)}\bigr)
+  \;=\;
+  \frac{c_i\,m/n}{D_{i,m}},
+  \qquad i=1,\dots,n.
+  \tag{A.6}
+\end{equation}
+By construction
+$\widehat f_n\bigl(Z_{(i)}\bigr)\approx f\!\bigl(Z_{(i)}\bigr)$,
+while its reciprocal gives an improved estimate of $Q'(p_i)$:
+\begin{equation}
+  \widehat{Q'}\!\bigl(p_i\bigr)
+  \;=\;
+  \frac{1}{\widehat f_n\bigl(Z_{(i)}\bigr)}
+  \;=\;
+  \frac{D_{i,m}}{c_i\,m/n}.
+  \tag{A.7}
+\end{equation}
+Approximating the integral in (A.3) by the
+Riemann sum over the grid $p_i=i/n$ and inserting $\widehat{Q'}\!\bigl(p_i\bigr)$
+of (A.7) yields the non-parametric Tsallis entropy estimator:
+$$
+  \widehat T_{\lambda}(\bm{Z})
+  \;=\;
+  \frac{1}{\lambda-1}
+  \Biggl\{
+     1
+     -\frac{1}{n}
+      \sum_{i=1}^{n}
+      \Bigl[
+         \widehat{Q'}\!\bigl(p_i\bigr)
+      \Bigr]^{1-\lambda}
+  \Biggr\}
+  \;=\;
+  \frac{1}{\lambda-1}
+  \Biggl\{
+     1
+     -\frac{1}{n}
+      \sum_{i=1}^{n}
+      \Bigl(
+        \frac{c_i\,m/n}{D_{i,m}}
+      \Bigr)^{\lambda-1}
+  \Biggr\}.
+  \tag{A.8}
+$$
+
+
+
 
 
 

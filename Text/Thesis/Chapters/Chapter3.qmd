@@ -470,7 +470,7 @@ knitr::kable(
 
 The results indicate that $\widetilde{H}_{\text{AO}}$ consistently achieves lower computational times compared to $\widetilde{H}_{\text{C}}$. This makes it the more efficient option, particularly relevant for large datasets, such as SAR images discussed in @sec-Chapter4. Consequently, $\widetilde{H}_{\text{AO}}$ is selected as the representative non-parametric Shannon entropy estimator in the simulations presented in the following sections.
 
-## Optimal $\lambda$ Selection 
+### Optimal $\lambda$ Selection 
 <!-- Finding the Optimal Value of $\lambda$ for the Rényi and Tsallis Entropy Estimators -->
 
 We aim to determine the optimal order $\lambda$ for the nonparametric entropy estimators of Rényi ($\widetilde{R}_{\lambda}$) and Tsallis ($\widetilde{T}_{\lambda}$), using simulated samples of size $n = 49$ from $Z\sim\Gamma_{\text{SAR}}(5,  1)$ distribution.
@@ -1010,7 +1010,7 @@ for (L in L_values) {
 ```
 
 
-```{r fig-densities-shannon, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", fig.pos="hbt", fig.cap="Empirical densities of $S_{\\widetilde{H}_{AO}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$.", fig.width=9, fig.height=4.0}
+```{r fig-densities-shannon, echo=FALSE, message=FALSE, warning=FALSE, out.width="90%", fig.pos="hbt", fig.cap="Empirical densities of $S_{\\widetilde{H}_{AO}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$.", fig.width=9, fig.height=4.0}
 
 theme_set(theme_minimal() +
             theme(text = element_text(family = "serif"),
@@ -1145,7 +1145,7 @@ for (L in L_values) {
 
 ```
 
-```{r fig-densities,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="80%", fig.pos="hbt",  fig.cap="Empirical densities of $S_{\\widetilde{R}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$, with $\\lambda=0.9$.", fig.width=9, fig.height=4.0}
+```{r fig-densities,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="90%", fig.pos="hbt",  fig.cap="Empirical densities of $S_{\\widetilde{R}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$, with $\\lambda=0.9$.", fig.width=9, fig.height=4.0}
 #fig.show="hide", 
 # eval=FALSE,  #
 
@@ -1295,7 +1295,7 @@ for (L in L_values) {
 
 ```
 
-```{r fig-densities-tsallis4,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="80%", fig.pos="H",  fig.cap="Empirical densities of $S_{\\widetilde{T}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$, with $\\lambda=0.85$.", fig.width=9, fig.height=4.0}
+```{r fig-densities-tsallis4,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="90%", fig.pos="H",  fig.cap="Empirical densities of $S_{\\widetilde{T}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$, with $\\lambda=0.85$.", fig.width=9, fig.height=4.0}
 #fig.show="hide", 
 # eval=FALSE,  #
 
@@ -1394,16 +1394,16 @@ Because all three test statistics share the same asymptotic distribution, the pr
     shorten >=1pt, shorten <=1pt
   }
 ]
-  \node[box] (raw) {1. Compute\\test statistic\\ $S(\bm{Z})$};
-  \node[box,right=of raw] (std) {2. Standardize\\ $\varepsilon=(S-\hat\mu_S)/\hat\sigma_S$};
-  \node[box,right=of std] (pval) {3. Compute \\ $2\Phi(-|\varepsilon|)$};
-  \node[box,right=of pval] (dec) {4. Reject if\\ $p<0.05$};
+  \node[box] (raw) {1. Calculate\\test statistic\\ $S(\bm{Z})$};
+  \node[box,right=of raw] (std) {2. Standardize\\test statistic\\ $\varepsilon=(S-\hat\mu_S)/\hat\sigma_S$};
+  \node[box,right=of std] (pval) {3. Compute \\ $p$-value \\ $2\Phi(-|\varepsilon|)$};
+  \node[box,right=of pval] (dec) {4. Make decision\\Reject if\\ $p<0.05$};
 
   \draw[arrow] (raw)  -- (std);
   \draw[arrow] (std) -- (pval);
   \draw[arrow] (pval) -- (dec);
 \end{tikzpicture}
-    \caption{Workflow of the entropy‐based hypothesis test: compute statistic, standardize, derive $p$-value, and decision by threshold $0.05$.}
+    \caption{Workflow of the entropy‐based hypothesis test: calculate test statistic, standardize, derive $p$-value, and make a decision by threshold $0.05$.}
     \label{fig:entropy-diagram-test}
 \end{figure}
 
