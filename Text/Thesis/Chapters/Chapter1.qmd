@@ -10,7 +10,7 @@
 # INTRODUCTION {#sec-Chapter1}
 
 
-Synthetic Aperture Radar (SAR) technology has become essential in  remote sensing, as it offers high-resolution imaging capabilities independently of sunlight and weather conditions, thus facilitating continuous and reliable Earth observation&nbsp;[@Mondini2021; @Zeng2020]. SAR imagery finds extensive applications in environmental monitoring, disaster management, agriculture mapping, climatology, urban planning, and maritime surveillance, among others&nbsp;[@Akbarizadeh2012;@Moreira2013; @Mu2019;@Yu2023]. Despite these advantages, effective exploitation of SAR data requires a robust understanding of its unique statistical characteristics, particularly the presence of speckle noise, a granular interference pattern inherent to coherent imaging systems like SAR&nbsp;[@Argenti2013;@Choi2019].
+Synthetic Aperture Radar (SAR) technology has become essential in  remote sensing, as it offers high-resolution imaging capabilities independently of sunlight and weather conditions, thus facilitating continuous and reliable Earth observation&nbsp;[@Mondini2021; @Zeng2020]. SAR imagery finds extensive applications in environmental monitoring, disaster management, agricultural mapping, climatology, urban planning, and maritime surveillance, among others&nbsp;[@Akbarizadeh2012;@Moreira2013; @Mu2019;@Yu2023]. Despite these advantages, effective exploitation of SAR data requires a robust understanding of its unique statistical characteristics, particularly the presence of speckle noise, a granular interference pattern inherent to coherent imaging systems like SAR&nbsp;[@Argenti2013;@Choi2019].
 
 Speckle arises from the constructive and destructive interference of backscattered signals within a resolution cell, manifesting as multiplicative, non-Gaussian noise that severely complicates image analysis [@Baraha2023]. Hence, accurate processing and interpretation of SAR data depend critically on appropriate statistical models to describe speckle behavior.
 
@@ -50,7 +50,7 @@ To enhance accuracy, particularly within small-window analysis contexts common i
 
 ### General Objective
 
-To propose and evaluate entropy-based statistical tests for detecting heterogeneity in SAR imagery, using non-parametric estimation and bootstrap correction to enhance accuracy in small-sample scenarios.
+To propose and evaluate entropy-based statistical tests for detecting heterogeneity in SAR imagery, using non-parametric estimation and bootstrap bias-correction to enhance accuracy in small-sample scenarios.
 
 
 ### Specific Objectives

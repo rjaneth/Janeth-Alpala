@@ -3,7 +3,7 @@ source("setup.R")
 ```
 # RESULTS {#sec-Chapter4}
 
-## ANALYSIS WITH SIMULATED DATA
+## ANALYSIS WITH SIMULATED DATA {#sec-sim2}
 
 Figure&nbsp;\ref{fig:sim_Phantom_1} presents the structural design of the synthetic phantom with dimensions of
 $500\times500$ pixels, proposed by  Gomez et al.&nbsp;[-@Gomez2017] as a tool to assess the performance of speckle-reduction filters. This layout serves as a base template to generate the simulated images shown in Figures&nbsp;\ref{fig:sim_Phantom_2}–\ref{fig:sim_Phantom_3}.
@@ -159,7 +159,7 @@ When the number of looks increases to $L=9$ (Figure&nbsp;\ref{fig:sim2t}), the m
 All tests are able to detect zones with different levels of texture.
 However, some differences can be observed. The statistic $S_{\widetilde{R}_{\lambda}}$, based on Rényi entropy, is very sensitive to changes in texture and often highlights small variations and detailed patterns of heterogeneity. In contrast, $S_{\widetilde{T}_{\lambda}}$, based on Tsallis entropy, tends to avoid false detections in uniform areas and produces cleaner results. This is due to the underlying formulation: Rényi entropy emphasizes variability, making it effective in identifying heterogeneity; while Tsallis entropy is more robust to noise, which helps preserve homogeneous regions.
 
-## APPLICATIONS TO SAR DATA
+## APPLICATIONS TO SAR DATA {#sec-sim3}
 
 
 ### SAR dataset and preprocessing {#sec:SAR-data}
@@ -986,6 +986,36 @@ The area under each ROC curve (AUC) quantifies overall detection performance, wi
 In Munich, both Rényi and Tsallis performed similarly with near-perfect AUCs ($0.996$ and $0.998$ respectively), while Shannon slightly lagged behind ($0.989$). In Dublin, a similar pattern is observed: Tsallis again leads marginally with an AUC of $0.994$, followed by Rényi ($0.990$) and Shannon ($0.986$).
 
 These results confirm that Rényi and Tsallis entropies consistently outperform Shannon, with Tsallis showing slightly superior performance in higher-quality scenes. The ROC analysis aligns with the classification metrics, supporting the conclusion that Tsallis and Rényi are more effective in detecting heterogeneity across varying image conditions.
+
+## INTERACTIVE SHINY APP FOR HETEROGENEITY DETECTION
+
+Shiny is an R package (version 1.9.1) developed by RStudio (now Posit) that makes it possible to build interactive web applications directly from R code, without requiring knowledge of HTML, CSS or JavaScript.  Users can manipulate inputs (e.g. sliders, file uploads, dropdowns) and see results update instantly in the browser.
+
+To facilitate reproducibility and allow exploration of the heterogeneity-detection pipeline on both simulated and real SAR images, we have developed a Shiny web application.
+
+The app supports three data‐loading modes:
+
+- **Simulated image examples**: Choose one of two simulated images (e.g. $L=5$ or $L=9$).  
+
+- **ENVI sample images**:  Select one of three small SAR samples in ENVI format (e.g. Dublin $L=16$, London $L=1$, or New Orleans $L=12$).  
+
+- **Upload ENVI**: Upload any custom \texttt{.img}/\texttt{.hdr} pair to process your own data.
+
+Once the image is loaded, the user can select one of three entropy estimators (Shannon, Rényi, or Tsallis), set the order $\lambda$ (for Rényi and Tsallis), specify the number of looks $L$, enable or disable bootstrap resampling (and choose the number of replicates), and fix the sliding‐window size $n \times n$. By clicking **Run Detection**, the app performs the sliding‐window test and displays the resulting $p$-value heat‐map in color.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.96\textwidth]{Figures/shiny2.png}
+  \caption{Shiny application interface. The left panel shows the data‐loading and parameter controls; the right panel displays the colorized $p$-value map and elapsed runtime.}
+  \label{fig:shiny-app}
+\end{figure}
+
+This interactive tool complements the results presented in Sections \ref{sec-sim2} and \ref{sec-sim3} by enabling real‐time parameter tuning and direct comparison across estimators.
+
+The application is publicly accessible at:
+[https://janeth-alpala.shinyapps.io/heterogeneity\_detection\_app/](https://janeth-alpala.shinyapps.io/heterogeneity\_detection\_app/)
+
+
+
 
 
 

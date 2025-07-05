@@ -288,25 +288,25 @@ This appendix mirrors the derivation given for Vasicek’s estimator of Shannon 
 The differential entropy of a continuous random variable $Z$ with density $f(z)$ is given by:
 
 $$
-H(Z) = - \int_{-\infty}^{\infty} f(z)\ln f(z)\,dz.
+H(Z) = - \int_{-\infty}^{\infty} f(z)\ln f(z)\,\mathrm{d}z.
 $$
 
-We now perform a change of variables using the CDF of $F(z)$ and its inverse, the quantile function $Q(p) = F^{-1}(p)$.
+We now perform a change of variables using the cdf of $F(z)$ and its inverse, the quantile function $Q(p) = F^{-1}(p)$.
 
 - Let $p = F(z)$ so that $z = Q(p)$.
 - Then, using the change of variables:
 \vspace{-15pt}
 $$
-dz = Q'(p)\,dp, \quad \text{and} \quad f(z) = F'(z) = \frac{1}{Q'(p)}.
+\mathrm{d}z = Q'(p)\,\mathrm{d}p, \quad \text{and} \quad f(z) = F'(z) = \frac{1}{Q'(p)}.
 $$
 
 Substituting into the integral:
 
 $$
 \begin{aligned}
-H(Z) &= - \int_{-\infty}^{\infty} f(z)\ln f(z)\,dz \\
-     &= - \int_0^1 f(Q(p))\ln f(Q(p)) \cdot Q'(p)\,dp \\
-     &= - \int_0^1 \ln f(Q(p))\,dp.
+H(Z) &= - \int_{-\infty}^{\infty} f(z)\ln f(z)\,\mathrm{d}z \\
+     &= - \int_0^1 f(Q(p))\ln f(Q(p)) \cdot Q'(p)\,\mathrm{d}p \\
+     &= - \int_0^1 \ln f(Q(p))\,\mathrm{d}p.
 \end{aligned}
 $$
 
@@ -318,7 +318,7 @@ $$
 thus,
 \vspace{-15pt}
 $$
-H(Z) = \int_0^1 \ln Q'(p)\,dp.
+H(Z) = \int_0^1 \ln Q'(p)\,\mathrm{d}p.
 $$
 
  Entropy can be expressed without needing the explicit density $f(z)$. It is sufficient to integrate the logarithm of the derivative of the quantile function over $p \in (0,1)$.
@@ -347,7 +347,7 @@ This is a symmetric window of width $2m$, valid for $m < i < n - m$.
 
 The integral over $p \in [0,1]$ is approximated by a Riemann sum:
 $$
-\int_0^1 \ln Q'(p)\,dp \approx \frac{1}{n} \sum_{i=1}^{n} \ln Q'(p_i).
+\int_0^1 \ln Q'(p)\,\mathrm{d}p \approx \frac{1}{n} \sum_{i=1}^{n} \ln Q'(p_i).
 $$
 
 Substituting the approximation of $Q'(p_i)$:
@@ -361,8 +361,8 @@ This is the Vasicek estimator of Shannon entropy.
 
 ## Tsallis Entropy and the Quantile Function  {#app:tsallis_1} 
 
-For a continuous random variable $Z$ with pdf $f$ and CDF $F$, the Tsallis entropy is  defined by:
-$$
+For a continuous random variable $Z$ with pdf $f$ and cdf $F$, the Tsallis entropy is  defined by:
+\begin{equation}
   T_\lambda(Z)
   \;=\;
   \frac{1}{\lambda-1}
@@ -372,10 +372,11 @@ $$
   \;=\;
   \frac{1}{\lambda-1}
   \Bigl(
-    1 - \textstyle\int_{\mathbb R} f^{\lambda}(z)\,dz
+    1 - \int_{\mathbb R} f^{\lambda}(z)\,\mathrm{d}z
   \Bigr).
-  \tag{A.1}
-$$
+  \label{eq:A1}
+\end{equation}
+
 To express $T_\lambda$ in terms of the quantile function
 $Q(p)=F^{-1}(p)$ for $p\in(0,1)$, note that
 $F\!\bigl(Q(p)\bigr)=p$.
@@ -384,19 +385,21 @@ Differentiating with respect to $p$ yields:
   f\!\bigl(Q(p)\bigr)\,Q'(p)=1
   \quad\Longrightarrow\quad
   Q'(p)=\frac{1}{f\!\bigl(Q(p)\bigr)}.
-  \tag{A.2}
+  \label{eq:A2}
 \end{equation}
-Using the change of variables $z=Q(p)$ ($dz = Q'(p)\,dp$) in
-the integral of (A.1) and applying (A.2),
-$$
+
+Using the change of variables $z=Q(p)$ ($\mathrm{d}z = Q'(p)\,\mathrm{d}p$) in
+the integral of \eqref{eq:A1} and applying \eqref{eq:A2},
+\begin{equation*}
   \mathbb{E}\bigl[f^{\,\lambda-1}(Z)\bigr]
   \;=\;
   \int_0^1
-    \bigl[f(Q(p))\bigr]^{\lambda-1}\,dp
+    \bigl[f(Q(p))\bigr]^{\lambda-1}\,\mathrm{d}p
   \;=\;
   \int_0^1
-    \bigl[Q'(p)\bigr]^{1-\lambda}\,dp.
-$$
+    \bigl[Q'(p)\bigr]^{1-\lambda}\,\mathrm{d}p.
+\end{equation*}
+
 Hence the entropy can be written solely in terms of the quantile
 derivative:
 \begin{equation}
@@ -405,12 +408,12 @@ derivative:
   \frac{1}{\lambda-1}
   \Bigl\{
      1-\displaystyle\int_0^1
-       \bigl[Q'(p)\bigr]^{1-\lambda}\,dp
+       \bigl[Q'(p)\bigr]^{1-\lambda}\,\mathrm{d}p
   \Bigr\}.
-  \tag{A.3}
+  \label{eq:A3}
 \end{equation}
 
-Equation (A.3) dispenses with the pdf itself, once we can estimate $Q'(p)$, we obtain an estimator of
+Equation \eqref{eq:A3} dispenses with the pdf itself; once we can estimate $Q'(p)$, we obtain an estimator of
 $T_\lambda$.
 
 Draw an i.i.d.\ sample $Z_1,\dots,Z_n\sim F$ and sort it,
@@ -418,12 +421,12 @@ $Z_{(1)}\le\cdots\le Z_{(n)}$.
 Fix an integer window
 $m\in\{1,\dots,\lfloor n/2\rfloor\}$.
 For every index $i=1,\dots,n$ define the (centred)
-\emph{$m$–spacing}
-$$
+$m$–spacing:
+\begin{equation*}
   D_{i,m}
   \;=\;
   Z_{(i+m)}-Z_{(i-m)},
-$$
+\end{equation*}
 with the conventions $Z_{(i-m)}:=Z_{(1)}$ when $i\le m$
 and $Z_{(i+m)}:=Z_{(n)}$ when $i\ge n-m$.
 
@@ -432,36 +435,36 @@ $Z_{(i-m)}$ and $Z_{(i+m)}$ correspond roughly to the
 probabilities $(i-m)/n$ and $(i+m)/n$, so that\,
 $\Delta p = 2m/n$.
 A centred finite–difference therefore gives the
-\emph{quantile-slope estimator}
-$$
-  \widehat{Q'}\!\bigl(p_i\bigr)
+quantile-slope estimator:
+\begin{equation}
+  \widehat{Q^\prime}\!\bigl(p_i\bigr)
   \;=\;
   \frac{Z_{(i+m)}-Z_{(i-m)}}{\displaystyle\frac{2m}{n}}
   =\frac{n}{2m}\,D_{i,m},
   \qquad p_i:=\frac{i}{n}.
-  \tag{A.4}
-$$
+  \label{eq:A5}
+\end{equation}
 
 To reduce edge bias Ebrahimi et al.&nbsp;[-@Ebrahimi1994]
 suggest position-dependent correction factors
-$$
+\begin{equation*}
   c_i=
   \begin{cases}
     1+\dfrac{i-1}{m}, & 1\le i\le m,\\[6pt]
     2,                & m+1\le i\le n-m,\\[6pt]
     1+\dfrac{n-i}{m}, & n-m+1\le i\le n.
   \end{cases}
-  \tag{A.5}
-$$
+\end{equation*}
+
 The resulting boundary-corrected $m$-spacing
 density estimator is
-\begin{equation}
+\begin{equation*}
   \widehat f_n\bigl(Z_{(i)}\bigr)
   \;=\;
   \frac{c_i\,m/n}{D_{i,m}},
   \qquad i=1,\dots,n.
-  \tag{A.6}
-\end{equation}
+\end{equation*}
+
 By construction
 $\widehat f_n\bigl(Z_{(i)}\bigr)\approx f\!\bigl(Z_{(i)}\bigr)$,
 while its reciprocal gives an improved estimate of $Q'(p_i)$:
@@ -471,12 +474,13 @@ while its reciprocal gives an improved estimate of $Q'(p_i)$:
   \frac{1}{\widehat f_n\bigl(Z_{(i)}\bigr)}
   \;=\;
   \frac{D_{i,m}}{c_i\,m/n}.
-  \tag{A.7}
+  \label{eq:A8}
 \end{equation}
-Approximating the integral in (A.3) by the
+
+Approximating the integral in \eqref{eq:A3} by the
 Riemann sum over the grid $p_i=i/n$ and inserting $\widehat{Q'}\!\bigl(p_i\bigr)$
-of (A.7) yields the non-parametric Tsallis entropy estimator:
-$$
+of \eqref{eq:A8} yields the non-parametric Tsallis entropy estimator:
+\begin{equation}
   \widehat T_{\lambda}(\bm{Z})
   \;=\;
   \frac{1}{\lambda-1}
@@ -498,12 +502,5 @@ $$
         \frac{c_i\,m/n}{D_{i,m}}
       \Bigr)^{\lambda-1}
   \Biggr\}.
-  \tag{A.8}
-$$
-
-
-
-
-
-
-
+  \label{eq:A9}
+\end{equation}

@@ -46,8 +46,7 @@ source("./Code/functions_sample_bias_mse_1.R")
 
 ## STATISTICAL MODELING OF INTENSITY SAR DATA
 
-
-Statistical modeling plays a central role in the analysis of SAR imagery, where speckle is a fundamental characteristic. The main distributions considered for SAR intensity data are the $\Gamma_{\text{SAR}}$ distribution, which is suitable for fully developed speckle, and the $\mathcal{G}^0_I$ distribution, which can describe varying levels of heterogeneity&nbsp;[@Frery1997].
+Statistical modeling plays a central role in the analysis of SAR imagery, where speckle is an inherent feature. For SAR intensity data, two main probability models are employed: the SAR-Gamma distribution ($\Gamma_{\text{SAR}}$), a reparameterization of the classical Gamma law suited to fully developed speckle, and the $\mathcal{G}^0_I$ distribution, which can describe varying levels of heterogeneity&nbsp;[@Frery1997].
 
 We denote $Z \sim \Gamma_{\mathrm{SAR}}(L, \mu)$ and $Z \sim \mathcal{G}_I^0(\alpha, \gamma, L)$ when the random variable $Z$ follows the respective distributions, characterized by the following probability density functions (pdfs):
 \begin{equation}
@@ -70,14 +69,14 @@ The $r$th order moments of the $\mathcal{G}_I^0$ model are
 E\big(Z^r\big)  = \left(\frac{\gamma}{L}\right)^r\frac{\Gamma(-\alpha-r)}{\Gamma(-\alpha)}\frac{\Gamma(L+r)}{\Gamma(L)}, 
     \label{E:rmom}
 \end{equation}
-provided $\alpha <-r$, and infinite otherwise.
+provided that $\alpha <-r$, and infinite otherwise.
 Therefore, assuming $\alpha<-1$, its expected value is
 \begin{equation}
-    \mu=\left(\frac{\gamma}{L}\right)\frac{\Gamma(-\alpha-1)}{\Gamma(-\alpha)}\frac{\Gamma(L+1)}{\gamma(L)}=-\frac{\gamma}{\alpha+1}.
+    \mu=\left(\frac{\gamma}{L}\right)\frac{\Gamma(-\alpha-1)}{\Gamma(-\alpha)}\frac{\Gamma(L+1)}{\Gamma(L)}=-\frac{\gamma}{\alpha+1}.
     \label{E:mean1}
 \end{equation} 
 
-Although the $\mathcal{G}_I^0$ distribution is defined by the parameters $\alpha$ and $\gamma$, in the SAR literature&nbsp;[@Nascimento2010] the texture $\alpha$ and the mean $\mu$ are usually used. Reparametrizing&nbsp;\eqref{E:gi01} with $\mu$, and denoting this model as $Z \sim \mathcal{G}_I^0(\alpha, \mu, L)$ we obtain:
+Although the $\mathcal{G}_I^0$ distribution is defined by the parameters $\alpha$ and $\gamma$, in the SAR literature&nbsp;[@Nascimento2010] the texture $\alpha$ and the mean $\mu$ are usually used. Reparameterizing&nbsp;\eqref{E:gi01} with $\mu$, and denoting this model as $Z \sim \mathcal{G}_I^0(\alpha, \mu, L)$ we obtain:
 \begin{equation}
     f_{\mathcal{G}^0_I}\bigl(z; \mu, \alpha, L \bigr) 
     = \frac{L^L\,\Gamma(L-\alpha)}
@@ -190,7 +189,7 @@ In practice, detecting heterogeneity is equivalent to testing whether $\Delta_\a
 For a continuous random variable $Z$ with pdf $f(z)$, the Rényi entropy of order $\lambda \in \mathbbm R_+ \setminus \{1\}$ is defined as:
 \begin{equation}
 \label{E:entropy-R}
-R_\lambda(Z)  = \frac{1}{1-\lambda }\ln \Bigl[ \mathbb{E}\Bigl( f^{\lambda - 1}(Z)\Bigr) \Bigr] =\frac{1}{1 - \lambda} \ln \int_{-\infty}^{\infty} [f(z)]^\lambda \, dz.
+R_\lambda(Z)  = \frac{1}{1-\lambda }\ln \Bigl[ \mathbb{E}\Bigl( f^{\lambda - 1}(Z)\Bigr) \Bigr] =\frac{1}{1 - \lambda} \ln \int_{-\infty}^{\infty} [f(z)]^\lambda \,\mathrm{d}z.
 \end{equation}
 As $\lambda \to 1$, $R_{\lambda}(Z)$ reduces to the Shannon entropy $H(Z)$.
 
@@ -249,10 +248,10 @@ Substituting into \eqref{E:entropy-R} yields the closed-form
 \textbf{Textured case.} Starting from the definition of Rényi entropy in  \eqref{E:entropy-R} and the pdf of  $Z\sim\mathcal{G}^0_I(\alpha,\gamma,L)$ given in \eqref{E:gi01}, we define:
 $$
 I
-= \int_{0}^{\infty}\bigl[f_{\mathcal{G}^0_I}(z;\alpha,\gamma,L)\bigr]^{\lambda}\,dz
+= \int_{0}^{\infty}\bigl[f_{\mathcal{G}^0_I}(z;\alpha,\gamma,L)\bigr]^{\lambda}\,\mathrm{d}z
 = C^{\lambda}
   \int_{0}^{\infty}
-    \frac{z^{\lambda(L-1)}}{(\gamma+Lz)^{\,\lambda(L-\alpha)}}\,dz,
+    \frac{z^{\lambda(L-1)}}{(\gamma+Lz)^{\,\lambda(L-\alpha)}}\,\mathrm{d}z,
 \qquad
 C=\frac{L^L\Gamma(L-\alpha)}{\gamma^{\alpha}\Gamma(-\alpha)\Gamma(L)}.
 $$
@@ -260,22 +259,22 @@ The parameterisation satisfies $\gamma=-\mu(\alpha+1)$, so the final result will
 
 $$
 I \;=\;\int_{0}^{\infty}
-        \bigl[f_{\mathcal{G}^0_I}(z;\alpha,\gamma,L)\bigr]^{\lambda}\,dz
+        \bigl[f_{\mathcal{G}^0_I}(z;\alpha,\gamma,L)\bigr]^{\lambda}\,\mathrm{d}z
     \;=\;C^{\lambda}\!
         \int_{0}^{\infty}\!
-          \frac{z^{\lambda(L-1)}}{(\gamma+Lz)^{\,\lambda(L-\alpha)}}\,dz,
+          \frac{z^{\lambda(L-1)}}{(\gamma+Lz)^{\,\lambda(L-\alpha)}}\,\mathrm{d}z,
 $$
-With the change of variable $t=Lz/\gamma$ ($dz=\gamma\,dt/L$) we obtain:
+With the change of variable $t=Lz/\gamma$ ($\,\mathrm{d}z=\gamma\,\,\mathrm{d}t/L$) we obtain:
 $$
 I
 = C^{\lambda}\,
   \frac{\gamma^{\,1+\lambda(\alpha-1)}}{L^{\,1+\lambda(L-1)}}
   \int_{0}^{\infty}
-    \frac{t^{\lambda(L-1)}}{(1+t)^{\,\lambda(L-\alpha)}}\,dt.
+    \frac{t^{\lambda(L-1)}}{(1+t)^{\,\lambda(L-\alpha)}}\,\mathrm{d}t.
 $$
 Using the Beta–function identity
 $$
-\int_{0}^{\infty}\frac{t^{a-1}}{(1+t)^{a+b}}\,dt
+\int_{0}^{\infty}\frac{t^{a-1}}{(1+t)^{a+b}}\,\mathrm{d}t
 = B(a,b),\;\;
 a=\lambda(L-1)+1,\;\;
 b=\lambda(-\alpha+1)-1,
@@ -416,27 +415,27 @@ For a continuous random variable $Z$ with pdf $f(z)$, the Tsallis entropy of ord
 \begin{equation}
 \label{eq:tsallis}
 T_\lambda(Z) = \frac{1}{\lambda - 1} \mathbb{E} \Bigl[ 1 - (f(Z))^{\lambda - 1} \Bigr]
-= \frac{1}{\lambda - 1} \Bigl[ 1 - \int_{-\infty}^{\infty} \bigl(f(z)\bigr)^{\lambda} dz \Bigr]. 
+= \frac{1}{\lambda - 1} \Bigl[ 1 - \int_{-\infty}^{\infty} \bigl(f(z)\bigr)^{\lambda} \,\mathrm{d}z \Bigr]. 
 \end{equation}
 In the limit $\lambda\to1$,
   $T_\lambda(Z)\to H(Z)$, making Tsallis a
-  one-parameter generalisation of Shannon entropy.
+  one-parameter generalization of Shannon entropy.
 
 Using&nbsp;\eqref{eq:tsallis}, we derive closed-form expressions for the Tsallis entropy of the $\Gamma_{\mathrm{SAR}}$ and the $\mathcal{G}^0_I$ distributions.
 
 \textbf{Homogeneous case.} 
 Let $Z\sim\Gamma_{\mathrm{SAR}}(L,\mu)$  with pdf given by \eqref{E:gamma1}. Define the integral:
 \begin{equation*}
-J
-= \int_0^\infty \left[f_{\Gamma_{\text{SAR}}}(z;L,\mu)\right]^{\lambda} \, dz.
+I
+= \int_0^\infty \left[f_{\Gamma_{\text{SAR}}}(z;L,\mu)\right]^{\lambda} \,\mathrm{d}z.
 \end{equation*}
 Substituting the density function and simplifying constants, we get
 \begin{equation*}
-J
+I
 = \left(\frac{L^L}{\Gamma(L)\,\mu^L}\right)^{\lambda}
   \int_0^\infty
      z^{\lambda(L-1)}
-     \exp\left(-\frac{\lambda L}{\mu} z\right)\, dz.
+     \exp\left(-\frac{\lambda L}{\mu} z\right)\,\mathrm{d}z.
 \end{equation*}
 Using the Gamma integral identity
 \begin{align*}
@@ -445,7 +444,7 @@ Using the Gamma integral identity
 \end{align*}
 with $p = \lambda(L-1) + 1$ and $q = \frac{\lambda L}{\mu}$. This leads to
 \begin{equation*}
-J
+I
 = \left(\frac{L^L}{\Gamma(L)\,\mu^L}\right)^{\lambda}
   \cdot
   \frac{\Gamma\big(\lambda(L-1)+1\big)}
@@ -453,7 +452,7 @@ J
 \end{equation*}
 After rearranging powers of $L$, $\mu$ and $\lambda$, we obtain
 \begin{equation}
-J
+I
 = \frac{L^{\lambda - 1}\,\mu^{1 - \lambda}\;
        \Gamma\big(\lambda(L - 1) + 1\big)}
       {\lambda^{\lambda(L - 1) + 1}\,
@@ -501,29 +500,29 @@ T_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L,\mu)\bigr)=
 \end{aligned}}
 \end{equation}
 
-\textbf{Textured case.} Starting from the Tsallis definition in \eqref{eq:tsallis} aand the pdf of $Z\sim\mathcal{G}^0_I(\alpha,\gamma,L)$ in \eqref{E:gi01}, define:
+\textbf{Textured case.} Starting from the Tsallis definition in \eqref{eq:tsallis} and the pdf of $Z\sim\mathcal{G}^0_I(\alpha,\gamma,L)$ in \eqref{E:gi01}, define:
 \begin{equation*}
-J = \int_0^\infty \left[ f_{\mathcal{G}_I^0}(z) \right]^\lambda dz,
+I = \int_0^\infty \left[ f_{\mathcal{G}_I^0}(z) \right]^\lambda \,\mathrm{d}z,
 \end{equation*}
 which, upon substitution of the density, becomes
 \begin{equation*}
-J = \left[ \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
-\int_0^\infty \frac{z^{\lambda(L-1)}}{(\gamma + Lz)^{\lambda(L - \alpha)}}  dz.
+I = \left[ \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
+\int_0^\infty \frac{z^{\lambda(L-1)}}{(\gamma + Lz)^{\lambda(L - \alpha)}}\,\mathrm{d}z.
 \label{eq:J_initial}
 \end{equation*}
-Introducing the change of variables $t = \frac{Lz}{\gamma}$ (so that $z = \frac{\gamma t}{L}$ and $dz = \frac{\gamma}{L} dt$), we obtain
+Introducing the change of variables $t = \frac{Lz}{\gamma}$ (so that $z = \frac{\gamma t}{L}$ and $\mathrm{d}z = \frac{\gamma}{L}\,\mathrm{d}t$), we obtain
 \begin{align}
-J &= \left[ \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
+I &= \left[ \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
 \frac{\gamma}{L} \int_0^\infty \frac{\left( \frac{\gamma t}{L} \right)^{\lambda(L-1)}}
-{[\gamma(1 + t)]^{\lambda(L - \alpha)}}  dt\nonumber \\
+{[\gamma(1 + t)]^{\lambda(L - \alpha)}}\,\mathrm{d}t\nonumber \\
 &= \left[ \frac{L^L \Gamma(L - \alpha)}{\gamma^\alpha \Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
 \frac{\gamma^{1 + \lambda(\alpha - 1)}}{L^{1 + \lambda(L-1)}} 
-\int_0^\infty t^{\lambda(L-1)} (1 + t)^{-\lambda(L - \alpha)}  dt.
+\int_0^\infty t^{\lambda(L-1)} (1 + t)^{-\lambda(L - \alpha)}\,\mathrm{d}t.
 \label{eq:J_transformed1}
 \end{align}
 This integral matches the Beta function identity
 \begin{equation*}
-\int_0^\infty \frac{t^{a-1}}{(1+t)^{a+b}} dt = B(a,b) = \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)},
+\int_0^\infty \frac{t^{a-1}}{(1+t)^{a+b}}\,\mathrm{d}z = B(a,b) = \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)},
 \end{equation*}
 for parameters
 \begin{equation*}
@@ -531,14 +530,14 @@ a = \lambda(L-1) + 1, \quad b = \lambda(-\alpha + 1) - 1.
 \end{equation*}
 Using this, we simplify \eqref{eq:J_transformed1} to
 \begin{equation}
-J = \left[ \frac{\Gamma(L - \alpha)}{\Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
+I = \left[ \frac{\Gamma(L - \alpha)}{\Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
 \frac{\gamma^{1-\lambda}}{L^{1-\lambda}} 
 \cdot \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}.
 \label{eq:J_beta1}
 \end{equation}
 To express $J$ in terms of the mean $\mu$, we use the relation $\gamma = -\mu(\alpha + 1)$ valid for $\alpha < -1$. Substituting into \eqref{eq:J_beta1} gives
 \begin{equation*}
-J = [-\mu(\alpha + 1)]^{1-\lambda} L^{\lambda-1} 
+I = [-\mu(\alpha + 1)]^{1-\lambda} L^{\lambda-1} 
 \left[ \frac{\Gamma(L - \alpha)}{\Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
 \frac{\Gamma(a)\Gamma(b)}{\Gamma(\lambda(L - \alpha))}.
 \end{equation*}
@@ -623,7 +622,6 @@ Figure&nbsp;\ref{fig:entropy-diagram} provides a conceptual overview of the deco
     property/.style={rectangle, draw=orange!60, fill=orange!10, thick, minimum width=3cm, align=center, font=\sffamily},
     arrow/.style={-Stealth, thick}
     ]
-    % Tu diagrama aquí...
     \node[entropy] (shannon) {Shannon \ $H(Z)$};
     \node[entropy, right=of shannon] (renyi) {Rényi \ $R_\lambda(Z)$};
     \node[entropy, right=of renyi] (tsallis) {Tsallis \ $T_\lambda(Z)$};
@@ -884,7 +882,7 @@ In the following, we introduce the concept of order statistics and sample spacin
 
 \subsection{Order Statistics and Sample Spacings}
 
-Let $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ be an independent and identically distributed (i.i.d) random sample of size $n$ from drawn from a continuous distribution with cumulative distribution function (CDF) $F(z)$, let $Z_{(1)} \le Z_{(2)} \le \cdots \le Z_{(n)}$ denote the ordered sample, known as the order statistics.
+Let $\bm{Z}=(Z_1, Z_2,\ldots,Z_n)$ be an independent and identically distributed (i.i.d.) random sample of size $n$ from drawn from a continuous distribution with cumulative distribution function (cdf) $F(z)$, let $Z_{(1)} \le Z_{(2)} \le \cdots \le Z_{(n)}$ denote the ordered sample, known as the order statistics.
 
 Sample spacings refer to the differences between ordered observations. More generally, an $m$-spacing is defined as the difference between two order statistics that are $m$ positions apart in the sorted sample. For instance, a 1-spacing corresponds to the gap between consecutive order statistics: $Z_{(i+1)} - Z_{(i)}$. In general, an $m$-spacing can be written as $Z_{(i+m)} - Z_{(i)}$, for indices $i$ such that $i + m \le n$.
 
@@ -895,7 +893,7 @@ A key probabilistic property that supports this idea arises when considering the
   \mathbb{E}[F(Z_{(i+1)}) - F(Z_{(i)})] = \frac{1}{n+1}.
 \end{equation*}
 
-This result suggests that, under the true CDF, the transformed spacings are uniformly spread in expectation. Consequently, a simple density estimate around the point $Z_{(i)}$ can be motivated by the approximation:
+This result suggests that, under the true cdf, the transformed spacings are uniformly spread in expectation. Consequently, a simple density estimate around the point $Z_{(i)}$ can be motivated by the approximation:
 $$
 f(Z_{(i)}) \approx \frac{\text{mass}}{\text{length}} \approx \frac{1/(n+1)}{Z_{(i+1)} - Z_{(i)}},
 $$
@@ -905,20 +903,20 @@ where $1/(n+1)$ serves as an estimate of the probability mass between $Z_{(i)}$ 
 ### Nonparametric Estimators for Shannon Entropy {#sec:sh_est}
 
 
-Let $F^{-1}(p)$ denote the quantile function (inverse CDF) of the distribution. We use $Q(p)$ as shorthand for $F^{-1}(p)$, so $Q:(0,1)\to \mathbb{R}$ satisfies $Q(p) = z$ if and only if $F(z) = p$.
+Let $F^{-1}(p)$ denote the quantile function (inverse cdf) of the distribution. We use $Q(p)$ as shorthand for $F^{-1}(p)$, so $Q:(0,1)\to \mathbb{R}$ satisfies $Q(p) = z$ if and only if $F(z) = p$.
 
-Since $F(z)$ is monotonic, $Q(p)$ is differentiable wherever $f(z)$ is positive, with derivative $Q'(p) = \frac{d}{dp}F^{-1}(p)$. By the inverse function theorem, $Q'(p) = \frac{1}{f(Q(p))}$.
+Since $F(z)$ is monotonic, $Q(p)$ is differentiable wherever $f(z)$ is positive, with derivative $Q'(p) = \frac{d}{\mathrm{d}p}F^{-1}(p)$. By the inverse function theorem, $Q'(p) = \frac{1}{f(Q(p))}$.
 
-Starting from the definition of Shannon entropy in Equation \eqref{eq:entropy-sh}, a change of variables $p = F(z)$ can be applied. When $z = Q(p)$, it follows that $dz = Q'(p)\,dp$. Substituting into the integral:
+Starting from the definition of Shannon entropy in Equation \eqref{eq:entropy-sh}, a change of variables $p = F(z)$ can be applied. When $z = Q(p)$, it follows that $\mathrm{d}z = Q'(p)\,\mathrm{d}p$. Substituting into the integral:
 \begin{align*}
   H(Z)
-  &= -\int_{0}^{1} f(Q(p))\ln f(Q(p))\cdot Q'(p)\,dp \\
-  &= -\int_{0}^{1} \ln f(Q(p))\,dp.
+  &= -\int_{0}^{1} f(Q(p))\ln f(Q(p))\cdot Q'(p)\,\mathrm{d}p \\
+  &= -\int_{0}^{1} \ln f(Q(p))\,\mathrm{d}p.
 \end{align*}
 
 Now using $f(Q(p)) = 1/Q'(p)$, we have $\ln f(Q(p)) = -\ln Q'(p)$. Thus:
 \begin{equation}
-  H(Z) = \int_{0}^{1} \ln Q'(p)\,dp = \int_{0}^{1} \ln \left(\frac{d}{dp}F^{-1}(p)\right) dp.
+  H(Z) = \int_{0}^{1} \ln Q'(p)\,\mathrm{d}p = \int_{0}^{1} \ln \left(\frac{d}{\mathrm{d}p}F^{-1}(p)\right)\,\mathrm{d}p.
 \end{equation}
 
 This is the foundation of spacing estimators: entropy as the integral of the log quantile derivative.
@@ -940,7 +938,7 @@ Nonparametric estimators using order statistics and spacings, such as Vasicek’
 
 Subsequent extensions and refinements (not detailed here) further improve bias, variance, and performance at the boundaries, forming a robust toolkit for entropy estimation in continuous distributions.
 
-We consider the following entropy estimators variants, as discussed by Cassetti et al.&nbsp;[-@Cassetti2022].
+We consider the following entropy estimators variants as discussed by Cassetti et al.&nbsp;[-@Cassetti2022].
 
 Van Es&nbsp;[-@VanEs1992] proposed a new estimator of entropy given by:
  \begin{equation}
@@ -1005,13 +1003,13 @@ The Rényi entropy of order $\lambda > 0$, with $\lambda \neq 1$, is defined in 
 
 To facilitate nonparametric estimation, the expression in Equation \eqref{E:entropy-R} can be reformulated using the quantile function $Q(p) = F^{-1}(p)$, with $p \in (0,1)$. Applying the change of variable $z = Q(p)$ and noting that $f(Q(p)) = Q'(p)$ yields:
 \begin{align*}
-\int f^\lambda(z)\,dz
-&= \int_0^1 [f(Q(p))]^\lambda \cdot Q'(p)\,dp \\
-&= \int_0^1 [Q'(p)]^{1 - \lambda}\,dp.
+\int f^\lambda(z)\,\mathrm{d}z
+&= \int_0^1 [f(Q(p))]^\lambda \cdot Q'(p)\,\mathrm{d}p \\
+&= \int_0^1 [Q'(p)]^{1 - \lambda}\,\mathrm{d}p.
 \end{align*}
 Substituting this into the original expression gives the quantile-based representation:
 \begin{equation}
-R_\lambda(Z) = \frac{1}{1 - \lambda} \ln \left( \int_0^1 [Q'(p)]^{1 - \lambda}\,dp \right).
+R_\lambda(Z) = \frac{1}{1 - \lambda} \ln \left( \int_0^1 [Q'(p)]^{1 - \lambda}\,\mathrm{d}p \right).
 \label{eq:renyi-quantile}
 \end{equation}
 
@@ -1067,14 +1065,14 @@ A detailed derivation of this estimator, including the quantile-based transforma
 The definition of Tsallis entropy is given in Equation \eqref{eq:tsallis}, this expression can be reformulated using the quantile function $Q(p)=F^{-1}(p)$, defined for $p\in(0,1)$. Since $f(Q(p)) = 1/Q'(p)$, the expectation in \eqref{eq:tsallis} becomes
 $$
   \mathbb{E}\bigl[f^{\lambda-1}(Z)\bigr] 
-  = \int_{0}^{1} \bigl(Q'(p)\bigr)^{1-\lambda}\,dp,
+  = \int_{0}^{1} \bigl(Q'(p)\bigr)^{1-\lambda}\,\mathrm{d}p,
 $$
 leading to the alternative representation:
 \begin{equation}
   T_\lambda(Z)
   =\frac{1}{\lambda-1}
      \left\{
-       1-\int_{0}^{1}\bigl(Q'(p)\bigr)^{1-\lambda}\,dp
+       1-\int_{0}^{1}\bigl(Q'(p)\bigr)^{1-\lambda}\,\mathrm{d}p
      \right\}.
   \label{eq:Tsallis-quantile}
 \end{equation}
