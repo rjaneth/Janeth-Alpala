@@ -451,22 +451,36 @@ imagematrix_colorPNG <- function(x, name,
   ticks  <- sort(unique(c(seq(0, 1, by = 0.2), significance_level)))
   labels <- ifelse(abs(ticks - significance_level) < 1e-8, "0.05", as.character(ticks))
   
+  #mexico
+    image.plot(zlim = c(0, 1),
+               legend.only = TRUE,
+               col = palette_colors,
+               horizontal = FALSE,
+               smallplot = c(0.3, 0.5,  0.02, 0.98),#smallplot = c(0.30, 0.58, 0.1, 0.9),
+               axis.args = list(
+                 at     = ticks,
+                 labels = labels,
+                 #at     = sort(unique(c(seq(0, 1, by = 0.2), significance_level))),
+                 #labels = as.character(sort(unique(c(seq(0, 1, by = 0.2), significance_level)))),
+                 cex.axis = 1.5 # 3.3 dublin 3.3, 3.1 munich, 2.1 mexico
+               ))
+    dev.off()
+  }
   
-  
-  image.plot(zlim = c(0, 1),
-             legend.only = TRUE,
-             col = palette_colors,
-             horizontal = FALSE,
-             smallplot = c(0.2, 0.53,  0.02, 0.98),#smallplot = c(0.30, 0.58, 0.1, 0.9),
-             axis.args = list(
-               at     = ticks,
-               labels = labels,
-               #at     = sort(unique(c(seq(0, 1, by = 0.2), significance_level))),
-               #labels = as.character(sort(unique(c(seq(0, 1, by = 0.2), significance_level)))),
-               cex.axis = 3.3 # 3.5 dublin 3.3, 3.1 munich
-             ))
-  dev.off()
-}
+#   image.plot(zlim = c(0, 1),
+#              legend.only = TRUE,
+#              col = palette_colors,
+#              horizontal = FALSE,
+#              smallplot = c(0.2, 0.53,  0.02, 0.98),#smallplot = c(0.30, 0.58, 0.1, 0.9),
+#              axis.args = list(
+#                at     = ticks,
+#                labels = labels,
+#                #at     = sort(unique(c(seq(0, 1, by = 0.2), significance_level))),
+#                #labels = as.character(sort(unique(c(seq(0, 1, by = 0.2), significance_level)))),
+#                cex.axis = 3.3 # 3.5 dublin 3.3, 3.1 munich
+#              ))
+#   dev.off()
+# }
 
 #london
 #   image.plot(zlim = c(0, 1),

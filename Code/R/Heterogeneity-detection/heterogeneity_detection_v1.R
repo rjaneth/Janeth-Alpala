@@ -2,36 +2,21 @@
 # heterogeneity_detection_v1.R  (v1.)
 # ------------------------------------------------------------
 # Author: Janeth Alpala
-# Date: 30‑Apr‑2025
+# Date: 30-jun-2025
 # Description:
 #   Script for heterogeneity detection in SAR images (ENVI format)
-#   using Shannon or Rényi non‑parametric estimators (with or without
-#   bootstrap resampling).
-# 
+#   or simulated (RData), using non-parametric estimators
+#   of Shannon, Rényi, or Tsallis entropy (with or without bootstrap).
+#
 # Quick-start:
-#   1. Edit the `opt` list below with your own paths, entropy type, window size, etc.
-#      Example:
-#        opt <- list(
-#          image     = "path/to/image.img",
-#          header    = "path/to/image.hdr",
-#          entropy   = "renyi",
-#          looks     = 16,
-#          bootstrap = TRUE,
-#          B         = 10,
-#          window    = 7,
-#          renyi     = 0.9
-#        )
-#   2. Run the script in R:  source("heterogeneity_detection_v1.R")   
-#   3. Watch the progress bar; when finished a 2×2 composite plot pops up:
-#        • Equalised SAR image
-#        • p-value map (grey)
-#        • p-value map (colour + scale bar)
-#        • Significance mask  (p < opt$p_thr)
+#   1. Edit the `opt` list below with your own paths, entropy type,
+#      window size, etc.
+#   2. Run in R: source("heterogeneity_detection_v1.R")
+#   3. At the end, a color p-value map with scale bar is displayed.
 # Outputs:
-#   • On‑screen plots (e.g., from plot_composite and quick previews).
-#   • High‑resolution PNGs saved to ./PNG/ (SAR image, statistics, p-values, threshold maps).
-#   • An .RData file with img_mat, entropy_test, p_values, and opt saved in ./Data/.
-
+#   • On-screen plot of color p-values.
+#   • PNG saved in ./PNG/ for p-values.
+#   • .RData saved in ./Data/ containing img_mat, entropy_test, p_values, and opt.
 
 # ----------------------------------------------------------------------
 # Required packages
@@ -45,14 +30,23 @@ library(progress)
 library(fields)   # for image.plot legend
 
 # ----------------------------------------------------------------------
-# External functions 
+# Optional: Parallelization setup 
 # ----------------------------------------------------------------------
-# 
+if (!requireNamespace("future.apply", quietly = TRUE)) install.packages("future.apply")
+library(future.apply)
+plan(multisession)   # Automatically uses available CPU cores 
+parallel <- TRUE     # Set to FALSE to disable parallel execution
+set.seed(1234567890, kind = "Mersenne-Twister")  
 
+# ----------------------------------------------------------------------
+# External functions
+# ----------------------------------------------------------------------
 source("./Code/al_omari_1_estimator.R")
 source("./Code/bootstrap_al_omari_1_estimator.R")
 source("./Code/renyi_entropy_estimator_v1.R")
 source("./Code/bootstrap_renyi_entropy_estimator_v1.R")
+source("./Code/tsallis_estimator_optimized.R")
+source("./Code/bootstrap_tsallis_entropy_optimized.R")
 source("./Code/read_ENVI_images.R")
 
 # ----------------------------------------------------------------------
@@ -61,11 +55,21 @@ source("./Code/read_ENVI_images.R")
 shannon_theoretical <- function(L, mu) {
   log(mu) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
 }
+
 renyi_theoretical <- function(L, lambda, mu) {
   num <- lambda * lgamma(L) - lgamma(lambda * (L - 1) + 1) +
     (lambda * (L - 1) + 1) * log(lambda)
   (num / (lambda - 1)) + log(mu) - log(L)
 }
+
+tsallis_theoretical <- function(L, lambda, mu) {
+  (1 - exp((1 - lambda)*log(mu) +
+             (lambda - 1)*log(L) +
+             lgamma(lambda*(L - 1) + 1) -
+             lambda*lgamma(L) -
+             (lambda*(L - 1) + 1)*log(lambda))) / (lambda - 1)
+}
+
 calculate_p_values_matrix <- function(stat_mat) {
   mu  <- mean(stat_mat, na.rm = TRUE)
   sig <- sd(stat_mat,   na.rm = TRUE)
@@ -74,112 +78,139 @@ calculate_p_values_matrix <- function(stat_mat) {
 }
 
 # ----------------------------------------------------------------------
-# Manual parameters 
+# Manual parameters
 # ----------------------------------------------------------------------
+# examples: SAR data in envi format is located in the Data folder.
+# image        = "./Data/SAR/L12_envi_munich_size_1024/Intensity_HH.img",
+# header       = "./Data/SAR/L12_envi_munich_size_1024/Intensity_HH.hdr",
 
-
-
-#image         = "../../../Data/SAR/L24_envi_Foggia_size_600/Intensity_VV.img",
-#header        = "../../../Data/SAR/L24_envi_Foggia_size_600/Intensity_VV.hdr",
+# sim_rdata    = "./Data/L5_simulated_image_500.Rdata",
 
 opt <- list(
-  image         = "./Data/SAR/L16_envi_dublin_size_600/Intensity_HH.img",
-  header        = "./Data/SAR/L16_envi_dublin_size_600/Intensity_HH.hdr",
-  entropy       = "renyi",   # "shannon" | "renyi"
-  looks         = 16,        # number of looks L
-  bootstrap     = TRUE,      # TRUE to enable bootstrap
-  B             = 10,        # bootstrap replicates
-  window        = 7,         # Window side length (results in 7x7 = 49 pixels per window)
-  prefix        = "Foggia_size_600",# Prefix for saved files, e.g., "image_size_sar.png"
-  renyi         = 0.9,        # Rényi parameter λ (only for "renyi"); recommend 0.9 if L > 1, 3 if L = 1
-  progress_step = 10,         # progress bar refresh
-  p_thr         = 0.05        # significance threshold 
+  # For ENVI inputs: 
+  image        = "./Data/SAR/L16_envi_dublin_size_600/Intensity_HH.img",
+  header       = "./Data/SAR/L16_envi_dublin_size_600/Intensity_HH.hdr",
+  # For simulated inputs:
+  sim_rdata    = "./Data/L9_simulated_image_500.Rdata",
+  # Input type selector:
+  #   - "envi": load SAR images in ENVI format (.img + .hdr)
+  #   - "sim" : load simulated images from an .RData file
+  input_type   = "envi",         # choose either "envi" or "sim"
+  # Entropy settings:
+  entropy      = "tsallis",      # "shannon" | "renyi" | "tsallis"
+  lambda       = 0.85,           # order parameter λ for Rényi & Tsallis (for L=1, choose Renyi (λ=3) and for Tsallis (λ=1.1)
+  # Bootstrap settings:
+  bootstrap    = TRUE,           # TRUE to enable bootstrap resampling or FALSE to disable
+  B            = 50,             # number of bootstrap replicates
+  # SAR image parameters:
+  looks        = 16,             # number of looks L
+  window       = 5,              # window side length (5x5,7×7,9x9... pixels)
+  # Output & display:
+  prefix       = "L16_dublin_600_tsallis_w9_b50", # Prefix for saved files, e.g., "image_size_sar.png"
+  progress_step= 10,             # progress bar refresh interval
+  p_thr        = 0.05            # significance threshold
 )
 
 # ----------------------------------------------------------------------
 # Basic checks
 # ----------------------------------------------------------------------
-stopifnot(!is.null(opt$image), !is.null(opt$header))
-if (opt$window < 1) {
-  stop("Window size must be a positive integer")
-}
-if (opt$entropy == "renyi") {
-  if (opt$renyi <= 0 || opt$renyi == 1) {
-    stop("Rényi parameter λ must satisfy: λ > 0 and λ ≠ 1")
-  }
+stopifnot(opt$input_type %in% c("envi", "sim"))
+if (opt$window < 1) stop("Window size must be a positive integer")
+if (opt$entropy %in% c("renyi", "tsallis")) {
+  if (opt$lambda <= 0 || opt$lambda == 1) 
+    stop("Parameter λ must satisfy: λ > 0 and λ ≠ 1")
 }
 
 # ----------------------------------------------------------------------
-# Read image
+# Load image matrix
 # ----------------------------------------------------------------------
-cat("Reading image", opt$image, "...\n")
-img_mat <- myread.ENVI(file = opt$image, headerfile = opt$header)
+cat("Loading data (type =", opt$input_type, ")...\n")
+if (opt$input_type == "envi") {
+  stopifnot(!is.null(opt$image), !is.null(opt$header))
+  img_mat <- myread.ENVI(file = opt$image, headerfile = opt$header)
+} else {
+  stopifnot(!is.null(opt$sim_rdata))
+  load(opt$sim_rdata)   # loads object Z
+  img_mat <- Z
+}
 rows <- nrow(img_mat); cols <- ncol(img_mat)
 cat("Dimensions:", rows, "x", cols, "pixels\n")
 
 # ----------------------------------------------------------------------
 # Select estimator dynamically
 # ----------------------------------------------------------------------
-
 get_estimator <- function(type, L, bootstrap) {
   if (type == "shannon") {
     if (bootstrap && L > 1) return(function(z) bootstrap_al_omari_1_estimator(z, opt$B))
     else                     return(al_omari_1_estimator)
   }
   if (type == "renyi") {
-    if (bootstrap && L > 1) return(function(z) bootstrap_renyi_entropy_estimator_v1(z, opt$B, opt$renyi))
-    else                     return(function(z) renyi_entropy_estimator_v1(z, opt$renyi))
+    if (bootstrap && L > 1) return(function(z) bootstrap_renyi_entropy_estimator_v1(z, opt$B, opt$lambda))
+    else                     return(function(z) renyi_entropy_estimator_v1(z, opt$lambda))
+  }
+  if (type == "tsallis") {
+    if (bootstrap && L > 1) return(function(z) bootstrap_tsallis_entropy_optimized(z, opt$B, opt$lambda))
+    else                     return(function(z) tsallis_estimator_optimized(z, opt$lambda))
   }
   stop("Unknown entropy type")
 }
 entropy_estimator <- get_estimator(opt$entropy, opt$looks, opt$bootstrap)
-get_theoretical   <- function(type, L, lambda, mu) {
-  if (type == "shannon") return(shannon_theoretical(L, mu))
-  if (type == "renyi")   return(renyi_theoretical(L, lambda, mu))
+
+get_theoretical <- function(type, L, lambda, mu) {
+  if (type == "shannon")  return(shannon_theoretical(L, mu))
+  if (type == "renyi")    return(renyi_theoretical(L, lambda, mu))
+  if (type == "tsallis")  return(tsallis_theoretical(L, lambda, mu))
 }
 
 # ----------------------------------------------------------------------
-# Sliding‑window processing
+# Sliding-window processing (parallelized with future.apply)
 # ----------------------------------------------------------------------
 cat("Processing", opt$window, "x", opt$window, "windows...\n")
 start_time <- Sys.time()
 
-out_nrow <- rows - opt$window + 1
-out_ncol <- cols - opt$window + 1
+out_nrow     <- rows - opt$window + 1
+out_ncol     <- cols - opt$window + 1
 entropy_test <- matrix(NA_real_, nrow = out_nrow, ncol = out_ncol)
 
-pb <- progress_bar$new(total = out_nrow,
-                       format = "[:bar] :current/:total (:percent) in :elapsed")
-for (i in 1:out_nrow) {
-  for (j in 1:out_ncol) {
-    slice <- img_mat[i:(i + opt$window - 1), j:(j + opt$window - 1)]
-    est   <- entropy_estimator(slice)
-    mu    <- mean(slice)
-    theo  <- get_theoretical(opt$entropy, opt$looks, opt$renyi, mu)
-    entropy_test[i, j] <- est - theo
-  }
-  pb$tick()
+# Generate all top-left coordinates for each window
+idx <- expand.grid(i = seq_len(out_nrow), j = seq_len(out_ncol))
+
+# Function to process a single window
+compute_one <- function(k) {
+  i <- idx$i[k]
+  j <- idx$j[k]
+  slice <- img_mat[i:(i + opt$window - 1), j:(j + opt$window - 1)]
+  est   <- entropy_estimator(slice)
+  mu    <- mean(slice)
+  theo  <- get_theoretical(opt$entropy, opt$looks, opt$lambda, mu)
+  est - theo
 }
 
+# Process all windows, in parallel if enabled
+if (parallel) {
+  # Uses all available CPU cores by default
+  res <- future_sapply(seq_len(nrow(idx)), compute_one, future.seed = TRUE)
+} else {
+  res <- sapply(seq_len(nrow(idx)), compute_one)
+}
+entropy_test[] <- matrix(res, nrow = out_nrow, byrow = FALSE)
+
 # ----------------------------------------------------------------------
-# p‑value matrix
+# p-value matrix
 # ----------------------------------------------------------------------
-cat("Computing p‑values...\n")
+cat("Computing p-values...\n")
 p_values <- calculate_p_values_matrix(entropy_test)
 
-
-
 # ----------------------------------------------------------------------
-# Quick exploratory plots
+# Quick exploratory plots (commented)
 # ----------------------------------------------------------------------
-
-source("Code/imagematrix_visualizer.R")     # visual helper library
+source("./Code/imagematrix_visualizer.R")
 # dev.new()
-# plot(imagematrix(equalize(img_mat)), main = "SAR image") # equalize SAR image gray scale
-# plot(imagematrix(p_values),main = "p-values (greyscale)" ) # plot p-values gray scale
-# plot(imagematrix(p_values< 0.05), ,main = "p-values < 0.05")
-# previewImagematrix(imagematrix_color(p_values), palette_option = "viridis-H",main = "p-values (colour)")# color image with colorbar
-
+# plot(imagematrix(equalize(img_mat)), main = "SAR image")
+# plot(imagematrix(p_values), main = "p-values (greyscale)")
+# plot(imagematrix(p_values < opt$p_thr), main = "p-values < threshold")
+# previewImagematrix(imagematrix_color(p_values), palette_option = "viridis-H",
+#                    main = "p-values (colour)")
 
 # ----------------------------------------------------------------------
 # Composite plot function
@@ -199,14 +230,14 @@ plot_composite <- function(img_mat, p_values,
   
   # grayscale p-values
   plot(imagematrix(p_values), main = "p-values (grayscale)")
- 
-  # colour p-values 
+  
+  # color p-values 
   
   previewImagematrixPanel(
     imagematrix_color(p_values),
     palette_option     = palette_option,
     significance_level = thr
-    #main               = "p-values (colour)"
+    #main               = "p-values (color)"
   )
   par(mar = c(1, 1, 3, 1))
   #  threshold map
@@ -219,13 +250,20 @@ plot_composite <- function(img_mat, p_values,
 cat("Plotting 2×2 composite figure...\n")
 plot_composite(img_mat, p_values, thr = opt$p_thr)
 
-#plot_composite(img_mat, p_values, thr = opt$p_thr, palette_option = "viridis-H")
-
+# ----------------------------------------------------------------------
+# Show only color p-values with scale bar
+# ----------------------------------------------------------------------
+# cat("Plotting color p-values with scale bar...\n")
+# previewImagematrixPanel(
+#   imagematrix_color(p_values),
+#   palette_option     = "viridis-H",
+#   significance_level = opt$p_thr
+# )
 
 # ----------------------------------------------------------------------
-# Save Individual PNG exports (optional)
+# Save PNG output
 # ----------------------------------------------------------------------
-cat("Saving PNG outputs...\n")
+cat("Saving PNG output...\n")
 if (!dir.exists("./PNG")) dir.create("./PNG")
 
 imagematrixPNG(
@@ -247,12 +285,11 @@ imagematrixPNG(
   imagematrix(p_values < opt$p_thr),
   file.path("./PNG", paste0(opt$prefix, "_pvals_thr.png"))
 )
-
 imagematrix_colorPNG(
   imagematrix_color(p_values),
   name            = file.path("./PNG", paste0(opt$prefix, "_pvals_color.png")),
   palette_option  = "viridis-H",
-  legend_width_px = 540,
+  legend_width_px = 300,
   scale_factor    = 2
 )
 
@@ -262,15 +299,24 @@ imagematrix_colorPNG(
 if (!dir.exists("./Data")) dir.create("./Data")
 base_name <- sprintf("%s_%s_L%d%s_w%d%s%s",
                      opt$prefix,
-                     ifelse(opt$entropy == "shannon", "shannon", "renyi"),
+                     ifelse(opt$entropy == "shannon", "shannon",
+                            ifelse(opt$entropy == "renyi",   "renyi",   "tsallis")),
                      opt$looks,
                      ifelse(opt$bootstrap, paste0("_b", opt$B), ""),
                      opt$window,
-                     ifelse(opt$entropy == "renyi", paste0("_lambda", gsub("\\.", "", sprintf("%.2f", opt$renyi))), ""),
+                     if (opt$entropy %in% c("renyi","tsallis"))
+                       paste0("_lambda", gsub("\\.", "", sprintf("%.2f", opt$lambda))) else "",
                      format(Sys.Date(), "_%Y%m%d"))
 save(file = file.path("./Data", paste0(base_name, ".RData")),
      list = c("img_mat", "entropy_test", "p_values", "opt"))
 
-# -------------------- Execution time -----------------------------------
+# ----------------------------------------------------------------------
+# Execution time formatted hh:mm:ss
+# ----------------------------------------------------------------------
 end_time <- Sys.time()
-cat("Total run time:", round(difftime(end_time, start_time, units = "secs"),1), "seconds\n")
+run_time <- difftime(end_time, start_time, units = "secs")
+secs <- as.numeric(run_time)
+h <- floor(secs / 3600)
+m <- floor((secs %% 3600) / 60)
+s <- round(secs %% 60)
+cat(sprintf("Total run time: %02d:%02d:%02d (hh:mm:ss)\n", h, m, s))
