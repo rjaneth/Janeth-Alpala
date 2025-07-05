@@ -1,11 +1,21 @@
 # app.R
-library(shiny)
-library(viridisLite)
-library(fields)          # for image.plot legend
-library(png)             # for readPNG
-library(shinycssloaders) # for the spinner
+# SAR Heterogeneity Detection
+req_pkgs <- c("shiny", "viridisLite", "fields", "png", "shinycssloaders")
+for (pkg in req_pkgs) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    install.packages(pkg)
+  }
+}
 
-# Carga tus scripts auxiliares
+
+lapply(req_pkgs, library, character.only = TRUE)
+# library(shiny)
+# library(viridisLite)
+# library(fields)          # for image.plot legend
+# library(png)             # for readPNG
+# library(shinycssloaders) # for the spinner
+
+
 source("./Code/al_omari_1_estimator.R")
 source("./Code/bootstrap_al_omari_1_estimator.R")
 source("./Code/renyi_entropy_estimator_v1.R")
@@ -15,7 +25,7 @@ source("./Code/bootstrap_tsallis_entropy_optimized.R")
 source("./Code/read_ENVI_images.R")
 source("./Code/imagematrix_visualizer.R")
 
-# Funciones teóricas y de p-values
+
 shannon_theoretical <- function(L, mu) {
   log(mu) + (L - log(L) + lgamma(L) + (1 - L) * digamma(L))
 }
@@ -117,7 +127,7 @@ ui <- navbarPage("SAR Heterogeneity Detection",
                           )
                  )
                  
-)  # <-- end of navbarPage
+)  #  end of navbarPage
 # --- SERVER -------------------------------------------------------------
 server <- function(input, output, session) {
   observeEvent(input$go, {
@@ -136,7 +146,7 @@ server <- function(input, output, session) {
                              headerfile = input$upload_hdr$datapath)
     }
     
-    # 2) Select entropy estimator (always function(z))
+    # 2) Select entropy estimator 
     estimator <- switch(input$entropy,
                         shannon = {
                           if (input$bootstrap && input$looks > 1) {
