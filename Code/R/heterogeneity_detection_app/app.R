@@ -70,7 +70,7 @@ ui <- navbarPage("SAR Heterogeneity Detection",
                                 selectInput("envi_choice", "Choose ENVI sample:",
                                             choices = list(
                                               "Dublin L16 (600×600)"      = "L16_envi_dublin_size_600",
-                                              "London L1 (1000×1000)"     = "L1_envi_london_size_2000",
+                                              "London L1 (1000×1000)"     = "L1_envi_london_size_1000",
                                               "New Orleans L12 (600×600)" = "L12_envi_New_Orleans_size_600"
                                             )
                                 ),
@@ -110,24 +110,34 @@ ui <- navbarPage("SAR Heterogeneity Detection",
                           )
                  ),
                  
-                 # About tab
+                 # About tab (idéntico a tu versión actual)
                  tabPanel("About",
                           fluidRow(
                             column(8,
                                    h4("About this app"),
                                    p("This interactive Shiny application allows users to detect heterogeneity in SAR images."),
                                    tags$ul(
-                                     tags$li("Load predefined simulated images, ENVI images examples, or upload your own .img/.hdr files."),
+                                     tags$li("Load predefined simulated images, ENVI image examples, or upload your own .img/.hdr files."),
                                      tags$li("Select entropy estimator: Shannon, Rényi, or Tsallis."),
-                                     tags$li("Optional bootstrap resampling and sliding-window analysis (N×N pixels)."),
+                                     tags$li("Optional bootstrap resampling and sliding-window analysis (n×n pixels)."),
                                      tags$li("Visualize resulting p-value map in color with interactive scale bar.")
                                    ),
-                                   p(" ")
+                                   h5("Recommendation"),
+                                   p("⚙️ On the hosted version, heavy bootstrap (B > 10) can be slow. We suggest starting with 5–10 replicates for interactive use."),
+                                   h5("Note on performance"),
+                                   p("⚠️ This app is hosted on the free tier of Shinyapps.io, which has limited computing resources (25 active hours/month)."),
+                                   p("For unlimited use and faster performance, we recommend running the app or the standalone script locally from the GitHub repository:"),
+                                   tags$ul(
+                                     tags$li(a("GitHub repository with app and script", 
+                                               href="https://github.com/rjaneth/heterogeneity_detection_app",target="_blank")),
+                                     tags$li("The same repository also contains a R script (`heterogeneity_detection_v1.R`) designed for large images with parallel processing (no Shiny interface).")
+                                   ),
+                                   p("To run locally, clone the repository, open `app.R` in RStudio, and click “Run App.”"),
+                                   p("To process large SAR images, edit the `opt` parameters in `heterogeneity_detection_v1.R` and run it directly.")
                             )
                           )
                  )
-                 
-)  #  end of navbarPage
+)  # end navbarPage
 # --- SERVER -------------------------------------------------------------
 server <- function(input, output, session) {
   observeEvent(input$go, {
