@@ -110,7 +110,7 @@ ui <- navbarPage("SAR Heterogeneity Detection",
                           )
                  ),
                  
-                 # About tab (idéntico a tu versión actual)
+                 # 
                  tabPanel("About",
                           fluidRow(
                             column(8,
@@ -137,8 +137,8 @@ ui <- navbarPage("SAR Heterogeneity Detection",
                             )
                           )
                  )
-)  # end navbarPage
-# --- SERVER -------------------------------------------------------------
+)  # 
+# --- SERVER 
 server <- function(input, output, session) {
   observeEvent(input$go, {
     # 1) Load image matrix
