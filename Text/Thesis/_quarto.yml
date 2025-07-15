@@ -30,7 +30,7 @@ book:
 thesis:
   #declaration: "Frontmatter/declaration.tex"
   #dedication: "Frontmatter/dedication.tex"
-  acknowledgements: "Frontmatter/acknowledgements.tex"
+  #acknowledgements: "Frontmatter/acknowledgements.tex"
   abstract: "Frontmatter/abstract.tex"
   resumo: "Frontmatter/resumo.tex"
   abbreviations: "Frontmatter/abbreviations.tex"

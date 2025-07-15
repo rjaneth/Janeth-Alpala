@@ -104,7 +104,7 @@ opt <- list(
   B            = 50,             # number of bootstrap replicates
   # SAR image parameters:
   looks        = 16,             # number of looks L
-  window       = 5,              # window side length (5x5,7×7,9x9... pixels)
+  window       = 7,              # window side length (5x5,7×7,9x9... pixels)
   # Output & display:
   prefix       = "L16_dublin_600_tsallis_w9_b50", # Prefix for saved files, e.g., "image_size_sar.png"
   progress_step= 10,             # progress bar refresh interval
