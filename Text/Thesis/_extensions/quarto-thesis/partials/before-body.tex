@@ -2,9 +2,13 @@
 \renewcommand{\cleardoublepage}{\clearpage} % Evita páginas en blanco extra
 \makeatother
 
-\frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
+%\frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
 
-\pagestyle{plain} % Default to the plain heading style until the thesis style is called for the body content
+%\pagestyle{plain} % Default to the plain heading style until the thesis style is called for the body content
+
+% --- UFPE: contar desde a folha de rosto, sem numerar o pré-texto ---
+%\pagenumbering{arabic}  % contador en arábigos desde el comienzo
+%\pagestyle{empty}       % no mostrar número en las páginas por ahora
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
@@ -26,51 +30,66 @@
     %\includegraphics[width=2cm]{images/ufpe-logo.png}\\[0.3cm]
     
     % NOMBRES DE LA UNIVERSIDAD/PROGRAMA EN MAYÚSCULAS
-    {\large\MakeUppercase{UNIVERSIDADE FEDERAL DE PERNAMBUCO}}\\
-    {\large\MakeUppercase{CENTRO DE CIÊNCIAS EXATAS E DA NATUREZA}}\\
-    {\large\MakeUppercase{PROGRAMA DE PÓS-GRADUAÇÃO EM ESTATÍSTICA}}\\
-    {\large\MakeUppercase{DOUTORADO EM ESTATÍSTICA}}\\[4cm]
+    {\normalsize\MakeUppercase{UNIVERSIDADE FEDERAL DE PERNAMBUCO}}\\
+    {\normalsize\MakeUppercase{CENTRO DE CIÊNCIAS EXATAS E DA NATUREZA}}\\
+    {\normalsize\MakeUppercase{PROGRAMA DE PÓS-GRADUAÇÃO EM ESTATÍSTICA}}\\ [4cm]
+    %{\large\MakeUppercase{DOUTORADO EM ESTATÍSTICA}}\\[4cm]
 		
     % NOMBRE DE LA TESISTA
-    {\large ROSA JANETH ALPALA}\\[3cm]
+    {\normalsize ROSA JANETH ALPALA}\\[4cm]
     
     % TÍTULO 
-    {\Large \textbf{Entropy-Based Test Statistics for Heterogeneity Detection in SAR Data}}\\[6cm]
+    {\normalsize \textbf{ENTROPY-BASED TEST STATISTICS FOR HETEROGENEITY DETECTION IN SAR DATA}}\\[6.19cm]
     %\textbf{AND CAUSE-SPECIFIC MORTALITY IN ENGLAND}}\\[5cm]
-    
+    % Entropy-Based Test Statistics for Heterogeneity Detection in SAR Data
 
 		
 		%{\Large Doctoral Thesis}\\[2cm] % Thesis type
 %
     % CIUDAD Y AÑO
-   {\large Recife}\\
-   {\large 2025}
+    %\vfill
+   {\normalsize Recife}\\
+   {\normalsize 2025}
     
   \end{center}
-\end{titlepage}
+\end{titlepage} % <— FIN de la portada
+\cleardoublepage
+
+% --- Aquí COMIENZA el conteo (folha de rosto = 1), pero sin imprimir número ---
+\pagenumbering{arabic}   % resetea a 1 en esta página
+\pagestyle{empty}        % no mostrar números en el pretexto
 
 \begin{titlepage}
   \thispagestyle{empty}
     \begin{center}
-    {\large ROSA JANETH ALPALA}\\[4cm]
-    {\Large \textbf{Entropy-Based Test Statistics for Heterogeneity Detection in SAR Data }}\\[4cm]
+    {\normalsize ROSA JANETH ALPALA}\\[5cm]
+    {\normalsize \textbf{ENTROPY-BASED TEST STATISTICS FOR HETEROGENEITY DETECTION IN SAR DATA}}\\[3cm]
   \end{center}
 
   % Quita el \hfill y en lugar de eso usamos \begin{center}...
   %\begin{center}
   \noindent
-  \hspace*{0.3\textwidth}
-  \begin{minipage}{0.65\textwidth}
-    Thesis submitted to the Graduate Program in Statistics at 
-    the Universidade Federal de Pernambuco, as a partial requirement 
-    for the degree of Doctor of Philosophy  in Statistics.
+  \hspace*{0.44\textwidth}
+  \begin{minipage}{0.52\textwidth}
+  \onehalfspacing
+  Tese apresentada ao Programa de Pós-Graduação em Estatística do Centro de Ciências
+  Exatas e da Natureza da Universidade Federal
+  de Pernambuco, como requisito parcial à
+  obtenção do título de Doutora em Estatística.
+    % Thesis submitted to the Graduate Program in Statistics at 
+    % the Universidade Federal de Pernambuco, as a partial requirement 
+    % for the degree of Doctor of Philosophy  in Statistics.
+   % \end{minipage}
     
-    \vspace{1em}
-    \textbf{Concentration area}: Applied Statistics
+      %\hspace*{0.34\textwidth}% \hspace*{0.34\textwidth}
+ % \begin{minipage}{0.65\textwidth}%\begin{minipage}{0.65\textwidth}
+  \vspace{2em}
+    %\textbf{Concentration area}: Applied Statistics
+    \textbf{Área de Concentração}: Estatística Aplicada
     
     \vspace{2em} 
-    \textbf{Advisor}: Prof. Dr. Alejandro C. Frery \\
-    \textbf{Co-advisor}: Prof. Dr. Abraão D. C. do Nascimento
+    \textbf{Orientador}: Dr. Alejandro César Frery Orgambide \\
+    \textbf{Co-Orientador}: Dr. Abraão David Costa do Nascimento
   \end{minipage}
   %\end{center}
   
@@ -80,6 +99,15 @@
     2025
   \end{center}
 \end{titlepage}
+\setcounter{page}{2}
+% --- Folha em branco para a ficha catalográfica (contada, sem número) ---
+\clearpage
+\thispagestyle{empty}
+\null
+\newpage
+
+
+ % la Capa NO se cuenta; la próxima hoja será la 1
 
 % --- SUBPORTADA O FOLHA DE ROSTO ---
 
@@ -117,12 +145,32 @@
 % 
 % \end{titlepage}
 
+% --- ACTA en PDF (contada, sin número visible) ---
+
+\cleardoublepage
+% (opcional) marcador de PDF sin añadir al ToC:
+%\phantomsection
+%\pdfbookmark[0]{ACTA}{acta}
+
+\includepdf[
+  pages=-,                    % todas las páginas del PDF
+  pagecommand={\thispagestyle{empty}}, % oculta el número en cada página incluida
+  fitpaper=true               % ajusta al tamaño del papel del documento
+]{Frontmatter/Folha2.pdf}
+
+\cleardoublepage
+
+
 %----------------------------------------------------------------------------------------
 %	Actas
 %----------------------------------------------------------------------------------------
 %\cleardoublepage % Asegura que la portada termine en una página aparte
 %\includepdf[pages=-]{Frontmatter/acta.pdf}
 %\cleardoublepage
+% Pretexto: no mostrar número
+
+\pagestyle{empty}
+\setchapterpagestyle{empty} % las "chapter pages" del pretexto también sin número
 
 
 $if(thesis.dedication)$
@@ -161,6 +209,7 @@ $if(thesis.acknowledgements)$
   \renewcommand{\chapterfont}{\bfseries\Large}  % Negrita y tamaño grande (ajusta a gusto)
 
   \begin{acknowledgements}
+  \thispagestyle{empty} 
   %\addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
   
   $if(thesis.acknowledgements.text)$
@@ -228,6 +277,7 @@ $if(thesis.abstract)$
   \renewcommand{\chapteralign}{\centering}      % Centra el título
   \renewcommand{\chapterfont}{\bfseries\Large}  % Negrita y tamaño grande (ajusta a gusto)
 \begin{abstract}
+ \thispagestyle{empty}  
 \input{"$thesis.abstract$"} 
 \end{abstract}
 \newpage % Solo inserta nueva página si es necesario
@@ -242,6 +292,7 @@ $if(thesis.resumo)$
   \renewcommand{\chapteralign}{\centering}      % Centra el título
   \renewcommand{\chapterfont}{\bfseries\Large}  % Negrita y tamaño grande 
 \begin{resumo}
+ \thispagestyle{empty}  
 \input{"$thesis.resumo$"} 
 \end{resumo}
 \newpage % Solo inserta nueva página si es necesario
@@ -249,48 +300,111 @@ $if(thesis.resumo)$
 $endif$
 
 
+
+
 % $--	LIST OF CONTENTS/FIGURES/TABLES PAGES
 
-\begingroup
+% \begingroup
+% \hypersetup{linkcolor=$if(toclinkcolor)$$toclinkcolor$$else$black$endif$}
+% 
+% %\renewcommand{\contentsname}{CONTENTS}            % Antes: Table of contents
+% %\tableofcontents % Prints the main table of contents
+% %\renewcommand{\listfigurename}{LIST OF FIGURES}   % Antes: List of figures
+% %\listoffigures % Prints the list of figures
+% %\renewcommand{\listtablename}{LIST OF TABLES}     % Antes: List of tables
+% %\listoftables % Prints the list of tables
+% % --- Cambiamos los nombres a mayúsculas ---
+% 
+% %\renewcommand{\contentsname}{CONTENTS}
+% %\patchcmd{\tableofcontents}
+%   %{\chapter*{\contentsname}}
+%   %{\chapter*{\bfseries\small \contentsname}}
+%   %{}{}
+% 	%\tableofcontents
+% 	
+% 	  \renewcommand{\chapteralign}{\centering}
+%   \renewcommand{\chapterfont}{\bfseries\Large}
+%   \renewcommand{\listfigurename}{LIST OF FIGURES}
+%   \cleardoublepage
+%   \listoffigures
+% \endgroup
+
+% \cleardoublepage
+% \phantomsection
+% \hypersetup{linkcolor=$if(toclinkcolor)$$toclinkcolor$$else$black$endif$}
+% \pdfbookmark[0]{LIST OF FIGURES}{lof}
+% {\centering\bfseries\Large LIST OF FIGURES\par}
+% \vspace{1.2em}
+% \makeatletter
+% \@starttoc{lof} % <--- imprime la lista SIN título
+% \makeatother
+
+% LIST OF FIGURES
+\cleardoublepage
+\phantomsection
 \hypersetup{linkcolor=$if(toclinkcolor)$$toclinkcolor$$else$black$endif$}
-
-%\renewcommand{\contentsname}{CONTENTS}            % Antes: Table of contents
-%\tableofcontents % Prints the main table of contents
-%\renewcommand{\listfigurename}{LIST OF FIGURES}   % Antes: List of figures
-%\listoffigures % Prints the list of figures
-%\renewcommand{\listtablename}{LIST OF TABLES}     % Antes: List of tables
-%\listoftables % Prints the list of tables
-% --- Cambiamos los nombres a mayúsculas ---
-
-%\renewcommand{\contentsname}{CONTENTS}
-%\patchcmd{\tableofcontents}
-  %{\chapter*{\contentsname}}
-  %{\chapter*{\bfseries\small \contentsname}}
-  %{}{}
-	%\tableofcontents
-	\renewcommand{\chapteralign}{\centering}
-	\renewcommand{\chapterfont}{\bfseries\Large}
-
- % \renewcommand{\contentsname}{CONTENTS}
- % \tableofcontents
-\renewcommand{\listfigurename}{LIST OF FIGURES}
-\patchcmd{\listoffigures}
-  {\chapter*{\listfigurename}}
-  {\chapter*{\bfseries\Large \listfigurename}}
-  {}{}
-	\listoffigures
-\renewcommand{\listtablename}{LIST OF TABLES}
-\patchcmd{\listoftables}
-  {\chapter*{\listtablename}}
-  {\chapter*{\bfseries\Large \listtablename}}
-  {}{}
-\listoftables
-% --- Ahora sí imprimimos los índices/listas ---
-%
-%
-%
-
+\pdfbookmark[0]{LIST OF FIGURES}{lof}
+\begingroup
+  \renewcommand{\chapteralign}{\centering} % <-- centrar SOLO aquí
+  \renewcommand{\chapterfont}{\bfseries\normalsize}
+  \renewcommand{\abovechapterskip}{\vspace*{-1.0\baselineskip}}
+  \renewcommand{\chapterbelowskip}{\vspace*{12pt}}
+  \abovechapterskip
+  {\chapteralign \chapterfont LIST OF FIGURES\par}
+  \chapterbelowskip
 \endgroup
+\makeatletter
+\@starttoc{lof}
+\makeatother
+
+
+% 3) LIST OF FIGURES
+
+
+
+% 	\renewcommand{\chapteralign}{\centering}
+% 	\renewcommand{\chapterfont}{\bfseries\Large}
+% 
+%  % \renewcommand{\contentsname}{CONTENTS}
+%  % \tableofcontents
+% \renewcommand{\listfigurename}{LIST OF FIGURES}
+% \patchcmd{\listoffigures}
+%   {\chapter*{\listfigurename}}
+%   {\chapter*{\bfseries\Large \listfigurename}}
+%   {}{}
+% 	\listoffigures
+% 	
+% \renewcommand{\listtablename}{LIST OF TABLES}
+% \patchcmd{\listoftables}
+%   {\chapter*{\listtablename}}
+%   {\chapter*{\bfseries\Large \listtablename}}
+%   {}{}
+% \listoftables
+% % --- Ahora sí imprimimos los índices/listas ---
+% %
+% %
+% %
+% 
+% \endgroup
+
+% 4) LIST OF TABLES
+% LIST OF TABLES
+\cleardoublepage
+\phantomsection
+\hypersetup{linkcolor=$if(toclinkcolor)$$toclinkcolor$$else$black$endif$}
+\pdfbookmark[0]{LIST OF TABLES}{lot}
+\begingroup
+  \renewcommand{\chapteralign}{\centering}
+  \renewcommand{\chapterfont}{\bfseries\normalsize}
+    \renewcommand{\abovechapterskip}{\vspace*{-1.0\baselineskip}}
+  \renewcommand{\chapterbelowskip}{\vspace*{12pt}}
+  \abovechapterskip
+  {\chapteralign \chapterfont LIST OF TABLES\par}
+  \chapterbelowskip
+\endgroup
+\makeatletter
+\@starttoc{lot}
+\makeatother
 
 
 $if(thesis.abbreviations)$
@@ -300,6 +414,7 @@ $if(thesis.abbreviations)$
 %----------------------------------------------------------------------------------------
 \renewcommand{\chapteralign}{\centering}
 \input{"$thesis.abbreviations$"}
+ \thispagestyle{empty}  
 \endgroup
 $endif$
 
@@ -319,27 +434,62 @@ $if(thesis.symbols)$
 %----------------------------------------------------------------------------------------
 \renewcommand{\chapteralign}{\centering}
 \input{"$thesis.symbols$"}
+ \thispagestyle{empty}  
 \endgroup
 $endif$
 
 
-\begingroup
+% \begingroup
+% \hypersetup{linkcolor=$if(toclinkcolor)$$toclinkcolor$$else$black$endif$}
+% 	\renewcommand{\chapteralign}{\centering}
+% 	\renewcommand{\chapterfont}{\bfseries\Large}
+% 
+%   \renewcommand{\contentsname}{CONTENTS}
+%   \tableofcontents
+% 
+% \endgroup
+
+% 7) CONTENTS (al final)
+% \cleardoublepage
+% \phantomsection
+% \hypersetup{linkcolor=$if(toclinkcolor)$$toclinkcolor$$else$black$endif$}
+% \pdfbookmark[0]{CONTENTS}{toc}
+% {\centering\bfseries\Large CONTENTS\par}
+% \vspace{1.2em}
+% \makeatletter
+% \@starttoc{toc} % <--- imprime el índice SIN título
+% \makeatother
+\cleardoublepage
+\phantomsection
 \hypersetup{linkcolor=$if(toclinkcolor)$$toclinkcolor$$else$black$endif$}
-	\renewcommand{\chapteralign}{\centering}
-	\renewcommand{\chapterfont}{\bfseries\Large}
-
-  \renewcommand{\contentsname}{CONTENTS}
-  \tableofcontents
-
+\pdfbookmark[0]{CONTENTS}{toc}
+\begingroup
+  \renewcommand{\chapteralign}{\centering}
+  \renewcommand{\chapterfont}{\bfseries\normalsize}
+    \renewcommand{\abovechapterskip}{\vspace*{-1.0\baselineskip}}
+  \renewcommand{\chapterbelowskip}{\vspace*{12pt}}
+  \abovechapterskip
+  {\chapteralign \chapterfont CONTENTS\par}
+  \chapterbelowskip
 \endgroup
+\makeatletter
+\@starttoc{toc}
+\makeatother
 %----------------------------------------------------------------------------------------
 %	THESIS CONTENT - CHAPTERS
 %----------------------------------------------------------------------------------------
 
-\mainmatter % Begin numeric (1,2,3...) page numbering
+%\mainmatter % Begin numeric (1,2,3...) page numbering
 
-\pagestyle{thesis} % Return the page headers back to the "thesis" style
+%\pagestyle{thesis} % Return the page headers back to the "thesis" style
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - CHAPTERS
+%----------------------------------------------------------------------------------------
 
+\cleardoublepage
+% ¡OJO! No usar \mainmatter para no reiniciar el contador.
+\pagestyle{thesis}  % desde aquí sí se muestra el número (arábigo)
+\setchapterpagestyle{thesis}
 % \backmatter 
 % \appendix        % <--- Activa numeración con letras en los capítulos siguientes
 % 

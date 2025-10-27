@@ -10,13 +10,21 @@
 # INTRODUCTION {#sec-Chapter1}
 
 
-Synthetic Aperture Radar (SAR) technology has become essential in  remote sensing, as it offers high-resolution imaging capabilities independently of sunlight and weather conditions, thus facilitating continuous and reliable Earth observation&nbsp;[@Mondini2021; @Zeng2020]. SAR imagery finds extensive applications in environmental monitoring, disaster management, agricultural mapping, climatology, urban planning, and maritime surveillance, among others&nbsp;[@Akbarizadeh2012;@Moreira2013; @Mu2019;@Yu2023]. Despite these advantages, effective exploitation of SAR data requires a robust understanding of its unique statistical characteristics, particularly the presence of speckle noise, a granular interference pattern inherent to coherent imaging systems like SAR&nbsp;[@Argenti2013;@Choi2019].
+Synthetic Aperture Radar (SAR) technology has become essential in  remote sensing, as it offers high-resolution imaging capabilities independently of sunlight and weather conditions, thus facilitating continuous and reliable Earth observation&nbsp;[@Mondini2021]. 
+SAR images are widely applied in environmental monitoring&nbsp;[@Amitrano2021], 
+disaster assessment&nbsp;[@Ge2020], 
+agriculture&nbsp;[@Changan2019], 
+urban planning&nbsp;[@Esch2010;@NovelTechniquesforBuiltupAreaExtractionfromPolarimetricSARImages2019], and  maritime surveillance&nbsp;[@Cao2024;@OntheDetectionandLongTermPathVisualisationofa68Iceberg], among other fields&nbsp;[@Moreira2013].
+Despite these advantages, effective exploitation of SAR data requires a robust understanding of its unique statistical characteristics, particularly the presence of speckle noise, a granular interference pattern inherent to coherent imaging systems like SAR&nbsp;[@Argenti2013].
 
 Speckle arises from the constructive and destructive interference of backscattered signals within a resolution cell, manifesting as multiplicative, non-Gaussian noise that severely complicates image analysis [@Baraha2023]. Hence, accurate processing and interpretation of SAR data depend critically on appropriate statistical models to describe speckle behavior.
 
-Among the statistical frameworks available, the $\mathcal{G}_I^0$ distribution has been recognized for effectively characterizing SAR intensity data across various levels of scene heterogeneity. Its versatility comes from incorporating a texture parameter that accounts for the spatial variability of scatterers, thus generalizing the simpler Gamma distribution, which represents fully developed speckle typically found in homogeneous, textureless regions&nbsp;[@Frery1997; @Ferreira2020]. In practice, the Gamma model can be considered a limiting case of the $\mathcal{G}_I^0$ distribution as scene texture becomes homogeneous.
+Among the statistical frameworks available, the $\mathcal{G}_I^0$ distribution has been recognized for effectively characterizing SAR intensity data across various levels of scene heterogeneity. 
+Its versatility comes from incorporating a texture parameter that accounts for the spatial variability of scatterers, thus generalizing the simpler Gamma distribution, which represents fully developed speckle typically found in homogeneous, textureless regions&nbsp;[@Frery1997; @Ferreira2020]. 
+In practice, the Gamma model can be considered a limiting case of the $\mathcal{G}_I^0$ distribution as scene texture becomes homogeneous.
 
-Parameter estimation for these statistical models, however, presents significant challenges, especially when using small-sized windows necessary to preserve spatial resolution in SAR images. Traditional likelihood-based or moment-based estimators often become biased or unstable under these practical constraints&nbsp;[@Nascimento2010; @VasconcellosFrerySilva]. This limitation motivates alternative statistical approaches not reliant on precise parameter estimation or large sample sizes.
+Parameter estimation for these statistical models, however, presents significant challenges, especially when using small-sized windows necessary to preserve spatial resolution in SAR images.
+Traditional parametric approaches, such as maximum likelihood estimation and moment-based methods, often become biased or unstable under these practical constraints&nbsp;[@Nascimento2010; @VasconcellosFrerySilva]. Moreover, likelihood ratio tests derived from these estimators may exhibit unreliable behavior when applied to small-window SAR data due to flat likelihood surfaces.
 
 
 Entropy, introduced by Shannon&nbsp;[-@Shannon1948], quantifies the uncertainty associated with a random variable and has found extensive application across fields such as pattern recognition [@Avval2021], statistical physics&nbsp;[@Presse2013], image processing&nbsp;[@MohammadDjafari2015], and particularly in SAR analysis&nbsp;[@Nascimento2014; @Nascimento2019;@Nobre2016; @Chan2022]. Beyond Shannon's original formulation, Rényi entropy generalizes the measure through an order parameter&nbsp;[@renyi1961measures], while Tsallis entropy offers an alternative non-additive generalization&nbsp;[@Tsallis1988].
@@ -43,10 +51,9 @@ This thesis proposes three novel entropy-based statistical tests (using Shannon,
 To enhance accuracy, particularly within small-window analysis contexts common in practical SAR scenarios, we further propose a bootstrap-based bias-correction procedure for the entropy estimators. Overall, our approach provides robust, unsupervised statistical tools well-suited for operational scenarios, bridging a critical gap in existing methodologies.
 
 
-
 ## OBJECTIVES
 
-<!-- The primary objective of this thesis is to develop and validate a set of entropy-based statistical tests for the detection of heterogeneity in SAR intensity images. These tests are designed to distinguish between fully developed speckle, modeled by the Gamma distribution, and heterogeneous clutter, modeled by the $\mathcal{G}_I^0$ distribution, in a robust and interpretable manner. -->
+
 
 ### General Objective
 
@@ -77,30 +84,29 @@ The main contributions of this work are the following:
 
 3. **Entropy-based test statistics.** Proposal of three  entropy-based statistical tests for heterogeneity detection in SAR imagery, using Shannon, Rényi, and Tsallis entropy measures.
 
-<!-- 4. **Comprehensive validation.** Evaluation of the statistical performance of the proposed tests through extensive Monte Carlo simulations, analyzing Type I error (size), power, and robustness under various speckle and texture conditions. -->
 
-<!-- 5. **Real applications.** Application of the proposed methodology to both simulated and real SAR data, producing $p$-value maps through sliding window analysis for visual and quantitative assessment of spatial heterogeneity. -->
-
-
-## COMPUTATIONAL SUPPORT AND REPRODUCIBILITY
-
-Simulations, tests, and data analyses presented in this thesis were implemented using the free, open-source programming language \texttt{R}\footnote{\url{https://www.r-project.org/}} within \texttt{RStudio} (version 2024.12.1+563, \texttt{R} version 4.4.2). The manuscript was written in \texttt{Quarto}\footnote{\url{https://quarto.org/}}, a dynamic publishing system that integrates code, output, and narrative to ensure full reproducibility&nbsp;[@bauer2023reproducible].
-
-The numerical experiments were performed on a personal computer equipped with an AMD Ryzen 9 5900X 12-Core Processor (3.70 GHz) and 32 GB RAM.
-
-All code and data for this research, including the manuscript source, are  available at \url{https://github.com/rjaneth/Thesis-UFPE}, supporting reproducibility. This work follows best practices recommended by Frery et al.&nbsp;[-@Frery2020].
 
 ### Related Publications
 
-The following peer-reviewed articles and conference paper have been published as part of or related to this research:
+The following peer-reviewed articles and conference papers have been published as part of or related to this research:
+
+- [-@Alpala2025]: [ALPALA, J.; NASCIMENTO, A. D. C.; FRERY, A. C. Quantifying Heterogeneity in SAR Imagery with the Rényi Entropy. \textit{IEEE Geoscience and Remote Sensing Letters}, p. 1--1, 2025.](https://openaccess.wgtn.ac.nz/articles/journal_contribution/Quantifying_Heterogeneity_in_SAR_Imagery_with_the_R_nyi_Entropy/29376944?file=55548095)
+
+- [-@Frery2024]: [FRERY, A. C.; ALPALA, J.; NASCIMENTO, A. D. C. Identifying Heterogeneity in SAR Data with New Test Statistics. \textit{Remote Sensing}, v. 16, n. 11, p. 1973, 2024.](https://www.mdpi.com/2072-4292/16/11/1973) 
+
+- [-@Alpala2024]: [ALPALA, J.; NASCIMENTO, A. D. C.; FRERY, A. C. Identifying departures from the fully developed speckle hypothesis in intensity SAR data with non-parametric estimation of the entropy. In: \textit{2024 International Conference on Machine Intelligence for GeoAnalytics and Remote Sensing (MIGARS)}, 2024.](https://ieeexplore.ieee.org/document/10544448)
+
+- [-@Alpala2023]: [ALPALA, R. J.; BORBA, A. A. De; FRERY, A. C. Quality Assessment measures for explainable fusion Of statistical evidences of edges in Polsar images: A First Approach. In: \textit{IGARSS 2023 - IEEE International Geoscience and Remote Sensing Symposium}, 2023.](https://ieeexplore.ieee.org/abstract/document/10283263)
+
+## COMPUTATIONAL SUPPORT AND REPRODUCIBILITY {#sec-repr}
+
+Simulations, tests, and data analyses presented in this thesis were implemented using the free, open-source programming language \texttt{R}\footnote{\url{https://www.r-project.org/}} within \texttt{RStudio} (version 2025.09.1+401, \texttt{R} version 4.5.1). The manuscript was written in \texttt{Quarto}\footnote{\url{https://quarto.org/}}, a dynamic publishing system that integrates code, output, and narrative to ensure full reproducibility&nbsp;[@bauer2023reproducible].
+
+The numerical experiments were performed on a workstation equipped with an Intel\textsuperscript{\textregistered} Core\texttrademark Ultra 9 285 CPU (2.5 GHz, 24 cores), 128 GB RAM, and an NVIDIA\textsuperscript{\textregistered} GeForce RTX 5090 GPU (31 GB VRAM), running Windows 11 Pro (version 24H2).
 
 
-1. [@Alpala2025]: [Quantifying Heterogeneity in SAR Imagery with the Rényi Entropy.](https://openaccess.wgtn.ac.nz/articles/journal_contribution/Quantifying_Heterogeneity_in_SAR_Imagery_with_the_R_nyi_Entropy/29376944?file=55548095)
+All code and data for this research, including the manuscript source, are  available at \url{https://github.com/rjaneth/Thesis-UFPE}, supporting reproducibility. This work follows best practices recommended by Frery et al.&nbsp;[-@Frery2020].
 
-
-2. [@Frery2024]: [Identifying Heterogeneity in SAR Data with New Test Statistics.](https://www.mdpi.com/2072-4292/16/11/1973) 
-
-3. [@Alpala2024]: [Identifying departures from the fully developed speckle hypothesis in intensity SAR data with non-parametric estimation of the entropy.](https://ieeexplore.ieee.org/document/10544448)
 
 
 ## STRUCTURE OF THE THESIS

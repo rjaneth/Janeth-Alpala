@@ -1,73 +1,518 @@
-%\usepackage[utf8]{inputenc} % Required for inputting international characters
-%\usepackage[T1]{fontenc} % Output font encoding for international characters; causes problems for xelatex
+%\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage{mathpazo}
+%\usepackage[backend=bibtex, style=authoryear, natbib=true]{biblatex}
 
-%\usepackage{mathpazo} % Use the Palatino font by default
-
-%\usepackage[backend=bibtex, style=authoryear, natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
-
-\usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
+\usepackage[autostyle=true]{csquotes}
 
 \usepackage{pdfpages}
-\usepackage{etoolbox} % para la tabla de contenido y figura y tablas
+\usepackage{etoolbox} % utilidades
 
-% Paquetes adicionales que no están en MastersDoctoralThesis.cls
-\usepackage{bbm}  % Bold math symbols
-\usepackage{mathrsfs}  % Script math fonts
-%\usepackage{siunitx}  % Scientific notation (verificar si ya está en cls)
-\usepackage{url}  % URLs
-\usepackage{color}  % Color support
-\usepackage{mathtools}  % Extended math tools
-%\usepackage{float}  % Better float control
-\usepackage{array}  % Advanced table formatting
-\usepackage{multirow}  % Table multirows
-\usepackage{wrapfig}  % Wrapping text around figures
-\usepackage{colortbl}  % Table colors
-\usepackage{pdflscape}  % Landscape pages
-\usepackage{xcolor}  % Advanced colors
-%\usepackage{amsmath}  % Math symbols
-
+% ---- Paquetes extra tuyos ----
+\usepackage{bbm}
+\usepackage{mathrsfs}
+\usepackage{url}
+\usepackage{color}
+\usepackage{mathtools}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{xcolor}
 \usepackage{float}
-
-%\usepackage{amsfonts}
-%\usepackage{amssymb}
-
-% Re-ajustar el setup sólo para las figuras
-% \captionsetup[figure]{position=above}
-% \floatstyle{plaintop}
-% \restylefloat{figure}
-
-% \usepackage{etoolbox}
-% 
-% % Para TODAS las figuras
-% \AtEndEnvironment{figure}{
-%   \par\medskip
-%   \centering
-%   \small Source: Author
-% }
-% 
-% % Para TODAS las tablas
-% \AtEndEnvironment{table}{
-%   \par\medskip
-%   \centering
-%   \small Source: Author
-% }
+\usepackage{textcase} % para \MakeTextUppercase (seguro en ToC)
 
 %----------------------------------------------------------------------------------------
-%	MARGINS
+% MÁRGENES
 %----------------------------------------------------------------------------------------
-
 \geometry{
-	headheight=4ex,
-	includehead,
-	includefoot
+  headheight=4ex,
+  includehead,
+  includefoot
 }
-
 \raggedbottom
 
+%----------------------------------------------------------------------------------------
+% METADATOS PDF
+%----------------------------------------------------------------------------------------
 \AtBeginDocument{
-\hypersetup{pdftitle=\ttitle} % Set the PDF's title to your title
-\hypersetup{pdfauthor=\authorname} % Set the PDF's author to your name
-\hypersetup{pdfkeywords=\keywordnames} % Set the PDF's keywords to your keywords
+  \hypersetup{pdftitle=\ttitle}
+  \hypersetup{pdfauthor=\authorname}
+  \hypersetup{pdfkeywords=\keywordnames}
 }
 
-%---------------------------------------------
+% ======================================================================================
+%  ÍNDICE (ToC) ALINEADO Y FORMATO SEGÚN NORMAS
+% ======================================================================================
+\usepackage{tocloft}
+
+% Líderes con puntos
+\renewcommand{\cftdot}{.}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+
+% Columna de numeración y comienzo del texto alineados por nivel
+% {indent}{numwidth}  ← Ajusta 3.0em/4.0em/5.0em si lo necesitas
+% MISMA COLUMNA DE TEXTO PARA TODOS LOS NIVELES
+% Ajusta 5.0em–5.5em según la longitud máxima de tu numeración (p.ej. 9.9.9).
+\cftsetindents{chapter}{0em}{5.0em}
+\cftsetindents{section}{0em}{5.0em}
+\cftsetindents{subsection}{0em}{5.0em}
+
+\setlength{\cftbeforechapskip}{0.09em}
+\setlength{\cftbeforesecskip}{0.08pt}       % antes de cada sección
+\setlength{\cftbeforesubsecskip}{0.08pt}    % antes de cada subsección
+%\setlength{\cftparskip}{0pt}             % espacio entre entradas consecutivas
+
+% Fuentes en la ToC
+% Capítulos: MAYÚSCULA + negrita
+% Fuentes en la ToC
+\renewcommand{\cftchapfont}{\bfseries\MakeTextUppercase}
+\renewcommand{\cftchappagefont}{\bfseries}
+\renewcommand{\cftsecfont}{\MakeTextUppercase}
+\renewcommand{\cftsubsecfont}{\bfseries}
+\renewcommand{\cftsubsecpagefont}{\bfseries} % quítalo si no quieres negrita en el número de página
+
+
+% =======================
+%  LISTAS (LoF / LoT)
+%  "Figure 1 – Título", "Table 1 – Título"
+% =======================
+% Prefijos antes del número:
+% \renewcommand{\cftfigpresnum}{Figure~}
+% \renewcommand{\cfttabpresnum}{Table~}
+% % Guion (con espacio) después del número:
+% \renewcommand{\cftfigaftersnum}{\enspace--\enspace}
+% \renewcommand{\cfttabaftersnum}{\enspace--\enspace}
+% % --- Ensanchar columna "Figure N" / "Table N" en LOF/LOT ---
+% \setlength{\cftfignumwidth}{6.0em}   % prueba 5.5–6.5em según lo largo de tus números
+% \setlength{\cfttabnumwidth}{6.0em}
+
+% LISTAS (LoF / LoT): “Figure 2.1 –” y “Table 1 –” en NEGRITA
+% Nota: lo que quede entre presnum y aftersnum hereda \bfseries,
+% así que el número también va en negrita; luego volvemos a \normalfont
+% \renewcommand{\cftfigpresnum}{\bfseries \small Figure~}
+% \renewcommand{\cftfigaftersnum}{\enspace--\enspace}
+% 
+% \renewcommand{\cfttabpresnum}{\bfseries \small Table~}
+% \renewcommand{\cfttabaftersnum}{\enspace--\enspace}
+% 
+% 
+% % Si necesitas ajustar el ancho reservado para “Figure 99 –”
+% \setlength{\cftfignumwidth}{6.0em} % prueba 5.5–6.5em
+% \setlength{\cfttabnumwidth}{6.0em}
+
+% LISTAS (LoF / LoT): “Figure N – …” y “Table N – …” en negrita
+\renewcommand{\cftfigpresnum}{\bfseries \small Figure~}
+\renewcommand{\cftfigaftersnum}{\enspace--\enspace}
+\renewcommand{\cfttabpresnum}{\bfseries \small Table~}
+\renewcommand{\cfttabaftersnum}{\enspace--\enspace}
+
+% Numeración global (sin prefijo de capítulo)
+\makeatletter
+\@removefromreset{figure}{chapter}
+\@removefromreset{table}{chapter}
+\makeatother
+\renewcommand{\thefigure}{\arabic{figure}}
+\renewcommand{\thetable}{\arabic{table}}
+
+% Ajusta el ancho reservado para “Figure 99 –”
+\setlength{\cftfignumwidth}{5.5em}
+\setlength{\cfttabnumwidth}{5.0em}
+
+
+% --- Separador de rótulos en el CUERPO: "Figure 2.3 -- Título"
+\usepackage{caption} % (si ya lo carga la clase, no pasa nada repetir)
+\DeclareCaptionLabelSeparator{dash}{\enspace\textendash\enspace}
+\captionsetup[figure]{labelsep=dash}
+\captionsetup[table]{labelsep=dash}
+
+% Reservar ancho para número + guion (ajusta 99 si tienes >99):
+%\settowidth{\cftfignumwidth}{Figure 99\enspace--\enspace}
+%\settowidth{\cfttabnumwidth}{Table 99\enspace--\enspace}
+
+
+% \renewcommand{\cftchapfont}{\bfseries\MakeUppercase}
+% \renewcommand{\cftchappagefont}{\bfseries}
+% 
+% % Secciones: MAYÚSCULA (sin negrita)
+% \renewcommand{\cftchapfont}{\bfseries\MakeTextUppercase}
+% \renewcommand{\cftsecfont}{\MakeTextUppercase}
+% 
+% % Subsecciones: negrita y “sentence case”
+% \renewcommand{\cftsubsecfont}{\bfseries}
+% \renewcommand{\cftsubsecpagefont}{\bfseries} % quita \bfseries si no quieres negrita en el número de página
+
+% (OPCIONAL) Interlineado 1.5 solo en la ToC
+% \usepackage{setspace}
+% \let\oldtableofcontents\tableofcontents
+% \renewcommand{\tableofcontents}{%
+%   \begingroup\onehalfspacing\oldtableofcontents\endgroup}
+
+% ======================================================================================
+%  TÍTULOS EN EL CUERPO (Capítulos/Secciones/Subsecciones)
+% ======================================================================================
+\usepackage{titlesec}
+
+% Capítulos: número + TÍTULO EN MAYÚSCULA y NEGRITA (misma línea)
+\titleformat{\chapter}[hang]
+  {\normalfont\bfseries}     % formato
+  {\thechapter}         % etiqueta (número)
+  {1em}                 % separación número–título
+  {\MakeUppercase}      % <--- sin #1; titlesec le pasa el título
+
+% (Opcional) espaciamiento antes/después del capítulo
+%\titlespacing*{\chapter}{0pt}{*3}{*2}
+%\titlespacing*{\chapter}{0pt}{*2}{*1.2} 
+\titlespacing*{\chapter}{0pt}{-1.0\baselineskip}{1.0\baselineskip}
+% Secciones: MAYÚSCULA, sin negrita
+\titleformat{\section}
+%{\normalsize\normalfont} 
+  {\normalfont\normalsize}
+  {\thesection}{1em}{\MakeUppercase}  % <--- sin #1
+
+% Subsecciones: negrita, “sentence case”
+\titleformat{\subsection}
+  {\bfseries\normalsize}
+  {\thesubsection}{1em}{}             % {} → muestra el título tal cual
+
+% Si también quieres definir subsubsection, hazlo así:
+% \titleformat{\subsubsection}
+%   {\normalfont\normalsize}
+%   {\thesubsubsection}{1em}{}         % sin cambios de mayúsculas
+
+% ======== Capítulos SIN número (frontmatter) centrados y tamaño adecuado ========
+% Esto afecta a ABSTRACT, RESUMO, CONTENTS, LIST OF FIGURES/TABLES, etc.
+\titleformat{name=\chapter,numberless}[block]
+  {\bfseries\normalsize\centering} % formato: negrita, grande y CENTRADO
+  {}                          % sin etiqueta (no hay número)
+  {0pt}                       % separación
+  {}                          % sin transformación extra (Abstract ya lo pone mayúsculas en su entorno)
+
+% ======================================================================================
+%  CAPCIONES EN EL TEXTO: usar guion en lugar de ":"
+%  (la clase ya carga 'caption'; solo ajustamos el separador)
+% ======================================================================================
+
+% ===== APÉNDICES: sin línea "Appendices" en el ToC
+%       y con entradas "APPENDIX A – <TÍTULO>" alineadas =====
+% --- Quitar cabecera/entrada automática "Appendices" en el ToC ---
+
+% ===== Apéndices: rótulo en capítulo y formato ToC =====
+\usepackage{etoolbox}
+\newcommand{\AppendixWord}{APPENDIX}
+
+\makeatletter
+\pretocmd{\appendix}{%
+  % Numeración por letras
+  \renewcommand{\thechapter}{\Alph{chapter}}%
+  % Cabecera del capítulo: "APPENDIX A – TÍTULO"
+  \titleformat{\chapter}[hang]
+    {\normalfont\bfseries}
+    {\AppendixWord~\thechapter\enspace\textendash}
+    {1em}{\MakeUppercase}%
+  % Formato en el sumario (ToC)
+  \renewcommand{\cftchappresnum}{APPENDIX\enspace}%
+  \renewcommand{\cftchapaftersnum}{\enspace\textendash\enspace}%
+  % (Opcional) Ocultar A.1, A.2... en el ToC a partir de aquí
+  \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}%
+  % Alinear la columna de texto de capítulos en ToC
+  \cftsetindents{chapter}{0em}{11.5em}%
+}{}{}
+\makeatother
+
+% --- Subcaptions más pequeños (solo (a), (b), …) ---
+
+
+
+% --- Captions arriba y separador con guion ---
+\usepackage{caption}
+\DeclareCaptionLabelSeparator{dash}{\enspace\textendash\enspace}
+
+\captionsetup[figure]{position=top,labelsep=dash}
+\captionsetup[table]{position=top,labelsep=dash}
+\captionsetup[sub]{justification=centering,font=footnotesize}%footnotesize
+
+
+
+% --- Macro para "Source:" centrado y en chico ---
+\newcommand{\FigSource}[1]{\begin{center}\footnotesize\textbf{Source:}~#1\end{center}}
+\newcommand{\TableSource}[1]{\FigSource{#1}} % mismo estilo para tablas
+
+
+% Añádelo al FINAL del archivo, después de cualquier \captionsetup
+\usepackage{etoolbox}
+\AtEndEnvironment{figure}{\par\FigSource{The author (2025)}}
+\AtEndEnvironment{table}{\par\TableSource{The author (2025)}}
+\usepackage{indentfirst}
+
+
+% --- Interlineado un poco mayor que 1.5 ---
+\usepackage{setspace}       % inofensivo aunque la clase ya lo cargue
+\setstretch{1.5}           % prueba 1.55–1.62 hasta quedar a gusto
+
+
+% % ---- Ocultar la línea "Appendices" del sumario (ToC) ----
+% \makeatletter
+% \let\mdt@orig@l@chapter\l@chapter
+% \renewcommand*\l@chapter[2]{%
+%   % #1 = título en el ToC, #2 = número de página
+%   \begingroup
+%     % título estándar que pone KOMA para la página de apéndices
+%     \edef\mdt@apxname{\appendixpagename}%
+%     % si no existiera \appendixpagename, usa literal "Appendices"
+%     \@ifundefined{appendixpagename}{\def\mdt@apxname{Appendices}}{}%
+%     % ¿el título que llegó es exactamente ese? -> no lo imprimimos
+%     \edef\mdt@this{#1}%
+%     \ifnum\pdfstrcmp{\mdt@this}{\mdt@apxname}=0\relax
+%       % saltar
+%     \else
+%       \mdt@orig@l@chapter{#1}{#2}%
+%     \fi
+%   \endgroup
+% }
+% \makeatother
+
+
+% \usepackage{etoolbox}
+% \makeatletter
+% \pretocmd{\appendix}{%
+%   % Desactiva comandos típicos de paquetes/clases que insertan esa línea
+%   \let\appendixpage\relax
+%   \let\appendixpagename\relax
+%   \let\appendixtocname\relax
+%   \let\addappheadtotoc\relax
+% }{}{}
+% \makeatother
+% 
+% % --- ToC: Prefijo "APPENDIX A – " y misma tabulación que capítulos ---
+% \makeatletter
+% \pretocmd{\appendix}{%
+%   % Guardar definición original
+%   \let\orig@numberline\numberline
+%   % Hacer que el "número" del capítulo en ToC sea "APPENDIX <letra> – "
+%   \renewcommand{\numberline}[1]{APPENDIX~##1\enspace\textendash\enspace}
+%   % Alineación: mismos márgenes/columnas que los capítulos normales
+%   \cftsetindents{chapter}{0em}{11.5em}% ajusta 11.0–12.0em si lo necesitas
+% }{}{}
+% % Restaurar al final del documento (por seguridad)
+% \apptocmd{\enddocument}{\let\numberline\orig@numberline}{}{}
+% \makeatother
+
+
+% \newcommand{\AppendixWord}{APPENDIX}
+% 
+% \makeatletter
+% \pretocmd{\appendix}{%
+%   % Numeración A, B, ...
+%   \renewcommand{\thechapter}{\Alph{chapter}}%
+% 
+%   % Título del capítulo en el cuerpo:
+%   \titleformat{\chapter}[hang]
+%     {\normalfont\bfseries}
+%     {\AppendixWord~\thechapter\enspace\textendash}
+%     {1em}{\MakeUppercase}%
+% 
+%   % Entrada del ToC: que el “APPENDIX A –” sea parte del texto (no una columna aparte)
+%   \renewcommand{\cftchappresnum}{\AppendixWord\enspace}%
+%   \renewcommand{\cftchapaftersnum}{\enspace\textendash\enspace}%
+% }{}{}
+% \makeatother
+% \usepackage{etoolbox}
+% \newcommand{\AppendixWord}{APPENDIX}
+% 
+% \makeatletter
+% \pretocmd{\appendix}{%
+%   \renewcommand{\thechapter}{\Alph{chapter}}%
+%   \titleformat{\chapter}[hang]
+%     {\normalfont\bfseries}
+%     {\AppendixWord~\thechapter\enspace\textendash}
+%     {1em}{\MakeUppercase}%
+%   \renewcommand{\cftchappresnum}{APPENDIX\enspace}%
+%   \renewcommand{\cftchapaftersnum}{\enspace\textendash\enspace}%
+%   \cftsetindents{chapter}{0em}{11.5em}%
+% }{}{}
+% \makeatother
+
+% \usepackage{etoolbox}
+% \newcommand{\AppendixWord}{APPENDIX}
+% 
+% \makeatletter
+% \pretocmd{\appendix}{%
+%   \renewcommand{\thechapter}{\Alph{chapter}}%
+%   \titleformat{\chapter}[hang]
+%     {\normalfont\bfseries}
+%     {\AppendixWord~\thechapter\enspace\textendash}
+%     {1em}{\MakeUppercase}%
+%   \renewcommand{\cftchappresnum}{APPENDIX\enspace}%
+%   \renewcommand{\cftchapaftersnum}{\enspace\textendash\enspace}%
+%   \cftsetindents{chapter}{0em}{11.5em}% ajusta 11.0–12.0em si hiciera falta
+% }{}{}
+% \makeatother
+
+% ===== Apéndices en el ToC: sin página "APPENDICES" y con "APPENDIX A – <Título>" =====
+% \usepackage{etoolbox}
+% \newcommand{\AppendixWord}{APPENDIX}
+% 
+% \makeatletter
+% \pretocmd{\appendix}{%
+%   \renewcommand{\thechapter}{\Alph{chapter}}%
+%   \titleformat{\chapter}[hang]
+%     {\normalfont\bfseries}
+%     {\AppendixWord~\thechapter\enspace\textendash}
+%     {1em}{\MakeUppercase}%
+%   \renewcommand{\cftchappresnum}{APPENDIX\enspace}%
+%   \renewcommand{\cftchapaftersnum}{\enspace\textendash\enspace}%
+%   \cftsetindents{chapter}{0em}{11.5em}% ajusta 11.0–12.0em si hiciera falta
+% }{}{}
+% \makeatother
+
+% % ===== Apéndices: rotulado y ToC =====
+% \usepackage{etoolbox}
+% \newcommand{\AppendixWord}{APPENDIX}
+% 
+% % Cuando entremos al modo apéndice:
+% \makeatletter
+% \pretocmd{\appendix}{%
+%   % Numeración A, B, C...
+%   \renewcommand{\thechapter}{\Alph{chapter}}%
+%   % Cabecera en el cuerpo: "APPENDIX A – <TÍTULO>"
+%   \titleformat{\chapter}[hang]
+%     {\normalfont\bfseries}
+%     {\AppendixWord~\thechapter\enspace\textendash}
+%     {1em}{\MakeUppercase}%
+%   % ToC: prefijo/sufijo y ancho reservado para "APPENDIX A –"
+%   \renewcommand{\cftchappresnum}{APPENDIX\enspace}%
+%   \renewcommand{\cftchapaftersnum}{\enspace\textendash\enspace}%
+%   \cftsetindents{chapter}{0em}{11.5em}%
+%   % A partir de aquí, solo listar a nivel capítulo en el ToC
+%   \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}%
+% }{}{}
+% \makeatother
+% 
+% 
+
+% 
+% % ===== Apéndices en el ToC: sin "Appendices" y con "APPENDIX A – <Título>" =====
+% \usepackage{etoolbox}
+% \newcommand{\AppendixWord}{APPENDIX}
+% 
+% % Formato del ToC para capítulos cuando estemos en apéndices
+% \newcommand{\AppendixTocOn}{%
+%   % Prefijo/sufijo alrededor del número "A", "B", ...
+%   \renewcommand{\cftchappresnum}{APPENDIX\enspace}%
+%   \renewcommand{\cftchapaftersnum}{\enspace\textendash\enspace}%
+%   % Ajusta este ancho si hace falta (10.5–12.5em)
+%   \cftsetindents{chapter}{0em}{11.5em}%
+% }
+% 
+% \makeatletter
+% \pretocmd{\appendix}{%
+%   % Numeración A, B, C...
+%   \renewcommand{\thechapter}{\Alph{chapter}}%
+%   % Cabecera en el cuerpo: "APPENDIX A – <TÍTULO>"
+%   \titleformat{\chapter}[hang]
+%     {\normalfont\bfseries}
+%     {\AppendixWord~\thechapter\enspace\textendash}
+%     {1em}{\MakeUppercase}%
+%   % Formato en ToC
+%   \AppendixTocOn
+%   % Si estamos en KOMA, suprime la entrada "Appendices" del ToC
+%   \@ifundefined{addparttocentry}{}{%
+%     \let\oldaddparttocentry\addparttocentry
+%     \renewcommand*\addparttocentry[2]{}%
+%   }%
+% }{}{}
+% 
+% % (Opcional) restaurar si estabas en KOMA
+% \apptocmd{\enddocument}{%
+%   \@ifundefined{oldaddparttocentry}{}{%
+%     \let\addparttocentry\oldaddparttocentry
+%   }%
+% }{}{}
+% \makeatother
+
+
+% % ================== APÉNDICES: rotulado, guion y ToC ==================
+% \usepackage{etoolbox}
+% \newcommand{\AppendixWord}{APPENDIX}
+% 
+% % Prefijo/sufijo en el ToC para capítulos (aplica cuando estemos en apéndices)
+% \newcommand{\AppendixTocOn}{%
+%   \renewcommand{\cftchappresnum}{APPENDIX\enspace}%
+%   \renewcommand{\cftchapaftersnum}{\enspace\textendash\enspace}%
+% }
+% \newcommand{\AppendixHideSecs}{%
+%   \setcounter{secnumdepth}{0}%
+%   \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}%
+% }
+% 
+% \makeatletter
+% \pretocmd{\appendix}{%
+%   % A, B, C... en la numeración de capítulo
+%   \renewcommand{\thechapter}{\Alph{chapter}}%
+%   % Cabecera en el cuerpo: "APPENDIX A – <TÍTULO>"
+%   \titleformat{\chapter}[hang]
+%     {\normalfont\bfseries}%
+%     {\AppendixWord~\thechapter\enspace\textendash}%
+%     {1em}{\MakeUppercase}%
+%   % Activar formato del ToC y ocultar secciones en ToC
+%   \AppendixTocOn
+%   \AppendixHideSecs
+% }{}{}
+% \makeatother
+
+% % --- Separador personalizado para leyendas: "Figure 1 – Título" ---
+% \DeclareCaptionLabelSeparator{ufpeDash}{\enspace\textendash\enspace} % en dash con espacio
+% \captionsetup[figure]{labelsep=ufpeDash}
+% \captionsetup[table]{labelsep=ufpeDash}
+% 
+% % ================== APÉNDICES: rotulado, guion y ToC ==================
+% \usepackage{etoolbox}
+% \newcommand{\AppendixWord}{APPENDIX} % Palabra delante de la letra
+% 
+% \makeatletter
+% \pretocmd{\appendix}{%
+%   % Capítulos con letras A, B, ...
+%   \renewcommand{\thechapter}{\Alph{chapter}}%
+%   % Cabecera en el cuerpo: "APPENDIX A – <TÍTULO>"
+%   \titleformat{\chapter}[hang]
+%     {\normalfont\bfseries}%
+%     {\AppendixWord~\thechapter\enspace\textendash}%
+%     {1em}{\MakeUppercase}%
+%   % === ToC ===
+%   % Prefijo "APPENDIX " antes de la letra en el ToC:
+%   \renewcommand{\cftchappresnum}{APPENDIX\enspace}
+%   % Guion entre número y título en el ToC:
+%   \renewcommand{\cftchapaftersnum}{\enspace\textendash\enspace}%
+%   % Ocultar numeración y entradas de secciones dentro de apéndices:
+%   \setcounter{secnumdepth}{0}%
+%   \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}%
+% }{}{}
+% \makeatother
+
+
+% % ================== APÉNDICES: rotulado, guion y ToC ==================
+% \usepackage{etoolbox}
+% \newcommand{\AppendixWord}{APPENDIX} % Palabra delante de la letra
+% 
+% \makeatletter
+% \pretocmd{\appendix}{%
+%   % A, B, C... como número de capítulo
+%   \renewcommand{\thechapter}{\Alph{chapter}}%
+%   % Cabecera de capítulo: "APPENDIX A – <TÍTULO>"
+%   \titleformat{\chapter}[hang]
+%     {\normalfont\bfseries}%
+%     {\AppendixWord~\thechapter\enspace\textendash}%
+%     {1em}{\MakeUppercase}%
+%   % En el ToC, reserva caja de número y añade guion: "APPENDIX A – TÍTULO"
+%   \renewcommand{\cftchapaftersnum}{\enspace\textendash\enspace}%
+%   % --- Reglas específicas pedidas por la uni ---
+%   \setcounter{secnumdepth}{0}% NO numerar secciones dentro de apéndices (sin A.1)
+%   \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}% Ocultar secciones en ToC
+% }{}{}
+% \makeatother
+
+

@@ -1,34 +1,32 @@
-
-
-Este trabalho apresenta uma abordagem estatística para detectar heterogeneidade em dados de 
-intensidade de radar de abertura sintética (SAR) utilizando métodos baseados em entropia. 
-Na análise de dados SAR, uma interpretação precisa do terreno depende fundamentalmente da 
-distinção entre dois regimes principais: regiões homogêneas, caracterizadas por speckle 
-totalmente desenvolvido e modeladas pela distribuição Gamma, e áreas heterogêneas, que 
-exibem comportamentos de espalhamento complexos, geralmente representados pela distribuição 
+Este trabalho apresenta uma abordagem estatística para detectar heterogeneidade em dados de
+intensidade de radar de abertura sintética (SAR), utilizando métodos baseados em entropia.
+Na análise de dados SAR, uma interpretação precisa do terreno depende fundamentalmente da
+distinção entre dois regimes principais: regiões homogêneas, em que o speckle está
+totalmente desenvolvido, os retornos SAR são representados pela distribuição Gamma, e áreas heterogêneas requerem distribuições mais flexíveis para descrever
+o espalhamento complexo, geralmente representado pela distribuição
 $\mathcal{G}_I^0$.
 Embora essa discriminação seja essencial para aplicações de sensoriamento remoto, 
-testes paramétricos clássicos muitas vezes não a abordam de forma eficaz devido a 
-limitações analíticas e instabilidades numéricas.
-Para superar esses desafios, propomos três estatísticas de teste para detectar heterogeneidade 
-em imagens SAR com base nas entropias de Shannon, Rényi e Tsallis. Esses testes utilizam 
-estimadores não paramétricos de entropia construídos a partir de espaçamentos amostrais, 
-evitando suposições explícitas sobre a distribuição subjacente. Para aumentar a precisão dos testes, 
-especialmente em amostras pequenas, incorporamos um procedimento de correção de viés via bootstrap, 
+testes paramétricos clássicos geralmente não são adequados para essa tarefa devido a 
+limitações analíticas e numéricas.
+Para superar esses desafios, propomos três estatísticas de teste para detectar heterogeneidade
+em imagens SAR, com base nas entropias de Shannon, Rényi e Tsallis. Os testes associados utilizam
+estimadores não paramétricos de entropia construídos a partir de espaçamentos amostrais,
+evitando suposições explícitas sobre a distribuição subjacente. Para aumentar a precisão dos testes,
+especialmente em amostras pequenas, incorporamos um procedimento de correção de viés via bootstrap,
 que melhora a estabilidade dos estimadores, reduz o viés e o erro quadrático médio.
-As estatísticas propostas são avaliadas por meio de simulações de Monte Carlo, 
-onde analisamos seu tamanho e poder sob diferentes condições de speckle e textura. 
-Os resultados mostram que os testes baseados em Rényi e Tsallis superam a versão baseada 
-em Shannon, detectando variações de textura mais sutis e mantendo maior confiabilidade na 
+Os testes propostos são avaliados por meio de simulações de Monte Carlo,
+tendo como critério de avaliação seu tamanho e poder sob diferentes condições de speckle e textura.
+Os resultados mostram que os testes baseados nas entropias de Rényi e Tsallis superam a versão baseada
+na entropia de Shannon, detectando variações de textura mais sutis e mantendo maior confiabilidade na
 identificação de regiões verdadeiramente homogêneas.
-Por fim, a metodologia é aplicada a dados SAR simulados e reais. 
-A análise é realizada com janelas deslizantes, gerando mapas de valores de $p$ que permitem a 
-avaliação visual e quantitativa da heterogeneidade espacial. O teste baseado na entropia de 
-Rényi mostra desempenho superior na identificação de padrões de rugosidade em pequena escala, 
-enquanto o teste baseado em Tsallis é eficaz na detecção de regiões homogêneas. Em conjunto, 
-essas ferramentas baseadas em entropia oferecem uma estrutura robusta, interpretável e não 
+Por fim, a metodologia é aplicada tanto a dados simulados como a dados SAR reais.
+A análise é realizada com janelas deslizantes, gerando mapas de valores-$p$ que permitem a
+avaliação visual e quantitativa da heterogeneidade espacial. O teste baseado na entropia de
+Rényi mostra desempenho superior na identificação de padrões de rugosidade em pequena escala,
+enquanto o teste baseado em Tsallis é melhor na detecção de regiões homogêneas. Em conjunto,
+essas ferramentas baseadas em entropia oferecem uma estrutura robusta, interpretável e não
 supervisionada para a detecção de heterogeneidade em dados SAR.
 
 \vspace{1em}
 \par
-\noindent \textbf{Palavras-chave:} Entropia; SAR; Heterogeneidade; Distribuição Gama; Teste de hipótese; Bootstrap
+\noindent \textbf{Palavras-chave:} entropia;  heterogeneidade; distribuição gama; teste de hipótese; bootstrap.

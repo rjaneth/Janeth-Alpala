@@ -17,8 +17,10 @@ book:
     - Chapters/Chapter4.qmd
     - Chapters/Chapter5.qmd
     - references.qmd
-  appendices:
-   - Appendices/AppendixA.qmd
+    - Appendices/AppendixA.qmd
+
+  #appendices:
+  # - Appendices/AppendixA.qmd
 
   site-url: https://nmfs-opensci.github.io/quarto-thesis/
   repo-url: https://github.com/nmfs-opensci/quarto-thesis
@@ -29,8 +31,8 @@ book:
 #the cover is edited in \_extensions\quarto-thesis\partials\before-body.tex
 thesis:
   #declaration: "Frontmatter/declaration.tex"
-  #dedication: "Frontmatter/dedication.tex"
-  #acknowledgements: "Frontmatter/acknowledgements.tex"
+ # dedication: "Frontmatter/dedication.tex"
+  acknowledgements: "Frontmatter/acknowledgements.tex"
   abstract: "Frontmatter/abstract.tex"
   resumo: "Frontmatter/resumo.tex"
   abbreviations: "Frontmatter/abbreviations.tex"
@@ -68,12 +70,15 @@ format:
     pdf-engine:  pdflatex # xelatex
     keep-tex: true 
     urlcolor: black
-    linkcolor: blue
+    linkcolor: black
     toclinkcolor: black
     toc-depth: 3
     fig-cap-location: top
 
-language:
-  crossref-apx-prefix: Attachment
-  section-title-appendices: APPENDICES
+#appendix-style: none
+#language:
+ # section-title-appendices: ""   # ← no muestres la entrada “Appendices”
+#language:
+#  crossref-apx-prefix: Attachment
+#  section-title-appendices: " "
   

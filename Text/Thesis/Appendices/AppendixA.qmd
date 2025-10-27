@@ -1,30 +1,31 @@
 <!-- # --- -->
-<!-- # title: "APPENDICES" -->
-<!-- # appendix: true {#sec-appA} -->
-<!-- # numbered: false  # 
+<!-- # appendix: true          -->
+<!-- # toc-depth: 0 -->
 <!-- # --- -->
-
-<!-- ```{=latex} -->
+<!-- ::: {=latex} -->
+<!-- \clearpage -->
+<!-- \phantomsection -->
 <!-- \appendix -->
-<!-- ``` -->
+<!-- \addtocontents{toc}{\protect\setcounter{tocdepth}{0}} -->
+# APPENDIX A – LIMIT BEHAVIOR OF ENTROPY FUNCTIONS {.unnumbered .unlisted} 
+\addcontentsline{toc}{chapter}{\protect\numberline{}APPENDIX A – LIMIT BEHAVIOR OF ENTROPY FUNCTIONS}
+<!-- {#sec-appendix-A} -->
 
-# LIMIT BEHAVIOR OF ENTROPY FUNCTIONS {#sec-appendix-A}
 
+##  Limit Behavior of $H\bigl(\mathcal{G}^0_I\bigr)$ as $\alpha \to -\infty$ {.unlisted}
 
-##  Limit Behavior of $H\bigl(\mathcal{G}^0_I\bigr)$ as $\alpha \to -\infty$ {#app:A1}
-
-To verify that $H\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr)$ converges to $H\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr)$ as $\alpha \to -\infty$, we show that the additional terms in $H\bigl(\mathcal{G}^0_I\bigr)$ cancel in the limit.
+To verify that $H\bigl(\mathcal{G}^0_I( \alpha, \mu, L)\bigr)$ converges to $H\bigl(\Gamma_{\text{SAR}}(\mu , L)\bigr)$ as $\alpha \to -\infty$, we show that the additional terms in $H\bigl(\mathcal{G}^0_I\bigr)$ cancel in the limit.
 
 The Shannon entropy for the $\mathcal{G}^0_I$ distribution is given by:
 \begin{multline}
 \label{eq:GIO-Sh}
-H\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) =H(\Gamma_{\text{SAR}}) +
+H\bigl(\mathcal{G}^0_I( \alpha, \mu, L)\bigr) =H(\Gamma_{\text{SAR}}) +
 \Bigl[ (L-\alpha) \psi^{(0)}(L-\alpha)-(1-\alpha)\psi^{(0)}(-\alpha)
 +\ln (-1-\alpha) -\ln\Gamma(L-\alpha)\\ +\ln\Gamma(-\alpha)-L\Bigr].
 \end{multline}
 We aim to show that
 $$
-\lim_{\alpha \to -\infty} H\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr).
+\lim_{\alpha \to -\infty} H\bigl(\mathcal{G}^0_I( \alpha, \mu, L)\bigr) = H\bigl(\Gamma_{\text{SAR}}(\mu , L)\bigr).
 $$ 
 The additional terms in $H\bigl(\mathcal{G}^0_I\bigr)$ compared to $H\bigl(\Gamma_{\text{SAR}}\bigr)$ are:
 \begin{multline}
@@ -86,19 +87,19 @@ $$
 
 Therefore,
 $$
-\lim_{\alpha \to -\infty} H\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H\bigl(\Gamma_{\text{SAR}}(L, \mu)\bigr).
+\lim_{\alpha \to -\infty} H\bigl(\mathcal{G}^0_I( \alpha, \mu, L)\bigr) = H\bigl(\Gamma_{\text{SAR}}(\mu , L)\bigr).
 $$ 
 which concludes the proof.
 
 
 
-## Limit Behavior of \texorpdfstring{$R_\lambda(\mathcal{G}^0_I)$}{Hl(GI0)} as \texorpdfstring{$\alpha \to -\infty$}{alpha->-∞} {#app:A24}
+## Limit Behavior of \texorpdfstring{$R_\lambda(\mathcal{G}^0_I)$}{Hl(GI0)} as \texorpdfstring{$\alpha \to -\infty$}{alpha->-∞} {.unlisted}
 
 
 We want to show that 
 $$
 \lim_{\alpha \to -\infty}
-R_\lambda\bigl(\mathcal{G}^0_I\bigr)(\mu, \alpha, L)
+R_\lambda\bigl(\mathcal{G}^0_I\bigr)( \alpha, \mu, L)
 =
 R_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu, L).
 $$
@@ -211,12 +212,12 @@ $$
 
 
 
-## Limit Behavior of \texorpdfstring{$T_\lambda(\mathcal{G}^0_I)$}{Hl(GI0)} as \texorpdfstring{$\alpha \to -\infty$}{alpha->-∞} {#app:A33}
+## Limit Behavior of \texorpdfstring{$T_\lambda(\mathcal{G}^0_I)$}{Hl(GI0)} as \texorpdfstring{$\alpha \to -\infty$}{alpha->-∞} {.unlisted}
 
 We want to show that 
 $$
 \lim_{\alpha \to -\infty}
-T_\lambda\bigl(\mathcal{G}^0_I\bigr)(\mu, \alpha, L)
+T_\lambda\bigl(\mathcal{G}^0_I\bigr)( \alpha, \mu, L)
 =
 T_\lambda\bigl(\Gamma_{\mathrm{SAR}}\bigr)(\mu, L).
 $$
@@ -278,11 +279,14 @@ The remaining constant is
 $\bigl[\lambda-1-\lambda L\bigr]\ln\lambda$. But $\lambda-1-\lambda L = -\bigl[\lambda(L-1)+1\bigr]$, and the opposite factor
 $\lambda(L-1)+1$ already appears with the opposite sign inside $C$; therefore this constant term vanishes as well. Consequently $\Phi_\alpha\to0$ and thus $\displaystyle\Delta_\alpha^{T}\longrightarrow 0$.
 
-#  DERIVATIONS OF $m$–SPACING ESTIMATORS  {#app:TsallisSpacing}
+# APPENDIX B – DERIVATIONS OF SPACING ESTIMATORS {.unnumbered .unlisted} 
+\addcontentsline{toc}{chapter}{\protect\numberline{}APPENDIX B – DERIVATIONS OF SPACING ESTIMATORS}
+
+
 
 This appendix mirrors the derivation given for Vasicek’s estimator of Shannon entropy, and the Tsallis  estimator.
 
-## From Quantile Function to Vasicek Estimator {#app:Vasicek}
+## From Quantile Function to Vasicek Estimator {.unlisted}
 
 
 The differential entropy of a continuous random variable $Z$ with density $f(z)$ is given by:
@@ -359,7 +363,7 @@ This is the Vasicek estimator of Shannon entropy.
 
 
 
-## Tsallis Entropy and the Quantile Function  {#app:tsallis_1} 
+## Tsallis Entropy and the Quantile Function  {.unlisted}
 
 For a continuous random variable $Z$ with pdf $f$ and cdf $F$, the Tsallis entropy is  defined by:
 \begin{equation}

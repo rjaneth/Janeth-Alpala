@@ -1,7 +1,11 @@
-\begin{symbols}{lll} % Include a list of Symbols (a three column table)
+% --- SOLO afecta a esta tabla ---
+{%
+\setlength{\extrarowheight}{0.5pt}   % extra vertical por fila
+\renewcommand{\arraystretch}{1.18} % factor global para altura de filas (1.0 = normal)
 
+\begin{symbols}{@{}lll@{}} % @{} opcional: elimina márgenes laterales de la tabla
 $\mathbb{R}_+$ & Positive real numbers \\
- $\Gamma(\cdot)$  & Gamma function \\
+$\Gamma(\cdot)$  & Gamma function \\
 $\Gamma_{\mathrm{SAR}}(L, \mu)$ & Gamma SAR distribution with parameters $L$ and $\mu$ \\
 $\mathcal{G}^0_I$ & $\mathcal{G}^0_I$ distribution for intensity \\
 $\psi^{(0)}(\cdot)$ & Digamma function \\
@@ -21,7 +25,35 @@ $\widehat{\mu}$ & Sample mean of $\bm{Z}$ \\
 $Z_{(i)}$ & $i$-th order statistic in sample $\bm{Z}$ \\
 $m$ & Spacing parameter (window size) used in entropy estimation \\
 $c_i$ & Boundary correction factor in spacing estimators \\
-\addlinespace % Gap to separate the Roman symbols from the Greek
-
-
+\addlinespace[4pt] % (opcional) espacio extra para separar bloques
 \end{symbols}
+}% --- fin del ámbito local ---
+
+
+% \begin{symbols}{lll} % Include a list of Symbols (a three column table)
+% 
+% $\mathbb{R}_+$ & Positive real numbers \\ 
+%  $\Gamma(\cdot)$  & Gamma function \\
+% $\Gamma_{\mathrm{SAR}}(L, \mu)$ & Gamma SAR distribution with parameters $L$ and $\mu$ \\
+% $\mathcal{G}^0_I$ & $\mathcal{G}^0_I$ distribution for intensity \\
+% $\psi^{(0)}(\cdot)$ & Digamma function \\
+% $H(Z)$ & Shannon entropy of random variable $Z$ \\
+% $R_{\lambda}(Z)$ & Rényi entropy of order $\lambda$ \\
+% $T_{\lambda}(Z)$ & Tsallis entropy of order $\lambda$ \\
+% $\widehat{H}_{\text{AO}}(\bm{Z})$ & Nonparametric Shannon entropy estimator (Al-Omari) \\
+% $\widehat{R}_{\lambda}(\bm{Z})$ & Nonparametric Rényi entropy estimator via sample spacings \\
+% $\widehat{T}_{\lambda}(\bm{Z})$ & Nonparametric Tsallis entropy estimator via sample spacings \\
+% $\widetilde{H}_{\text{AO}}(\bm{Z})$ & Bootstrap-corrected Shannon entropy estimator \\
+% $\widetilde{R}_{\lambda}(\bm{Z})$ & Bootstrap-corrected Rényi entropy estimator \\
+% $\widetilde{T}_{\lambda}(\bm{Z})$ & Bootstrap-corrected Tsallis entropy estimator \\
+% $S_{\widetilde{H}_{\text{AO}}}(\bm{Z}; L)$ & Test statistic based on Shannon entropy \\
+% $S_{\widetilde{R}_{\lambda}}(\bm{Z}; L)$ & Test statistic based on Rényi entropy \\
+% $S_{\widetilde{T}_{\lambda}}(\bm{Z}; L)$ & Test statistic based on Tsallis entropy \\
+% $\widehat{\mu}$ & Sample mean of $\bm{Z}$ \\
+% $Z_{(i)}$ & $i$-th order statistic in sample $\bm{Z}$ \\
+% $m$ & Spacing parameter (window size) used in entropy estimation \\
+% $c_i$ & Boundary correction factor in spacing estimators \\
+% \addlinespace % Gap to separate the Roman symbols from the Greek
+% 
+% 
+% \end{symbols}

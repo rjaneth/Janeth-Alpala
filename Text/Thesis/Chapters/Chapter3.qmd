@@ -61,9 +61,12 @@ We adopt the heuristic spacing $m = \left[\sqrt{n} + 0.5\right]$, a choice commo
 
 Figure \ref{fig:Plot_bias_mse-sh} presents the bias and MSE for each of the non-parametric estimators of Shannon entropy. The results are summarized in @tbl-out-shannon.
 
+As shown in the simulation results, the estimators $\widehat{H}_{\text{C}}$, $\widehat{H}_{\text{E}}$, and $\widehat{H}_{\text{AO}}$ show low bias and achieve convergence for sample sizes larger than 81. These estimators exhibit good behavior in terms of bias and MSE across various parameter combinations.
+
+In contrast, estimator $\widehat{H}_{\text{N}}$ displays the lowest MSE across all scenarios. However, the bias remains unchanged and high for sample sizes larger than 25, indicating that the convergence is not very fast. Additionally, we observe that both $\widehat{H}_{\text{V}}$ and $\widehat{H}_{\text{VE}}$ estimators exhibit larger bias and slower convergence compared to their counterparts. Notably, the $\widehat{H}_{\text{V}}$ estimator shows the highest MSE.
 
 ```{=latex}
-\begin{figure}[H]
+\begin{figure}[htb]
 \caption{Performance of Shannon entropy estimators under $\Gamma_{\text{SAR}}(5,1)$.}\label{fig:Plot_bias_mse-sh}
 {\centering \includegraphics[width=1\linewidth]{Figures/Plot_bias_shannon_L5b-1}
 
@@ -162,6 +165,7 @@ print(combined_plot_gi0)
 #| warning: false
 #| results: 'asis'
 #| tbl-cap: 'Bias and MSE of Shannon entropy estimators under $\Gamma_{\text{SAR}}(5,1)$.'
+#| tbl-pos: 'htb'
 
 
 cat("\\setlength{\\tabcolsep}{4pt}\n")
@@ -236,9 +240,6 @@ knitr::kable(
 
 ```
 
-As shown in the simulation results, the estimators $\widehat{H}_{\text{C}}$, $\widehat{H}_{\text{E}}$, and $\widehat{H}_{\text{AO}}$ show low bias and achieve convergence for sample sizes larger than 81. These estimators exhibit good behavior in terms of bias and MSE across various parameter combinations.
-
-In contrast, estimator $\widehat{H}_{\text{N}}$ displays the lowest MSE across all scenarios. However, the bias remains unchanged and high for sample sizes larger than 25, indicating that the convergence is not very fast. Additionally, we observe that both $\widehat{H}_{\text{V}}$ and $\widehat{H}_{\text{VE}}$ estimators exhibit larger bias and slower convergence compared to their counterparts. Notably, the $\widehat{H}_{\text{V}}$ estimator shows the highest MSE.
 
 
 Although the estimators $\widehat{H}_{\text{C}}$, $\widehat{H}_{\text{E}}$, and $\widehat{H}_{\text{AO}}$ demonstrate good performance in terms of bias and MSE for sufficiently large samples (e.g., $n \geq 81$), practical scenarios in SAR image processing often involve much smaller sample sizes. In particular, local texture analysis is typically performed on small windows, such as $7 \times 7$, which correspond to $n = 49$. Under these conditions, bias can become significant, and convergence is slower or incomplete.
@@ -264,10 +265,12 @@ The bias is then estimated using Equation \eqref{eq:bias_estimate}, which calcul
 \label{eq:bias_estimate}
 \end{equation}
 A bias-corrected estimator is then defined by subtracting the estimated bias from the original estimator, as expressed in Equation \eqref{eq:bias_corrected}:
+\vspace{-10pt}
 \begin{equation}
 \widetilde{\theta} = \widehat{\theta} - \widehat{\operatorname{Bias}}.
 \label{eq:bias_corrected}
 \end{equation}
+\vspace{-5pt}
 Substituting the estimate from Equation \eqref{eq:bias_estimate} into Equation \eqref{eq:bias_corrected} yields the explicit formula for the corrected estimator:
 \begin{equation}
 \widetilde{\theta} = 2\widehat{\theta}(\bm{Z}) - \frac{1}{B} \sum_{b=1}^{B} \widehat{\theta}(\bm{Z}^{(b)}).
@@ -329,14 +332,13 @@ In order to assess the effectiveness of the bootstrap technique, we present comp
 ```
 
 The estimators $\widetilde{H}_{\text{V}}$ and $\widetilde{H}_{\text{VE}}$ show consistent bias reduction, though convergence remains slow. For $\widetilde{H}_{\text{E}}$, the correction improves bias only for small $n$, while its MSE steadily decreases. In contrast, the bootstrap technique did not improve the $\widetilde{H}_{\text{N}}$ estimator. This might occur because the original estimator overestimates the entropy values, showing a positive bias. This tendency to overestimate persists with the use of bootstrap, contributing to an increase in bias and MSE.
-
 The most notable improvements are observed with $\widetilde{H}_{\text{C}}$ and $\widetilde{H}_{\text{AO}}$, which achieve both low bias and MSE even for small sample sizes, demonstrating faster convergence.
 
 While the bias-corrected estimator $\widetilde{\theta}$ is theoretically motivated to reduce bias, its effectiveness is not guaranteed for all entropy estimators. In practice, the performance of the bootstrap correction varies depending on the characteristics of the original estimator and the sample size.
 
 To finalize the selection of the non-parametric Shannon entropy estimator used in the following simulations, we consider the execution time of the bootstrap versions of $\widetilde{H}_{\text{C}}$ and $\widetilde{H}_{\text{AO}}$. 
 
- @tbl-out-time shows the processing time of each estimator across different settings of $L$  and $n$.
+@tbl-out-time shows the processing time of each estimator across different settings of $L$  and $n$. The results indicate that $\widetilde{H}_{\text{AO}}$ consistently achieves lower computational times compared to $\widetilde{H}_{\text{C}}$. This makes it the more efficient option, particularly relevant for large datasets, such as SAR images discussed in @sec-Chapter4. Consequently, $\widetilde{H}_{\text{AO}}$ is selected as the representative non-parametric Shannon entropy estimator in the simulations presented in the following sections.
 
 ```{r Simulated_comparative_time6, echo=FALSE, message=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
@@ -389,7 +391,7 @@ if (!file.exists("./Data/results_data_time_sh.Rdata")) {#results_data_timenn
 
 ```
 
-\renewcommand{\arraystretch}{1.1}
+\renewcommand{\arraystretch}{1.3}
 ```{r}
 #| label: tbl-out-time
 #| echo: false
@@ -397,6 +399,7 @@ if (!file.exists("./Data/results_data_time_sh.Rdata")) {#results_data_timenn
 #| warning: false
 #| results: 'asis'
 #| tbl-cap: 'Processing time for bootstrap-improved estimators $\widetilde{H}_{\text{C}}$ and $\widetilde{H}_{\text{AO}}$'
+#| tbl-pos: 'htb'
 
 
 
@@ -456,22 +459,18 @@ knitr::kable(
   escape     = FALSE,
   #label      = "table_time",
   #table.envir= "table",
- # position   = "H",
+ # position   = "htb",
   linesep    = ""
 ) %>%
   row_spec(4,  extra_latex_after = "\\cline{3-4}") %>%
   row_spec(12, extra_latex_after = "\\cline{3-4}") %>%
   collapse_rows(latex_hline = "major", valign = "middle") %>%
   row_spec(0, align = "c") %>%
-  kable_styling(latex_options = "scale_down", full_width = TRUE)
-
-
+  kable_styling(font_size = 10,latex_options = "scale_down", full_width = TRUE)
 ```
-
-The results indicate that $\widetilde{H}_{\text{AO}}$ consistently achieves lower computational times compared to $\widetilde{H}_{\text{C}}$. This makes it the more efficient option, particularly relevant for large datasets, such as SAR images discussed in @sec-Chapter4. Consequently, $\widetilde{H}_{\text{AO}}$ is selected as the representative non-parametric Shannon entropy estimator in the simulations presented in the following sections.
+\vspace{-20pt}
 
 ### Optimal $\lambda$ Selection 
-<!-- Finding the Optimal Value of $\lambda$ for the Rényi and Tsallis Entropy Estimators -->
 
 We aim to determine the optimal order $\lambda$ for the nonparametric entropy estimators of Rényi ($\widetilde{R}_{\lambda}$) and Tsallis ($\widetilde{T}_{\lambda}$), using simulated samples of size $n = 49$ from $Z\sim\Gamma_{\text{SAR}}(5,  1)$ distribution.
 
@@ -481,9 +480,11 @@ For the Rényi estimator (see Fig. \ref{fig-optimal_order}), $\lambda = 0.9$ min
 
 Similarly, for the Tsallis estimator (Fig. \ref{fig-optimal_order-tsallis}), $\lambda = 0.85$ results in the lowest MSE with moderate bias, making it the most suitable choice.
 
+The estimators remained numerically stable and converged smoothly to Shannon entropy as $\lambda \to 1$. 
+Outside this range ($\lambda < 0.7$ or $\lambda > 1$), bias and MSE increased, indicating reduced numerical precision. 
+These results confirm that the selected $\lambda$ values ensure stable and reliable entropy estimates under typical SAR conditions.
 
-
-```{r fig-optimal_order,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="65%",  fig.pos="H", fig.cap="Bias and MSE as a function of $\\lambda$, for the Rényi entropy estimator, with $n = 49$, $L = 5$.", fig.width=5, fig.height=3}
+```{r fig-optimal_order,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="70%",  fig.pos="htb", fig.cap="Bias and MSE as a function of $\\lambda$, for the Rényi entropy estimator, with $n = 49$, $L = 5$.", fig.width=5, fig.height=3.0}
 #fig.show="hide", 
 # eval=FALSE,  # 
 
@@ -532,9 +533,7 @@ grid.arrange(bias_plot, mse_plot, nrow = 2)
 
 ```
 
-
-
-```{r fig-optimal_order-tsallis,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="65%",  fig.pos="H", fig.cap="Bias and MSE as a function of $\\lambda$, for the Tsallis entropy estimator, with $n = 49$, $L = 5$.", fig.width=5, fig.height=3}
+```{r fig-optimal_order-tsallis,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="70%",  fig.pos="htb", fig.cap="Bias and MSE as a function of $\\lambda$, for the Tsallis entropy estimator, with $n = 49$, $L = 5$.", fig.width=5, fig.height=3.0}
 #fig.show="hide", 
 # eval=FALSE,  # 
 
@@ -582,7 +581,6 @@ mse_plot <- ggplot(data, aes(x = Lambda, y = MSE)) +
 grid.arrange(bias_plot, mse_plot, nrow = 2)
 
 ```
-
 <!-- ```{=latex} -->
 <!-- \begin{figure}[hbt] -->
 <!--   \centering -->
@@ -592,14 +590,14 @@ grid.arrange(bias_plot, mse_plot, nrow = 2)
 <!--   \label{fig-optimal_order} -->
 <!-- \end{figure} -->
 <!-- ``` -->
+\vspace{-15pt}
 In the case of $L = 1$, the bootstrap procedure does not provide meaningful improvement and often leads to unstable estimates. Therefore, we omit bootstrap in this setting. Under these conditions, higher values of $\lambda$ yield better results: $\lambda = 3$ is preferred for the Rényi estimator, and $\lambda = 1.2$ for the Tsallis estimator. 
+\vspace{-15pt}
 
 ### Bootstrap Bias Correction in Rényi and Tsallis Entropy Estimation
 
-
-Building upon the previous Monte Carlo setup, we further assess the performance of the Rényi and Tsallis entropy estimators by analyzing their behavior across varying sample sizes $n \in \{9, 25, 49, 81, 121\}$. Using the optimal values of the order parameter ($\lambda = 0.9$ for Rényi and $\lambda = 0.85$ for Tsallis) already identified in the earlier analysis, we compute the bias and MSE for both the original and bootstrap-corrected versions of the estimators. As illustrated in Figures \ref{fig-bias_mse_rm1} and \ref{fig-bias_mse_Tsallis}, the bootstrap estimators consistently show improved performance, especially for small samples. In particular, at $n = 49$, both estimators exhibit low bias and MSE, confirming their robustness in moderate sample regimes and supporting their use in practical applications.
-
-
+Building upon the previous Monte Carlo setup, we further assess the performance of the Rényi and Tsallis entropy estimators by analyzing their behavior across varying sample sizes $n \in \{9, 25, 49, 81, 121\}$. Using the optimal values of the order parameter ($\lambda = 0.9$ for Rényi and $\lambda = 0.85$ for Tsallis) already identified in the earlier analysis, we compute the bias and MSE for both the original and bootstrap-corrected versions of the estimators. As illustrated in Figures&nbsp;\ref{fig-bias_mse_rm1} and \ref{fig-bias_mse_Tsallis}, the bootstrap estimators consistently show improved performance for small samples. 
+\vspace{-10pt}
 ```{r Simulated_data_bias_m1, echo=FALSE, message=FALSE }
 set.seed(1234567890, kind = "Mersenne-Twister")
 #cache = TRUE, autodep = TRUE
@@ -635,7 +633,7 @@ if (file.exists(file_name)) {
 ```
 
 
-```{r fig-bias_mse_rm1,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="70%",  fig.pos="H",  fig.cap="Bias and MSE of the Rényi entropy estimators for $\\Gamma_{\\text{SAR}}$, with $L=5$", fig.width=5.5, fig.height=4}
+```{r fig-bias_mse_rm1,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="65%",  fig.pos="H",  fig.cap="Bias and MSE of the Rényi entropy estimators for $\\Gamma_{\\text{SAR}}$, with $L=5$", fig.width=5.5, fig.height=3.5}
 
 theme_set(theme_minimal() +
             theme(text = element_text(family = "serif"),
@@ -814,7 +812,7 @@ generate_plot_tsallisn <- function(results_df, lambda_values, selected_estimator
 }
 ```
 
-```{r fig-bias_mse_Tsallis,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="70%",  fig.pos="H",  fig.cap="Bias and MSE of the Tsallis entropy estimators for $\\Gamma_{\\text{SAR}}$, with $L=5$", fig.width=5.5, fig.height=4}
+```{r fig-bias_mse_Tsallis,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="65%",  fig.pos="htb",  fig.cap="Bias and MSE of the Tsallis entropy estimators for $\\Gamma_{\\text{SAR}}$, with $L=5$", fig.width=5.5, fig.height=3.6}
 
 
 theme_set(theme_minimal() +
@@ -850,9 +848,11 @@ print(combined_plot_tsallis)
 
 ```
 
+\vspace{-15pt}
+
+In particular, at $n = 49$, both estimators exhibit low bias and MSE, confirming their robustness in moderate sample regimes and supporting their use in practical applications.
 
 From this point forward, all subsequent simulations and comparisons will be based on the improved bootstrap estimators: $\widetilde{H}_{\text{AO}}$ for Shannon, $\widetilde{R}_{\lambda}$ for Rényi, and $\widetilde{T}_{\lambda}$ for Tsallis entropy.
-
 
 ## HYPOTHESIS TESTING
 
@@ -896,11 +896,13 @@ that is, the discrepancy between the estimated entropy and the theoretical value
 ### The Proposed Test Based on Rényi Entropy
 
 To assess deviations from homogeneity in SAR data, we define a test statistic based on Rényi entropy. The statistic contrasts the non-parametric estimator $\widetilde{R}_\lambda(\bm{Z})$ with the theoretical Rényi entropy of the $\Gamma_{\text{SAR}}$ model in $\eqref{eq-GammaSAR-R}$, assuming that the number of looks $L \geq 1$ is known. The proposed statistic is defined as:
+\begingroup\small
 \begin{equation}
 \label{eq-test-renyi}
 S_{\widetilde{R}_{\lambda}}(\bm{Z}; L) = \widetilde{R}_{\lambda} - \left\{ \ln \widehat{\mu} - \ln L + \frac{1}{1-\lambda}
 \left[ -\lambda \ln\Gamma(L) + \ln\Gamma\bigl(\lambda(L-1)+1\bigr) - \bigl(\lambda(L-1)+1\bigr)\ln\lambda \right] \right\},
 \end{equation}
+\endgroup
 where $\widehat{\mu} = \frac{1}{n} \sum_{i=1}^n Z_i$ is the sample mean.
 
 This test statistic measures the discrepancy between the empirical entropy and the value expected under the fully developed speckle assumption and can be interpreted as:
@@ -914,7 +916,7 @@ the difference between the estimated entropy and the expected value under homoge
 ### The Proposed Test Based on Tsallis Entropy
 
 To evaluate heterogeneity in SAR imagery, we define a test statistic using Tsallis entropy. This statistic contrasts the non-parametric estimator $\widetilde{T}_\lambda(\bm{Z})$ with the analytical Tsallis entropy under the $\Gamma_{\text{SAR}}$ model, as derived in Equation \eqref{eq:gammasar-Tsallis}. We assume the number of looks $L \geq 1$ is known and use the following formulation:
-
+\vspace{-12pt}
 \begin{multline}
 \label{eq-test-tsallis}
 S_{\widetilde{T}_{\lambda}}(\bm{Z}; L) = \widetilde{T}_{\lambda} - \biggl\{ \frac{1}{\lambda - 1} \Bigl[ 1 -
@@ -926,10 +928,10 @@ S_{\widetilde{T}_{\lambda}}(\bm{Z}; L) = \widetilde{T}_{\lambda} - \biggl\{ \fra
 - \bigl(\lambda(L - 1) + 1\bigr)\ln \lambda
 \Bigr) \Bigr] \biggr\},
 \end{multline}
-
 where $\widehat{\mu} = \frac{1}{n} \sum_{i=1}^n Z_i$ is the sample mean.
 
 As in the previous cases, this test statistic measures the difference between the empirical entropy and its theoretical counterpart under the assumption of fully developed speckle:
+\vspace{-5pt}
 $$
 S_{\widetilde{T}_\lambda} =
 \underbrace{\widetilde{T}_\lambda}_{\text{estimated}} -
@@ -938,14 +940,16 @@ $$
 
 Values of $S_{\widetilde{T}_\lambda}$ close to zero indicate that the observed region aligns with the homogeneous model. In contrast, significantly positive values suggest the presence of structural variations or texture, signaling statistical heterogeneity in the scene.
 
+An important advantage shared by all three proposed test statistics (\eqref{eq-test-sh}, \eqref{eq-test-renyi} and \eqref{eq-test-tsallis}) is that they avoid the need to estimate parameters from the alternative $\mathcal{G}^0_I$ distribution, such as the roughness parameter $\alpha$. 
+This leads to a simpler, more interpretable, and statistically grounded testing procedure.
 
-An important advantage shared by all three proposed test statistics (\eqref{eq-test-sh}, \eqref{eq-test-renyi} and \eqref{eq-test-tsallis}) is that they avoid the need to estimate parameters from the alternative $\mathcal{G}^0_I$ distribution, such as the roughness parameter $\alpha$. This leads to a simpler, more interpretable, and statistically grounded testing procedure.
+Additionally, the tests are computationally efficient and suitable for practical applications, including large-scale image processing. 
+This robustness is especially evident in small sample sizes, where bootstrap correction improves the reliability of the entropy estimates and stabilizes the resulting $p$-values used for decision-making.
 
-Additionally, the tests are computationally efficient and suitable for practical applications, including large-scale image processing. This robustness is especially evident in small sample sizes, where bootstrap correction improves the reliability of the entropy estimates and stabilizes the resulting $p$-values used for decision-making.
-
-\subsection*{Empirical behaviour of the three statistics} 
+\subsection{Empirical Behaviour of the Three Statistics} 
 
 Figures [-@fig-densities-shannon]-[-@fig-densities-tsallis4] display the empirical distributions of the three entropy-based statistics:Shannon $S_{\widetilde{H}}(\mathbf Z;L)$, Rényi $S_{\widetilde{R}_{\lambda}}(\mathbf Z;L)$ (with $\lambda=0.9$) and Tsallis $S_{\widetilde{T}_{\lambda}}(\mathbf Z;L)$ ($\lambda=0.85$) obtained from $10^{4}$ Monte Carlo replications of $\Gamma_{\text{SAR}}$ data for window sizes $n\in\{49,81,121\}$ and looks $L\in\{5,18\}$.  
+
 All three empirical densities are tightly concentrated around zero, confirming that under $\mathcal{H}_0$ the test statistic has mean approximately $0$; at the same time, their moderately heavy tails reveal sensitivity to departures from homogeneity, which is desirable for detecting subtle texture.
 
 ```{r Simulated_density-shannon, echo=FALSE, message=FALSE}
@@ -1381,6 +1385,8 @@ Because all three test statistics share the same asymptotic distribution, the pr
 ```{=latex}
 \begin{figure}[H]
     \centering
+     \caption{Workflow of the entropy‐based hypothesis test: calculate test statistic, standardize, derive $p$-value, and make a decision by threshold $0.05$.}
+    \label{fig:entropy-diagram-test}
 \begin{tikzpicture}[
   node distance=1cm and 1cm,
   box/.style={
@@ -1403,14 +1409,13 @@ Because all three test statistics share the same asymptotic distribution, the pr
   \draw[arrow] (std) -- (pval);
   \draw[arrow] (pval) -- (dec);
 \end{tikzpicture}
-    \caption{Workflow of the entropy‐based hypothesis test: calculate test statistic, standardize, derive $p$-value, and make a decision by threshold $0.05$.}
-    \label{fig:entropy-diagram-test}
+  %\caption*{\footnotesize\textbf{Source:} The author (2025)} 
 \end{figure}
 
 ```
 Importantly, no parameters from the alternative $\mathcal{G}^0_I$ model are needed, which simplifies implementation and avoids complex estimation procedures.
 
-In the next chapter, we apply this procedure to SAR images using a sliding window of size $7 \times 7$ pixels. For each window, we compute the corresponding test statistic and derive a $p$-value, which quantifies the statistical evidence against local homogeneity. High $p$-values (e.g., $p > 0.05$) indicate no significant deviation from the fully developed speckle model, suggesting homogeneity. Conversely, low $p$-values (e.g., $p < 0.05$)  suggest statistically significant deviations and are interpreted as heterogeneity.
+<!-- In the next chapter, we apply this procedure to SAR images using a sliding window of size $7 \times 7$ pixels. For each window, we compute the corresponding test statistic and derive a $p$-value, which quantifies the statistical evidence against local homogeneity. High $p$-values (e.g., $p > 0.05$) indicate no significant deviation from the fully developed speckle model, suggesting homogeneity. Conversely, low $p$-values (e.g., $p < 0.05$)  suggest statistically significant deviations and are interpreted as heterogeneity. -->
 
 ### Size and Power Analysis of the Proposed Tests
 
@@ -1596,7 +1601,7 @@ if (!file.exists("./Data/results_power-shannon2.Rdata")) {
 
 ```
 
-\renewcommand{\arraystretch}{1}
+\renewcommand{\arraystretch}{0.9}
 ```{r Table_size_and_power-shannon3, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 suppressMessages({
   suppressWarnings({
@@ -1867,7 +1872,7 @@ if (!file.exists("./Data/results_power.Rdata")) {
 ```
 
 
-\renewcommand{\arraystretch}{1}
+\renewcommand{\arraystretch}{0.9}
 ```{r Table_size_and_power-renyi, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 suppressMessages({
   suppressWarnings({
@@ -2270,8 +2275,6 @@ comparison_data <- left_join(size_all, power_all,
 ```
 
 
-
-
 ```{r fig-compare_size_power_plot0, echo=FALSE, fig.width=10, fig.height=12, fig.pos="H", fig.cap="Comparative performance of test statistics based on Shannon, Rényi and Tsallis entropies. Size and Power for different sample sizes and $L$ values."}
 library(ggplot2)
 
@@ -2341,5 +2344,58 @@ plot_power <- ggplot(comparison_data, aes(x = Sample_Size, y = power, color = En
 (plot_size / plot_power) + plot_layout(guides = "collect") & theme(legend.position = "bottom")
 
 ```
+
+
+## FIXED AND ADAPTIVE WINDOWS
+
+This section outlines the two local windowing strategies that will be used in the next chapter to evaluate the proposed entropy-based tests on both simulated and real SAR intensity data. 
+
+### Fixed Sliding Windows
+
+The first strategy uses a fixed sliding window of size $7 \times 7$ pixels. 
+For each window, the test statistics $S_{\widetilde{H}_{\text{AO}}}$, $S_{\widetilde{R}_{\lambda}}$, and $S_{\widetilde{T}_{\lambda}}$ will be computed, and the associated $p$-values derived. 
+The $p$-value measures evidence against the null hypothesis of homogeneity (fully developed speckle under the $\Gamma_{\text{SAR}}$ model). High values (e.g., $p>0.05$) will be interpreted as no significant deviation from homogeneity, whereas low $p$-values (e.g., $p<0.05$) will be taken as *evidence of heterogeneity*. These $p$-values will later be visualized as maps to enable spatial assessment.
+
+
+
+### Adaptive Windows 
+
+The second strategy, used only with the Tsallis-entropy test $S_{\widetilde{T}_{\lambda}}$, builds on the adaptive windowing algorithm by Park et al. [-@Park1999]. The analysis window size is adjusted according to the local homogeneity of the scene. 
+For each pixel $(i,j)$, let $w_{ij}$ be the window centered at $(i,j)$ with radius $N_{ij}$, defined as  
+$w_{ij} = \{(i',j') \,/\, i-N_{ij} \le i' \le i+N_{ij} \,\wedge\, j-N_{ij} \le j' \le j+N_{ij}\}$.  
+The border of this window is given by  
+$b_{ij} = \{(i',j') \in w_{ij} \,/\, i' = i-N_{ij} \,\vee\, i' = i+N_{ij} \,\vee\, j' = j-N_{ij} \,\vee\, j' = j+N_{ij}\}$.
+
+The coefficient of variation is computed over the border of the current window as $C_{ij} =\frac{\sigma_{ij}}{\mu_{ij}}$, where the mean $\mu_{ij}$ and the standard deviation $\sigma_{ij}$ are calculated using only the border pixels $b_{ij}$ of $w_{ij}$.
+
+For SAR intensity images (fully developed speckle with $L$ looks), the coefficient of variation in homogeneous areas satisfies
+\begin{equation*}
+C_{ij} \approx \sigma_n := \frac{1}{\sqrt{L}}.
+\end{equation*}
+
+The homogeneity criterion is defined by comparing $C_{ij}$ with an adaptive threshold $U_{ij}$:
+\begin{equation*}
+U_{ij} = \eta\!\left( 1 + \sqrt{\frac{1 + 2\sigma_n^2}{8\,(W_{ij} - 1)}} \right)\sigma_n,
+\end{equation*}
+where $W_{ij} = 2N_{ij} + 1$ is the current window side length, and $\eta$ is a tuning parameter controlling the degree of smoothing. Values close to $\eta=1$ provide limited speckle suppression, while larger values increase smoothing and yield stronger noise reduction.
+
+The window radius $N_{ij}$ is updated dynamically and locally as follows:
+$$
+N_{i,j}^{\text{updated}} =
+\begin{cases}
+\min\{N_{ij} + 1,\, N_{\max}\}, & \text{if } C_{ij} \leq U_{ij}, \\
+\max\{N_{ij} - 1,\, N_{\min}\}, & \text{if } C_{ij} > U_{ij},
+\end{cases}
+$$
+where $N_{\max}$ and $N_{\min}$ denote the maximum and minimum allowed window size, respectively. Hence, windows *grow* in homogeneous regions (stabilizing estimates) and *shrink* in heterogeneous areas (preserving edges and avoiding class mixing). 
+
+Once the window radius $N_{ij}$ has been determined for pixel $(i,j)$, the corresponding full window is extracted and the proposed test in \eqref{eq-test-tsallis} is applied to obtain the local test statistic. This produces two outputs: (i) a map of test statistics over the image, and (ii) a window-size map $W_{ij}$ that records the locally selected window side (larger in homogeneous regions, smaller in heterogeneous ones). For inference, each value of the test statistic is standardized using the empirical mean and standard deviation of the image, and two-sided $p$-values are then computed.
+
+In the experiments presented in the next chapter, the Tsallis-based test statistic $S_{\widetilde{T}{\lambda}}$ will be applied to both simulated and real SAR images using adaptive windows with side lengths ranging from $5\times5$ ($N{\min}=5$) to $11\times11$ ($N_{\max}=11$), with the smoothing parameter set to $\eta = 3$. For comparison, a fixed $7\times7$ window configuration will also be evaluated.
+
+
+
+
+
 
 

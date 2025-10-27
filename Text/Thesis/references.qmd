@@ -1,4 +1,12 @@
-# REFERENCES {.unnumbered}
+<!-- # REFERENCES {.unnumbered} -->
+
+
+<!-- ::: {#refs} -->
+<!-- ::: -->
+
+# REFERENCES {.unnumbered .unlisted}
+
+\addcontentsline{toc}{chapter}{\protect\numberline{}REFERENCES}
 
 ::: {#refs}
 :::

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<style xmlns="http://purl.org/net/xbiblio/csl" version="1.0" class="in-text" demote-non-dropping-particle="never" default-locale="pt-BR">
+<style xmlns="http://purl.org/net/xbiblio/csl" version="1.0" class="in-text" demote-non-dropping-particle="never" default-locale="en-US">
   <info>
     <title>Universidade do Estado do Rio de Janeiro - ABNT (Português - Brasil)</title>
     <title-short>UERJ-ABNT</title-short>
@@ -115,8 +115,7 @@
     </names>
   </macro>
   <macro name="access">
-    <text variable="URL" prefix="Disponível em: &lt;" suffix="&gt;."/>
-    <date variable="accessed" prefix=". Acesso em: " suffix=".">
+      <date variable="accessed" prefix=". Acesso em: " suffix=".">
       <date-part name="day" suffix=" "/>
       <date-part name="month" form="short" suffix=". " text-case="lowercase"/>
       <date-part name="year"/>
@@ -479,9 +478,6 @@
           <text macro="container-title"/>
           <text variable="edition" suffix="., "/>
           <text variable="issue" suffix=", "/>
-          <text variable="publisher-place" suffix=". "/>
-          <text value="Anais" font-style="italic"/>
-          <text value="..."/>
           <group delimiter=". " prefix=". " suffix=". ">
             <text macro="event"/>
           </group>

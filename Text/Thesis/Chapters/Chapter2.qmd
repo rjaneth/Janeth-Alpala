@@ -50,7 +50,7 @@ Statistical modeling plays a central role in the analysis of SAR imagery, where 
 
 We denote $Z \sim \Gamma_{\mathrm{SAR}}(L, \mu)$ and $Z \sim \mathcal{G}_I^0(\alpha, \gamma, L)$ when the random variable $Z$ follows the respective distributions, characterized by the following probability density functions (pdfs):
 \begin{equation}
-	f_{\Gamma_{\text{SAR}}}\bigl(z;L, \mu \bigr) 
+	f_{\Gamma_{\mathrm{SAR}}}\bigl(z;\mu, L\bigr) 
     = \frac{L^L}{\Gamma(L)\,\mu^L} z^{L-1} 
     \exp \biggl(-\frac{Lz}{\mu}\biggr)
     \mathbbm 1_{\mathbbm R_+}(z) \label{E:gamma1}
@@ -78,7 +78,7 @@ Therefore, assuming $\alpha<-1$, its expected value is
 
 Although the $\mathcal{G}_I^0$ distribution is defined by the parameters $\alpha$ and $\gamma$, in the SAR literature&nbsp;[@Nascimento2010] the texture $\alpha$ and the mean $\mu$ are usually used. Reparameterizing&nbsp;\eqref{E:gi01} with $\mu$, and denoting this model as $Z \sim \mathcal{G}_I^0(\alpha, \mu, L)$ we obtain:
 \begin{equation}
-    f_{\mathcal{G}^0_I}\bigl(z; \mu, \alpha, L \bigr) 
+    f_{\mathcal{G}^0_I}\bigl(z;  \alpha, \mu, L \bigr) 
     = \frac{L^L\,\Gamma(L-\alpha)}
     {\bigl[-\mu(\alpha+1)\bigr]^{\alpha} \Gamma(-\alpha)\,\Gamma(L)}
     \frac{z^{L-1}}
@@ -87,9 +87,9 @@ Although the $\mathcal{G}_I^0$ distribution is defined by the parameters $\alpha
 \end{equation}
 The $\Gamma_{\mathrm{SAR}}$ model is a particular case of the $\mathcal{G}^0_I$ distribution, as demonstrated in&nbsp;[@Frery1997]. Specifically, for a given $\mu$ fixed,
 $$
-f_{\mathcal{G}^0_I}\big(z; \mu, \alpha, L\big)
+f_{\mathcal{G}^0_I}\big(z;  \alpha, \mu, L\big)
 \longrightarrow 
-f_{\Gamma_{\text{SAR}}}(z;L, \mu) \quad \text{ when } \alpha\to-\infty.
+f_{\Gamma_{\text{SAR}}}(z; \mu, L) \quad \text{ when } \alpha\to-\infty.
 $$
 
 In this work, we do not focus on parameter estimation using likelihood-based or moment-based methods. Instead, we adopt a hypothesis testing framework to detect heterogeneity in SAR imagery. The analytical expressions of entropy measures derived from the $\Gamma_{\text{SAR}}$ and $\mathcal{G}_I^0$ models form the theoretical basis for constructing these statistical tests. In the following section, we introduce the entropy-based measures, specifically Shannon, Rényi, and Tsallis, on which our detection strategy is built.
@@ -109,7 +109,7 @@ This section focuses on three widely used entropy formulations that offer comple
 
 \textbf{Tsallis entropy} was first introduced by Havrda and Charvát&nbsp;[-@Havrda1967] in the context of information theory. Later, Tsallis&nbsp;[-@Tsallis1988] extended it by emphasizing its non-extensive features and placing it in a physical context. The generalized Tsallis entropy of order $\lambda$ offers an alternative formulation motivated by non-extensive systems, such as those exhibiting long-range dependencies, memory effects, or multifractal behavior. Unlike Rényi entropy, it does not obey the additivity property under independence, making it particularly suitable for modeling complex spatial structures and textured regions in SAR images.
 
-In the context of SAR imaging, homogeneous areas produce fully developed speckle and are effectively modeled by the $Z \sim\Gamma_{\text{SAR}}(L, \mu)$ distribution. In contrast, textured or heterogeneous regions are better represented by the  $Z \sim\mathcal{G}^0_I(\mu, \alpha, L)$ model, where the roughness parameter $\alpha$ controls the degree of heterogeneity. Across this section, we show that all three entropy measures applied to $\mathcal{G}^0_I$ can be decomposed as:
+In the context of SAR imaging, homogeneous areas produce fully developed speckle and are effectively modeled by the $Z \sim\Gamma_{\text{SAR}}(L, \mu)$ distribution. In contrast, textured or heterogeneous regions are better represented by the  $Z \sim\mathcal{G}^0_I( \alpha, \mu, L)$ model, where the roughness parameter $\alpha$ controls the degree of heterogeneity. Across this section, we show that all three entropy measures applied to $\mathcal{G}^0_I$ can be decomposed as:
 \begin{equation}
 \label{eq:decomp-intro}
 \boxed{\;
@@ -132,23 +132,23 @@ This section details the closed-form expressions for $H$, $R_\lambda$, and $T_\l
 The parametric representation of Shannon entropy for a system described by a continuous random variable is:
 \begin{equation}
   \label{eq:entropy-sh}
-  H(Z) =   -\mathbb{E}\bigl[ \ln f(z)\bigr]=-\int_{-\infty }^\infty f(z)\ln f(z)\, \mathrm{d}z,
+  H(Z) =   -\mathbb{E}\bigl[ \ln f(z)\bigr]=-\int_{\mathcal{B}} f(z)\ln f(z)\, \mathrm{d}z,
 \end{equation}
-where $f(\cdot)$ is the pdf that characterizes the distribution of the real-valued random variable $Z$.
+where $f(\cdot)$ is the pdf that characterizes the distribution of the real-valued random variable $Z$ and $\mathcal{B} \subseteq \mathbb{R}$ denotes the support of $f(z)$.
 
 Using the definition in \eqref{eq:entropy-sh}, we derive closed-form expressions for the Shannon entropy of the $\Gamma_{\mathrm{SAR}}$ and $\mathcal{G}^0_I$ distributions under our parametrization.
 
 \textbf{Homogeneous case.} For the $\Gamma_{\mathrm{SAR}}$ distribution defined in \eqref{E:gamma1}, we obtain:
 \begin{equation}
 \label{eq:gamma-sh1}
-H\bigl(\Gamma_{\mathrm{SAR}}(L, \mu)\bigr) = L - \ln L + \ln\Gamma(L) + (1 - L)\psi^{(0)}(L) + \ln \mu,
+H\bigl(\Gamma_{\mathrm{SAR}}(\mu, L)\bigr) = L - \ln L + \ln\Gamma(L) + (1 - L)\psi^{(0)}(L) + \ln \mu,
 \end{equation}
 where $\psi^{(0)}(\cdot)$ is the digamma function; $H(\Gamma_{\mathrm{SAR}})$ represents the baseline entropy of fully developed speckle.
 
 \textbf{Textured case.} In the case of the $\mathcal{G}^0_I$ distribution \eqref{E:gi02}, we adapt existing expressions reported by De A. Ferreira and Nascimento&nbsp;[-@Ferreira2020] to our parametrization, using the relation $\mu = -\gamma/(\alpha + 1)$. This yields:
 \begin{multline}
 \label{eq:GIO-Sh1}
-H\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) =H\bigl(\Gamma_{\mathrm{SAR}}(L, \mu)\bigr)\;+\;
+H\bigl(\mathcal{G}^0_I(\alpha, \mu, L)\bigr) =H\bigl(\Gamma_{\mathrm{SAR}}(\mu, L)\bigr)\;+\;
 \Bigl[ (L-\alpha) \psi^{(0)}(L-\alpha)-(1-\alpha)\psi^{(0)}(-\alpha)
 +\ln (-1-\alpha) \\
 -\ln\Gamma(L-\alpha) 
@@ -179,9 +179,9 @@ where
 the extra term $\Delta_\alpha$ captures how much entropy increases due to texture (heterogeneity), caused by the roughness parameter $\alpha$. When $\alpha \to -\infty$ (fully developed speckle), the excess term tends to zero, and Equation \eqref{eq:GIO-Sh1} collapses to the homogeneous case in \eqref{eq:gamma-sh1}, i.e.,
 \vspace{-15pt}
 $$
-\lim_{\alpha \to -\infty} H\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = H\bigl(\Gamma_{\mathrm{SAR}}(L, \mu)\bigr).
+\lim_{\alpha \to -\infty} H\bigl(\mathcal{G}^0_I( \alpha, \mu, L)\bigr) = H\bigl(\Gamma_{\mathrm{SAR}}(\mu, L)\bigr).
 $$ 
-Appendix&nbsp;\ref{app:A1} provides a proof of this limiting behavior.
+Appendix A provides a proof of this limiting behavior.
 <!-- This motivates our work: we check whether the \emph{excess} is statistically different from zero.  -->
 In practice, detecting heterogeneity is equivalent to testing whether $\Delta_\alpha$ is significantly different from zero.
 
@@ -189,16 +189,17 @@ In practice, detecting heterogeneity is equivalent to testing whether $\Delta_\a
 For a continuous random variable $Z$ with pdf $f(z)$, the Rényi entropy of order $\lambda \in \mathbbm R_+ \setminus \{1\}$ is defined as:
 \begin{equation}
 \label{E:entropy-R}
-R_\lambda(Z)  = \frac{1}{1-\lambda }\ln \Bigl[ \mathbb{E}\Bigl( f^{\lambda - 1}(Z)\Bigr) \Bigr] =\frac{1}{1 - \lambda} \ln \int_{-\infty}^{\infty} [f(z)]^\lambda \,\mathrm{d}z.
+R_\lambda(Z)  = \frac{1}{1-\lambda }\ln \Bigl[ \mathbb{E}\Bigl( f^{\lambda - 1}(Z)\Bigr) \Bigr] =\frac{1}{1 - \lambda} \ln \int_{\mathcal{B}} [f(z)]^\lambda \,\mathrm{d}z,
 \end{equation}
+where $\mathcal{B} \subseteq \mathbb{R}$ denotes the support of $f(z)$.
 As $\lambda \to 1$, $R_{\lambda}(Z)$ reduces to the Shannon entropy $H(Z)$.
 
 Using \eqref{E:entropy-R}, we now derive the closed-form expression for the Rényi entropy under the homogeneous ($\Gamma_{\mathrm{SAR}}$) model.
 
-\textbf{Homogeneous case.} Let $Z\sim\Gamma_{\mathrm{SAR}}(L,\mu)$ with pdf given in \eqref{E:gamma1}. We compute
+\textbf{Homogeneous case.} Let $Z\sim\Gamma_{\mathrm{SAR}}(\mu, L)$ with pdf given in \eqref{E:gamma1}. We compute
 $$
 I = \int_{0}^{\infty}
-    \bigl[f_{\Gamma_{\mathrm{SAR}}}(z;L,\mu)\bigr]^{\lambda}
+    \bigl[f_{\Gamma_{\mathrm{SAR}}}(z;\mu, L)\bigr]^{\lambda}
     \,\mathrm{d}z
   = \Bigl(\tfrac{L^{L}}{\Gamma(L)\,\mu^{L}}\Bigr)^{\!\lambda}
     \int_{0}^{\infty} z^{\lambda(L-1)}
@@ -231,10 +232,11 @@ Taking logarithms and simplifying gives
 - \bigl(\lambda(L-1)+1\bigr)\ln\lambda.
 \end{equation*}
 Substituting into \eqref{E:entropy-R} yields the closed-form
+\begingroup\small
 \begin{equation}
   \label{eq-GammaSAR-R}
   \boxed{
-  R_{\lambda}\bigl(\Gamma_{\mathrm{SAR}}(L,\mu)\bigr)
+  R_{\lambda}\bigl(\Gamma_{\mathrm{SAR}}(\mu, L)\bigr)
   = \ln\mu - \ln L
 + \frac{1}{1-\lambda}
 \Bigl[
@@ -244,7 +246,7 @@ Substituting into \eqref{E:entropy-R} yields the closed-form
 \Bigr].
 }
 \end{equation}
-
+\endgroup
 \textbf{Textured case.} Starting from the definition of Rényi entropy in  \eqref{E:entropy-R} and the pdf of  $Z\sim\mathcal{G}^0_I(\alpha,\gamma,L)$ given in \eqref{E:gi01}, we define:
 $$
 I
@@ -256,7 +258,7 @@ I
 C=\frac{L^L\Gamma(L-\alpha)}{\gamma^{\alpha}\Gamma(-\alpha)\Gamma(L)}.
 $$
 The parameterisation satisfies $\gamma=-\mu(\alpha+1)$, so the final result will be expressed in terms of $\mu$.
-
+\vspace{-15pt}
 $$
 I \;=\;\int_{0}^{\infty}
         \bigl[f_{\mathcal{G}^0_I}(z;\alpha,\gamma,L)\bigr]^{\lambda}\,\mathrm{d}z
@@ -334,6 +336,7 @@ $$
 = \ln \Gamma(a) + \ln \Gamma(b) - \ln \Gamma(a + b),
 $$
 where $a + b = \lambda(L - \alpha)$, we have
+\vspace{-10pt}
 \begin{multline}
 R_\lambda\bigl(\mathcal{G}^0_I( \alpha,\gamma, L)\bigr)
 = \ln\Bigl(\tfrac{\gamma}{L}\Bigr)
@@ -349,6 +352,7 @@ R_\lambda\bigl(\mathcal{G}^0_I( \alpha,\gamma, L)\bigr)
 \label{eq:GI0RenyiInGamma1}
 \end{multline}
 Finally, noting that $\gamma = -\mu(\alpha + 1)$ from \eqref{E:rmom}, and substituting this expression into \eqref{eq:GI0RenyiInGamma1}, we obtain:
+\vspace{-15pt}
 \begin{multline*}
 R_\lambda\bigl(\mathcal{G}^0_I( \alpha,\mu, L)\bigr)
 = \ln \mu  -  \ln L + \ln(- 1-\alpha)
@@ -363,13 +367,14 @@ R_\lambda\bigl(\mathcal{G}^0_I( \alpha,\mu, L)\bigr)
 \Bigr],
 \label{eq:RenyiGI0Final}
 \end{multline*}
-This expression extends the Rényi entropy of the $\Gamma_{\mathrm{SAR}}(L,\mu)$ model \eqref{eq-GammaSAR-R} by including additional terms that depend on the texture parameter $\alpha$. Specifically:
+This expression extends the Rényi entropy of the $\Gamma_{\mathrm{SAR}}(\mu, L)$ model \eqref{eq-GammaSAR-R} by including additional terms that depend on the texture parameter $\alpha$. Specifically:
+\begingroup\small
 \begin{equation}
 \label{eq-HGI0-R}
 \boxed{%
 \begin{aligned}
 R_{\lambda}\bigl(\mathcal{G}^0_I(\alpha,\mu,L)\bigr)
-&=R_{\lambda}\bigl(\Gamma_{\mathrm{SAR}}(L,\mu)\bigr)
+&=R_{\lambda}\bigl(\Gamma_{\mathrm{SAR}}(\mu, L)\bigr)
   +\ln(-1-\alpha) \\
 &\qquad+\,\frac{1}{1-\lambda}\!\bigl[
     \lambda\bigl(\ln\Gamma(L-\alpha)-\ln\Gamma(-\alpha)\bigr)
@@ -379,6 +384,7 @@ R_{\lambda}\bigl(\mathcal{G}^0_I(\alpha,\mu,L)\bigr)
   \bigr].
 \end{aligned}}
 \end{equation}
+\endgroup
 Equation&nbsp;\eqref{eq-HGI0-R} can be read as:
 \vspace{-15pt}
 \begin{equation*}
@@ -405,18 +411,19 @@ the excess term $\Delta^R_\alpha$ depends on the heterogeneity parameter $\alpha
 $\alpha\to-\infty$, validating the decomposition, i.e.,
 \vspace{-15pt}
 $$
-\lim_{\alpha \to -\infty} R_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = R_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L, \mu)\bigr).
+\lim_{\alpha \to -\infty} R_\lambda\bigl(\mathcal{G}^0_I( \alpha, \mu, L)\bigr) = R_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L, \mu)\bigr).
 $$ 
-Appendix&nbsp;\ref{app:A24} provides proof of this limiting behavior.
+Appendix A provides proof of this limiting behavior.
 
-### Tsallis entropy
+### Tsallis Entropy
 
 For a continuous random variable $Z$ with pdf $f(z)$, the Tsallis entropy of order $\lambda \in \mathbbm R_+ \setminus \{1\}$ is defined as:
 \begin{equation}
 \label{eq:tsallis}
 T_\lambda(Z) = \frac{1}{\lambda - 1} \mathbb{E} \Bigl[ 1 - (f(Z))^{\lambda - 1} \Bigr]
-= \frac{1}{\lambda - 1} \Bigl[ 1 - \int_{-\infty}^{\infty} \bigl(f(z)\bigr)^{\lambda} \,\mathrm{d}z \Bigr]. 
+= \frac{1}{\lambda - 1} \Bigl[ 1 - \int_{\mathcal{B}} \bigl(f(z)\bigr)^{\lambda} \,\mathrm{d}z \Bigr],
 \end{equation}
+where $\mathcal{B} \subseteq \mathbb{R}$ denotes the support of $f(z)$.
 In the limit $\lambda\to1$,
   $T_\lambda(Z)\to H(Z)$, making Tsallis a
   one-parameter generalization of Shannon entropy.
@@ -424,10 +431,10 @@ In the limit $\lambda\to1$,
 Using&nbsp;\eqref{eq:tsallis}, we derive closed-form expressions for the Tsallis entropy of the $\Gamma_{\mathrm{SAR}}$ and the $\mathcal{G}^0_I$ distributions.
 
 \textbf{Homogeneous case.} 
-Let $Z\sim\Gamma_{\mathrm{SAR}}(L,\mu)$  with pdf given by \eqref{E:gamma1}. Define the integral:
+Let $Z\sim\Gamma_{\mathrm{SAR}}(\mu, L)$  with pdf given by \eqref{E:gamma1}. Define the integral:
 \begin{equation*}
 I
-= \int_0^\infty \left[f_{\Gamma_{\text{SAR}}}(z;L,\mu)\right]^{\lambda} \,\mathrm{d}z.
+= \int_0^\infty \left[f_{\Gamma_{\text{SAR}}}(z;\mu, L)\right]^{\lambda} \,\mathrm{d}z.
 \end{equation*}
 Substituting the density function and simplifying constants, we get
 \begin{equation*}
@@ -461,7 +468,7 @@ I
 \end{equation}
 Substituting Equation \eqref{eq:Jgamma1} into the Tsallis entropy definition \eqref{eq:tsallis}, we have:
 \begin{equation}
-T_\lambda\big(\Gamma_{\text{SAR}}(L,\mu)\big)
+T_\lambda\big(\Gamma_{\text{SAR}}(\mu, L)\big)
 = \frac{1}{\lambda - 1}
    \left[
      1 -
@@ -474,7 +481,7 @@ T_\lambda\big(\Gamma_{\text{SAR}}(L,\mu)\big)
 \end{equation}
 This expression can also be written in an equivalent form:
 <!-- \begin{equation*} -->
-<!-- T_\lambda\big(\Gamma_{\text{SAR}}(L,\mu)\big) -->
+<!-- T_\lambda\big(\Gamma_{\text{SAR}}(\mu, L)\big) -->
 <!-- = \frac{1}{\lambda - 1} \left[ -->
 <!--    1 - -->
 <!--    \mu^{1 - \lambda}\, -->
@@ -484,11 +491,12 @@ This expression can also be written in an equivalent form:
 <!--    \Gamma(L)^{ - \lambda} -->
 <!-- \right], -->
 <!-- \end{equation*} -->
+\begingroup\small
 \begin{equation}
 \label{eq:gammasar-Tsallis}
 \boxed{%
 \begin{aligned}
-T_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L,\mu)\bigr)=
+T_\lambda\bigl(\Gamma_{\mathrm{SAR}}(\mu, L)\bigr)=
 \frac{1}{\lambda-1}\Bigl\{1-
 \exp\Bigl[
 (1-\lambda)\ln\mu
@@ -499,7 +507,7 @@ T_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L,\mu)\bigr)=
 \Bigr]\Bigr\}.
 \end{aligned}}
 \end{equation}
-
+\endgroup
 \textbf{Textured case.} Starting from the Tsallis definition in \eqref{eq:tsallis} and the pdf of $Z\sim\mathcal{G}^0_I(\alpha,\gamma,L)$ in \eqref{E:gi01}, define:
 \begin{equation*}
 I = \int_0^\infty \left[ f_{\mathcal{G}_I^0}(z) \right]^\lambda \,\mathrm{d}z,
@@ -535,7 +543,7 @@ I = \left[ \frac{\Gamma(L - \alpha)}{\Gamma(-\alpha) \Gamma(L)} \right]^\lambda
 \cdot \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}.
 \label{eq:J_beta1}
 \end{equation}
-To express $J$ in terms of the mean $\mu$, we use the relation $\gamma = -\mu(\alpha + 1)$ valid for $\alpha < -1$. Substituting into \eqref{eq:J_beta1} gives
+To express $I$ in terms of the mean $\mu$, we use the relation $\gamma = -\mu(\alpha + 1)$ valid for $\alpha < -1$. Substituting into \eqref{eq:J_beta1} gives
 \begin{equation*}
 I = [-\mu(\alpha + 1)]^{1-\lambda} L^{\lambda-1} 
 \left[ \frac{\Gamma(L - \alpha)}{\Gamma(-\alpha) \Gamma(L)} \right]^\lambda 
@@ -551,12 +559,13 @@ T_\lambda\bigl(\mathcal{G}^0_I( \alpha,\mu, L)\bigr)
 \frac{\Gamma(a)\Gamma(b)}{\Gamma(\lambda(L - \alpha))}
 \biggr\}.
 \end{equation*}
-This expression extends the Tsallis entropy of the $\Gamma_{\mathrm{SAR}}(L,\mu)$ model \eqref{eq:gammasar-Tsallis} by including additional terms that depend on the texture parameter $\alpha$. It can be written in an exponential-logarithmic form as:
+This expression extends the Tsallis entropy of the $\Gamma_{\mathrm{SAR}}(\mu, L)$ model \eqref{eq:gammasar-Tsallis} by including additional terms that depend on the texture parameter $\alpha$. It can be written in an exponential-logarithmic form as:
+\begingroup\small
 \begin{equation}
 \label{eq:GI0-Tsallis}
 \boxed{%
 \begin{aligned}
-  T_\lambda\bigl(\mathcal{G}^0_I(\mu,\alpha,L)\bigr) = T_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L,\mu)\bigr)\;+\;\frac{1}{\lambda-1}\,
+  T_\lambda\bigl(\mathcal{G}^0_I(\mu,\alpha,L)\bigr) = T_\lambda\bigl(\Gamma_{\mathrm{SAR}}(\mu, L)\bigr)\;+\;\frac{1}{\lambda-1}\,
   \exp\Bigl[
   (1-\lambda)\ln\mu
   +(\lambda-1)\ln L
@@ -574,6 +583,7 @@ This expression extends the Tsallis entropy of the $\Gamma_{\mathrm{SAR}}(L,\mu)
   \Bigr]\Bigr\}.
 \end{aligned}}
 \end{equation}
+\endgroup
 Equation&nbsp;\eqref{eq:GI0-Tsallis} can be interpreted as:
 \begin{equation*}
   T_\lambda(\mathcal{G}^0_I)
@@ -608,53 +618,69 @@ where
 the excess term $\Delta^T_\alpha$ depends on the heterogeneity parameter $\alpha$, and  $\Delta^T_\alpha\to0$ when
 $\alpha\to-\infty$, validating the decomposition, i.e.,
 $$
-\lim_{\alpha \to -\infty} T_\lambda\bigl(\mathcal{G}^0_I(\mu, \alpha, L)\bigr) = T_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L, \mu)\bigr).
+\lim_{\alpha \to -\infty} T_\lambda\bigl(\mathcal{G}^0_I( \alpha, \mu, L)\bigr) = T_\lambda\bigl(\Gamma_{\mathrm{SAR}}(L, \mu)\bigr).
 $$ 
-Appendix&nbsp;\ref{app:A33} provides proof of this limiting behavior.
+Appendix A provides proof of this limiting behavior.
 
 Figure&nbsp;\ref{fig:entropy-diagram} provides a conceptual overview of the decomposition structure of the differential entropy for the heterogeneous model $\mathcal{G}^0_I$. This entropy is expressed as the sum of a baseline term corresponding to the homogeneous $\Gamma_{\text{SAR}}$ distribution and an excess term $\Delta_\alpha$ that reflects the contribution of texture. The decomposition applies to the three entropy measures considered in this study: Shannon \eqref{eq:GIO-Sh1}, Rényi \eqref{eq-HGI0-R}, and Tsallis \eqref{eq:GI0-Tsallis}. In all cases, the excess term depends on the roughness parameter $\alpha$ and vanishes as $\alpha\to-\infty$, thus recovering the homogeneous case.
+
 ```{=latex}
 \begin{figure}[H]
-    \centering
-    \begin{tikzpicture}[
-    node distance=1.5cm,
-    entropy/.style={rectangle, rounded corners, draw=blue!60, fill=blue!10, thick, minimum width=3cm, align=center, font=\sffamily},
-    property/.style={rectangle, draw=orange!60, fill=orange!10, thick, minimum width=3cm, align=center, font=\sffamily},
+  \centering
+  \caption{Conceptual diagram of entropy decomposition.}
+  \label{fig:entropy-diagram}
+
+  \begin{tikzpicture}[
+    scale=0.88, every node/.style={transform shape},
+    node distance=1.2cm,
+    entropy/.style={
+      rectangle, rounded corners, draw=blue!60, fill=blue!10, thick,
+      minimum width=2.6cm, align=center, font=\sffamily
+    },
+    property/.style={
+      rectangle, draw=orange!60, fill=orange!10, thick,
+      minimum width=2.6cm, align=center, font=\sffamily
+    },
     arrow/.style={-Stealth, thick}
-    ]
-    \node[entropy] (shannon) {Shannon \ $H(Z)$};
-    \node[entropy, right=of shannon] (renyi) {Rényi \ $R_\lambda(Z)$};
-    \node[entropy, right=of renyi] (tsallis) {Tsallis \ $T_\lambda(Z)$};
+  ]
 
-    \node[property, below=2cm of renyi] (decomp) {Entropy Decomposition\\[0.5ex]
+  \node[entropy] (shannon) {Shannon \ $H(Z)$};
+  \node[entropy, right=of shannon] (renyi)   {Rényi \ $R_\lambda(Z)$};
+  \node[entropy, right=of renyi] (tsallis)   {Tsallis \ $T_\lambda(Z)$};
+
+  \node[property, below=1.6cm of renyi] (decomp) {Entropy Decomposition\\[0.5ex]
     $\text{Entropy}\bigl(\mathcal{G}^{0}_{I}\bigr)
-\;=\;
-\text{Entropy}\bigl(\Gamma_{\mathrm{SAR}}\bigr)
-\;+\;
-\Delta_{\alpha}$};
+    \;=\;
+    \text{Entropy}\bigl(\Gamma_{\mathrm{SAR}}\bigr)
+    \;+\;
+    \Delta_{\alpha}$};
 
-    \node[property, below left=1.1cm of decomp, align=center] (baseline) {Homogeneous Baseline\\($\Gamma_{\text{SAR}}$)};
-    \node[property, below right=1.1cm of decomp, align=center] (texture) {Texture-Induced Excess\\($\Delta_{\alpha}$)};
+  % --- OJO: espacio tras \\ para que NO sea \(
+  \node[property, below left=1.0cm of decomp, align=center] (baseline)
+    {Homogeneous Baseline\\ ($\Gamma_{\text{SAR}}$)};
+  \node[property, below right=1.0cm of decomp, align=center] (texture)
+    {Texture-Induced Excess\\ ($\Delta_{\alpha}$)};
 
-    \node[property, below=1.8cm of texture, align=center] (limits) {Vanishing Excess\\ $\Delta_\alpha \to 0$ as $\alpha\to -\infty$};
-    \node[property, below=1.8cm of baseline, align=center] (test) {Statistical Test\\ $\Delta_\alpha \neq 0?$};
+  \node[property, below=1.5cm of texture, align=center] (limits)
+    {Vanishing Excess\\ $\Delta_\alpha \to 0$ as $\alpha\to -\infty$};
+  \node[property, below=1.5cm of baseline, align=center] (test)
+    {Statistical Test\\ $\Delta_\alpha \neq 0?$};
 
-    \draw[arrow] (shannon.south) |- (decomp);
-    \draw[arrow] (renyi.south) -- (decomp);
-    \draw[arrow] (tsallis.south) |- (decomp);
+  \draw[arrow] (shannon.south) |- (decomp);
+  \draw[arrow] (renyi.south)    -- (decomp);
+  \draw[arrow] (tsallis.south)  |- (decomp);
 
-    \draw[arrow] (decomp.south west) -- (baseline.north);
-    \draw[arrow] (decomp.south east) -- (texture.north);
+  \draw[arrow] (decomp.south west) -- (baseline.north);
+  \draw[arrow] (decomp.south east) -- (texture.north);
 
-    \draw[arrow] (texture.south) -- (limits.north);
-    \draw[arrow] (baseline.south) -- (test.north);
-    \draw[arrow] (texture.south west) -- (test.east);
-    \end{tikzpicture}
-    \caption{Conceptual diagram of entropy decomposition.}
-    \label{fig:entropy-diagram}
+  \draw[arrow] (texture.south)  -- (limits.north);
+  \draw[arrow] (baseline.south) -- (test.north);
+  \draw[arrow] (texture.south west) -- (test.east);
+
+  \end{tikzpicture}
 \end{figure}
-```
 
+```
 
 To conclude this section, we illustrate the convergence behavior of each entropy measure.
 
@@ -666,8 +692,8 @@ In the case of Rényi entropy (@fig-renyi-convergence-r), for $\lambda = 0.6$ an
 
 For Tsallis entropy (@fig-tsallis-convergence-t), the separation between curves is most noticeable for $\lambda = 0.6$ and $L = 5$, where texture has more influence. When $\lambda$ increases to $0.9$ or when $L$ is increased, the curves become more compact and approach the Gamma entropy faster, indicating lower sensitivity to texture variation and confirming that $\lambda$ controls the influence of the tail behavior.
 
-```{r fig-shannon-convergence-s, echo=FALSE, message=FALSE, warning=FALSE, fig.pos="hbt", out.width="98%", fig.cap="Shannon entropy $H(\\mathcal{G}^0_I)$ converges to $H(\\Gamma_{\\mathrm{SAR}})$ as $\\alpha$ decreases.", fig.width=8, fig.height=3.9}
 
+```{r fig-shannon-convergence-s, echo=FALSE, message=FALSE, warning=FALSE, fig.pos="hbt", out.width="98%", fig.cap="Shannon entropy $H(\\mathcal{G}^0_I)$ converges to $H(\\Gamma_{\\mathrm{SAR}})$ as $\\alpha$ decreases.", fig.width=8, fig.height=3.9} 
 
 
 entropy_gamma_sar <- function(L, mu) {
@@ -727,6 +753,7 @@ p2 <- plot_shannon(18)
 (p1 | p2) + plot_layout(guides = "collect") & theme(legend.position = "bottom")
 
 ```
+
 
 ```{r fig-renyi-convergence-r, echo=FALSE, message=FALSE, warning=FALSE, fig.pos="hbt", out.width="98%", fig.cap="Rényi entropy $R_{\\lambda}(\\mathcal{G}^0_I)$ converges to $R_{\\lambda}(\\Gamma_{\\mathrm{SAR}})$ as $\\alpha$ decreases.", fig.width=8, fig.height=3.9}
 # fig.fullwidth = TRUE, out.width="95%"
@@ -926,15 +953,15 @@ In practice, we estimate $Q'(p)$ using order statistics. Consider:
   Q'(p) \approx \frac{n+1}{2m}(Z_{(i+m)} - Z_{(i-m)}), \quad m \le i \le n-m.
 \end{equation}
 
-By taking logarithms and averaging over $i$, Vasicek’s estimator&nbsp;[-@vasicek1976test] becomes:
+By taking logarithms and averaging over $i$, Vasicek’s estimator becomes:
 \begin{equation}
 \label{E:Vasi}
   \widehat{H}_{\text{V}}(\bm{Z}) = \frac{1}{n} \sum_{i=1}^{n} \ln\left[ \frac{n}{2m}(Z_{(i+m)} - Z_{(i-m)}) \right].
 \end{equation}
 
-Vasicek showed that under regularity conditions ($m \to \infty$, $m/n \to 0$), $\widehat{H}_{\text{V}} \to H(f)$ in probability. 
+Vasicek&nbsp;[-@vasicek1976test] showed that under regularity conditions ($m \to \infty$, $m/n \to 0$), $\widehat{H}_{\text{V}} \to H(f)$ in probability. 
 
-Nonparametric estimators using order statistics and spacings, such as Vasicek’s m-spacing estimator, provide a flexible alternative to model-based entropy estimation. By converting the entropy integral into a quantile-based form (see Appendix&nbsp;\ref{app:Vasicek}), these estimators offer robust, consistent estimation of Shannon entropy without requiring explicit density estimation.
+Nonparametric estimators using order statistics and spacings, such as Vasicek’s m-spacing estimator, provide a flexible alternative to model-based entropy estimation. By converting the entropy integral into a quantile-based form (see Appendix B), these estimators offer robust, consistent estimation of Shannon entropy without requiring explicit density estimation.
 
 Subsequent extensions and refinements (not detailed here) further improve bias, variance, and performance at the boundaries, forming a robust toolkit for entropy estimation in continuous distributions.
 
@@ -1058,7 +1085,7 @@ This estimator extends the $m$-spacing approach originally introduced for Shanno
 \label{subsec:tsallis-spacing}
 Following the approach of Vasicek&nbsp;[-@vasicek1976test] and Ebrahimi et al.&nbsp;[-@Ebrahimi1994] for Shannon entropy, and the methodology for Rényi entropy proposed by Al-Labadi, Chu and Xu&nbsp;[-@AlLabadi2024], we derive a nonparametric estimator for Tsallis entropy.
 
-A detailed derivation of this estimator, including the quantile-based transformation and spacing approximation, is provided in Appendix&nbsp;\ref{app:tsallis_1}.
+A detailed derivation of this estimator, including the quantile-based transformation and spacing approximation, is provided in Appendix B.
 
 
 

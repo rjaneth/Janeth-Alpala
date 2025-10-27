@@ -23,7 +23,7 @@ source("./Code/bootstrap_renyi_entropy_estimator_v1.R")
 source("./Code/tsallis_estimator_optimized.R")
 source("./Code/bootstrap_tsallis_entropy_optimized.R")
 source("./Code/read_ENVI_images.R")
-source("./Code/imagematrix_visualizer.R")
+source("./Code/imagematrix_visualizer_v2.R")
 
 
 shannon_theoretical <- function(L, mu) {
@@ -232,7 +232,10 @@ server <- function(input, output, session) {
       previewImagematrixPanel(
         imagematrix_color(pvals),
         palette_option     = "viridis-H",
-        significance_level = NULL
+        significance_level = NULL,
+       # legend_width_px = 700,
+        #scale_factor = 2,
+        direction = -1
       )
     })
   })

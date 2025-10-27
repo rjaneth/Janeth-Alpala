@@ -3,7 +3,7 @@ source("setup.R")
 ```
 
 
-# CONCLUSIONS AND FUTURE WORK {#sec-Chapter5}
+# CONCLUSIONS {#sec-Chapter5}
 
 This thesis presented a statistical framework for detecting heterogeneity in SAR images, offering both theoretical and practical insights into a fundamental question: How can one effectively distinguish heterogeneous clutter from fully developed speckle, assuming SAR intensity is modeled by the Gamma SAR ($\Gamma_{\text{SAR}}$) distribution?
 
@@ -17,9 +17,12 @@ Quantitative evaluations using ground truth regions of interest (ROIs) and stand
 
 Compared to conventional classification methods, the proposed entropy-based statistical tests offer practical advantages:  they provide interpretable, analytical significance measures and require no training data or manual labeling, facilitating rapid analysis suitable for environments with limited data availability. Typical computations are efficient, generally taking only a few minutes depending on the image size and number of bootstrap replications. Since the three tests share a common computational structure, their execution times are comparable, making the proposed methods particularly attractive for quick screening and exploratory analysis.
 
+\subsection*{Future directions}
+
 Future research directions identified from this thesis include integrating the improved bootstrap-based Rényi and Tsallis estimators into broader SAR classification frameworks, both supervised and unsupervised, to expand their applicability beyond heterogeneity detection. This integration could enable the development of multi-level texture classification schemes (e.g., low, moderate, high heterogeneity) that go beyond binary discrimination and provide a more detailed understanding of the scene, without requiring labeled training data.
 
 Additionally, extending the proposed methodology to polarimetric SAR (PolSAR) data represents a promising avenue. One approach could involve analyzing the intensity channels independently and fusing the resulting entropy information using multivariate models. Alternatively, a fully polarimetric analysis could be pursued by testing deviations from the scaled complex Wishart distribution. In this context, exploring the asymptotic behavior of the generalized variance (i.e., the determinant of the covariance matrix) under the complex Wishart model may offer valuable theoretical insights for detecting structural changes in polarimetric data.
+
 
 
 

@@ -1,15 +1,52 @@
-\begin{abbreviations}{ll} % Include a list of abbreviations (a table of two columns)
+% --- SOLO afecta a esta tabla ---
+{%
+\setlength{\extrarowheight}{0.5pt}   % +3pt por fila (prueba 2–4pt)
+\renewcommand{\arraystretch}{1.18} % factor global (1.0=normal)
 
-\textbf{SAR} & Synthetic Aperture Radar\\
-\textbf{UAVSAR} & Uninhabited Aerial Vehicle Synthetic Aperture Radar\\
-\textbf{PDF} & Probability density function\\
-\textbf{CDF} & Cumulative distribution function\\
-\textbf{ASF} & Alaska Satellite Facility\\
-\textbf{ESA} & Agencia Espacial Europea\\
-\textbf{ASF} & Alaska Satellite Facility\\
-\textbf{ENL} & Equivalent Number of Looks\\
-\textbf{SNAP} & Sentinel Application Platform\\
-\textbf{ROI} & Region of Interest\\ 
-\textbf{ROC} & Receiver Operating Characteristic \\
-\textbf{AUC} & Area Under the ROC Curve
+% Si quieres que las definiciones envuelvan línea, usa p{...}:
+% \begin{abbreviations}{@{}p{3cm}p{11cm}@{}}
+\begin{abbreviations}{@{}ll@{}}    % o deja "ll" si no necesitas ajuste de ancho
+\textbf{AUC}    & Area Under the ROC Curve \\
+\textbf{ASF}    & Alaska Satellite Facility \\
+\textbf{CDF}    & Cumulative distribution function \\
+\textbf{ENL}    & Equivalent number of looks \\
+\textbf{ESA}    & European Space Agency \\
+\textbf{PDF}    & Probability density function \\
+\textbf{ROI}    & Region of interest \\
+\textbf{ROC}    & Receiver Operating Characteristic \\
+\textbf{SAR}    & Synthetic Aperture Radar \\
+\textbf{SNAP}   & Sentinel Application Platform \\
+\textbf{UAVSAR} & Uninhabited Aerial Vehicle Synthetic Aperture Radar \\
 \end{abbreviations}
+}% --- fin ámbito local ---
+
+
+% \begin{abbreviations}{ll}
+% \textbf{AUC}   & Area Under the ROC Curve \\
+% \textbf{ASF}   & Alaska Satellite Facility \\
+% \textbf{CDF}   & Cumulative distribution function \\
+% \textbf{ENL}   & Equivalent number of looks \\
+% \textbf{ESA}   & European Space Agency \\
+% \textbf{PDF}   & Probability density function \\
+% \textbf{ROI}   & Region of interest \\
+% \textbf{ROC}   & Receiver Operating Characteristic \\
+% \textbf{SAR}   & Synthetic Aperture Radar \\
+% \textbf{SNAP}  & Sentinel Application Platform \\
+% \textbf{UAVSAR} & Uninhabited Aerial Vehicle Synthetic Aperture Radar \\
+% \end{abbreviations}
+
+% \begin{abbreviations}{ll} % Include a list of abbreviations (a table of two columns)
+% 
+% \textbf{SAR} & Synthetic Aperture Radar\\
+% \textbf{UAVSAR} & Uninhabited Aerial Vehicle Synthetic Aperture Radar\\
+% \textbf{PDF} & Probability density function\\
+% \textbf{CDF} & Cumulative distribution function\\
+% \textbf{ASF} & Alaska Satellite Facility\\
+% \textbf{ESA} & Agencia Espacial Europea\\
+% \textbf{ASF} & Alaska Satellite Facility\\
+% \textbf{ENL} & Equivalent Number of Looks\\
+% \textbf{SNAP} & Sentinel Application Platform\\
+% \textbf{ROI} & Region of Interest\\ 
+% \textbf{ROC} & Receiver Operating Characteristic \\
+% \textbf{AUC} & Area Under the ROC Curve
+% \end{abbreviations}
