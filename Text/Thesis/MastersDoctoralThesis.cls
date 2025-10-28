@@ -253,7 +253,7 @@
 %\RequirePackage{placeins}
 \RequirePackage{array}
 \RequirePackage{multirow}    % Para \bm
-\RequirePackage{tabu}
+%\RequirePackage{tabu}
 \RequirePackage{caption} % Required for customising the captions
 %\captionsetup{justification=centering,font=small,labelfont=bf}
 \captionsetup{format=hang,justification=justified,font=small,labelfont=bf,margin=0pt}

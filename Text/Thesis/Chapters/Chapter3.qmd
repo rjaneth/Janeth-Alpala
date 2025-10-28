@@ -164,7 +164,7 @@ print(combined_plot_gi0)
 #| message: false
 #| warning: false
 #| results: 'asis'
-#| tbl-cap: 'Bias and MSE of Shannon entropy estimators under $\Gamma_{\text{SAR}}(5,1)$.'
+#| tbl-cap: 'Bias and MSE of Shannon entropy estimators under $\Gamma_{\text{SAR}}(5,1)$'
 #| tbl-pos: 'htb'
 
 
@@ -466,7 +466,12 @@ knitr::kable(
   row_spec(12, extra_latex_after = "\\cline{3-4}") %>%
   collapse_rows(latex_hline = "major", valign = "middle") %>%
   row_spec(0, align = "c") %>%
-  kable_styling(font_size = 10,latex_options = "scale_down", full_width = TRUE)
+  kable_styling(font_size = 10,latex_options = "scale_down")%>%
+ column_spec(1, width = "3.5cm") %>%
+column_spec(2, width = "3.5cm") %>%
+column_spec(3, width = "3.5cm") %>%
+column_spec(4, width = "3.5cm")
+
 ```
 \vspace{-20pt}
 
@@ -1526,14 +1531,14 @@ The size of a statistical test, also known as the Type&nbsp;I error rate, refers
 
 To evaluate this, we performed a Monte Carlo simulation with $1000$ replications for each combination of sample size and number of looks $L$, under the null hypothesis $\mathcal{H}_0$, where the data follow a $\Gamma_{\text{SAR}}$ distribution with mean $\mu = 1$. For each replication, the corresponding test statistic was computed using a bootstrap-based entropy estimator with $B = 100$ resamples. In the case of the Rényi and Tsallis entropy-based tests, we used order parameters $\lambda = 0.9$ and $\lambda = 0.85$, respectively. The empirical size was then estimated as the proportion of replications in which the null hypothesis was incorrectly rejected.
 
-The observed Type&nbsp;I error rates for the three entropy-based tests were consistently close to the nominal levels ($0.01$, $0.05$, $0.10$), thereby confirming the validity and proper calibration of the procedures. These results are summarized in Tables&nbsp;\ref{tab:table_size_power_shannon}-\ref{tab:size-power-tsallis}, and are visualized in the top panel of&nbsp;Figure&nbsp;\ref{fig-compare_size_power_plot0}.
+The observed Type&nbsp;I error rates for the three entropy-based tests were consistently close to the nominal levels ($0.01$, $0.05$, $0.10$), thereby confirming the validity and proper calibration of the procedures. These results are summarized in Tables&nbsp;[-@tbl-table_size_power_shannon]--[-@tbl-size-power-tsallis], and are visualized in the top panel of&nbsp;Figure&nbsp;\ref{fig-compare_size_power_plot0}.
 
 The power of a statistical test is defined as the probability of correctly rejecting the null hypothesis when it is false, that is, when the data are generated under the alternative hypothesis $\mathcal{H}_1$. It is mathematically given by $1 - \beta$, where $\beta$ represents the Type&nbsp;II error rate (the probability of failing to reject a false null hypothesis). In other words, high power indicates low probability of committing a Type II error, and reflects the test’s sensitivity to deviations from $\mathcal{H}_0$.
 
 To assess this property, we simulated data under the alternative hypothesis $\mathcal{H}_1$, assuming the $\mathcal{G}^0_I$ distribution with $\mu = 1$ and  $\alpha = -2$. For each combination of sample size and number of looks $L$, we performed $1000$ Monte Carlo replications. In each replication, the corresponding test statistic was computed using a bootstrap-based entropy estimator with $B = 100$ resamples. For the Rényi and Tsallis entropy-based tests, we used order parameters $\lambda = 0.9$ and $\lambda = 0.85$, respectively. Power was estimated as the proportion of replications in which the null hypothesis $\mathcal{H}_0$ was correctly rejected.
 
 As expected, power increased with both the sample size and the number of looks. This trend was consistent across all three entropic measures, demonstrating the effectiveness of the tests in identifying departures from the null hypothesis under heterogeneous conditions.
-The results are shown in Tables&nbsp;\ref{tab:table_size_power_shannon}-\ref{tab:size-power-tsallis}, with graphical representations provided in the lower panel of&nbsp;Figure&nbsp;\ref{fig-compare_size_power_plot0}.
+The results are shown in Tables&nbsp;[-@tbl-table_size_power_shannon]--[-@tbl-size-power-tsallis], with graphical representations provided in the lower panel of&nbsp;Figure&nbsp;\ref{fig-compare_size_power_plot0}.
 
 <!-- The observed increase in power with both sample size and number of looks is theoretically justified. Larger sample sizes provide more information about the underlying distribution, which reduces variability in the estimation of the test statistic and improves its ability to detect departures from the null hypothesis. Similarly, in the context of the $\Gamma_{\text{SAR}}$ and $\mathcal{G}^0_I$ models, a higher number of looks $L$ corresponds to less speckle noise and more stable observations. This leads to more reliable test statistics, further enhancing the ability of the test to distinguish between homogeneous and heterogeneous regions. Therefore, both increased $n$ and $L$ contribute to higher sensitivity, which is reflected in the rising power curves observed in the simulations. -->
 ```{r Simulated_error_type_I-shannon1, echo=FALSE, message=FALSE}
@@ -1703,7 +1708,14 @@ if (!file.exists("./Data/results_power-shannon2.Rdata")) {
 ```
 
 \renewcommand{\arraystretch}{0.9}
-```{r Table_size_and_power-shannon3, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+```{r}
+#| label: tbl-table_size_power_shannon
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'asis'
+#| tbl-cap: 'Size and Power of the $S_{\widetilde{H}}(\bm{Z})$ test statistic (Shannon)'
+#| tbl-pos: 'H'
 suppressMessages({
   suppressWarnings({
     load("./Data/type_I_results-shannon.Rdata")
@@ -1760,23 +1772,31 @@ suppressMessages({
 
 table_combined_result <- knitr::kable(
   combined_results,
-  caption = "Size and Power of the $S_{\\widetilde{H}}(\\bm{Z})$ test statistic (Shannon).",
+ # caption = "Size and Power of the $S_{\\widetilde{H}}(\\bm{Z})$ test statistic (Shannon).",
   format = "latex",
   booktabs = TRUE,
   align = "cccccccc",
   escape = FALSE,
   digits = 3,
-  label = "table_size_power_shannon",
+  #label = "table_size_power_shannon",
   centering = FALSE,
-  table.envir = "table", 
-  position="H", 
+  #table.envir = "table", 
+  #position="H", 
   linesep = ""
 ) %>%
   add_header_above(c(" " = 2, "Size" = 3, "Power" = 3)) %>%
   collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") %>%
   row_spec(0, align = "c") %>%
-  kable_styling(latex_options = "scale_down", font_size = 10) %>%
-  kable_styling(full_width = T)
+  kable_styling(latex_options = "scale_down", font_size = 10)%>%
+  column_spec(1, width = "1.5cm") %>%
+  column_spec(2, width = "1.5cm") %>%
+  column_spec(3, width = "1.5cm") %>%
+  column_spec(4, width = "1.5cm") %>%
+  column_spec(5, width = "1.5cm") %>%
+  column_spec(6, width = "1.5cm") %>%
+  column_spec(7, width = "1.5cm") %>%
+  column_spec(8, width = "1.5cm")
+  #kable_styling(full_width = T)
 
 print(table_combined_result)
 
@@ -1974,7 +1994,14 @@ if (!file.exists("./Data/results_power.Rdata")) {
 
 
 \renewcommand{\arraystretch}{0.9}
-```{r Table_size_and_power-renyi, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+```{r}
+#| label: tbl-size-power-renyi
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'asis'
+#| tbl-cap: 'Size and Power of the $S_{\widetilde{R}_{\lambda}}(\bm{Z})$ test statistic (Rényi)'
+#| tbl-pos: 'H'
 suppressMessages({
   suppressWarnings({
 
@@ -2034,23 +2061,31 @@ suppressMessages({
 
 table_combined_result <- knitr::kable(
   combined_results,
-  caption = "Size and Power of the $S_{\\widetilde{R}_{\\lambda}}(\\bm{Z})$ test statistic (Rényi).",
+  #caption = "Size and Power of the $S_{\\widetilde{R}_{\\lambda}}(\\bm{Z})$ test statistic (Rényi).",
   format = "latex",
   booktabs = TRUE,
   align = "cccccccc",
   escape = FALSE,
   digits = 3,
-  label = "size-power-renyi",
+  #label = "size-power-renyi",
   centering = FALSE,
-  table.envir = "table", 
-  position="H", 
+  #table.envir = "table", 
+  #position="H", 
   linesep = ""
 ) %>%
   add_header_above(c(" " = 2, "Size" = 3,  "Power" = 3)) %>%
   collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") %>%
   row_spec(0, align = "c") %>%
-  kable_styling(latex_options = "scale_down", font_size = 10) %>%
-  kable_styling(full_width = T)
+  kable_styling(latex_options = "scale_down", font_size = 10)%>%
+  column_spec(1, width = "1.5cm") %>%
+  column_spec(2, width = "1.5cm") %>%
+  column_spec(3, width = "1.5cm") %>%
+  column_spec(4, width = "1.5cm") %>%
+  column_spec(5, width = "1.5cm") %>%
+  column_spec(6, width = "1.5cm") %>%
+  column_spec(7, width = "1.5cm") %>%
+  column_spec(8, width = "1.5cm")
+  #kable_styling(full_width = T)
 
 print(table_combined_result)
 ```
@@ -2248,7 +2283,14 @@ if (!file.exists("./Data/results_power-tsallis1.Rdata")) {
 
 
 \renewcommand{\arraystretch}{1}
-```{r Table_size_and_power-tsallis0, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+```{r}
+#| label: tbl-size-power-tsallis
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'asis'
+#| tbl-cap: 'Size and Power of the $S_{\\widetilde{T}_{\\lambda}}(\\bm{Z})$ test statistic (Tsallis)'
+#| tbl-pos: 'H'
 suppressMessages({
   suppressWarnings({
 
@@ -2308,23 +2350,32 @@ suppressMessages({
 
 table_combined_result <- knitr::kable(
   combined_results,
-  caption = "Size and Power of the $S_{\\widetilde{T}_{\\lambda}}(\\bm{Z})$ test statistic (Tsallis).",
+  #caption = "Size and Power of the $S_{\\widetilde{T}_{\\lambda}}(\\bm{Z})$ test statistic (Tsallis).",
   format = "latex",
   booktabs = TRUE,
   align = "cccccccc",
   escape = FALSE,
   digits = 3,
-  label = "size-power-tsallis",
+  #label = "size-power-tsallis",
   centering = FALSE,
-  table.envir = "table", 
-  position="H", 
+  #table.envir = "table", 
+  #position="H", 
   linesep = ""
 ) %>%
   add_header_above(c(" " = 2, "Size" = 3,  "Power" = 3)) %>%
   collapse_rows(columns = 1:2, latex_hline = "major", valign = "middle") %>%
   row_spec(0, align = "c") %>%
-  kable_styling(latex_options = "scale_down", font_size = 10) %>%
-  kable_styling(full_width = T)
+  kable_styling(latex_options = "scale_down", font_size = 10)%>%
+  column_spec(1, width = "1.5cm") %>%
+  column_spec(2, width = "1.5cm") %>%
+  column_spec(3, width = "1.5cm") %>%
+  column_spec(4, width = "1.5cm") %>%
+  column_spec(5, width = "1.5cm") %>%
+  column_spec(6, width = "1.5cm") %>%
+  column_spec(7, width = "1.5cm") %>%
+  column_spec(8, width = "1.5cm")
+
+  #kable_styling(full_width = T)
 
 print(table_combined_result)
 ```
@@ -2377,7 +2428,7 @@ comparison_data <- left_join(size_all, power_all,
 
 
 ```{r fig-compare_size_power_plot0,  eval=FALSE,  include=FALSE, echo=FALSE, fig.width=10, fig.height=12, fig.pos="H", fig.cap="Comparative performance of test statistics based on Shannon, Rényi and Tsallis entropies. Size and Power for different sample sizes and $L$ values."}
-library(ggplot2)
+
 
 theme_set(theme_minimal() +
             theme(text = element_text(family = "serif"),

@@ -204,12 +204,18 @@ We evaluated the proposed test statistics using a set of five SAR images acquire
 
 To facilitate interpretation, we also included the corresponding optical images (Figures&nbsp;\ref{fig:london-optical}–\ref{fig:ja-optical}) obtained from Sentinel-2 Level-2A products. These optical scenes were acquired on dates close to those of the SAR acquisitions to ensure visual consistency. The optical data were downloaded from the Copernicus Data Space platform\footnote{\url{https://dataspace.copernicus.eu/}}.
 
-The SAR images come from TanDEM-X (X-band), UAVSAR (L-band), and Sentinel-1B (C-band). The two UAVSAR images were obtained from the Alaska Satellite Facility (ASF)\footnote{\url{https://search.asf.alaska.edu/}}, which provides airborne and satellite SAR data. The X-band images were downloaded from ESA’s Third Party Missions (ESA TPM)\footnote{\url{https://tpm-ds.eo.esa.int/collections/}}, and the C-band image from Copernicus Data Space. All images use single polarization (HH or VV), and their acquisition settings differ in resolution, scene size, and number of looks. Table&nbsp;\ref{tab:table_param} lists the main characteristics of each SAR image.
+The SAR images come from TanDEM-X (X-band), UAVSAR (L-band), and Sentinel-1B (C-band). The two UAVSAR images were obtained from the Alaska Satellite Facility (ASF)\footnote{\url{https://search.asf.alaska.edu/}}, which provides airborne and satellite SAR data. The X-band images were downloaded from ESA’s Third Party Missions (ESA TPM)\footnote{\url{https://tpm-ds.eo.esa.int/collections/}}, and the C-band image from Copernicus Data Space. All images use single polarization (HH or VV), and their acquisition settings differ in resolution, scene size, and number of looks. @tbl-table_param lists the main characteristics of each SAR image.
 
-
-\renewcommand{\arraystretch}{2}   
-```{r parameters_sar, echo=FALSE, message=FALSE, warning=FALSE}
-
+\renewcommand{\arraystretch}{1}   
+```{r}
+#| label: tbl-table_param
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'asis'
+#| tbl-cap: 'Parameters of selected SAR images'
+#| tbl-pos: 'H'
+#| 
 SAR_data <- data.frame(
   Site = c("London",  "Munich","New Orleans", "Dublin","Coast of Jalisco" ),
   Mission = c("TanDEM-X", "UAVSAR", "UAVSAR", "TanDEM-X", "Sentinel-1B"),
@@ -246,13 +252,14 @@ kable(SAR_data,
       align = "cccccccc",
       escape = FALSE,
       digits = 2,
-      label = "table_param",
-      centering = TRUE,
-      caption = "Parameters of selected SAR images.",
-      table.envir = "table", position = "hbt") %>%
+      #label = "table_param",
+      centering = TRUE
+     # caption = "Parameters of selected SAR images.",
+     # table.envir = "table", position = "hbt"
+      ) %>%
   row_spec(0, align = "c") %>%
   kable_styling(latex_options = "scale_down", font_size = 21) %>% 
-  kable_styling(full_width = TRUE) %>%
+  #kable_styling(full_width = TRUE) %>%
   column_spec(1, width = "3.8cm") %>%
   column_spec(2, width = "3.7cm") %>%
   column_spec(3, width = "2.5cm") %>%
@@ -786,13 +793,20 @@ $\eta=3.0$. Bottom:  (g-j) Binary decision maps at 0.05 significance level.}
 <!-- ``` -->
 
 
-In addition to the visual analysis presented above, we measured execution times to assess the computational cost of the proposed methods. Table&nbsp;\ref{tab:table_exec_times} reports the processing times for the three entropy-based tests (Shannon, Rényi, and Tsallis) with fixed $7\times7$ windows and, for comparison, the adaptive Tsallis variant with window sizes from $5\times5$ ($N_{\min}=5$) to $11\times11$ ($N_{\max}=11$). Times are reported in minutes and seconds (mm:ss) with $B=100$ bootstrap replications per window.
+In addition to the visual analysis presented above, we measured execution times to assess the computational cost of the proposed methods. @tbl-exec-times reports the processing times for the three entropy-based tests (Shannon, Rényi, and Tsallis) with fixed $7\times7$ windows and, for comparison, the adaptive Tsallis variant with window sizes from $5\times5$ ($N_{\min}=5$) to $11\times11$ ($N_{\max}=11$). Times are reported in minutes and seconds (mm:ss) with $B=100$ bootstrap replications per window.
 
 Overall, Shannon is the fastest across scenes, which is consistent with its simpler analytical form. Rényi and Tsallis are slightly slower due to the evaluation of additional terms. As expected, the adaptive Tsallis approach takes the longest because it evaluates multiple window sizes per pixel. 
 
 
-\renewcommand{\arraystretch}{1.8}   
-```{r times_sar_images2, echo=FALSE, message=FALSE, warning=FALSE}
+\renewcommand{\arraystretch}{1.8} 
+```{r}
+#| label: tbl-exec-times
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'asis'
+#| tbl-cap: 'Execution times for the heterogeneity detection using fixed $7\times7$ and adaptive windows ($N_{\min}=5$, $N_{\max}=11$), with $B=100$ bootstrap replications per scenario. Times are given in minutes and seconds (mm:ss). Rényi entropy uses $\lambda=0.9$ and Tsallis entropy uses $\lambda=0.85$'
+#| tbl-pos: 'hbt'
 
 #library(kableExtra)
 
@@ -826,13 +840,14 @@ format = "latex",
 booktabs = TRUE,
 align = "ccccc",
 escape = FALSE,
-label = "table_exec_times",#adaptive windows with side lengths ranging from $5\times5$ ($N{\min}=5$) to $11\times11$ ($N_{\max}=11$)
-centering = TRUE,
-caption = "Execution times for the heterogeneity detection using fixed $7\\times7$ and adaptive windows ($N_{\\min}=5$, $N_{\\max}=11$), with $B=100$ bootstrap replications per scenario. Times are given in minutes and seconds (mm:ss). Rényi entropy uses $\\lambda=0.9$ and Tsallis entropy uses $\\lambda=0.85$.",
-table.envir = "table", position = "hbt") %>%
+#label = "table_exec_times",#adaptive windows with side lengths ranging from $5\times5$ ($N{\min}=5$) to $11\times11$ ($N_{\max}=11$)
+centering = TRUE
+#caption = "Execution times for the heterogeneity detection using fixed $7\\times7$ and adaptive windows ($N_{\\min}=5$, $N_{\\max}=11$), with $B=100$ bootstrap replications per scenario. Times are given in minutes and seconds (mm:ss). Rényi entropy uses $\\lambda=0.9$ and Tsallis entropy uses $\\lambda=0.85$.",
+#table.envir = "table", position = "hbt"
+) %>%
 row_spec(0, align = "c") %>%
-kable_styling(latex_options = "scale_down", font_size = 16) %>%
-kable_styling(full_width = TRUE) %>%
+kable_styling(latex_options = "scale_down", font_size = 14) %>%
+#kable_styling(full_width = TRUE) %>%
 column_spec(1, width = "5cm") %>%
 column_spec(2, width = "3.5cm") %>%
 column_spec(3, width = "3.5cm") %>%
@@ -844,7 +859,7 @@ column_spec(5, width = "4cm")
 
 
 All experiments were executed on the workstation described in @sec-repr, using 8–16 CPU cores. 
-This setup allowed the entropy-based heterogeneity detection tests to process medium-sized SAR scenes within a few minutes, as reported in Table&nbsp;\ref{tab:table_exec_times}.
+This setup allowed the entropy-based heterogeneity detection tests to process medium-sized SAR scenes within a few minutes, as reported in @tbl-exec-times.
 
 The total runtime also depends on the number of bootstrap replications ($B$), since each replication recomputes the test statistic to approximate its sampling distribution under the null hypothesis.  
 In our simulations, we used $B=100$, which provides stable and reliable estimates with moderate computational cost. Stable results can already be achieved with $B\geq50$, whereas larger values of $B$ yield smoother $p$-value distributions at the expense of longer processing times.
@@ -864,7 +879,7 @@ Regarding the decision threshold, a significance level of $\alpha = 0.05$ was ad
 
 ### Quantitative Evaluation
 
-Eight polygonal regions of interest (ROIs) were manually selected for each of the three SAR scenes used in the quantitative study—London, Munich, and Dublin (Figures&nbsp;\ref{fig:london-sar-roi1}–\ref{fig:dublin-sar-roi1}). ROIs labeled in red correspond to heterogeneous areas (class 1) and those in blue to homogeneous areas (class 0). The polygons were rasterized to the image grid to form a partial ground truth. We thresholded the $p$-value maps at $\alpha=0.05$, labeling each pixel as heterogeneous (1) or homogeneous (0), and compared the resulting decisions with the ground truth to compute the F1-score ($F_1$), the Kappa coefficient ($\kappa$), and the overall accuracy (OA). Results are summarized in Table&nbsp;\ref{tab:table_metrics1}.
+Eight polygonal regions of interest (ROIs) were manually selected for each of the three SAR scenes used in the quantitative study—London, Munich, and Dublin (Figures&nbsp;\ref{fig:london-sar-roi1}–\ref{fig:dublin-sar-roi1}). ROIs labeled in red correspond to heterogeneous areas (class 1) and those in blue to homogeneous areas (class 0). The polygons were rasterized to the image grid to form a partial ground truth. We thresholded the $p$-value maps at $\alpha=0.05$, labeling each pixel as heterogeneous (1) or homogeneous (0), and compared the resulting decisions with the ground truth to compute the F1-score ($F_1$), the Kappa coefficient ($\kappa$), and the overall accuracy (OA). Results are summarized in @tbl-table-metrics1.
 
 ```{=latex}
 \begin{figure}[H]
@@ -897,7 +912,14 @@ Eight polygonal regions of interest (ROIs) were manually selected for each of th
 ```
 
 \renewcommand{\arraystretch}{1.3}
-```{r metrics_table_k, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+```{r}
+#| label: tbl-table-metrics1
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'asis'
+#| tbl-cap: 'Quantitative measures of heterogeneity detection'
+#| tbl-pos: 'htb'
 suppressPackageStartupMessages({
 library(dplyr)
 library(knitr)
@@ -979,16 +1001,22 @@ colnames(all_metrics) <- c("\\textbf{Scene}", "\\textbf{Test}", "$\\bm{F_1}$", "
 
 
 kable(all_metrics,
-caption = "Quantitative measures of heterogeneity detection",
+#caption = "Quantitative measures of heterogeneity detection",
 format = "latex",
 booktabs = TRUE,
 align = "ccccc",      
 escape = FALSE,
-label = "table_metrics1",
+#label = "table_metrics1",
 row.names = FALSE) %>%
 row_spec(0, align = "c") %>%
 collapse_rows(columns = 1, latex_hline = "major", valign = "bottom") %>%
-kable_styling(latex_options = c("hold_position","scale_down"), font_size = 11, full_width = T) %>%
+kable_styling(latex_options = c("hold_position","scale_down"), font_size = 14) %>%
+column_spec(1, width = "5cm") %>%
+column_spec(2, width = "3.5cm") %>%
+column_spec(3, width = "3.5cm") %>%
+column_spec(4, width = "3.5cm") %>%
+column_spec(5, width = "4cm")%>%
+#kable_styling(latex_options = c("hold_position","scale_down"), font_size = 11, full_width = T)
 print()
 
 
