@@ -340,7 +340,7 @@ To finalize the selection of the non-parametric Shannon entropy estimator used i
 
 @tbl-out-time shows the processing time of each estimator across different settings of $L$  and $n$. The results indicate that $\widetilde{H}_{\text{AO}}$ consistently achieves lower computational times compared to $\widetilde{H}_{\text{C}}$. This makes it the more efficient option, particularly relevant for large datasets, such as SAR images discussed in @sec-Chapter4. Consequently, $\widetilde{H}_{\text{AO}}$ is selected as the representative non-parametric Shannon entropy estimator in the simulations presented in the following sections.
 
-```{r Simulated_comparative_time6, echo=FALSE, message=FALSE}
+```{r Simulated_comparative_time6,  echo=FALSE, message=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 R <- 600
 mu <- 1
@@ -476,15 +476,15 @@ We aim to determine the optimal order $\lambda$ for the nonparametric entropy es
 
 To assess estimator performance, we conducted a Monte Carlo simulation with $R = 1000$ replications. For each value of $\lambda$, independent samples were generated, and entropy was estimated for each sample using the bootstrap bias-corrected version with $B = 100$ resamples  to reduce bias. The resulting estimates were compared to the theoretical entropy to compute the bias and MSE. This simulation-based procedure allows us to evaluate how the choice of $\lambda$ affects estimation accuracy, and whether the bootstrap improves performance.
 
-For the Rényi estimator (see Fig. \ref{fig-optimal_order}), $\lambda = 0.9$ minimizes the MSE while keeping the bias low, achieving a favorable bias-variance trade-off. Although $\lambda = 0.85$ yields slightly lower bias, it produces a higher MSE, supporting the choice of $\lambda = 0.9$ as optimal.
+For the Rényi estimator (see Figure&nbsp;\ref{fig-optimal_order}), $\lambda = 0.9$ minimizes the MSE while keeping the bias low, achieving a favorable bias-variance trade-off. Although $\lambda = 0.85$ yields slightly lower bias, it produces a higher MSE, supporting the choice of $\lambda = 0.9$ as optimal.
 
-Similarly, for the Tsallis estimator (Fig. \ref{fig-optimal_order-tsallis}), $\lambda = 0.85$ results in the lowest MSE with moderate bias, making it the most suitable choice.
+Similarly, for the Tsallis estimator (Figure&nbsp;\ref{fig-optimal_order-tsallis}), $\lambda = 0.85$ results in the lowest MSE with moderate bias, making it the most suitable choice.
 
 The estimators remained numerically stable and converged smoothly to Shannon entropy as $\lambda \to 1$. 
 Outside this range ($\lambda < 0.7$ or $\lambda > 1$), bias and MSE increased, indicating reduced numerical precision. 
 These results confirm that the selected $\lambda$ values ensure stable and reliable entropy estimates under typical SAR conditions.
 
-```{r fig-optimal_order,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="70%",  fig.pos="htb", fig.cap="Bias and MSE as a function of $\\lambda$, for the Rényi entropy estimator, with $n = 49$, $L = 5$.", fig.width=5, fig.height=3.0}
+```{r fig-optimal_order, eval=FALSE,  include=FALSE, echo=FALSE, message=FALSE, warning=FALSE,  out.width="70%",  fig.pos="htb", fig.cap="Bias and MSE as a function of $\\lambda$, for the Rényi entropy estimator, with $n = 49$, $L = 5$.", fig.width=5, fig.height=3.0}
 #fig.show="hide", 
 # eval=FALSE,  # 
 
@@ -533,7 +533,7 @@ grid.arrange(bias_plot, mse_plot, nrow = 2)
 
 ```
 
-```{r fig-optimal_order-tsallis,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="70%",  fig.pos="htb", fig.cap="Bias and MSE as a function of $\\lambda$, for the Tsallis entropy estimator, with $n = 49$, $L = 5$.", fig.width=5, fig.height=3.0}
+```{r fig-optimal_order-tsallis,  eval=FALSE,  include=FALSE, echo=FALSE, message=FALSE, warning=FALSE,  out.width="70%",  fig.pos="htb", fig.cap="Bias and MSE as a function of $\\lambda$, for the Tsallis entropy estimator, with $n = 49$, $L = 5$.", fig.width=5, fig.height=3.0}
 #fig.show="hide", 
 # eval=FALSE,  # 
 
@@ -581,6 +581,37 @@ mse_plot <- ggplot(data, aes(x = Lambda, y = MSE)) +
 grid.arrange(bias_plot, mse_plot, nrow = 2)
 
 ```
+
+```{=latex}
+\begin{figure}[htb]
+
+\caption{\label{fig-optimal_order}Bias and MSE as a function of
+\(\lambda\), for the Rényi entropy estimator, with \(n = 49\),
+\(L = 5\).}
+
+\centering{
+
+\includegraphics[width=0.7\linewidth,height=\textheight,keepaspectratio]{Figures/fig-optimal_order-1.pdf}
+
+}
+
+\end{figure}%
+
+\begin{figure}[htb]
+
+\caption{\label{fig-optimal_order-tsallis}Bias and MSE as a function of
+\(\lambda\), for the Tsallis entropy estimator, with \(n = 49\),
+\(L = 5\).}
+
+\centering{
+
+\includegraphics[width=0.7\linewidth,height=\textheight,keepaspectratio]{Figures/fig-optimal_order-tsallis-1.pdf}
+
+}
+
+\end{figure}%
+```
+
 <!-- ```{=latex} -->
 <!-- \begin{figure}[hbt] -->
 <!--   \centering -->
@@ -598,7 +629,7 @@ In the case of $L = 1$, the bootstrap procedure does not provide meaningful impr
 
 Building upon the previous Monte Carlo setup, we further assess the performance of the Rényi and Tsallis entropy estimators by analyzing their behavior across varying sample sizes $n \in \{9, 25, 49, 81, 121\}$. Using the optimal values of the order parameter ($\lambda = 0.9$ for Rényi and $\lambda = 0.85$ for Tsallis) already identified in the earlier analysis, we compute the bias and MSE for both the original and bootstrap-corrected versions of the estimators. As illustrated in Figures&nbsp;\ref{fig-bias_mse_rm1} and \ref{fig-bias_mse_Tsallis}, the bootstrap estimators consistently show improved performance for small samples. 
 \vspace{-10pt}
-```{r Simulated_data_bias_m1, echo=FALSE, message=FALSE }
+```{r Simulated_data_bias_m1,  eval=FALSE,  include=FALSE, echo=FALSE, message=FALSE }
 set.seed(1234567890, kind = "Mersenne-Twister")
 #cache = TRUE, autodep = TRUE
 
@@ -633,7 +664,7 @@ if (file.exists(file_name)) {
 ```
 
 
-```{r fig-bias_mse_rm1,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="65%",  fig.pos="H",  fig.cap="Bias and MSE of the Rényi entropy estimators for $\\Gamma_{\\text{SAR}}$, with $L=5$", fig.width=5.5, fig.height=3.5}
+```{r fig-bias_mse_rm1,   eval=FALSE,  include=FALSE, echo=FALSE, message=FALSE, warning=FALSE,  out.width="65%",  fig.pos="H",  fig.cap="Bias and MSE of the Rényi entropy estimators for $\\Gamma_{\\text{SAR}}$, with $L=5$", fig.width=5.5, fig.height=3.5}
 
 theme_set(theme_minimal() +
             theme(text = element_text(family = "serif"),
@@ -716,7 +747,7 @@ calculate_bias_mse_tsallis <- function(sample_sizes, R, B, mu, L, lambda_values,
 
 ```
 
-```{r Simulated_data_bias_tt, echo=FALSE, message=FALSE }
+```{r Simulated_data_bias_tt,  eval=FALSE,  include=FALSE, echo=FALSE, message=FALSE }
 set.seed(1234567890, kind = "Mersenne-Twister")
 #cache = TRUE, autodep = TRUE
 
@@ -812,7 +843,7 @@ generate_plot_tsallisn <- function(results_df, lambda_values, selected_estimator
 }
 ```
 
-```{r fig-bias_mse_Tsallis,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="65%",  fig.pos="htb",  fig.cap="Bias and MSE of the Tsallis entropy estimators for $\\Gamma_{\\text{SAR}}$, with $L=5$", fig.width=5.5, fig.height=3.6}
+```{r fig-bias_mse_Tsallis,  eval=FALSE,  include=FALSE,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="65%",  fig.pos="htb",  fig.cap="Bias and MSE of the Tsallis entropy estimators for $\\Gamma_{\\text{SAR}}$, with $L=5$", fig.width=5.5, fig.height=3.6}
 
 
 theme_set(theme_minimal() +
@@ -846,6 +877,34 @@ print(combined_plot_tsallis)
 
 
 
+```
+
+```{=latex}
+\begin{figure}[H]
+
+\caption{\label{fig-bias_mse_rm1}Bias and MSE of the Rényi entropy
+estimators for \(\Gamma_{\text{SAR}}\), with \(L=5\)}
+
+\centering{
+
+\includegraphics[width=0.65\linewidth,height=\textheight,keepaspectratio]{Figures/fig-bias_mse_rm1-1.pdf}
+
+}
+
+\end{figure}%
+
+\begin{figure}[htb]
+
+\caption{\label{fig-bias_mse_Tsallis}Bias and MSE of the Tsallis entropy
+estimators for \(\Gamma_{\text{SAR}}\), with \(L=5\)}
+
+\centering{
+
+\includegraphics[width=0.65\linewidth,height=\textheight,keepaspectratio]{Figures/fig-bias_mse_Tsallis-1.pdf}
+
+}
+
+\end{figure}%
 ```
 
 \vspace{-15pt}
@@ -948,11 +1007,11 @@ This robustness is especially evident in small sample sizes, where bootstrap cor
 
 \subsection{Empirical Behaviour of the Three Statistics} 
 
-Figures [-@fig-densities-shannon]-[-@fig-densities-tsallis4] display the empirical distributions of the three entropy-based statistics:Shannon $S_{\widetilde{H}}(\mathbf Z;L)$, Rényi $S_{\widetilde{R}_{\lambda}}(\mathbf Z;L)$ (with $\lambda=0.9$) and Tsallis $S_{\widetilde{T}_{\lambda}}(\mathbf Z;L)$ ($\lambda=0.85$) obtained from $10^{4}$ Monte Carlo replications of $\Gamma_{\text{SAR}}$ data for window sizes $n\in\{49,81,121\}$ and looks $L\in\{5,18\}$.  
+Figures&nbsp;\ref{fig-densities-shannon}-\ref{fig-densities-tsallis4} display the empirical distributions of the three entropy-based statistics:Shannon $S_{\widetilde{H}}(\mathbf Z;L)$, Rényi $S_{\widetilde{R}_{\lambda}}(\mathbf Z;L)$ (with $\lambda=0.9$) and Tsallis $S_{\widetilde{T}_{\lambda}}(\mathbf Z;L)$ ($\lambda=0.85$) obtained from $10^{4}$ Monte Carlo replications of $\Gamma_{\text{SAR}}$ data for window sizes $n\in\{49,81,121\}$ and looks $L\in\{5,18\}$.  
 
 All three empirical densities are tightly concentrated around zero, confirming that under $\mathcal{H}_0$ the test statistic has mean approximately $0$; at the same time, their moderately heavy tails reveal sensitivity to departures from homogeneity, which is desirable for detecting subtle texture.
 
-```{r Simulated_density-shannon, echo=FALSE, message=FALSE}
+```{r Simulated_density-shannon, eval=FALSE,  include=FALSE, echo=FALSE, message=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
 R <- 10000
@@ -1014,7 +1073,7 @@ for (L in L_values) {
 ```
 
 
-```{r fig-densities-shannon, echo=FALSE, message=FALSE, warning=FALSE, out.width="90%", fig.pos="hbt", fig.cap="Empirical densities of $S_{\\widetilde{H}_{AO}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$.", fig.width=9, fig.height=4.0}
+```{r fig-densities-shannon, eval=FALSE,  include=FALSE, echo=FALSE, message=FALSE, warning=FALSE, out.width="90%", fig.pos="hbt", fig.cap="Empirical densities of $S_{\\widetilde{H}_{AO}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$.", fig.width=9, fig.height=4.0}
 
 theme_set(theme_minimal() +
             theme(text = element_text(family = "serif"),
@@ -1065,7 +1124,7 @@ combined_plot <- wrap_plots(all_plots, ncol = 2, nrow = 1) +
 print(combined_plot)
 ```
 
-```{r Simulated_densityR, echo=FALSE, message=FALSE}
+```{r Simulated_densityR, eval=FALSE,  include=FALSE, echo=FALSE, message=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
 R <- 10000
@@ -1149,7 +1208,7 @@ for (L in L_values) {
 
 ```
 
-```{r fig-densities,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="90%", fig.pos="hbt",  fig.cap="Empirical densities of $S_{\\widetilde{R}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$, with $\\lambda=0.9$.", fig.width=9, fig.height=4.0}
+```{r fig-densities, eval=FALSE,  include=FALSE,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="90%", fig.pos="hbt",  fig.cap="Empirical densities of $S_{\\widetilde{R}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$, with $\\lambda=0.9$.", fig.width=9, fig.height=4.0}
 #fig.show="hide", 
 # eval=FALSE,  #
 
@@ -1212,7 +1271,7 @@ print(combined_plot)
 ```
 
 
-```{r Simulated_density-tsallis2, echo=FALSE, message=FALSE}
+```{r Simulated_density-tsallis2, eval=FALSE,  include=FALSE, echo=FALSE, message=FALSE}
 set.seed(1234567890, kind = "Mersenne-Twister")
 
 R <- 10000
@@ -1299,7 +1358,7 @@ for (L in L_values) {
 
 ```
 
-```{r fig-densities-tsallis4,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="90%", fig.pos="H",  fig.cap="Empirical densities of $S_{\\widetilde{T}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$, with $\\lambda=0.85$.", fig.width=9, fig.height=4.0}
+```{r fig-densities-tsallis4, eval=FALSE,  include=FALSE,  echo=FALSE, message=FALSE, warning=FALSE,  out.width="90%", fig.pos="H",  fig.cap="Empirical densities of $S_{\\widetilde{T}_{\\lambda}}(\\bm{Z}; L)$ under $\\mathcal{H}_0$, with $\\lambda=0.85$.", fig.width=9, fig.height=4.0}
 #fig.show="hide", 
 # eval=FALSE,  #
 
@@ -1362,6 +1421,48 @@ print(combined_plot)
 
 ```
 
+```{=latex}
+\begin{figure}[hbt]
+
+\caption{\label{fig-densities-shannon}Empirical densities of
+\(S_{\widetilde{H}_{AO}}(\bm{Z}; L)\) under \(\mathcal{H}_0\).}
+
+\centering{
+
+\includegraphics[width=0.9\linewidth,height=\textheight,keepaspectratio]{Figures/fig-densities-shannon-1.pdf}
+
+}
+
+\end{figure}%
+
+\begin{figure}[hbt]
+
+\caption{\label{fig-densities}Empirical densities of
+\(S_{\widetilde{R}_{\lambda}}(\bm{Z}; L)\) under \(\mathcal{H}_0\), with
+\(\lambda=0.9\).}
+
+\centering{
+
+\includegraphics[width=0.9\linewidth,height=\textheight,keepaspectratio]{Figures/fig-densities-1.pdf}
+
+}
+
+\end{figure}%
+
+\begin{figure}[H]
+
+\caption{\label{fig-densities-tsallis4}Empirical densities of
+\(S_{\widetilde{T}_{\lambda}}(\bm{Z}; L)\) under \(\mathcal{H}_0\), with
+\(\lambda=0.85\).}
+
+\centering{
+
+\includegraphics[width=0.9\linewidth,height=\textheight,keepaspectratio]{Figures/fig-densities-tsallis4-1.pdf}
+
+}
+
+\end{figure}%
+```
 Under the asymptotic properties of the entropy estimators [@vasicek1976test;@VanEs1992], for sufficiently large samples, $S_{\widetilde{\theta}}(\bm{Z};L)$ follows an asymptotic normal distribution:
 <!-- From the asymptotic theory of entropy estimators [@vasicek1976test;@VanEs1992], we know that for sufficiently large samples the statistic $S_{\widetilde{\theta}}(\bm{Z};L)$ converges in distribution to a normal law. Formally, as: -->
 $$
@@ -1425,14 +1526,14 @@ The size of a statistical test, also known as the Type&nbsp;I error rate, refers
 
 To evaluate this, we performed a Monte Carlo simulation with $1000$ replications for each combination of sample size and number of looks $L$, under the null hypothesis $\mathcal{H}_0$, where the data follow a $\Gamma_{\text{SAR}}$ distribution with mean $\mu = 1$. For each replication, the corresponding test statistic was computed using a bootstrap-based entropy estimator with $B = 100$ resamples. In the case of the Rényi and Tsallis entropy-based tests, we used order parameters $\lambda = 0.9$ and $\lambda = 0.85$, respectively. The empirical size was then estimated as the proportion of replications in which the null hypothesis was incorrectly rejected.
 
-The observed Type&nbsp;I error rates for the three entropy-based tests were consistently close to the nominal levels ($0.01$, $0.05$, $0.10$), thereby confirming the validity and proper calibration of the procedures. These results are summarized in Tables&nbsp;\ref{tab:table_size_power_shannon}-\ref{tab:size-power-tsallis}, and are visualized in the top panel of&nbsp;@fig-compare_size_power_plot0.
+The observed Type&nbsp;I error rates for the three entropy-based tests were consistently close to the nominal levels ($0.01$, $0.05$, $0.10$), thereby confirming the validity and proper calibration of the procedures. These results are summarized in Tables&nbsp;\ref{tab:table_size_power_shannon}-\ref{tab:size-power-tsallis}, and are visualized in the top panel of&nbsp;Figure&nbsp;\ref{fig-compare_size_power_plot0}.
 
 The power of a statistical test is defined as the probability of correctly rejecting the null hypothesis when it is false, that is, when the data are generated under the alternative hypothesis $\mathcal{H}_1$. It is mathematically given by $1 - \beta$, where $\beta$ represents the Type&nbsp;II error rate (the probability of failing to reject a false null hypothesis). In other words, high power indicates low probability of committing a Type II error, and reflects the test’s sensitivity to deviations from $\mathcal{H}_0$.
 
 To assess this property, we simulated data under the alternative hypothesis $\mathcal{H}_1$, assuming the $\mathcal{G}^0_I$ distribution with $\mu = 1$ and  $\alpha = -2$. For each combination of sample size and number of looks $L$, we performed $1000$ Monte Carlo replications. In each replication, the corresponding test statistic was computed using a bootstrap-based entropy estimator with $B = 100$ resamples. For the Rényi and Tsallis entropy-based tests, we used order parameters $\lambda = 0.9$ and $\lambda = 0.85$, respectively. Power was estimated as the proportion of replications in which the null hypothesis $\mathcal{H}_0$ was correctly rejected.
 
 As expected, power increased with both the sample size and the number of looks. This trend was consistent across all three entropic measures, demonstrating the effectiveness of the tests in identifying departures from the null hypothesis under heterogeneous conditions.
-The results are shown in Tables&nbsp;\ref{tab:table_size_power_shannon}-\ref{tab:size-power-tsallis}, with graphical representations provided in the lower panel of&nbsp;@fig-compare_size_power_plot0.
+The results are shown in Tables&nbsp;\ref{tab:table_size_power_shannon}-\ref{tab:size-power-tsallis}, with graphical representations provided in the lower panel of&nbsp;Figure&nbsp;\ref{fig-compare_size_power_plot0}.
 
 <!-- The observed increase in power with both sample size and number of looks is theoretically justified. Larger sample sizes provide more information about the underlying distribution, which reduces variability in the estimation of the test statistic and improves its ability to detect departures from the null hypothesis. Similarly, in the context of the $\Gamma_{\text{SAR}}$ and $\mathcal{G}^0_I$ models, a higher number of looks $L$ corresponds to less speckle noise and more stable observations. This leads to more reliable test statistics, further enhancing the ability of the test to distinguish between homogeneous and heterogeneous regions. Therefore, both increased $n$ and $L$ contribute to higher sensitivity, which is reflected in the rising power curves observed in the simulations. -->
 ```{r Simulated_error_type_I-shannon1, echo=FALSE, message=FALSE}
@@ -2275,7 +2376,7 @@ comparison_data <- left_join(size_all, power_all,
 ```
 
 
-```{r fig-compare_size_power_plot0, echo=FALSE, fig.width=10, fig.height=12, fig.pos="H", fig.cap="Comparative performance of test statistics based on Shannon, Rényi and Tsallis entropies. Size and Power for different sample sizes and $L$ values."}
+```{r fig-compare_size_power_plot0,  eval=FALSE,  include=FALSE, echo=FALSE, fig.width=10, fig.height=12, fig.pos="H", fig.cap="Comparative performance of test statistics based on Shannon, Rényi and Tsallis entropies. Size and Power for different sample sizes and $L$ values."}
 library(ggplot2)
 
 theme_set(theme_minimal() +
@@ -2345,6 +2446,21 @@ plot_power <- ggplot(comparison_data, aes(x = Sample_Size, y = power, color = En
 
 ```
 
+```{=latex}
+\begin{figure}[H]
+
+\caption{\label{fig-compare_size_power_plot0}Comparative performance of
+test statistics based on Shannon, Rényi and Tsallis entropies. Size and
+Power for different sample sizes and \(L\) values.}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{Figures/fig-compare_size_power_plot0-1.pdf}}
+
+}
+
+\end{figure}%
+```
 
 ## FIXED AND ADAPTIVE WINDOWS
 

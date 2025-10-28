@@ -684,16 +684,15 @@ Figure&nbsp;\ref{fig:entropy-diagram} provides a conceptual overview of the deco
 
 To conclude this section, we illustrate the convergence behavior of each entropy measure.
 
-Figures&nbsp;[-@fig-shannon-convergence-s]--[-@fig-tsallis-convergence-t] illustrate the Shannon ($H$), Rényi ($R_\lambda$), and Tsallis ($T_\lambda$) entropies for the $\mathcal{G}^0_I$ model under different texture levels ($\alpha$) and numbers of looks ($L$).  In every case the coloured dashed curves converge to the solid black baseline of the homogeneous $\Gamma_{\mathrm{SAR}}$ distribution as $\alpha\to-\infty$, confirming the limiting behavior.
+Figures&nbsp;\ref{fig-shannon-convergence-s}--\ref{fig-tsallis-convergence-t} illustrate the Shannon ($H$), Rényi ($R_\lambda$), and Tsallis ($T_\lambda$) entropies for the $\mathcal{G}^0_I$ model under different texture levels ($\alpha$) and numbers of looks ($L$).  In every case the coloured dashed curves converge to the solid black baseline of the homogeneous $\Gamma_{\mathrm{SAR}}$ distribution as $\alpha\to-\infty$, confirming the limiting behavior.
 
-For the Shannon entropy (@fig-shannon-convergence-s), when $L = 5$ the entropy curves for different $\alpha$ values are more concentrated. This is due to the higher speckle noise present in a low number of looks, which dominates the uncertainty and masks texture effects. When $L = 18$, speckle is reduced and the entropy better reflects texture variation, resulting in more separated curves.
+For the Shannon entropy (Figure&nbsp;\ref{fig-shannon-convergence-s}), when $L = 5$ the entropy curves for different $\alpha$ values are more concentrated. This is due to the higher speckle noise present in a low number of looks, which dominates the uncertainty and masks texture effects. When $L = 18$, speckle is reduced and the entropy better reflects texture variation, resulting in more separated curves.
 
-In the case of Rényi entropy (@fig-renyi-convergence-r), for $\lambda = 0.6$ and $\lambda = 0.9$, the general shape and separation of the curves are similar. However, increasing $L$ leads to a slight decrease in entropy values across all $\alpha$, consistent with reduced speckle. The convergence pattern toward the Gamma baseline remains stable in both settings.
+In the case of Rényi entropy (Figure&nbsp;\ref{fig-renyi-convergence-r}), for $\lambda = 0.6$ and $\lambda = 0.9$, the general shape and separation of the curves are similar. However, increasing $L$ leads to a slight decrease in entropy values across all $\alpha$, consistent with reduced speckle. The convergence pattern toward the Gamma baseline remains stable in both settings.
 
-For Tsallis entropy (@fig-tsallis-convergence-t), the separation between curves is most noticeable for $\lambda = 0.6$ and $L = 5$, where texture has more influence. When $\lambda$ increases to $0.9$ or when $L$ is increased, the curves become more compact and approach the Gamma entropy faster, indicating lower sensitivity to texture variation and confirming that $\lambda$ controls the influence of the tail behavior.
+For Tsallis entropy (Figure&nbsp;\ref{fig-tsallis-convergence-t}), the separation between curves is most noticeable for $\lambda = 0.6$ and $L = 5$, where texture has more influence. When $\lambda$ increases to $0.9$ or when $L$ is increased, the curves become more compact and approach the Gamma entropy faster, indicating lower sensitivity to texture variation and confirming that $\lambda$ controls the influence of the tail behavior.
 
-
-```{r fig-shannon-convergence-s, echo=FALSE, message=FALSE, warning=FALSE, fig.pos="hbt", out.width="98%", fig.cap="Shannon entropy $H(\\mathcal{G}^0_I)$ converges to $H(\\Gamma_{\\mathrm{SAR}})$ as $\\alpha$ decreases.", fig.width=8, fig.height=3.9} 
+```{r fig-shannon-convergence-s,  eval=FALSE,  include=FALSE, echo=FALSE, message=FALSE, warning=FALSE, fig.pos="hbt", out.width="98%", fig.cap="Shannon entropy $H(\\mathcal{G}^0_I)$ converges to $H(\\Gamma_{\\mathrm{SAR}})$ as $\\alpha$ decreases.", fig.width=8, fig.height=3.9} 
 
 
 entropy_gamma_sar <- function(L, mu) {
@@ -755,7 +754,7 @@ p2 <- plot_shannon(18)
 ```
 
 
-```{r fig-renyi-convergence-r, echo=FALSE, message=FALSE, warning=FALSE, fig.pos="hbt", out.width="98%", fig.cap="Rényi entropy $R_{\\lambda}(\\mathcal{G}^0_I)$ converges to $R_{\\lambda}(\\Gamma_{\\mathrm{SAR}})$ as $\\alpha$ decreases.", fig.width=8, fig.height=3.9}
+```{r fig-renyi-convergence-r,  eval=FALSE,  include=FALSE, echo=FALSE, message=FALSE, warning=FALSE, fig.pos="hbt", out.width="98%", fig.cap="Rényi entropy $R_{\\lambda}(\\mathcal{G}^0_I)$ converges to $R_{\\lambda}(\\Gamma_{\\mathrm{SAR}})$ as $\\alpha$ decreases.", fig.width=8, fig.height=3.9}
 # fig.fullwidth = TRUE, out.width="95%"
 
 
@@ -823,7 +822,7 @@ p2 <- plot_renyi(18, 0.9)
 (p1 | p2) + plot_layout(guides = "collect") & theme(legend.position = "bottom")
 ```
 
-```{r fig-tsallis-convergence-t, echo=FALSE, message=FALSE, warning=FALSE, fig.pos="H", out.width="98%", fig.cap="Tsallis entropy $T_{\\lambda}(\\mathcal{G}^0_I)$ converges to $T_{\\lambda}(\\Gamma_{\\mathrm{SAR}})$ as $\\alpha$ decreases.", fig.width=8, fig.height=3.9}
+```{r fig-tsallis-convergence-t,  eval=FALSE,  include=FALSE, echo=FALSE, message=FALSE, warning=FALSE, fig.pos="H", out.width="98%", fig.cap="Tsallis entropy $T_{\\lambda}(\\mathcal{G}^0_I)$ converges to $T_{\\lambda}(\\Gamma_{\\mathrm{SAR}})$ as $\\alpha$ decreases.", fig.width=8, fig.height=3.9}
 # fig.fullwidth = TRUE, out.width="95%"
 
 
@@ -889,6 +888,49 @@ p2 <- plot_tsallis(18, 0.9)
 (p1 | p2) + plot_layout(guides = "collect") & theme(legend.position = "bottom")
 ```
 
+```{=latex}
+\begin{figure}[hbt]
+
+\caption{\label{fig-shannon-convergence-s}Shannon entropy
+\(H(\mathcal{G}^0_I)\) converges to \(H(\Gamma_{\mathrm{SAR}})\) as
+\(\alpha\) decreases.}
+
+\centering{
+
+\includegraphics[width=0.98\linewidth,height=\textheight,keepaspectratio]{Figures/fig-shannon-convergence-s-1.pdf}
+
+}
+
+\end{figure}%
+
+\begin{figure}[hbt]
+
+\caption{\label{fig-renyi-convergence-r}Rényi entropy
+\(R_{\lambda}(\mathcal{G}^0_I)\) converges to
+\(R_{\lambda}(\Gamma_{\mathrm{SAR}})\) as \(\alpha\) decreases.}
+
+\centering{
+
+\includegraphics[width=0.98\linewidth,height=\textheight,keepaspectratio]{Figures/fig-renyi-convergence-r-1.pdf}
+
+}
+
+\end{figure}%
+
+\begin{figure}[H]
+
+\caption{\label{fig-tsallis-convergence-t}Tsallis entropy
+\(T_{\lambda}(\mathcal{G}^0_I)\) converges to
+\(T_{\lambda}(\Gamma_{\mathrm{SAR}})\) as \(\alpha\) decreases.}
+
+\centering{
+
+\includegraphics[width=0.98\linewidth,height=\textheight,keepaspectratio]{Figures/fig-tsallis-convergence-t-1.pdf}
+
+}
+
+\end{figure}%
+```
 
 
 
