@@ -101,12 +101,17 @@
 \end{titlepage}
 \setcounter{page}{2}
 % --- Folha em branco para a ficha catalográfica (contada, sem número) ---
-\clearpage
-\thispagestyle{empty}
-\null
-\newpage
+% \clearpage
+% \thispagestyle{empty}
+% \null
+% \newpage
 
-
+\cleardoublepage
+\includepdf[
+  pages=-,
+  pagecommand={\thispagestyle{empty}},
+  fitpaper=true
+]{Frontmatter/ficha_catalografica_7882.pdf}
  % la Capa NO se cuenta; la próxima hoja será la 1
 
 % --- SUBPORTADA O FOLHA DE ROSTO ---

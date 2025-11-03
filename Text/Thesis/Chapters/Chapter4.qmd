@@ -52,7 +52,7 @@ bodies&nbsp;[@Neto2023].
 
 
 
-We evaluated the three test statistics $S_{\widetilde{H}_{\text{AO}}}$, $S_{\widetilde{R}_{\lambda}}$, and $S_{\widetilde{T}_{\lambda}}$ on simulated images using fixed sliding windows of size $7\times7$ and, for Tsallis only, the adaptive windowing strategy with side lengths from $5\times5$ ($N_{\min}=5$) to $11\times11$ ($N_{\max}=11$) and smoothing parameter $\eta=3$. Figures&nbsp;\ref{fig:sim1t} and \ref{fig:sim2t} present, respectively for $L=5$ and $L=9$, the $p$-value maps (top row) and the corresponding binary decision maps (bottom row).
+We evaluated the three test statistics $S_{\widetilde{H}_{\text{AO}}}$, $S_{\widetilde{R}_{\lambda}}$, and $S_{\widetilde{T}_{\lambda}}$ on simulated images using fixed sliding windows of size $7\times7$ and, for Tsallis only, the adaptive windowing strategy with side lengths from $5\times5$ ($W_{\min}=5$) to $11\times11$ ($W_{\max}=11$) and smoothing parameter $\eta=3$. Figures&nbsp;\ref{fig:sim1t} and \ref{fig:sim2t} present, respectively for $L=5$ and $L=9$, the $p$-value maps (top row) and the corresponding binary decision maps (bottom row).
 
 The $p$-value maps (Figures&nbsp;\ref{fig:sim1a}–\ref{fig:sim1d} and \ref{fig:sim2a}–\ref{fig:sim2d}) are shown with a continuous color scale: dark red ($p\!\approx\!0$) indicates strong evidence of heterogeneity, while dark blue ($p\!\approx\!1$) corresponds to homogeneous areas. Intermediate colors follow a smooth progression orange ($p\!\approx\!0.2$–$0.4$) for transitional textures and yellow–green to cyan ($p\!\approx\!0.4$–$0.8$) for increasingly near-homogeneous regions. 
 
@@ -286,7 +286,7 @@ The SAR images were preprocessed using the SNAP (Sentinel Application Platform) 
 
 ### Qualitative Inspection {#qualitative-inspection}
 
-We applied the three bootstrap statistics, $S_{\widetilde{H}_{\text{AO}}}$, $S_{\widetilde{R}_{\lambda}}$, and $S_{\widetilde{T}_{\lambda}}$, to the five SAR intensity images in Figures&nbsp;\ref{fig:london-sar}–\ref{fig:ja-sar}. The fixed approach uses local sliding windows of size $7\times7$. The adaptive approach (used with Tsallis) varies the window side from $5\times5$ ($N_{\min}=5$) to $11\times11$ ($N_{\max}=11$), with smoothing parameter $\eta=3$, and $B=100$ bootstrap replications per window. Each figure is organized in three rows: (i) SAR scene and a matching Sentinel-2 optical image, (ii) $p$-value maps for the three tests, and (iii) binary maps at the $5\%$ level (black = heterogeneous, white = homogeneous).
+We applied the three bootstrap statistics, $S_{\widetilde{H}_{\text{AO}}}$, $S_{\widetilde{R}_{\lambda}}$, and $S_{\widetilde{T}_{\lambda}}$, to the five SAR intensity images in Figures&nbsp;\ref{fig:london-sar}–\ref{fig:ja-sar}. The fixed approach uses local sliding windows of size $7\times7$. The adaptive approach (used with Tsallis) varies the window side from $5\times5$ ($W_{\min}=5$) to $11\times11$ ($W_{\max}=11$), with smoothing parameter $\eta=3$, and $B=100$ bootstrap replications per window. Each figure is organized in three rows: (i) SAR scene and a matching Sentinel-2 optical image, (ii) $p$-value maps for the three tests, and (iii) binary maps at the $5\%$ level (black = heterogeneous, white = homogeneous).
 
 Across all scenes, the three tests detect the main textured elements (urban blocks, port facilities, roads, crop boundaries, mountains, and river banks). In the $p$-value maps, dark red ($p\!\approx\!0$) concentrates on heterogeneous areas such as urban blocks, harbor structures, and field edges, while blue ($p\!\approx\!1$) dominates open water and other uniform surfaces. Intermediate colors mark transitional textures.
 
@@ -793,7 +793,7 @@ $\eta=3.0$. Bottom:  (g-j) Binary decision maps at 0.05 significance level.}
 <!-- ``` -->
 
 
-In addition to the visual analysis presented above, we measured execution times to assess the computational cost of the proposed methods. @tbl-exec-times reports the processing times for the three entropy-based tests (Shannon, Rényi, and Tsallis) with fixed $7\times7$ windows and, for comparison, the adaptive Tsallis variant with window sizes from $5\times5$ ($N_{\min}=5$) to $11\times11$ ($N_{\max}=11$). Times are reported in minutes and seconds (mm:ss) with $B=100$ bootstrap replications per window.
+In addition to the visual analysis presented above, we measured execution times to assess the computational cost of the proposed methods. @tbl-exec-times reports the processing times for the three entropy-based tests (Shannon, Rényi, and Tsallis) with fixed $7\times7$ windows and, for comparison, the adaptive Tsallis variant with window sizes from $5\times5$ ($W_{\min}=5$) to $11\times11$ ($W_{\max}=11$). Times are reported in minutes and seconds (mm:ss) with $B=100$ bootstrap replications per window.
 
 Overall, Shannon is the fastest across scenes, which is consistent with its simpler analytical form. Rényi and Tsallis are slightly slower due to the evaluation of additional terms. As expected, the adaptive Tsallis approach takes the longest because it evaluates multiple window sizes per pixel. 
 
@@ -805,7 +805,7 @@ Overall, Shannon is the fastest across scenes, which is consistent with its simp
 #| message: false
 #| warning: false
 #| results: 'asis'
-#| tbl-cap: 'Execution times for the heterogeneity detection using fixed $7\times7$ and adaptive windows ($N_{\min}=5$, $N_{\max}=11$), with $B=100$ bootstrap replications per scenario. Times are given in minutes and seconds (mm:ss). Rényi entropy uses $\lambda=0.9$ and Tsallis entropy uses $\lambda=0.85$'
+#| tbl-cap: 'Execution times for the heterogeneity detection using fixed $7\times7$ and adaptive windows ($W_{\min}=5$, $W_{\max}=11$), with $B=100$ bootstrap replications per scenario. Times are given in minutes and seconds (mm:ss). Rényi entropy uses $\lambda=0.9$ and Tsallis entropy uses $\lambda=0.85$'
 #| tbl-pos: 'hbt'
 
 #library(kableExtra)

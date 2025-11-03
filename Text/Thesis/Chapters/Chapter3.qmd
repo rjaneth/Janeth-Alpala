@@ -2554,11 +2554,11 @@ N_{i,j}^{\text{updated}} =
 \max\{N_{ij} - 1,\, N_{\min}\}, & \text{if } C_{ij} > U_{ij},
 \end{cases}
 $$
-where $N_{\max}$ and $N_{\min}$ denote the maximum and minimum allowed window size, respectively. Hence, windows *grow* in homogeneous regions (stabilizing estimates) and *shrink* in heterogeneous areas (preserving edges and avoiding class mixing). 
+where $N_{\max}$ and $N_{\min}$ denote the maximum and minimum allowed window radius, respectively. Since $W_{ij}=2N_{ij}+1$, these bounds on the radius induce the corresponding minimum and maximum window sides $W_{\min}=2N_{\min}+1$ and $W_{\max}=2N_{\max}+1$. Hence, windows *grow* in homogeneous regions (stabilizing estimates) and *shrink* in heterogeneous areas (preserving edges and avoiding class mixing). 
 
 Once the window radius $N_{ij}$ has been determined for pixel $(i,j)$, the corresponding full window is extracted and the proposed test in \eqref{eq-test-tsallis} is applied to obtain the local test statistic. This produces two outputs: (i) a map of test statistics over the image, and (ii) a window-size map $W_{ij}$ that records the locally selected window side (larger in homogeneous regions, smaller in heterogeneous ones). For inference, each value of the test statistic is standardized using the empirical mean and standard deviation of the image, and two-sided $p$-values are then computed.
 
-In the experiments presented in the next chapter, the Tsallis-based test statistic $S_{\widetilde{T}{\lambda}}$ will be applied to both simulated and real SAR images using adaptive windows with side lengths ranging from $5\times5$ ($N{\min}=5$) to $11\times11$ ($N_{\max}=11$), with the smoothing parameter set to $\eta = 3$. For comparison, a fixed $7\times7$ window configuration will also be evaluated.
+In the experiments presented in the next chapter, the Tsallis-based test statistic $S_{\widetilde{T}{\lambda}}$ will be applied to both simulated and real SAR images using adaptive windows with side lengths ranging from $5\times5$ ($W_{\min}=5$) to $11\times11$ ($W_{\max}=11$), with the smoothing parameter set to $\eta = 3$. For comparison, a fixed $7\times7$ window configuration will also be evaluated.
 
 
 
